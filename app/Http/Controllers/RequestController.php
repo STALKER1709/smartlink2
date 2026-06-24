@@ -6,6 +6,7 @@ use App\Http\Requests\RequestActionRequest;
 use App\Http\Requests\StoreServiceRequestRequest;
 use App\Models\Service;
 use App\Models\ServiceRequest;
+use App\Models\User;
 use App\Services\RequestService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -64,8 +65,16 @@ class RequestController extends Controller
             $service = Service::query()->active()->findOrFail($request->integer('service_id'));
         }
 
+        $provider = null;
+        if (! $service && $request->filled('provider_id')) {
+            $provider = User::query()->ofRole(User::ROLE_PROVIDER)
+                ->with('providerProfile')
+                ->findOrFail($request->integer('provider_id'));
+        }
+
         return view('requests.create', [
             'service' => $service,
+            'provider' => $provider,
         ]);
     }
 

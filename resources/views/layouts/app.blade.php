@@ -27,10 +27,14 @@
                 </header>
             @endisset
 
+            @include('partials.flash-messages')
+
             <!-- Page Content -->
             <main>
                 {{ $slot }}
             </main>
+
+            @include('partials.chatbot-widget')
         </div>
     </body>
 </html>
