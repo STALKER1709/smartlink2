@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Middleware\EnsureAccountIsActive;
+use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,13 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+            'role' => EnsureUserHasRole::class,
         ]);
 
-        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureAccountIsActive::class);
+        $middleware->appendToGroup('web', EnsureAccountIsActive::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
-        );
+        //
     })->create();
