@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ServiceCategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['name', 'slug', 'icon', 'description', 'is_active'])]
 class ServiceCategory extends Model
 {
-    /** @use HasFactory<\Database\Factories\ServiceCategoryFactory> */
+    /** @use HasFactory<ServiceCategoryFactory> */
     use HasFactory, SoftDeletes;
 
     protected function casts(): array

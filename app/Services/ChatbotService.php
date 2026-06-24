@@ -6,9 +6,7 @@ use App\Contracts\ChatbotProvider;
 
 class ChatbotService
 {
-    public function __construct(private readonly ChatbotProvider $provider)
-    {
-    }
+    public function __construct(private readonly ChatbotProvider $provider) {}
 
     /**
      * @param  array<int, array{role: string, content: string}>  $history

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ConversationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['client_id', 'provider_id', 'request_id', 'last_message_at'])]
 class Conversation extends Model
 {
-    /** @use HasFactory<\Database\Factories\ConversationFactory> */
+    /** @use HasFactory<ConversationFactory> */
     use HasFactory, SoftDeletes;
 
     protected function casts(): array

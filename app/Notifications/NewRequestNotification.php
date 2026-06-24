@@ -7,9 +7,7 @@ use Illuminate\Notifications\Notification;
 
 class NewRequestNotification extends Notification
 {
-    public function __construct(private readonly ServiceRequest $request)
-    {
-    }
+    public function __construct(private readonly ServiceRequest $request) {}
 
     /**
      * @return array<int, string>

@@ -10,9 +10,7 @@ use Illuminate\Http\RedirectResponse;
 
 class MessageController extends Controller
 {
-    public function __construct(private readonly NotificationService $notifications)
-    {
-    }
+    public function __construct(private readonly NotificationService $notifications) {}
 
     public function store(StoreMessageRequest $request, Conversation $conversation): RedirectResponse
     {

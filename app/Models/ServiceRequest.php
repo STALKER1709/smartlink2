@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ServiceRequestFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['client_id', 'provider_id', 'service_id', 'message', 'preferred_date', 'status'])]
 class ServiceRequest extends Model
 {
-    /** @use HasFactory<\Database\Factories\ServiceRequestFactory> */
+    /** @use HasFactory<ServiceRequestFactory> */
     use HasFactory, SoftDeletes;
 
     protected $table = 'requests';

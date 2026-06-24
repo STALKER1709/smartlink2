@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReviewController extends Controller
 {
-    public function __construct(private readonly NotificationService $notifications)
-    {
-    }
+    public function __construct(private readonly NotificationService $notifications) {}
 
     public function store(StoreReviewRequest $request, ServiceRequest $serviceRequest): RedirectResponse
     {

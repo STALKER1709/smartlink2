@@ -10,6 +10,7 @@ use App\Models\ServiceCategory;
 use App\Models\ServiceImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -97,7 +98,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * @param  array<int, \Illuminate\Http\UploadedFile>  $images
+     * @param  array<int, UploadedFile>  $images
      */
     private function storeImages(Service $service, array $images): void
     {

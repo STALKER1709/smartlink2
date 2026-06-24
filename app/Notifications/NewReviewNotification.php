@@ -7,9 +7,7 @@ use Illuminate\Notifications\Notification;
 
 class NewReviewNotification extends Notification
 {
-    public function __construct(private readonly Review $review)
-    {
-    }
+    public function __construct(private readonly Review $review) {}
 
     /**
      * @return array<int, string>

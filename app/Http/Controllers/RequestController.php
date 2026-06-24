@@ -14,9 +14,7 @@ use Illuminate\View\View;
 
 class RequestController extends Controller
 {
-    public function __construct(private readonly RequestService $requests)
-    {
-    }
+    public function __construct(private readonly RequestService $requests) {}
 
     public function index(Request $request): View
     {

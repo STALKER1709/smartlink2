@@ -8,9 +8,7 @@ use Illuminate\Http\JsonResponse;
 
 class ChatbotController extends Controller
 {
-    public function __construct(private readonly ChatbotService $chatbot)
-    {
-    }
+    public function __construct(private readonly ChatbotService $chatbot) {}
 
     public function ask(StoreChatbotMessageRequest $request): JsonResponse
     {

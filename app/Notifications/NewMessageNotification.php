@@ -7,9 +7,7 @@ use Illuminate\Notifications\Notification;
 
 class NewMessageNotification extends Notification
 {
-    public function __construct(private readonly Message $message)
-    {
-    }
+    public function __construct(private readonly Message $message) {}
 
     /**
      * @return array<int, string>

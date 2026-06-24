@@ -30,8 +30,7 @@ class RequestService
     public function __construct(
         private readonly NotificationService $notifications,
         private readonly AuditLogService $auditLog,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<string, mixed>  $data

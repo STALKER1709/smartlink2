@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['request_id', 'client_id', 'provider_id', 'rating', 'comment'])]
 class Review extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReviewFactory> */
+    /** @use HasFactory<ReviewFactory> */
     use HasFactory, SoftDeletes;
 
     protected function casts(): array

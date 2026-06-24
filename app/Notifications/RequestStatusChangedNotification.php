@@ -11,8 +11,7 @@ class RequestStatusChangedNotification extends Notification
         private readonly ServiceRequest $request,
         private readonly string $from,
         private readonly string $to,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<int, string>

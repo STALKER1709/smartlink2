@@ -19,12 +19,12 @@ class RuleBasedChatbotProvider implements ChatbotProvider
         [
             'keywords' => ['bonjour', 'salut', 'bonsoir'],
             'reply' => "Bonjour ! Je suis l'assistant SmartLink. Je peux vous aider à trouver un prestataire, "
-                ."envoyer une demande, ou suivre son statut. Que souhaitez-vous savoir ?",
+                .'envoyer une demande, ou suivre son statut. Que souhaitez-vous savoir ?',
         ],
         [
             'keywords' => ['trouver', 'rechercher', 'chercher', 'prestataire', 'service'],
-            'reply' => "Pour trouver un prestataire, utilisez la barre de recherche : vous pouvez filtrer par "
-                ."catégorie, par ville et par mot-clé.",
+            'reply' => 'Pour trouver un prestataire, utilisez la barre de recherche : vous pouvez filtrer par '
+                .'catégorie, par ville et par mot-clé.',
         ],
         [
             'keywords' => ['demande', 'envoyer', 'contacter'],
@@ -38,8 +38,8 @@ class RuleBasedChatbotProvider implements ChatbotProvider
         ],
         [
             'keywords' => ['paiement', 'payer', 'argent', 'prix', 'tarif'],
-            'reply' => "SmartLink ne gère aucun paiement en ligne. Les modalités financières sont à convenir "
-                ."directement entre vous et le prestataire, hors plateforme.",
+            'reply' => 'SmartLink ne gère aucun paiement en ligne. Les modalités financières sont à convenir '
+                .'directement entre vous et le prestataire, hors plateforme.',
         ],
         [
             'keywords' => ['compte', 'inscription', 'inscrire', 'mot de passe'],

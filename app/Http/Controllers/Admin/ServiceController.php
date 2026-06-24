@@ -11,9 +11,7 @@ use Illuminate\View\View;
 
 class ServiceController extends Controller
 {
-    public function __construct(private readonly AuditLogService $auditLog)
-    {
-    }
+    public function __construct(private readonly AuditLogService $auditLog) {}
 
     public function index(Request $request): View
     {
