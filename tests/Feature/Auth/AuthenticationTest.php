@@ -22,7 +22,20 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->post('/login', [
-            'email' => $user->email,
+            'login' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_users_can_authenticate_using_their_phone_number(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/login', [
+            'login' => $user->phone,
             'password' => 'password',
         ]);
 
@@ -35,8 +48,20 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', [
-            'email' => $user->email,
+            'login' => $user->email,
             'password' => 'wrong-password',
+        ]);
+
+        $this->assertGuest();
+    }
+
+    public function test_suspended_users_can_not_authenticate(): void
+    {
+        $user = User::factory()->suspended()->create();
+
+        $this->post('/login', [
+            'login' => $user->email,
+            'password' => 'password',
         ]);
 
         $this->assertGuest();
