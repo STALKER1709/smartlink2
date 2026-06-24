@@ -6,16 +6,30 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
+
+    public const ROLE_CLIENT = 'client';
+
+    public const ROLE_PROVIDER = 'provider';
+
+    public const ROLE_ADMIN = 'admin';
+
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_SUSPENDED = 'suspended';
 
     /**
      * Get the attributes that should be cast.
@@ -26,7 +40,88 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function clientProfile(): HasOne
+    {
+        return $this->hasOne(ClientProfile::class);
+    }
+
+    public function providerProfile(): HasOne
+    {
+        return $this->hasOne(ProviderProfile::class);
+    }
+
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class, 'provider_id');
+    }
+
+    public function sentRequests(): HasMany
+    {
+        return $this->hasMany(ServiceRequest::class, 'client_id');
+    }
+
+    public function receivedRequests(): HasMany
+    {
+        return $this->hasMany(ServiceRequest::class, 'provider_id');
+    }
+
+    public function reviewsGiven(): HasMany
+    {
+        return $this->hasMany(Review::class, 'client_id');
+    }
+
+    public function reviewsReceived(): HasMany
+    {
+        return $this->hasMany(Review::class, 'provider_id');
+    }
+
+    public function conversationsAsClient(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'client_id');
+    }
+
+    public function conversationsAsProvider(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'provider_id');
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
+    public function isClient(): bool
+    {
+        return $this->role === self::ROLE_CLIENT;
+    }
+
+    public function isProvider(): bool
+    {
+        return $this->role === self::ROLE_PROVIDER;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function scopeOfRole(Builder $query, string $role): Builder
+    {
+        return $query->where('role', $role);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 }
