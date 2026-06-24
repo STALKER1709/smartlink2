@@ -29,6 +29,23 @@ class ServiceRequestPolicy
         return $user->id === $serviceRequest->client_id || $user->id === $serviceRequest->provider_id;
     }
 
+    /**
+     * Provider-only actions: accept, refuse, start, complete.
+     */
+    public function respond(User $user, ServiceRequest $serviceRequest): bool
+    {
+        return $user->id === $serviceRequest->provider_id && $user->isActive();
+    }
+
+    /**
+     * Either participant may cancel a request that is not yet final.
+     */
+    public function cancel(User $user, ServiceRequest $serviceRequest): bool
+    {
+        return ! $serviceRequest->isFinal()
+            && ($user->id === $serviceRequest->client_id || $user->id === $serviceRequest->provider_id);
+    }
+
     public function delete(User $user, ServiceRequest $serviceRequest): bool
     {
         return $user->isAdmin();

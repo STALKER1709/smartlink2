@@ -24,7 +24,7 @@ class ProviderProfile extends Model
             'opening_hours' => 'array',
             'contact_methods' => 'array',
             'is_verified' => 'boolean',
-            'rating_avg' => 'float',
+            'rating_avg' => 'decimal:2',
         ];
     }
 

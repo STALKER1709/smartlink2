@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Review;
+use App\Models\ServiceRequest;
 use App\Models\User;
 
 class ReviewPolicy
@@ -21,9 +22,19 @@ class ReviewPolicy
         return $user && ($user->isAdmin() || $user->id === $review->client_id || $user->id === $review->provider_id);
     }
 
-    public function create(User $user): bool
+    public function create(User $user, ?ServiceRequest $serviceRequest = null): bool
     {
-        return $user->isClient();
+        if (! $user->isClient()) {
+            return false;
+        }
+
+        if ($serviceRequest === null) {
+            return true;
+        }
+
+        return $user->id === $serviceRequest->client_id
+            && $serviceRequest->status === ServiceRequest::STATUS_COMPLETED
+            && ! $serviceRequest->review()->exists();
     }
 
     public function update(User $user, Review $review): bool
