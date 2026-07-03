@@ -28,6 +28,11 @@ class UpdateProviderProfileRequest extends FormRequest
             'contact_methods' => ['nullable', 'array'],
             'contact_methods.*' => ['string', 'max:120'],
             'logo' => ['nullable', 'image', 'max:2048'],
+            'quarter' => ['nullable', 'string', 'max:120'],
+            'whatsapp' => ['nullable', 'string', 'max:20'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'id_card' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:4096'],
         ];
     }
 }

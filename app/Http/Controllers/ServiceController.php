@@ -15,7 +15,7 @@ class ServiceController extends Controller
     public function index(Request $request): View
     {
         $services = $this->searchService->searchServices($request->only([
-            'category_id', 'city', 'term', 'available_only', 'sort',
+            'category_id', 'city', 'quarter', 'term', 'available_only', 'sort',
         ]));
 
         $categories = ServiceCategory::query()->active()->orderBy('name')->get();

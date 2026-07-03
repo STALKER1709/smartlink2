@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ProviderVerificationController;
 use App\Http\Controllers\Admin\ServiceCategoryController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -8,6 +9,9 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
@@ -37,6 +41,10 @@ Route::get('/prestataires/{providerProfile}', [ProviderController::class, 'show'
 Route::post('/chatbot', [ChatbotController::class, 'ask'])
     ->middleware('throttle:30,1')
     ->name('chatbot.ask');
+
+Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+
+Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('payments.webhook');
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +77,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+
+    Route::get('/phone/verify', [PhoneVerificationController::class, 'show'])->name('phone.verify');
+    Route::post('/phone/verify/send', [PhoneVerificationController::class, 'send'])->name('phone.verify.send');
+    Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])->name('phone.verify.check');
+
+    Route::get('/requests/{serviceRequest}/payment', [PaymentController::class, 'show'])->name('payments.show');
+    Route::post('/requests/{serviceRequest}/payment', [PaymentController::class, 'initiate'])->name('payments.initiate');
 });
 
 /*
@@ -113,6 +128,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
 
     Route::resource('categories', ServiceCategoryController::class)->except('show');
+
+    Route::get('/verifications', [ProviderVerificationController::class, 'index'])->name('verifications.index');
+    Route::post('/verifications/{providerProfile}/approve', [ProviderVerificationController::class, 'approve'])->name('verifications.approve');
+    Route::post('/verifications/{providerProfile}/reject', [ProviderVerificationController::class, 'reject'])->name('verifications.reject');
 });
 
 require __DIR__.'/auth.php';

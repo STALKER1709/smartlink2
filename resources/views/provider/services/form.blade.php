@@ -37,14 +37,25 @@
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
         <x-input-label for="city" value="Ville" />
-        <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city', $service?->city)" required />
+        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+            <option value="">— Choisir une ville —</option>
+            @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
+                <option value="{{ $ville }}" @selected(old('city', $service?->city) === $ville)>{{ $ville }}</option>
+            @endforeach
+        </select>
         <x-input-error :messages="$errors->get('city')" class="mt-2" />
     </div>
     <div>
-        <x-input-label for="location" value="Quartier / lieu précis (facultatif)" />
-        <x-text-input id="location" name="location" type="text" class="mt-1 block w-full" :value="old('location', $service?->location)" />
-        <x-input-error :messages="$errors->get('location')" class="mt-2" />
+        <x-input-label for="quarter" value="Quartier (facultatif)" />
+        <x-text-input id="quarter" name="quarter" type="text" class="mt-1 block w-full" :value="old('quarter', $service?->quarter)" maxlength="120" placeholder="ex: Bastos, Akwa…" />
+        <x-input-error :messages="$errors->get('quarter')" class="mt-2" />
     </div>
+</div>
+
+<div class="mt-4">
+    <x-input-label for="location" value="Adresse précise (facultatif)" />
+    <x-text-input id="location" name="location" type="text" class="mt-1 block w-full" :value="old('location', $service?->location)" />
+    <x-input-error :messages="$errors->get('location')" class="mt-2" />
 </div>
 
 <div class="mt-4">

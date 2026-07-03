@@ -26,6 +26,7 @@ class UpdateServiceRequest extends FormRequest
             'price_unit' => ['nullable', 'string', 'max:50'],
             'location' => ['nullable', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:120'],
+            'quarter' => ['nullable', 'string', 'max:120'],
             'is_available' => ['nullable', 'boolean'],
             'availability_note' => ['nullable', 'string', 'max:255'],
             'status' => ['required', Rule::in([Service::STATUS_ACTIVE, Service::STATUS_INACTIVE])],

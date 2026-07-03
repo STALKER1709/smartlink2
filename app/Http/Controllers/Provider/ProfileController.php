@@ -30,13 +30,21 @@ class ProfileController extends Controller
 
         $this->authorize('update', $providerProfile);
 
-        $data = $request->safe()->except('logo');
+        $data = $request->safe()->except(['logo', 'id_card']);
 
         if ($request->hasFile('logo')) {
             if ($providerProfile->logo_path) {
                 Storage::disk('public')->delete($providerProfile->logo_path);
             }
             $data['logo_path'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        if ($request->hasFile('id_card')) {
+            if ($providerProfile->id_card_path) {
+                Storage::disk('public')->delete($providerProfile->id_card_path);
+            }
+            $data['id_card_path'] = $request->file('id_card')->store('id_cards', 'public');
+            $data['id_card_verified'] = false;
         }
 
         $providerProfile->update($data);

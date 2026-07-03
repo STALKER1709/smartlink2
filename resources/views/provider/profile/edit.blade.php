@@ -1,7 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Mon profil prestataire</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('ui.provider.my_profile') }}</h2>
     </x-slot>
+
+    {{-- Leaflet CSS --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -34,15 +37,91 @@
 
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <x-input-label for="city" value="Ville" />
-                        <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city', $providerProfile->city)" required />
+                        <x-input-label for="city" :value="__('ui.provider.city')" />
+                        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                            <option value="">— {{ __('ui.provider.choose_city') }} —</option>
+                            @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
+                                <option value="{{ $ville }}" @selected(old('city', $providerProfile->city) === $ville)>{{ $ville }}</option>
+                            @endforeach
+                        </select>
                         <x-input-error :messages="$errors->get('city')" class="mt-2" />
                     </div>
                     <div>
-                        <x-input-label for="address" value="Adresse (facultatif)" />
-                        <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $providerProfile->address)" />
-                        <x-input-error :messages="$errors->get('address')" class="mt-2" />
+                        <x-input-label for="quarter" :value="__('ui.provider.quarter')" />
+                        <x-text-input id="quarter" name="quarter" type="text" class="mt-1 block w-full" :value="old('quarter', $providerProfile->quarter)" maxlength="120" placeholder="ex: Bastos, Akwa…" />
+                        <x-input-error :messages="$errors->get('quarter')" class="mt-2" />
                     </div>
+                </div>
+
+                <div class="mt-4">
+                    <x-input-label for="address" :value="__('ui.provider.address')" />
+                    <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $providerProfile->address)" />
+                    <x-input-error :messages="$errors->get('address')" class="mt-2" />
+                </div>
+
+                {{-- WhatsApp --}}
+                <div class="mt-4">
+                    <x-input-label for="whatsapp" :value="__('ui.provider.whatsapp')" />
+                    <div class="mt-1 flex rounded-md shadow-sm">
+                        <span class="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">+237</span>
+                        <x-text-input id="whatsapp" name="whatsapp" type="tel" class="block flex-1 rounded-none rounded-r-md" :value="old('whatsapp', $providerProfile->whatsapp)" placeholder="6XXXXXXXX" maxlength="20" />
+                    </div>
+                    <x-input-error :messages="$errors->get('whatsapp')" class="mt-2" />
+                </div>
+
+                {{-- Leaflet map for location --}}
+                <div class="mt-4" x-data="{
+                    lat: {{ old('latitude', $providerProfile->latitude ?? 3.848) }},
+                    lng: {{ old('longitude', $providerProfile->longitude ?? 11.502) }},
+                    map: null, marker: null,
+                    init() {
+                        this.map = L.map('provider-map').setView([this.lat, this.lng], 12);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap'
+                        }).addTo(this.map);
+                        this.marker = L.marker([this.lat, this.lng], { draggable: true }).addTo(this.map);
+                        this.marker.on('dragend', (e) => {
+                            this.lat = e.target.getLatLng().lat.toFixed(7);
+                            this.lng = e.target.getLatLng().lng.toFixed(7);
+                        });
+                        this.map.on('click', (e) => {
+                            this.lat = e.latlng.lat.toFixed(7);
+                            this.lng = e.latlng.lng.toFixed(7);
+                            this.marker.setLatLng([this.lat, this.lng]);
+                        });
+                    }
+                }">
+                    <x-input-label :value="__('ui.provider.location_map')" />
+                    <p class="text-xs text-gray-500 mb-2">{{ __('ui.provider.location_hint') }}</p>
+                    <div id="provider-map" class="w-full h-56 rounded-md border border-gray-200 z-0"></div>
+                    <input type="hidden" name="latitude" :value="lat">
+                    <input type="hidden" name="longitude" :value="lng">
+                    <p class="mt-1 text-xs text-gray-400" x-text="`${lat}, ${lng}`"></p>
+                </div>
+
+                {{-- ID Card upload --}}
+                <div class="mt-6 border-t border-gray-100 pt-5">
+                    <h3 class="font-medium text-gray-900 mb-1">{{ __('ui.provider.id_card_title') }}</h3>
+                    <p class="text-xs text-gray-500 mb-3">{{ __('ui.provider.id_card_hint') }}</p>
+
+                    @if ($providerProfile->id_card_path)
+                        <div class="mb-3 flex items-center gap-3">
+                            @php $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION); @endphp
+                            @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
+                                <img src="{{ asset('storage/'.$providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-gray-200">
+                            @else
+                                <a href="{{ asset('storage/'.$providerProfile->id_card_path) }}" target="_blank" class="text-indigo-600 text-sm hover:underline">Voir le document</a>
+                            @endif
+                            @if ($providerProfile->id_card_verified)
+                                <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Vérifié</span>
+                            @else
+                                <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">En attente de vérification</span>
+                            @endif
+                        </div>
+                    @endif
+
+                    <input type="file" name="id_card" accept="image/*,.pdf" class="text-sm text-gray-700">
+                    <x-input-error :messages="$errors->get('id_card')" class="mt-2" />
                 </div>
 
                 <!-- Service areas -->
@@ -109,10 +188,12 @@
 
                 <div class="mt-6 flex justify-end">
                     <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
-                        Enregistrer
+                        {{ __('ui.save') }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </x-app-layout>

@@ -44,6 +44,15 @@
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6 gap-3">
+                {{-- Language switcher --}}
+                @php $currentLocale = app()->getLocale(); @endphp
+                <div class="flex rounded-md border border-gray-200 overflow-hidden text-xs font-medium">
+                    <a href="{{ route('locale.switch', 'fr') }}"
+                       class="px-2.5 py-1.5 {{ $currentLocale === 'fr' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">FR</a>
+                    <a href="{{ route('locale.switch', 'en') }}"
+                       class="px-2.5 py-1.5 {{ $currentLocale === 'en' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">EN</a>
+                </div>
+
                 @auth
                     <!-- Notifications -->
                     <a href="{{ route('notifications.index') }}" class="relative inline-flex items-center p-2 text-gray-500 hover:text-gray-700">
@@ -155,6 +164,15 @@
                     </x-responsive-nav-link>
                 @endif
             @endauth
+        </div>
+
+        <!-- Mobile language switcher -->
+        <div class="pt-2 pb-2 px-4 border-t border-gray-100 flex gap-2">
+            @php $currentLocale = app()->getLocale(); @endphp
+            <a href="{{ route('locale.switch', 'fr') }}"
+               class="rounded px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'fr' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">Français</a>
+            <a href="{{ route('locale.switch', 'en') }}"
+               class="rounded px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'en' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">English</a>
         </div>
 
         <!-- Responsive Settings Options -->

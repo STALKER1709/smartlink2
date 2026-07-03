@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-    'user_id', 'category_id', 'business_name', 'description', 'address', 'city',
-    'service_areas', 'opening_hours', 'logo_path', 'contact_methods',
+    'user_id', 'category_id', 'business_name', 'description', 'address', 'city', 'quarter',
+    'latitude', 'longitude', 'whatsapp', 'service_areas', 'opening_hours',
+    'logo_path', 'id_card_path', 'contact_methods',
 ])]
 class ProviderProfile extends Model
 {
@@ -25,8 +26,28 @@ class ProviderProfile extends Model
             'opening_hours' => 'array',
             'contact_methods' => 'array',
             'is_verified' => 'boolean',
+            'id_card_verified' => 'boolean',
             'rating_avg' => 'decimal:2',
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
         ];
+    }
+
+    public function whatsappUrl(): ?string
+    {
+        if (! $this->whatsapp) {
+            return null;
+        }
+        $digits = preg_replace('/[^\d]/', '', $this->whatsapp);
+        if (! str_starts_with($digits, '237')) {
+            $digits = '237'.$digits;
+        }
+        return 'https://wa.me/'.$digits;
+    }
+
+    public function payments(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(Payment::class, User::class, 'id', 'payer_id', 'user_id');
     }
 
     public function user(): BelongsTo

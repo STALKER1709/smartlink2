@@ -23,6 +23,10 @@ class SearchService
             $query->inCity($filters['city']);
         }
 
+        if (! empty($filters['quarter'])) {
+            $query->where('quarter', 'like', '%'.$filters['quarter'].'%');
+        }
+
         if (! empty($filters['term'])) {
             $query->searchTerm($filters['term']);
         }

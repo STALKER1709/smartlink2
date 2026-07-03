@@ -22,11 +22,18 @@
                 @endforeach
             </select>
 
+            <select name="city" class="rounded-md border-gray-300 text-sm">
+                <option value="">Toutes les villes</option>
+                @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
+                    <option value="{{ $ville }}" @selected(request('city') === $ville)>{{ $ville }}</option>
+                @endforeach
+            </select>
+
             <input
                 type="text"
-                name="city"
-                value="{{ request('city') }}"
-                placeholder="Ville"
+                name="quarter"
+                value="{{ request('quarter') }}"
+                placeholder="Quartier"
                 class="rounded-md border-gray-300 text-sm"
             >
 

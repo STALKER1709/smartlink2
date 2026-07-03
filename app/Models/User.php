@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'role'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role', 'locale'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -40,9 +40,25 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function hasVerifiedPhone(): bool
+    {
+        return $this->phone_verified_at !== null;
+    }
+
+    public function markPhoneAsVerified(): void
+    {
+        $this->forceFill(['phone_verified_at' => now()])->save();
+    }
+
+    public function preferredLocale(): string
+    {
+        return $this->locale ?? 'fr';
     }
 
     public function clientProfile(): HasOne

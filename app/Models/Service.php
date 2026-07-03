@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 #[Fillable([
     'provider_id', 'category_id', 'title', 'slug', 'description',
-    'price_amount', 'price_unit', 'location', 'city',
+    'price_amount', 'price_unit', 'location', 'city', 'quarter',
     'is_available', 'availability_note', 'status',
 ])]
 class Service extends Model
