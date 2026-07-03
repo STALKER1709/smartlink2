@@ -23,7 +23,7 @@ class OtpService
 
         OtpCode::create([
             'phone' => $phone,
-            'code' => $code,
+            'code' => hash('sha256', $code),
             'purpose' => $purpose,
             'expires_at' => now()->addMinutes(self::EXPIRY_MINUTES),
         ]);
@@ -51,7 +51,7 @@ class OtpService
             return false;
         }
 
-        if (! hash_equals($otp->code, $code)) {
+        if (! hash_equals($otp->code, hash('sha256', $code))) {
             $otp->increment('attempts');
             return false;
         }

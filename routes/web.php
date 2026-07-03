@@ -79,11 +79,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 
     Route::get('/phone/verify', [PhoneVerificationController::class, 'show'])->name('phone.verify');
-    Route::post('/phone/verify/send', [PhoneVerificationController::class, 'send'])->name('phone.verify.send');
-    Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])->name('phone.verify.check');
+    Route::post('/phone/verify/send', [PhoneVerificationController::class, 'send'])
+        ->middleware('throttle:3,1')
+        ->name('phone.verify.send');
+    Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])
+        ->middleware('throttle:10,1')
+        ->name('phone.verify.check');
 
     Route::get('/requests/{serviceRequest}/payment', [PaymentController::class, 'show'])->name('payments.show');
-    Route::post('/requests/{serviceRequest}/payment', [PaymentController::class, 'initiate'])->name('payments.initiate');
+    Route::post('/requests/{serviceRequest}/payment', [PaymentController::class, 'initiate'])
+        ->middleware('throttle:5,1')
+        ->name('payments.initiate');
 });
 
 /*

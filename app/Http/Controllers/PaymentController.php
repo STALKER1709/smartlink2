@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -40,8 +41,12 @@ class PaymentController extends Controller
     {
         $this->authorize('view', $serviceRequest);
 
+        if ($request->user()->id !== $serviceRequest->client_id) {
+            abort(403);
+        }
+
         $validated = $request->validate([
-            'phone' => ['required', 'string', 'max:20'],
+            'phone' => ['required', 'string', 'regex:/^\+?2376[0-9]{8}$|^6[0-9]{8}$/'],
             'operator' => ['required', 'in:mtn,orange'],
         ]);
 
@@ -50,6 +55,16 @@ class PaymentController extends Controller
         $internalRef = 'SL-'.strtoupper(Str::random(12));
 
         $payment = DB::transaction(function () use ($serviceRequest, $request, $validated, $amount, $internalRef) {
+            $alreadyPaid = $serviceRequest->payments()
+                ->where('type', Payment::TYPE_DEPOSIT)
+                ->where('status', Payment::STATUS_SUCCESS)
+                ->lockForUpdate()
+                ->exists();
+
+            if ($alreadyPaid) {
+                abort(409, 'Un acompte a déjà été réglé pour cette demande.');
+            }
+
             return Payment::create([
                 'request_id' => $serviceRequest->id,
                 'payer_id' => $request->user()->id,
@@ -98,44 +113,55 @@ class PaymentController extends Controller
 
     public function webhook(Request $request): JsonResponse
     {
+        $secret = config('campay.webhook_secret');
+        if (! empty($secret)) {
+            $provided = $request->header('X-Campay-Signature') ?? $request->query('token');
+            if (! hash_equals($secret, (string) $provided)) {
+                Log::warning('[Campay] Webhook signature mismatch', ['ip' => $request->ip()]);
+                return response()->json(['status' => 'forbidden'], 403);
+            }
+        }
+
         $ref = $request->input('external_reference');
         $status = $request->input('status');
 
-        $payment = Payment::where('internal_reference', $ref)->first();
-
-        if (! $payment) {
-            return response()->json(['status' => 'not_found'], 404);
+        if (empty($ref) || empty($status)) {
+            return response()->json(['status' => 'bad_request'], 400);
         }
 
-        if ($payment->status !== Payment::STATUS_PENDING) {
-            return response()->json(['status' => 'already_processed']);
-        }
+        DB::transaction(function () use ($request, $ref, $status) {
+            $payment = Payment::where('internal_reference', $ref)->lockForUpdate()->first();
 
-        if ($status === 'SUCCESSFUL') {
-            $payment->update([
-                'status' => Payment::STATUS_SUCCESS,
-                'campay_reference' => $request->input('reference'),
-                'paid_at' => now(),
-            ]);
-
-            $payer = $payment->payer;
-            if ($payer) {
-                $this->sms->send(
-                    $payer->phone,
-                    __('sms.payment_success', [
-                        'amount' => number_format($payment->amount_xaf, 0, ',', ' '),
-                        'reference' => $payment->internal_reference,
-                    ])
-                );
+            if (! $payment || $payment->status !== Payment::STATUS_PENDING) {
+                return;
             }
-        } elseif (in_array($status, ['FAILED', 'CANCELLED'], true)) {
-            $payment->update([
-                'status' => strtolower($status) === 'cancelled'
-                    ? Payment::STATUS_CANCELLED
-                    : Payment::STATUS_FAILED,
-                'failure_reason' => $request->input('message'),
-            ]);
-        }
+
+            if ($status === 'SUCCESSFUL') {
+                $payment->update([
+                    'status' => Payment::STATUS_SUCCESS,
+                    'campay_reference' => $request->input('reference'),
+                    'paid_at' => now(),
+                ]);
+
+                $payer = $payment->payer;
+                if ($payer?->phone) {
+                    $this->sms->send(
+                        $payer->phone,
+                        __('sms.payment_success', [
+                            'amount' => number_format($payment->amount_xaf, 0, ',', ' '),
+                            'reference' => $payment->internal_reference,
+                        ])
+                    );
+                }
+            } elseif (in_array($status, ['FAILED', 'CANCELLED'], true)) {
+                $payment->update([
+                    'status' => strtolower($status) === 'cancelled'
+                        ? Payment::STATUS_CANCELLED
+                        : Payment::STATUS_FAILED,
+                    'failure_reason' => mb_substr((string) $request->input('message'), 0, 500),
+                ]);
+            }
+        });
 
         return response()->json(['status' => 'ok']);
     }

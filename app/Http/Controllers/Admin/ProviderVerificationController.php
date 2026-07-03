@@ -32,10 +32,12 @@ class ProviderVerificationController extends Controller
             'id_card_verified' => true,
         ]);
 
-        $this->sms->send(
-            $providerProfile->user->phone,
-            'SmartLink : Votre profil prestataire a été vérifié. Le badge "Vérifié" est maintenant visible sur votre profil.'
-        );
+        if ($providerProfile->user->phone) {
+            $this->sms->send(
+                $providerProfile->user->phone,
+                'SmartLink : Votre profil prestataire a été vérifié. Le badge "Vérifié" est maintenant visible sur votre profil.'
+            );
+        }
 
         return back()->with('status', 'Prestataire vérifié avec succès.');
     }
@@ -44,10 +46,12 @@ class ProviderVerificationController extends Controller
     {
         $providerProfile->update(['id_card_path' => null]);
 
-        $this->sms->send(
-            $providerProfile->user->phone,
-            'SmartLink : Votre pièce d\'identité n\'a pas pu être validée. Veuillez soumettre un document lisible et valide.'
-        );
+        if ($providerProfile->user->phone) {
+            $this->sms->send(
+                $providerProfile->user->phone,
+                'SmartLink : Votre pièce d\'identité n\'a pas pu être validée. Veuillez soumettre un document lisible et valide.'
+            );
+        }
 
         return back()->with('status', 'Document rejeté.');
     }
