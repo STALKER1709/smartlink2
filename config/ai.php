@@ -62,7 +62,7 @@ return [
          * Plafond de dépense mensuel, en dollars. Au-delà, toute la plateforme
          * bascule en mode par règles et l'administration est alertée.
          */
-        'monthly_budget_usd' => (float) env('AI_MONTHLY_BUDGET_USD', 50),
+        'monthly_budget_usd' => (float) env('AI_MONTHLY_BUDGET_USD', 10),
     ],
 
     /* Nombre de messages d'historique renvoyés au modèle à chaque tour. */
