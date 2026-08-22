@@ -16,20 +16,20 @@
     ];
 
     $colors = [
-        'draft' => 'bg-gray-100 text-gray-700',
-        'sent' => 'bg-blue-100 text-blue-700',
-        'viewed' => 'bg-indigo-100 text-indigo-700',
-        'accepted' => 'bg-teal-100 text-teal-700',
-        'refused' => 'bg-red-100 text-red-700',
-        'in_progress' => 'bg-amber-100 text-amber-700',
-        'completed' => 'bg-green-100 text-green-700',
-        'cancelled' => 'bg-gray-200 text-gray-600',
-        'active' => 'bg-green-100 text-green-700',
-        'inactive' => 'bg-gray-200 text-gray-600',
-        'suspended' => 'bg-red-100 text-red-700',
+        'draft' => 'bg-surface-container-high text-on-surface-variant',
+        'sent' => 'bg-secondary-container text-on-secondary-container',
+        'viewed' => 'bg-secondary-container text-on-secondary-container',
+        'accepted' => 'bg-secondary-container text-on-secondary-container',
+        'refused' => 'bg-error-container text-on-error-container',
+        'in_progress' => 'bg-tertiary-container/20 text-tertiary',
+        'completed' => 'bg-secondary-container text-on-secondary-container',
+        'cancelled' => 'bg-surface-container-high text-on-surface-variant',
+        'active' => 'bg-secondary-container text-on-secondary-container',
+        'inactive' => 'bg-surface-container-high text-on-surface-variant',
+        'suspended' => 'bg-error-container text-on-error-container',
     ];
 @endphp
 
-<span {{ $attributes->merge(['class' => 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium '.($colors[$status] ?? 'bg-gray-100 text-gray-700')]) }}>
+<span {{ $attributes->merge(['class' => 'inline-flex items-center rounded-full px-3 py-1 font-button-text text-xs font-semibold '.($colors[$status] ?? 'bg-surface-container-high text-on-surface-variant')]) }}>
     {{ $labels[$status] ?? $status }}
 </span>
