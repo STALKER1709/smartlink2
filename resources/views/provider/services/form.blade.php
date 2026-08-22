@@ -39,10 +39,10 @@
                     .finally(() => { this.working = false; });
             },
         }"
-        class="mb-6 rounded-lg border border-indigo-200 bg-indigo-50 p-4"
+        class="mb-6 rounded-lg border border-brand-200 bg-brand-50 p-4"
     >
-        <label for="ai-notes" class="block text-sm font-medium text-indigo-900">{{ __('ui.draft.label') }}</label>
-        <p class="mt-1 text-xs text-indigo-800">{{ __('ui.draft.hint') }}</p>
+        <label for="ai-notes" class="block text-sm font-medium text-brand-900">{{ __('ui.draft.label') }}</label>
+        <p class="mt-1 text-xs text-brand-800">{{ __('ui.draft.hint') }}</p>
 
         <textarea
             id="ai-notes"
@@ -50,7 +50,7 @@
             rows="2"
             maxlength="600"
             placeholder="{{ __('ui.draft.placeholder') }}"
-            class="mt-3 block w-full rounded-md border-indigo-300 text-sm"
+            class="mt-3 block w-full rounded-md border-brand-300 text-sm"
         ></textarea>
 
         <div class="mt-3 flex flex-wrap items-center gap-3">
@@ -58,7 +58,7 @@
                 type="button"
                 @click="propose"
                 :disabled="working || ! notes.trim()"
-                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <span x-show="! working">{{ __('ui.draft.submit') }}</span>
                 <span x-show="working" x-cloak>{{ __('ui.draft.working') }}</span>
@@ -78,7 +78,7 @@
 
 <div class="mt-4">
     <x-input-label for="category_id" value="Catégorie" />
-    <select id="category_id" name="category_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+    <select id="category_id" name="category_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
         <option value="">Choisir une catégorie</option>
         @foreach ($categories as $category)
             <option value="{{ $category->id }}" @selected(old('category_id', $service?->category_id) == $category->id)>{{ $category->name }}</option>
@@ -89,7 +89,7 @@
 
 <div class="mt-4">
     <x-input-label for="description" value="Description" />
-    <textarea id="description" name="description" rows="5" required maxlength="3000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $service?->description) }}</textarea>
+    <textarea id="description" name="description" rows="5" required maxlength="3000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">{{ old('description', $service?->description) }}</textarea>
     <x-input-error :messages="$errors->get('description')" class="mt-2" />
 </div>
 
@@ -109,7 +109,7 @@
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
         <x-input-label for="city" value="Ville" />
-        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm">
             <option value="">— Choisir une ville —</option>
             @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
                 <option value="{{ $ville }}" @selected(old('city', $service?->city) === $ville)>{{ $ville }}</option>
@@ -147,7 +147,7 @@
 @if ($service)
     <div class="mt-4">
         <x-input-label for="status" value="Statut" />
-        <select id="status" name="status" required class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        <select id="status" name="status" required class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
             <option value="active" @selected(old('status', $service->status) === 'active')>Actif</option>
             <option value="inactive" @selected(old('status', $service->status) === 'inactive')>Inactif</option>
         </select>

@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-indigo-600" />
+                        <x-application-logo class="block h-9 w-auto fill-current text-brand-600" />
                     </a>
                 </div>
 
@@ -56,9 +56,9 @@
                 @php $currentLocale = app()->getLocale(); @endphp
                 <div class="flex rounded-md border border-gray-200 overflow-hidden text-xs font-medium">
                     <a href="{{ route('locale.switch', 'fr') }}"
-                       class="px-2.5 py-1.5 {{ $currentLocale === 'fr' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">FR</a>
+                       class="px-2.5 py-1.5 {{ $currentLocale === 'fr' ? 'bg-brand-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">FR</a>
                     <a href="{{ route('locale.switch', 'en') }}"
-                       class="px-2.5 py-1.5 {{ $currentLocale === 'en' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">EN</a>
+                       class="px-2.5 py-1.5 {{ $currentLocale === 'en' ? 'bg-brand-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">EN</a>
                 </div>
 
                 @auth
@@ -118,7 +118,7 @@
                     </x-dropdown>
                 @else
                     <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">{{ __('Se connecter') }}</a>
-                    <a href="{{ route('register') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">{{ __("S'inscrire") }}</a>
+                    <a href="{{ route('register') }}" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">{{ __("S'inscrire") }}</a>
                 @endauth
             </div>
 
@@ -186,9 +186,9 @@
         <div class="pt-2 pb-2 px-4 border-t border-gray-100 flex gap-2">
             @php $currentLocale = app()->getLocale(); @endphp
             <a href="{{ route('locale.switch', 'fr') }}"
-               class="rounded px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'fr' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">Français</a>
+               class="rounded px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'fr' ? 'bg-brand-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">Français</a>
             <a href="{{ route('locale.switch', 'en') }}"
-               class="rounded px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'en' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">English</a>
+               class="rounded px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'en' ? 'bg-brand-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">English</a>
         </div>
 
         <!-- Responsive Settings Options -->

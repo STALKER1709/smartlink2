@@ -17,7 +17,7 @@
                     placeholder="{{ __('ui.search.natural_placeholder') }}"
                     class="flex-1 rounded-md border-gray-300 text-sm"
                 >
-                <button type="submit" class="rounded-md bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                <button type="submit" class="rounded-md bg-brand-600 px-5 py-2 text-sm font-medium text-white hover:bg-brand-700">
                     {{ __('ui.search.natural_submit') }}
                 </button>
             </div>
@@ -26,12 +26,12 @@
 
         {{-- Ce qui a été compris de la phrase, corrigeable par les filtres ci-dessous --}}
         @if (session('searchIntent'))
-            <div class="rounded-md bg-indigo-50 border border-indigo-200 px-4 py-3 flex flex-wrap items-center gap-2">
-                <span class="text-sm font-medium text-indigo-900">{{ __('ui.search.understood') }}</span>
+            <div class="rounded-md bg-brand-50 border border-brand-200 px-4 py-3 flex flex-wrap items-center gap-2">
+                <span class="text-sm font-medium text-brand-900">{{ __('ui.search.understood') }}</span>
                 @foreach (session('searchIntent') as $piece)
-                    <span class="rounded-full bg-white border border-indigo-200 px-3 py-1 text-xs font-medium text-indigo-800">{{ $piece }}</span>
+                    <span class="rounded-full bg-white border border-brand-200 px-3 py-1 text-xs font-medium text-brand-800">{{ $piece }}</span>
                 @endforeach
-                <a href="{{ route('services.index') }}" class="ml-auto text-xs text-indigo-700 hover:text-indigo-900 underline">
+                <a href="{{ route('services.index') }}" class="ml-auto text-xs text-brand-700 hover:text-brand-900 underline">
                     {{ __('ui.search.understood_reset') }}
                 </a>
             </div>
@@ -92,7 +92,7 @@
 
             <div class="lg:col-span-5 flex justify-end gap-2">
                 <a href="{{ route('services.index') }}" class="text-sm text-gray-500 hover:text-gray-700 px-3 py-2">Réinitialiser</a>
-                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
                     Filtrer
                 </button>
             </div>

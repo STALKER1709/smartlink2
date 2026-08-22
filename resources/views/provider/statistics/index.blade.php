@@ -34,7 +34,7 @@
                             <div class="flex items-center gap-3">
                                 <span class="w-28 shrink-0"><x-status-badge :status="$status" /></span>
                                 <div class="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
-                                    <div class="h-full rounded-full bg-indigo-500" style="width: {{ max($share, 2) }}%"></div>
+                                    <div class="h-full rounded-full bg-brand-500" style="width: {{ max($share, 2) }}%"></div>
                                 </div>
                                 <span class="w-10 text-right text-sm text-gray-600 tabular-nums">{{ $count }}</span>
                             </div>

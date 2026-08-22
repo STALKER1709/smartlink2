@@ -37,7 +37,7 @@
 
             <div class="lg:col-span-3 flex justify-end gap-2">
                 <a href="{{ route('providers.index') }}" class="text-sm text-gray-500 hover:text-gray-700 px-3 py-2">Réinitialiser</a>
-                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
                     Filtrer
                 </button>
             </div>

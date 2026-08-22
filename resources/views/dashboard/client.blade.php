@@ -23,13 +23,13 @@
 
         <div class="mt-8 flex items-center justify-between">
             <h3 class="font-semibold text-gray-900">Demandes récentes</h3>
-            <a href="{{ route('requests.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Voir tout →</a>
+            <a href="{{ route('requests.index') }}" class="text-sm font-medium text-brand-600 hover:text-brand-800">Voir tout →</a>
         </div>
 
         @if ($requests->isEmpty())
             <p class="mt-4 text-gray-500">
                 Vous n'avez pas encore envoyé de demande.
-                <a href="{{ route('services.index') }}" class="text-indigo-600 hover:text-indigo-800">Explorez les services</a>.
+                <a href="{{ route('services.index') }}" class="text-brand-600 hover:text-brand-800">Explorez les services</a>.
             </p>
         @else
             <div class="mt-4 bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-100">

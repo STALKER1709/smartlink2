@@ -18,7 +18,7 @@
                                 @if ($profile->logo_path)
                                     <img src="{{ asset('storage/'.$profile->logo_path) }}" class="h-10 w-10 rounded-full object-cover">
                                 @else
-                                    <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm">
+                                    <div class="h-10 w-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">
                                         {{ Str::substr($profile->business_name, 0, 1) }}
                                     </div>
                                 @endif
@@ -47,7 +47,7 @@
                                 </a>
                             @else
                                 <a href="{{ asset('storage/'.$profile->id_card_path) }}" target="_blank"
-                                   class="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm mt-1">
+                                   class="flex items-center gap-2 text-brand-600 hover:text-brand-800 text-sm mt-1">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>

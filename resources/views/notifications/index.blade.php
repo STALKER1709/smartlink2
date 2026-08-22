@@ -5,7 +5,7 @@
             @if ($notifications->isNotEmpty())
                 <form action="{{ route('notifications.read-all') }}" method="POST">
                     @csrf
-                    <button type="submit" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                    <button type="submit" class="text-sm font-medium text-brand-600 hover:text-brand-800">
                         Tout marquer comme lu
                     </button>
                 </form>
@@ -28,12 +28,12 @@
                             default => null,
                         };
                     @endphp
-                    <div class="flex items-start gap-3 p-4 {{ $notification->read_at ? '' : 'bg-indigo-50' }}">
-                        <div class="h-2 w-2 mt-2 rounded-full {{ $notification->read_at ? 'bg-gray-300' : 'bg-indigo-600' }} shrink-0"></div>
+                    <div class="flex items-start gap-3 p-4 {{ $notification->read_at ? '' : 'bg-brand-50' }}">
+                        <div class="h-2 w-2 mt-2 rounded-full {{ $notification->read_at ? 'bg-gray-300' : 'bg-brand-600' }} shrink-0"></div>
 
                         <div class="flex-1 min-w-0">
                             @if ($link)
-                                <a href="{{ $link }}" class="text-sm text-gray-900 hover:text-indigo-600">
+                                <a href="{{ $link }}" class="text-sm text-gray-900 hover:text-brand-600">
                                     {{ $data['message'] ?? 'Notification' }}
                                 </a>
                             @else

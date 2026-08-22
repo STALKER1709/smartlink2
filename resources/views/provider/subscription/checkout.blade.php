@@ -31,10 +31,10 @@
                     <x-input-label :value="__('ui.payment.operator')" />
                     <div class="mt-2 grid grid-cols-2 gap-3">
                         @foreach (['mtn' => 'ui.payment.mtn', 'orange' => 'ui.payment.orange'] as $value => $label)
-                            <label class="flex items-center gap-3 rounded-md border border-gray-300 px-4 py-3 cursor-pointer hover:bg-gray-50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
+                            <label class="flex items-center gap-3 rounded-md border border-gray-300 px-4 py-3 cursor-pointer hover:bg-gray-50 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
                                 <input type="radio" name="operator" value="{{ $value }}"
                                        @checked(old('operator') === $value)
-                                       class="text-indigo-600 focus:ring-indigo-500">
+                                       class="text-brand-600 focus:ring-brand-500">
                                 <span class="text-sm font-medium text-gray-800">{{ __($label) }}</span>
                             </label>
                         @endforeach

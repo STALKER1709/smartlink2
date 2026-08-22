@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Demandes</h2>
             @if (Auth::user()->isClient())
-                <a href="{{ route('requests.create') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                <a href="{{ route('requests.create') }}" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
                     Nouvelle demande
                 </a>
             @endif
@@ -22,14 +22,14 @@
         <div class="flex flex-wrap gap-2 mb-6">
             <a
                 href="{{ route('requests.index') }}"
-                class="rounded-full px-3 py-1 text-xs font-medium {{ request('status') ? 'bg-gray-100 text-gray-600' : 'bg-indigo-600 text-white' }}"
+                class="rounded-full px-3 py-1 text-xs font-medium {{ request('status') ? 'bg-gray-100 text-gray-600' : 'bg-brand-600 text-white' }}"
             >
                 Toutes
             </a>
             @foreach ($statuses as $value => $label)
                 <a
                     href="{{ route('requests.index', ['status' => $value]) }}"
-                    class="rounded-full px-3 py-1 text-xs font-medium {{ request('status') === $value ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600' }}"
+                    class="rounded-full px-3 py-1 text-xs font-medium {{ request('status') === $value ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-600' }}"
                 >
                     {{ $label }}
                 </a>

@@ -9,7 +9,7 @@
                 {{ $other->providerProfile?->business_name ?? $other->name }}
             </h2>
             @if ($conversation->request)
-                <a href="{{ route('requests.show', $conversation->request) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                <a href="{{ route('requests.show', $conversation->request) }}" class="text-sm font-medium text-brand-600 hover:text-brand-800">
                     Voir la demande →
                 </a>
             @endif

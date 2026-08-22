@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Mes services</h2>
-            <a href="{{ route('provider.services.create') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+            <a href="{{ route('provider.services.create') }}" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
                 Publier un service
             </a>
         </div>
@@ -32,7 +32,7 @@
                         @endif
 
                         <div class="flex items-center gap-2 shrink-0">
-                            <a href="{{ route('provider.services.edit', $service) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                            <a href="{{ route('provider.services.edit', $service) }}" class="text-sm font-medium text-brand-600 hover:text-brand-800">
                                 Modifier
                             </a>
                             <form action="{{ route('provider.services.destroy', $service) }}" method="POST" onsubmit="return confirm('Supprimer ce service ?');">

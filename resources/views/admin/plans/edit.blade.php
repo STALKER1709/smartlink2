@@ -45,7 +45,7 @@
                         <input type="hidden" name="{{ $field }}" value="0">
                         <input type="checkbox" name="{{ $field }}" value="1"
                                @checked(old($field, $plan->$field))
-                               class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                               class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
                         {{ __($label) }}
                     </label>
                 @endforeach

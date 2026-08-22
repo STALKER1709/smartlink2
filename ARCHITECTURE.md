@@ -234,6 +234,14 @@ La structure des rappels n'étant documentée par aucun exemple, la lecture est 
 2. **Expiration** — les abonnements échus basculent en `expired`, avec journal d'audit et SMS de notification. C'est le moment où les services sortent des recherches.
 3. **Visibilité** — recalcul de `is_listed` / `is_promoted` pour tout le monde, ce qui fait notamment réapparaître au changement de mois les prestataires qui étaient au plafond de demandes.
 
+## Couleurs
+
+L'échelle `brand` de `tailwind.config.js` porte l'identité de SmartLink : `brand-600` (#0F6F4C) pour les actions principales, `brand-700` pour l'état pressé, `brand-100` pour les fonds d'accentuation. Elle remplace l'échelle `indigo` héritée de Laravel Breeze, qui n'était pas un choix mais un défaut.
+
+**Les couleurs sémantiques ne suivent pas l'accent.** Les pastilles de statut d'une demande forment une échelle distincte — gris pour un brouillon, bleu pour une demande envoyée, violet pour une demande vue, sarcelle pour une acceptation, ambre pour une prestation en cours, vert pour une prestation terminée, rouge pour un refus. Le violet de « Vue » était de l'indigo : le passer au vert de marque l'aurait confondu avec « Acceptée » et « Terminée ». Les mêmes réserves valent pour l'ambre du palier Pro et le rouge de l'expiration : ils disent un état, pas une marque, et ne se renomment pas avec l'accent.
+
+Un piège à connaître : le glob de contenu de Tailwind inclut `storage/framework/views`, le cache des vues Blade compilées. Après un changement de couleurs, `php artisan view:clear` est nécessaire avant de recompiler, sans quoi les anciennes classes survivent dans la feuille de style produite.
+
 ## Tests (`tests/`)
 
 - **`tests/Unit`** — modèles (`ConversationTest`, `ServiceRequestTest`, `UserTest`) et services métier isolés (`RequestServiceTest`, `AuditLogServiceTest`, `RuleBasedChatbotProviderTest`), sans passer par le HTTP.

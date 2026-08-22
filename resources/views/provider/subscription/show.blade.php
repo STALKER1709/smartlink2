@@ -58,13 +58,13 @@
                 @php $isCurrent = $subscription && $subscription->plan_id === $plan->id; @endphp
                 <div @class([
                     'bg-white rounded-lg border p-6 flex flex-col',
-                    'border-indigo-500 ring-1 ring-indigo-500' => $isCurrent,
+                    'border-brand-500 ring-1 ring-brand-500' => $isCurrent,
                     'border-gray-200' => ! $isCurrent,
                 ])>
                     <div class="flex items-baseline justify-between gap-2">
                         <h3 class="text-lg font-semibold text-gray-900">{{ $plan->name() }}</h3>
                         @if ($isCurrent)
-                            <span class="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">
+                            <span class="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-medium text-brand-800">
                                 {{ __('ui.subscription.current_plan') }}
                             </span>
                         @endif
@@ -95,7 +95,7 @@
                     </ul>
 
                     <a href="{{ route('provider.subscription.checkout', $plan) }}"
-                       class="mt-6 block rounded-md bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-indigo-700">
+                       class="mt-6 block rounded-md bg-brand-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-brand-700">
                         {{ $isCurrent && $subscription && ! $subscription->isTrial()
                             ? __('ui.subscription.renew')
                             : __('ui.subscription.choose_plan') }}

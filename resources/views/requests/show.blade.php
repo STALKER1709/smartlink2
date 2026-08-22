@@ -23,7 +23,7 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     @if ($serviceRequest->service)
                         <p class="text-sm text-gray-500">Service concerné</p>
-                        <a href="{{ route('services.show', $serviceRequest->service) }}" class="font-medium text-indigo-600 hover:text-indigo-800">
+                        <a href="{{ route('services.show', $serviceRequest->service) }}" class="font-medium text-brand-600 hover:text-brand-800">
                             {{ $serviceRequest->service->title }}
                         </a>
                     @else
@@ -134,10 +134,10 @@
                             </div>
                             <div>
                                 <x-input-label for="comment" value="Commentaire (facultatif)" />
-                                <textarea id="comment" name="comment" rows="3" maxlength="1000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                                <textarea id="comment" name="comment" rows="3" maxlength="1000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"></textarea>
                                 <x-input-error :messages="$errors->get('comment')" class="mt-2" />
                             </div>
-                            <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                            <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
                                 Envoyer mon avis
                             </button>
                         </form>
@@ -160,7 +160,7 @@
                     <ol class="space-y-4">
                         @foreach ($serviceRequest->statusHistory as $history)
                             <li class="flex gap-3">
-                                <div class="h-2 w-2 mt-1.5 rounded-full bg-indigo-600 shrink-0"></div>
+                                <div class="h-2 w-2 mt-1.5 rounded-full bg-brand-600 shrink-0"></div>
                                 <div>
                                     <p class="text-sm text-gray-900">
                                         @if ($history->from_status)
