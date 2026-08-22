@@ -34,12 +34,13 @@ Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts 
 1. **Inscription** (`/register`) en choisissant le rôle "Prestataire" et un nom d'activité — crée automatiquement un profil prestataire.
 2. **Compléter son profil** (`/provider/profile`) : nom de l'activité, catégorie, description, ville, zones d'intervention, horaires, moyens de contact, logo.
 3. **Publier un service** (`/provider/services/create`) : titre, catégorie, description, prix indicatif (optionnel — purement informatif, SmartLink ne prélève rien dessus), ville, disponibilité, jusqu'à 5 photos. Le nombre de services publiables dépend du palier d'abonnement.
-4. **Gérer ses services** (`/provider/services`) : modifier, activer/désactiver, supprimer, ajouter ou retirer des photos.
-5. **Traiter les demandes reçues** (`/requests`) : accepter ou refuser une demande, démarrer la prestation, puis la marquer comme terminée.
-6. **Messagerie** (`/conversations`) : échanger avec le client une fois la demande acceptée.
-7. **Suivre sa réputation** : la note moyenne et le nombre d'avis affichés sur son profil sont recalculés automatiquement à chaque nouvel avis.
-8. **Gérer son abonnement** (`/provider/subscription`) : l'inscription ouvre 30 jours d'essai gratuit au niveau Pro. La page affiche le palier en cours, l'échéance, le nombre de services publiés et de demandes lues ce mois-ci, et le comparatif des paliers.
-9. **Régler son abonnement** : choisir un palier, sélectionner MTN Mobile Money ou Orange Money, saisir son numéro. Une demande de confirmation arrive sur le téléphone ; composer son code Mobile Money valide le paiement. **Il n'existe aucun prélèvement automatique** — l'opérateur ne le permet pas — donc chaque cycle se renouvelle par une validation explicite, annoncée par SMS 3 jours puis 1 jour avant l'échéance.
+4. **Se faire aider à rédiger** : sur le formulaire de publication, décrivez votre métier en quelques mots — l'orthographe n'a pas d'importance — et un titre et une description vous sont proposés. Vous restez libre de tout modifier : c'est une proposition, pas une décision. Cette aide est comprise dans les paliers Essentiel et Pro.
+5. **Gérer ses services** (`/provider/services`) : modifier, activer/désactiver, supprimer, ajouter ou retirer des photos.
+6. **Traiter les demandes reçues** (`/requests`) : accepter ou refuser une demande, démarrer la prestation, puis la marquer comme terminée.
+7. **Messagerie** (`/conversations`) : échanger avec le client une fois la demande acceptée.
+8. **Suivre sa réputation** : la note moyenne et le nombre d'avis affichés sur son profil sont recalculés automatiquement à chaque nouvel avis.
+9. **Gérer son abonnement** (`/provider/subscription`) : l'inscription ouvre 30 jours d'essai gratuit au niveau Pro. La page affiche le palier en cours, l'échéance, le nombre de services publiés et de demandes lues ce mois-ci, et le comparatif des paliers.
+10. **Régler son abonnement** : choisir un palier, sélectionner MTN Mobile Money ou Orange Money, saisir son numéro. Une demande de confirmation arrive sur le téléphone ; composer son code Mobile Money valide le paiement. **Il n'existe aucun prélèvement automatique** — l'opérateur ne le permet pas — donc chaque cycle se renouvelle par une validation explicite, annoncée par SMS 3 jours puis 1 jour avant l'échéance.
 
 ### Cycle de vie d'une demande
 
@@ -84,6 +85,12 @@ Il connaît le catalogue réel — les catégories publiées, les villes où des
 **Ce qu'il ne fait pas.** Il n'a accès à aucune donnée personnelle : ni votre compte, ni vos demandes, ni vos messages, ni vos paiements. À « où en est ma demande ? », il vous renvoie vers la page concernée plutôt que d'inventer une réponse. Il ne peut pas non plus agir à votre place : ni créer une demande, ni envoyer un message, ni modifier un abonnement.
 
 **Deux modes.** Le mode par règles répond par mots-clés, sans appel externe ni coût. Le mode IA s'appuie sur le catalogue réel. La plateforme rabat automatiquement sur le mode par règles pour les visiteurs non connectés, au-delà du quota quotidien d'un compte, lorsque le plafond de dépense mensuel est atteint, ou si l'IA est momentanément injoignable. L'assistant répond donc toujours — il répond simplement moins finement.
+
+## La modération
+
+Les annonces et les avis passent par un examen automatique à la publication. Cet examen **signale, il ne supprime jamais** : un administrateur retrouve les contenus signalés sur `/admin/moderation` et décide seul de la suite. Classer un signalement sans suite laisse le contenu en ligne.
+
+Un texte mal écrit, très court, en pidgin ou mêlant français et anglais n'est pas un motif de signalement — c'est la façon normale d'écrire de beaucoup de prestataires. Un avis négatif mais argumenté non plus. Sont visés les contenus qui poussent à traiter hors de la plateforme, les arnaques probables, les propos haineux, les coordonnées bancaires et les textes sans rapport avec une prestation.
 
 ## L'argent sur la plateforme
 

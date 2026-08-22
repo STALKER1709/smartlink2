@@ -81,6 +81,12 @@
             <a href="{{ route('admin.categories.index') }}" class="rounded-md bg-white border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                 Gérer les catégories
             </a>
+            <a href="{{ route('admin.moderation.index') }}" class="rounded-md bg-white border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                {{ __('ui.moderation.title') }}
+                @if (($stats['moderation_pending'] ?? 0) > 0)
+                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">{{ $stats['moderation_pending'] }}</span>
+                @endif
+            </a>
             <a href="{{ route('admin.verifications.index') }}" class="rounded-md bg-white border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                 @php $pendingCount = \App\Models\ProviderProfile::whereNotNull('id_card_path')->where('id_card_verified', false)->count(); @endphp
                 Vérifications prestataires

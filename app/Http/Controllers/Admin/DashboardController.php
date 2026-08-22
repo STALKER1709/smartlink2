@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ModerationReport;
 use App\Models\Service;
 use App\Models\ServiceRequest;
 use App\Models\User;
@@ -19,6 +20,7 @@ class DashboardController extends Controller
             'services_active' => Service::query()->active()->count(),
             'services_total' => Service::query()->count(),
             'requests_total' => ServiceRequest::query()->count(),
+            'moderation_pending' => ModerationReport::query()->pending()->count(),
         ];
 
         $requestsByStatus = ServiceRequest::query()

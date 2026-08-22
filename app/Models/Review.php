@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\ModerateContent;
 use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,11 @@ class Review extends Model
 {
     /** @use HasFactory<ReviewFactory> */
     use HasFactory, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::created(fn (Review $review) => ModerateContent::dispatch($review));
+    }
 
     protected function casts(): array
     {

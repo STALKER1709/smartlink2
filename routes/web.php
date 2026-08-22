@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ModerationController;
 use App\Http\Controllers\Admin\ProviderVerificationController;
 use App\Http\Controllers\Admin\ServiceCategoryController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ProfileController as ProviderProfileController;
 use App\Http\Controllers\Provider\ServiceController as ProviderServiceController;
+use App\Http\Controllers\Provider\ServiceDraftController;
 use App\Http\Controllers\Provider\SubscriptionController as ProviderSubscriptionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
@@ -97,6 +99,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider.')->group(function () {
     Route::resource('services', ProviderServiceController::class)->except('show');
 
+    Route::post('/services/draft', [ServiceDraftController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('services.draft');
+
     Route::get('/profile', [ProviderProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProviderProfileController::class, 'update'])->name('profile.update');
 
@@ -136,6 +142,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
 
     Route::resource('categories', ServiceCategoryController::class)->except('show');
+
+    Route::get('/moderation', [ModerationController::class, 'index'])->name('moderation.index');
+    Route::post('/moderation/{report}/dismiss', [ModerationController::class, 'dismiss'])->name('moderation.dismiss');
 
     Route::get('/verifications', [ProviderVerificationController::class, 'index'])->name('verifications.index');
     Route::post('/verifications/{providerProfile}/approve', [ProviderVerificationController::class, 'approve'])->name('verifications.approve');

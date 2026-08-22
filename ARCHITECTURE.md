@@ -100,6 +100,24 @@ Tout échec ramène silencieusement à la recherche par mot-clé : IA coupée, p
 
 Le quota quotidien par compte ne borne que la conversation : sans cela, un utilisateur bavard se retrouverait privé de recherche. L'extraction reste bornée par le plafond de dépense mensuel, et elle s'appuie sur le modèle le plus économique.
 
+#### La rédaction assistée
+
+`ServiceDraftWriter` propose un titre et une description à partir de quelques mots jetés par le prestataire, même mal orthographiés. Beaucoup d'artisans sont plus à l'aise à l'oral qu'à l'écrit : c'est un frein réel à la publication.
+
+Deux conditions se cumulent : le palier de l'abonnement en cours doit comprendre la rédaction assistée, et les garde-fous de coût doivent laisser passer. La vue interroge `isAvailableFor()` avant d'afficher quoi que ce soit — proposer un bouton à qui ne peut pas s'en servir n'aide personne.
+
+Le texte produit est une **proposition** : il remplit les champs du formulaire, que le prestataire relit et corrige. Le prompt interdit d'inventer un tarif, un délai, une certification ou une zone d'intervention absents de ses mots, et les longueurs sont bornées aux mêmes limites que la validation du formulaire — une proposition que le formulaire refuserait ne rendrait service à personne.
+
+#### La modération automatique
+
+`ContentModerator` examine les annonces et les avis. Elle **classe et signale, elle ne supprime jamais** : un `ModerationReport` polymorphe est attaché au contenu, et un administrateur tranche depuis `/admin/moderation`. Classer un signalement sans suite ne touche pas au contenu ; supprimer un service ou suspendre un compte restent des actions distinctes, décidées et tracées à part.
+
+L'examen passe par la file d'attente (`ModerateContent`) : il ne doit jamais retarder la publication d'un service ni le dépôt d'un avis. Il se déclenche à la création, et à la modification **du texte seulement** — changer un prix ou une photo n'a pas à repasser par la modération.
+
+Le prompt insiste sur ce qu'il ne faut **pas** signaler : un texte mal écrit, très court, en pidgin ou mêlant français et anglais est normal pour beaucoup de prestataires, et un avis négatif mais argumenté n'est pas un abus. Un faux signalement coûte du temps d'administration et pénalise un honnête homme. Côté code, seules les catégories connues sont retenues, et un signalement sans catégorie retombe en verdict sain.
+
+Un contenu que la modération n'a pas pu examiner — IA coupée, plafond atteint, appel en échec — reste simplement en ligne, comme avant l'existence de la fonction.
+
 #### L'historique vient du navigateur
 
 `ConversationHistory` remet en état l'historique envoyé par le client avant de le transmettre : rôles inconnus écartés, contenus vides ou non textuels écartés, tours consécutifs du même rôle dédoublonnés, conversation tronquée aux derniers tours et forcée à commencer par un tour utilisateur. Rien de ce qui vient du navigateur n'est transmis tel quel.

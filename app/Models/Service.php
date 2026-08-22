@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\ModerateContent;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,6 +37,16 @@ class Service extends Model
 
     protected static function booted(): void
     {
+        static::created(fn (Service $service) => ModerateContent::dispatch($service));
+
+        static::updated(function (Service $service) {
+            // Seul un changement de texte justifie un nouvel examen : changer
+            // un prix ou une photo n'a pas à repasser par la modération.
+            if ($service->wasChanged(['title', 'description'])) {
+                ModerateContent::dispatch($service);
+            }
+        });
+
         static::creating(function (Service $service) {
             if (empty($service->slug)) {
                 $service->slug = Str::slug($service->title).'-'.Str::random(6);
