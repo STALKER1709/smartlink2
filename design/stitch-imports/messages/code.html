@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SmartLink - Messagerie</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdbca",
+                        "inverse-primary": "#83d7ad",
+                        "surface-container-high": "#e7e8e6",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-surface-variant": "#3f4943",
+                        "primary": "#005538",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#a04700",
+                        "on-error": "#ffffff",
+                        "tertiary": "#7b3500",
+                        "surface-tint": "#086c49",
+                        "outline-variant": "#bec9c0",
+                        "secondary-container": "#aff1cf",
+                        "on-secondary-container": "#317054",
+                        "on-surface": "#191c1b",
+                        "on-tertiary-fixed-variant": "#763300",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#0f6f4c",
+                        "surface-variant": "#e2e3e0",
+                        "surface-bright": "#f9faf7",
+                        "surface-dim": "#d9dad7",
+                        "secondary-fixed": "#aff1cf",
+                        "on-tertiary-container": "#ffd4bf",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1b",
+                        "surface-container-low": "#f3f4f1",
+                        "tertiary-fixed-dim": "#ffb68e",
+                        "inverse-surface": "#2e312f",
+                        "on-primary-fixed": "#002113",
+                        "background": "#f9faf7",
+                        "primary-fixed-dim": "#83d7ad",
+                        "surface-container": "#edeeeb",
+                        "outline": "#6f7a72",
+                        "on-tertiary-fixed": "#331200",
+                        "inverse-on-surface": "#f0f1ee",
+                        "secondary": "#2a694f",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#9aefc3",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e2e3e0",
+                        "primary-fixed": "#9ff4c8",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#93d4b3",
+                        "on-secondary-fixed-variant": "#095138",
+                        "surface": "#f9faf7",
+                        "on-secondary-fixed": "#002114"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "container-max-width": "1200px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["\"Source Sans 3\""],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-numeric": ["JetBrains Mono"],
+                        "body-lg": ["\"Source Sans 3\""],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "button-text": ["\"Source Sans 3\""]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-numeric": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Hide scrollbar for clean look but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased h-screen flex flex-col pt-14 pb-16 md:pb-0 md:pt-16">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flat no shadows flex justify-between items-center px-margin-mobile h-14 md:h-16">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim hidden md:block">SmartLink</h1>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim md:hidden">SmartLink</h1>
+</div>
+<!-- Desktop Nav embedded in App Bar -->
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed font-button-text text-button-text transition-colors duration-200" href="#">Accueil</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed font-button-text text-button-text transition-colors duration-200" href="#">Recherche</a>
+<a class="text-primary dark:text-inverse-primary font-button-text text-button-text transition-colors duration-200 border-b-2 border-primary pb-1" href="#">Messages</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed font-button-text text-button-text transition-colors duration-200" href="#">Profil</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out p-2 rounded-full hidden md:block">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant cursor-pointer">
+<img alt="Profil utilisateur" class="w-full h-full object-cover" data-alt="A close-up portrait of a professional African man smiling subtly, wearing a crisp white shirt, set against a clean, light green studio background. The lighting is soft and flattering, creating a modern, approachable corporate aesthetic typical of high-end business profiles." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH40zc1lnrNLn18yEpU8pRy6iLYN5yenHMrPhnpPhOrba0k7KVpuyFW-BtuSQ9gAk7GsbxpLRFkW5tMYb8wlLuzlg1AgKx55NzO0yafnBOVQbuCPP7uO2ptWkEQkveO6e-GFObnyDE-1c-iEphDeclfyo5IhmuHhl_7gocf3yIh18H3uAlf6-HPRqjzRHAt7T-v5WdgtuFNYQEI6RGmbEQvVZUrDabL7D-5i8b1PBC_UhDrDMbxHuc"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto no-scrollbar w-full max-w-[container-max-width] mx-auto px-margin-mobile md:px-margin-desktop py-6">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-background">Messages</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Gérez vos conversations en cours</p>
+</div>
+<!-- Search/Filter -->
+<div class="hidden md:flex items-center bg-surface-container rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 p-0 font-body-md text-body-md text-on-background placeholder-on-surface-variant w-64" placeholder="Rechercher une conversation..." type="text"/>
+</div>
+</div>
+<!-- Mobile Search (Visible only on small screens) -->
+<div class="md:hidden flex items-center bg-surface-container rounded-lg px-4 py-3 mb-6 border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all w-full">
+<span class="material-symbols-outlined text-on-surface-variant mr-3" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 p-0 font-body-md text-body-md text-on-background placeholder-on-surface-variant w-full" placeholder="Rechercher..." type="text"/>
+</div>
+<!-- Conversation List -->
+<div class="flex flex-col border-t border-outline-variant">
+<!-- Unread Conversation Item -->
+<a class="flex items-start p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-200 bg-secondary-container bg-opacity-20" href="#">
+<div class="relative flex-shrink-0 mr-4">
+<div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Avatar Marie" class="w-full h-full object-cover" data-alt="A portrait of a confident African woman tradesperson wearing a clean, modern safety vest over a neat polo shirt. She has a warm smile. The background is a bright, slightly blurred construction site indicating daytime activity. Lighting is natural and bright, emphasizing trust and professionalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHJycD6vNhy-vI3ljV_wyYuihFsvvZYZgISVtoekhhFk5g8RQuaS-RC9s_Yg6rK24hqZFRkQnisx01N3JLANxOstvhTMfr6YXBxK6t6tLfRew2hGUIpj3TZa9KMx7tNCHnsE1n59F3LIFUajZ8aaFSfUrPeJgKNeq-1tdeEOz9yTzbRgTylazV5CS90zdxcJEhlhFkKFXGTKn69WKaLm0MsysFd0Jmm6JCAyYKdBazlkDw-qLGWBuY"/>
+</div>
+<!-- Online Status -->
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full border-2 border-surface-bright"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-headline-md text-body-lg text-on-background truncate">Marie Dubois</h3>
+<span class="font-label-numeric text-label-numeric text-primary whitespace-nowrap ml-2">09:42</span>
+</div>
+<div class="font-button-text text-body-md text-on-surface-variant mb-1 truncate">
+                        Demande : Réparation plomberie d'urgence
+                    </div>
+<div class="flex justify-between items-center">
+<p class="font-body-md text-body-md text-on-background font-semibold truncate mr-4">
+                            Oui, je peux passer vers 14h aujourd'hui.
+                        </p>
+<!-- Unread Badge -->
+<span class="flex-shrink-0 bg-primary text-on-primary font-label-numeric text-xs h-5 min-w-[20px] flex items-center justify-center rounded-full px-1.5">
+                            2
+                        </span>
+</div>
+</div>
+</a>
+<!-- Unread Conversation Item -->
+<a class="flex items-start p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-200 bg-secondary-container bg-opacity-20" href="#">
+<div class="relative flex-shrink-0 mr-4">
+<div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border border-outline-variant bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-headline-md text-headline-md">
+                        PK
+                    </div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-headline-md text-body-lg text-on-background truncate">Paul Kamga</h3>
+<span class="font-label-numeric text-label-numeric text-primary whitespace-nowrap ml-2">Hier</span>
+</div>
+<div class="font-button-text text-body-md text-on-surface-variant mb-1 truncate">
+                        Demande : Nettoyage fin de chantier
+                    </div>
+<div class="flex justify-between items-center">
+<p class="font-body-md text-body-md text-on-background font-semibold truncate mr-4">
+                            Le devis est en pièce jointe, merci de me confirmer.
+                        </p>
+<!-- Unread Badge -->
+<span class="flex-shrink-0 bg-primary text-on-primary font-label-numeric text-xs h-5 min-w-[20px] flex items-center justify-center rounded-full px-1.5">
+                            1
+                        </span>
+</div>
+</div>
+</a>
+<!-- Read Conversation Item -->
+<a class="flex items-start p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<div class="relative flex-shrink-0 mr-4">
+<div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Avatar Jean" class="w-full h-full object-cover" data-alt="Portrait of an older African man with grey hair, dressed in a neat casual button-down shirt. He has a calm, experienced demeanor. The background is a brightly lit, minimalist home office setting. The style is clean, modern, and realistic, conveying reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT-Zo4CdaPBXtRDZbNPB2G8obczc7HYut60EXzYadEYS-j3Gx0uCb3gki22CIFFIHCdx66T9LMSF3aBwbhXenhBO_FD7lWYzEJi_Ebo_w5zQOfelDK8YWMFBeDTMlTnX4SFohCKq8ZZlc-HQ5ShbxqeJT0pikIbQqTethdFyU6-8Hxo5xdF2t9OTxB3PPbyvYwj1KTJ8YxV9hZFHN-IVEJiVtvlleyhKO2UH6DF0uru7-AAJC4btKX"/>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-headline-md text-body-lg text-on-background truncate">Jean Talla</h3>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant whitespace-nowrap ml-2">Lun.</span>
+</div>
+<div class="font-button-text text-body-md text-on-surface-variant mb-1 truncate">
+                        Demande : Installation électrique
+                    </div>
+<div class="flex justify-between items-center">
+<p class="font-body-md text-body-md text-on-surface-variant truncate mr-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="done_all">done_all</span>
+                            Parfait, on se voit demain matin.
+                        </p>
+</div>
+</div>
+</a>
+<!-- Read Conversation Item -->
+<a class="flex items-start p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<div class="relative flex-shrink-0 mr-4">
+<div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border border-outline-variant bg-tertiary-container flex items-center justify-center text-on-tertiary font-headline-md text-headline-md">
+                        SA
+                    </div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-headline-md text-body-lg text-on-background truncate">Sophie Atangana</h3>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant whitespace-nowrap ml-2">04 Oct</span>
+</div>
+<div class="font-button-text text-body-md text-on-surface-variant mb-1 truncate">
+                        Demande : Cours de soutien scolaire
+                    </div>
+<div class="flex justify-between items-center">
+<p class="font-body-md text-body-md text-on-surface-variant truncate mr-4">
+                            Merci pour votre aide, mon fils a beaucoup progressé.
+                        </p>
+</div>
+</div>
+</a>
+<!-- Read Conversation Item -->
+<a class="flex items-start p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<div class="relative flex-shrink-0 mr-4">
+<div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Avatar Eric" class="w-full h-full object-cover" data-alt="Close up of a young African professional holding a smartphone, looking thoughtful. Dressed in smart casual attire. The environment suggests a bright, modern co-working space with natural light. The mood is focused and dynamic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOv7rfRu471hZmgbrOAVbIhTGAhGR4skxy6DA0DVxWC3YWQR7BR0Kl4AqtH0ZA1JFgf5Z3LHi-G9Yq6H6lK18WLspJQcXXa0LrTiKg_6Nh0cITmNI7aJHrI9jdJjldOCjJezHgmP9fpSlMayawtIkw8q8YFhzBh3XtDcpbOpzpG3Pr0XQ5VcvrhAGcUyBMia_O9zvkIR-u7EPrg1xWf8hwwGKlIVqky_3eYXSG-bcWH3WpmpXAeDge"/>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-headline-md text-body-lg text-on-background truncate">Eric Ndongo</h3>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant whitespace-nowrap ml-2">28 Sep</span>
+</div>
+<div class="font-button-text text-body-md text-on-surface-variant mb-1 truncate">
+                        Demande : Transport de meubles
+                    </div>
+<div class="flex justify-between items-center">
+<p class="font-body-md text-body-md text-on-surface-variant truncate mr-4">
+                            Je vous recontacte la semaine prochaine pour organiser ça.
+                        </p>
+</div>
+</div>
+</a>
+</div>
+<!-- FAB (New Message) - Visible on mobile mainly -->
+<button class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-on-primary rounded-xl shadow-lg flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined fill" data-icon="edit_square" style="font-size: 24px;">edit_square</span>
+</button>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-dim border-t border-outline-variant dark:border-outline flat no shadows flex justify-around items-center h-16 pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-button-text text-label-numeric mt-1">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-button-text text-label-numeric mt-1">Recherche</span>
+</a>
+<!-- Active Tab: 'Demandes' acts as the container for messages/tasks based on intent fallback -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined fill" data-icon="assignment">assignment</span>
+<span class="font-button-text text-label-numeric mt-1">Demandes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-button-text text-label-numeric mt-1">Profil</span>
+</a>
+</nav>
+</body></html>

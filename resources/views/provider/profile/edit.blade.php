@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('ui.provider.my_profile') }}</h2>
+        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.provider.my_profile') }}</h2>
     </x-slot>
 
     {{-- Leaflet CSS --}}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
             <form action="{{ route('provider.profile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -20,7 +20,7 @@
 
                 <div class="mt-4">
                     <x-input-label for="category_id" value="Catégorie principale" />
-                    <select id="category_id" name="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <select id="category_id" name="category_id" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
                         <option value="">Choisir une catégorie</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}" @selected(old('category_id', $providerProfile->category_id) == $category->id)>{{ $category->name }}</option>
@@ -31,14 +31,14 @@
 
                 <div class="mt-4">
                     <x-input-label for="description" value="Description (facultatif)" />
-                    <textarea id="description" name="description" rows="4" maxlength="2000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $providerProfile->description) }}</textarea>
+                    <textarea id="description" name="description" rows="4" maxlength="2000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">{{ old('description', $providerProfile->description) }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
                 </div>
 
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="city" :value="__('ui.provider.city')" />
-                        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary text-sm">
                             <option value="">— {{ __('ui.provider.choose_city') }} —</option>
                             @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
                                 <option value="{{ $ville }}" @selected(old('city', $providerProfile->city) === $ville)>{{ $ville }}</option>
@@ -63,7 +63,7 @@
                 <div class="mt-4">
                     <x-input-label for="whatsapp" :value="__('ui.provider.whatsapp')" />
                     <div class="mt-1 flex rounded-md shadow-sm">
-                        <span class="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">+237</span>
+                        <span class="inline-flex items-center rounded-l-md border border-r-0 border-outline-variant bg-surface-container-low px-3 text-sm text-on-surface-variant">+237</span>
                         <x-text-input id="whatsapp" name="whatsapp" type="tel" class="block flex-1 rounded-none rounded-r-md" :value="old('whatsapp', $providerProfile->whatsapp)" placeholder="6XXXXXXXX" maxlength="20" />
                     </div>
                     <x-input-error :messages="$errors->get('whatsapp')" class="mt-2" />
@@ -92,35 +92,35 @@
                     }
                 }">
                     <x-input-label :value="__('ui.provider.location_map')" />
-                    <p class="text-xs text-gray-500 mb-2">{{ __('ui.provider.location_hint') }}</p>
-                    <div id="provider-map" class="w-full h-56 rounded-md border border-gray-200 z-0"></div>
+                    <p class="text-xs text-on-surface-variant mb-2">{{ __('ui.provider.location_hint') }}</p>
+                    <div id="provider-map" class="w-full h-56 rounded-md border border-outline-variant z-0"></div>
                     <input type="hidden" name="latitude" :value="lat">
                     <input type="hidden" name="longitude" :value="lng">
-                    <p class="mt-1 text-xs text-gray-400" x-text="`${lat}, ${lng}`"></p>
+                    <p class="mt-1 text-xs text-on-surface-variant" x-text="`${lat}, ${lng}`"></p>
                 </div>
 
                 {{-- ID Card upload --}}
-                <div class="mt-6 border-t border-gray-100 pt-5">
-                    <h3 class="font-medium text-gray-900 mb-1">{{ __('ui.provider.id_card_title') }}</h3>
-                    <p class="text-xs text-gray-500 mb-3">{{ __('ui.provider.id_card_hint') }}</p>
+                <div class="mt-6 border-t border-outline-variant pt-5">
+                    <h3 class="font-medium text-on-surface mb-1">{{ __('ui.provider.id_card_title') }}</h3>
+                    <p class="text-xs text-on-surface-variant mb-3">{{ __('ui.provider.id_card_hint') }}</p>
 
                     @if ($providerProfile->id_card_path)
                         <div class="mb-3 flex items-center gap-3">
                             @php $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION); @endphp
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <img src="{{ asset('storage/'.$providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-gray-200">
+                                <img src="{{ asset('storage/'.$providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
                             @else
-                                <a href="{{ asset('storage/'.$providerProfile->id_card_path) }}" target="_blank" class="text-indigo-600 text-sm hover:underline">Voir le document</a>
+                                <a href="{{ asset('storage/'.$providerProfile->id_card_path) }}" target="_blank" class="text-primary text-sm hover:underline">Voir le document</a>
                             @endif
                             @if ($providerProfile->id_card_verified)
-                                <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Vérifié</span>
+                                <span class="inline-flex items-center rounded-full bg-secondary-container/40 px-2.5 py-0.5 text-xs font-medium text-on-secondary-container">Vérifié</span>
                             @else
-                                <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">En attente de vérification</span>
+                                <span class="inline-flex items-center rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-xs font-medium text-tertiary">En attente de vérification</span>
                             @endif
                         </div>
                     @endif
 
-                    <input type="file" name="id_card" accept="image/*,.pdf" class="text-sm text-gray-700">
+                    <input type="file" name="id_card" accept="image/*,.pdf" class="text-sm text-on-surface-variant">
                     <x-input-error :messages="$errors->get('id_card')" class="mt-2" />
                 </div>
 
@@ -129,11 +129,11 @@
                     <x-input-label value="Zones d'intervention (facultatif)" />
                     <template x-for="(area, index) in areas" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <button type="button" @click="areas.splice(index, 1)" class="text-red-600 text-sm px-2">✕</button>
+                            <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                            <button type="button" @click="areas.splice(index, 1)" class="text-error text-sm px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="areas.push('')" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">
+                    <button type="button" @click="areas.push('')" class="mt-2 text-sm text-primary hover:text-primary-container">
                         + Ajouter une zone
                     </button>
                     <x-input-error :messages="$errors->get('service_areas')" class="mt-2" />
@@ -144,11 +144,11 @@
                     <x-input-label value="Moyens de contact (facultatif)" />
                     <template x-for="(contact, index) in contacts" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <button type="button" @click="contacts.splice(index, 1)" class="text-red-600 text-sm px-2">✕</button>
+                            <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                            <button type="button" @click="contacts.splice(index, 1)" class="text-error text-sm px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="contacts.push('')" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">
+                    <button type="button" @click="contacts.push('')" class="mt-2 text-sm text-primary hover:text-primary-container">
                         + Ajouter un contact
                     </button>
                     <x-input-error :messages="$errors->get('contact_methods')" class="mt-2" />
@@ -156,18 +156,18 @@
 
                 <!-- Opening hours -->
                 <div class="mt-4">
-                    <p class="block font-medium text-sm text-gray-700 mb-2">Horaires d'ouverture (facultatif)</p>
+                    <p class="block font-medium text-sm text-on-surface-variant mb-2">Horaires d'ouverture (facultatif)</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @foreach (['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'] as $day)
                             <div class="flex items-center gap-2">
-                                <label for="opening_hours_{{ $day }}" class="w-24 text-sm text-gray-600 capitalize shrink-0">{{ $day }}</label>
+                                <label for="opening_hours_{{ $day }}" class="w-24 text-sm text-on-surface-variant capitalize shrink-0">{{ $day }}</label>
                                 <input
                                     id="opening_hours_{{ $day }}"
                                     type="text"
                                     name="opening_hours[{{ $day }}]"
                                     value="{{ old('opening_hours.'.$day, $providerProfile->opening_hours[$day] ?? '') }}"
                                     placeholder="ex: 8h-18h"
-                                    class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary"
                                 >
                             </div>
                         @endforeach
@@ -181,13 +181,13 @@
                         @if ($providerProfile->logo_path)
                             <img src="{{ asset('storage/'.$providerProfile->logo_path) }}" class="h-16 w-16 rounded-full object-cover">
                         @endif
-                        <input type="file" name="logo" accept="image/*" class="text-sm text-gray-700">
+                        <input type="file" name="logo" accept="image/*" class="text-sm text-on-surface-variant">
                     </div>
                     <x-input-error :messages="$errors->get('logo')" class="mt-2" />
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                    <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
                         {{ __('ui.save') }}
                     </button>
                 </div>

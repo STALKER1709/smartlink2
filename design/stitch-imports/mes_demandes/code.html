@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Demandes - SmartLink</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#ffdbca",
+                    "inverse-primary": "#83d7ad",
+                    "surface-container-high": "#e7e8e6",
+                    "on-primary-fixed-variant": "#005236",
+                    "on-surface-variant": "#3f4943",
+                    "primary": "#005538",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#a04700",
+                    "on-error": "#ffffff",
+                    "tertiary": "#7b3500",
+                    "surface-tint": "#086c49",
+                    "outline-variant": "#bec9c0",
+                    "secondary-container": "#aff1cf",
+                    "on-secondary-container": "#317054",
+                    "on-surface": "#191c1b",
+                    "on-tertiary-fixed-variant": "#763300",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#0f6f4c",
+                    "surface-variant": "#e2e3e0",
+                    "surface-bright": "#f9faf7",
+                    "surface-dim": "#d9dad7",
+                    "secondary-fixed": "#aff1cf",
+                    "on-tertiary-container": "#ffd4bf",
+                    "on-error-container": "#93000a",
+                    "on-background": "#191c1b",
+                    "surface-container-low": "#f3f4f1",
+                    "tertiary-fixed-dim": "#ffb68e",
+                    "inverse-surface": "#2e312f",
+                    "on-primary-fixed": "#002113",
+                    "background": "#f9faf7",
+                    "primary-fixed-dim": "#83d7ad",
+                    "surface-container": "#edeeeb",
+                    "outline": "#6f7a72",
+                    "on-tertiary-fixed": "#331200",
+                    "inverse-on-surface": "#f0f1ee",
+                    "secondary": "#2a694f",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#9aefc3",
+                    "error": "#ba1a1a",
+                    "surface-container-highest": "#e2e3e0",
+                    "primary-fixed": "#9ff4c8",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#93d4b3",
+                    "on-secondary-fixed-variant": "#095138",
+                    "surface": "#f9faf7",
+                    "on-secondary-fixed": "#002114"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "gutter": "16px",
+                    "container-max-width": "1200px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "body-md": ["\"Source Sans 3\""],
+                    "headline-md": ["Hanken Grotesk"],
+                    "label-numeric": ["JetBrains Mono"],
+                    "body-lg": ["\"Source Sans 3\""],
+                    "headline-xl": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "button-text": ["\"Source Sans 3\""]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-numeric": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Hide scrollbar for horizontal scrolling but allow scroll */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-20 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-headline-md text-headline-md fixed top-0 w-full z-50 border-b border-outline-variant dark:border-outline flat no shadows transition-colors duration-200 ease-in-out">
+<div class="flex justify-between items-center px-margin-mobile h-14 w-full">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim">SmartLink</div>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-full overflow-hidden w-8 h-8 flex items-center justify-center">
+<img alt="Profil utilisateur" class="w-full h-full object-cover" data-alt="A clean, professional portrait of an African man with a friendly smile, suitable for a user profile avatar. He is wearing a crisp shirt. The background is a simple, light neutral tone, providing a clear contrast. The overall mood is approachable and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpgffGvAuGmfFwARj0YDC_uc7YQyyN37MOmntaqCmk84SVXH9ZiyvdAG8IJEwB3mwz03ha04L7OzBWH2kQj4viKUAXktOgAHsN96pWgDVEp3PZt21h7KCYBCX7l6DZ5l3YUgH_wE1fAN7Cu-2O0Yk28I2PwVPg6vKTbM0RubpatwNhIIkLYiSORQL6Inwvc0V2S_P-d_-EOINZsS3wvDt4eqY-CK_U5n_JLuyH4BF4zbVytOA49EKY"/>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-[72px] pb-[80px] max-w-container-max-width mx-auto md:px-margin-desktop">
+<!-- Header & Filters Section -->
+<div class="px-margin-mobile md:px-0 mb-6 mt-4">
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-4">Demandes</h1>
+<!-- Horizontal Filter Tabs -->
+<div class="flex overflow-x-auto hide-scrollbar -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 gap-3 pb-2">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-button-text text-button-text border border-transparent flex-shrink-0">Toutes</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low font-button-text text-button-text flex-shrink-0 transition-colors">Envoyées</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low font-button-text text-button-text flex-shrink-0 transition-colors">Vues</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low font-button-text text-button-text flex-shrink-0 transition-colors">Acceptées</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low font-button-text text-button-text flex-shrink-0 transition-colors">En cours</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low font-button-text text-button-text flex-shrink-0 transition-colors">Terminées</button>
+</div>
+</div>
+<!-- Requests List -->
+<div class="px-margin-mobile md:px-0 flex flex-col gap-4">
+<!-- Card 1: New / Unread -->
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col relative group hover:bg-surface-container-lowest transition-colors cursor-pointer">
+<!-- Unread Indicator -->
+<div class="absolute top-4 right-4 w-3 h-3 bg-error rounded-full"></div>
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a female plumber looking confident and reliable. She wears a clean work uniform. The background is a soft, out-of-focus workshop setting. The lighting is bright and natural." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkv1EXqGuhVXveBlIG10ak5VTUwRpUKgYjxlKCSj2UB_hrYbxBDLr341FTSPBccj0uCnmPnBhFt0ZzlSYk3BMopyZTTJFZ5HCbzn9Y2ZftRocBGTkFxWJjAEBzkghNsZt1mH3u2stOuQXcL1EQvF9e5p1pgpD7mVP-kgRsW4qZo07S4c8EsnLUeeLztWPckbWgVmLhyNmwL0Tl7O5d54V_bYTgVyk6SkXmzCbDjIQeXnj1ShJJJpyq"/>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-on-surface">Marie Ndiaye</h3>
+<p class="font-body-md text-label-numeric text-on-surface-variant">Plomberie</p>
+</div>
+</div>
+</div>
+<div class="mb-3">
+<span class="inline-block px-2 py-1 rounded-sm bg-secondary-container text-on-secondary-container font-label-numeric text-[12px] uppercase tracking-wider mb-2">Envoyée</span>
+<h4 class="font-headline-md text-body-lg text-on-surface">Réparation fuite d'eau sous évier</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mt-1">Bonjour, suite à notre échange, j'ai besoin que vous interveniez demain matin pour la fuite...</p>
+</div>
+<div class="flex justify-between items-center mt-auto pt-3 border-t border-surface-variant">
+<span class="font-label-numeric text-label-numeric text-on-surface-variant">24 Oct, 10:30</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Card 2: Accepted -->
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col relative group hover:bg-surface-container-lowest transition-colors cursor-pointer opacity-90">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<div class="w-full h-full bg-tertiary-container flex items-center justify-center text-on-tertiary font-headline-md">PA</div>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-on-surface">Paul Atangana</h3>
+<p class="font-body-md text-label-numeric text-on-surface-variant">Électricité</p>
+</div>
+</div>
+</div>
+<div class="mb-3">
+<span class="inline-block px-2 py-1 rounded-sm bg-tertiary-fixed text-on-tertiary-fixed font-label-numeric text-[12px] uppercase tracking-wider mb-2">Acceptée</span>
+<h4 class="font-headline-md text-body-lg text-on-surface">Installation nouveau tableau électrique</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mt-1">J'accepte votre devis. À quelle heure pouvez-vous passer ce vendredi ?</p>
+</div>
+<div class="flex justify-between items-center mt-auto pt-3 border-t border-surface-variant">
+<span class="font-label-numeric text-label-numeric text-on-surface-variant">22 Oct, 15:45</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Card 3: In Progress -->
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col relative group hover:bg-surface-container-lowest transition-colors cursor-pointer opacity-90">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A friendly male tutor holding a tablet, smiling warmly. He is in a brightly lit room with a clean, modern aesthetic. The focus is on approachability and professionalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3M02NtQ9KWfZHd-bZe7cS5b1ZLjnFBpLhxJX4NM7mEQ-jK7Hf5rB1V4TmDSFBAGxYwi6oQBSDUEG0sLUmyOXFBWd1-SCOS9Fv4-LJvH0NLja3gKe--ReXfA3DQBtwqKWRE7JU98LPgjhtg0rKnISfgMpW5aRYqwubDV70MgwTCSA1xHU9QrI7S-fyTgC_GJ722Cc3WC_yZJ4loFSOA1g0yQK-gYBX7tLEJLusMrx3HjOT2pjXIDjE"/>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-on-surface">Lucie Kameni</h3>
+<p class="font-body-md text-label-numeric text-on-surface-variant">Soutien Scolaire</p>
+</div>
+</div>
+</div>
+<div class="mb-3">
+<span class="inline-block px-2 py-1 rounded-sm bg-primary-container text-on-primary-container font-label-numeric text-[12px] uppercase tracking-wider mb-2">En cours</span>
+<h4 class="font-headline-md text-body-lg text-on-surface">Cours de Mathématiques Terminale</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mt-1">Le prochain cours est prévu pour mercredi à 18h. N'oubliez pas les exercices.</p>
+</div>
+<div class="flex justify-between items-center mt-auto pt-3 border-t border-surface-variant">
+<span class="font-label-numeric text-label-numeric text-on-surface-variant">20 Oct, 09:12</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Empty State Example (Hidden by default, can be toggled via JS if list is empty) -->
+<div class="hidden flex-col items-center justify-center py-16 text-center">
+<div class="w-24 h-24 bg-surface-variant rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-4xl text-outline" data-icon="inbox">inbox</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-2">Aucune demande</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs">Vous n'avez pas encore envoyé de demande. Découvrez nos services pour commencer.</p>
+<button class="mt-8 px-6 py-3 bg-primary text-on-primary font-button-text text-button-text rounded-full hover:bg-surface-tint transition-colors">Explorer les services</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<!-- The intent of this page is "Demandes" -> "assignment" -->
+<nav class="bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-button-text text-label-numeric font-headline-md fixed bottom-0 w-full z-50 border-t border-outline-variant dark:border-outline flat no shadows flex justify-around items-center h-16 pb-safe md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span>Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="search">search</span>
+<span>Recherche</span>
+</a>
+<!-- ACTIVE TAB -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="assignment" data-weight="fill" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span>Demandes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span>Profil</span>
+</a>
+</nav>
+<script>
+        // Simple script to handle filter tab visual selection
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.overflow-x-auto button');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Reset all tabs
+                    tabs.forEach(t => {
+                        t.className = 'whitespace-nowrap px-4 py-2 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low font-button-text text-button-text flex-shrink-0 transition-colors';
+                    });
+                    // Set active tab
+                    tab.className = 'whitespace-nowrap px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-button-text text-button-text border border-transparent flex-shrink-0';
+                });
+            });
+        });
+    </script>
+</body></html>

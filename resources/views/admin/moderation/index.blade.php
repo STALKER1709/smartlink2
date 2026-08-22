@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('ui.moderation.title') }}</h2>
+        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.moderation.title') }}</h2>
     </x-slot>
 
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
-        <p class="text-sm text-gray-600">{{ __('ui.moderation.intro') }}</p>
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-4">
+        <p class="text-sm text-on-surface-variant">{{ __('ui.moderation.intro') }}</p>
 
         @if ($reports->isEmpty())
-            <p class="text-gray-500">{{ __('ui.moderation.empty') }}</p>
+            <p class="text-on-surface-variant">{{ __('ui.moderation.empty') }}</p>
         @else
             <div class="space-y-4">
                 @foreach ($reports as $report)
@@ -15,16 +15,16 @@
                         $content = $report->moderatable;
                         $isService = $content instanceof \App\Models\Service;
                     @endphp
-                    <div class="bg-white rounded-lg shadow-sm border border-amber-200 p-5">
+                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5">
                         <div class="flex flex-wrap items-start justify-between gap-3">
                             <div class="min-w-0">
-                                <p class="text-xs uppercase tracking-wide text-gray-500">
+                                <p class="text-xs uppercase tracking-wide text-on-surface-variant">
                                     {{ $isService ? __('ui.moderation.service') : __('ui.moderation.review') }}
                                     · {{ __('ui.moderation.flagged_at') }} {{ $report->created_at->format('d/m/Y H:i') }}
                                 </p>
-                                <p class="mt-1 font-medium text-gray-900 truncate">
+                                <p class="mt-1 font-medium text-on-surface truncate">
                                     @if ($content === null)
-                                        <span class="text-gray-400">— supprimé —</span>
+                                        <span class="text-on-surface-variant">— supprimé —</span>
                                     @elseif ($isService)
                                         {{ $content->title }}
                                     @else
@@ -35,7 +35,7 @@
 
                             <div class="flex flex-wrap gap-1.5 shrink-0">
                                 @foreach ($report->categories ?? [] as $category)
-                                    <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+                                    <span class="rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-xs font-medium text-tertiary">
                                         {{ __('ui.moderation.categories.'.$category) }}
                                     </span>
                                 @endforeach
@@ -43,7 +43,7 @@
                         </div>
 
                         @if ($report->reason)
-                            <p class="mt-3 text-sm text-gray-700">
+                            <p class="mt-3 text-sm text-on-surface-variant">
                                 <span class="font-medium">{{ __('ui.moderation.reason') }} :</span>
                                 {{ $report->reason }}
                             </p>
@@ -51,16 +51,16 @@
 
                         <div class="mt-4 flex flex-wrap items-center gap-3">
                             @if ($isService && $content !== null)
-                                <a href="{{ route('services.show', $content) }}" class="text-sm text-indigo-600 hover:text-indigo-800">
+                                <a href="{{ route('services.show', $content) }}" class="text-sm text-primary hover:text-primary-container">
                                     {{ __('ui.moderation.view_content') }}
                                 </a>
                             @endif
 
                             <form action="{{ route('admin.moderation.dismiss', $report) }}" method="POST" class="ml-auto">
                                 @csrf
-                                <button type="submit" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                <x-secondary-button type="submit">
                                     {{ __('ui.moderation.dismiss') }}
-                                </button>
+                                </x-secondary-button>
                             </form>
                         </div>
                     </div>

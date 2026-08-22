@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Historique des Transactions - SmartLink</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#317054",
+                      "primary": "#005538",
+                      "background": "#f9faf7",
+                      "on-primary-fixed": "#002113",
+                      "inverse-primary": "#83d7ad",
+                      "outline": "#6f7a72",
+                      "on-surface-variant": "#3f4943",
+                      "tertiary-container": "#a04700",
+                      "surface-variant": "#e2e3e0",
+                      "surface-tint": "#086c49",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#f0f1ee",
+                      "on-surface": "#191c1b",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed": "#9ff4c8",
+                      "surface-container-low": "#f3f4f1",
+                      "primary-fixed-dim": "#83d7ad",
+                      "surface-dim": "#d9dad7",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed": "#331200",
+                      "on-background": "#191c1b",
+                      "on-tertiary-container": "#ffd4bf",
+                      "inverse-surface": "#2e312f",
+                      "tertiary-fixed-dim": "#ffb68e",
+                      "on-secondary-fixed-variant": "#095138",
+                      "tertiary-fixed": "#ffdbca",
+                      "surface-container": "#edeeeb",
+                      "outline-variant": "#bec9c0",
+                      "primary-container": "#0f6f4c",
+                      "secondary-fixed-dim": "#93d4b3",
+                      "tertiary": "#7b3500",
+                      "secondary-fixed": "#aff1cf",
+                      "on-primary-fixed-variant": "#005236",
+                      "surface": "#f9faf7",
+                      "surface-container-high": "#e7e8e6",
+                      "surface-bright": "#f9faf7",
+                      "on-secondary-fixed": "#002114",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#9aefc3",
+                      "on-secondary": "#ffffff",
+                      "secondary-container": "#aff1cf",
+                      "secondary": "#2a694f",
+                      "on-tertiary-fixed-variant": "#763300",
+                      "surface-container-highest": "#e2e3e0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px",
+                      "container-max-width": "1200px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "\"Source Sans 3\""
+                      ],
+                      "button-text": [
+                              "\"Source Sans 3\""
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-numeric": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-xl": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "\"Source Sans 3\""
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "26px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "button-text": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-numeric": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-xl": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "headline-md": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md md:pb-0 pb-[80px]">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-background w-full top-0 sticky z-40">
+<div class="flex items-center justify-between px-margin-mobile md:px-margin-desktop h-14 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary" data-icon="hub">hub</span>
+<span class="font-headline-md text-primary dark:text-inverse-primary tracking-tight">SmartLink</span>
+</div>
+<div>
+<img alt="Photo de profil utilisateur" class="w-8 h-8 rounded-full object-cover" data-alt="Portrait of a young professional in a light-filled minimalist office space. The person is smiling warmly, wearing a smart-casual green jacket that matches the primary brand color. The lighting is soft and natural, creating a clean, modern aesthetic suitable for a professional profile picture in a light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_9khW97OaFWwtXzdA5uv6fo5a3cRws-aqR5hT1718B5Qg9xyCz5a_WkODW5YtaokUw2qrAV5EXFHiLWXqRWx_2rjuV4eVT0SIzYmtRGmqe3nUERNjjGbTifxVp7PflkQ88whwhtrb_pINFTm0xYIVtnKyatqXT63vlyswL9tcyz9H7-tjpaDHFJkyO_mx1TbxLHDmTANiQxvFjLv4ve0AxV_TZsfvBanSrzIWUI6B58De0fF-IRwj"/>
+</div>
+</div>
+<div class="border-b border-outline-variant dark:border-outline"></div>
+</header>
+<main class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-6">
+<!-- Header & Action -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-background mb-1">Historique des Transactions</h1>
+<p class="text-on-surface-variant">Consultez et gérez vos paiements et revenus.</p>
+</div>
+<button class="bg-primary text-on-primary font-button-text text-button-text px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-tint transition-colors w-full md:w-auto">
+<span class="material-symbols-outlined text-[20px]" data-icon="download">download</span>
+                Exporter (CSV)
+            </button>
+</div>
+<!-- Summary Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col justify-between h-[120px]">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-sm">Gains ce mois</span>
+<span class="material-symbols-outlined text-primary" data-icon="trending_up">trending_up</span>
+</div>
+<div class="font-label-numeric text-[28px] font-bold text-on-background">
+                    125 000 FCFA
+                </div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col justify-between h-[120px]">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-sm">En attente</span>
+<span class="material-symbols-outlined text-[#d97706]" data-icon="pending">pending</span>
+</div>
+<div class="font-label-numeric text-[28px] font-bold text-on-background">
+                    30 000 FCFA
+                </div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col justify-between h-[120px]">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-sm">Dépenses (Abonnements)</span>
+<span class="material-symbols-outlined text-error" data-icon="trending_down">trending_down</span>
+</div>
+<div class="font-label-numeric text-[28px] font-bold text-on-background">
+                    5 000 FCFA
+                </div>
+</div>
+</div>
+<!-- Filters -->
+<div class="flex flex-col md:flex-row gap-4 mb-6">
+<div class="relative w-full md:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Rechercher..." type="text"/>
+</div>
+<div class="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+<button class="bg-primary-container text-on-primary-container px-4 py-2 rounded-full border border-primary text-sm whitespace-nowrap">Toutes</button>
+<button class="bg-surface text-on-surface-variant hover:bg-surface-variant/50 px-4 py-2 rounded-full border border-outline-variant text-sm whitespace-nowrap transition-colors">Reçus</button>
+<button class="bg-surface text-on-surface-variant hover:bg-surface-variant/50 px-4 py-2 rounded-full border border-outline-variant text-sm whitespace-nowrap transition-colors">Envoyés</button>
+<div class="h-full w-px bg-outline-variant mx-2 hidden md:block"></div>
+<button class="bg-surface text-on-surface-variant hover:bg-surface-variant/50 px-4 py-2 rounded-full border border-outline-variant text-sm whitespace-nowrap transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                    Ce mois
+                </button>
+</div>
+</div>
+<!-- Transactions List -->
+<div class="bg-surface border border-outline-variant rounded-xl overflow-hidden">
+<!-- Header Row (Desktop) -->
+<div class="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-outline-variant text-on-surface-variant text-sm font-semibold bg-surface-container-lowest">
+<div class="col-span-4">Description</div>
+<div class="col-span-2">Date</div>
+<div class="col-span-3">Statut</div>
+<div class="col-span-3 text-right">Montant</div>
+</div>
+<!-- List Items -->
+<div class="divide-y divide-outline-variant">
+<!-- Item 1 (Received - Success) -->
+<div class="p-4 flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 items-start md:items-center hover:bg-surface-variant/20 transition-colors">
+<div class="flex items-center gap-3 md:col-span-4 w-full">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="arrow_downward">arrow_downward</span>
+</div>
+<div>
+<div class="font-semibold text-on-background">Réparation Plomberie</div>
+<div class="text-sm text-on-surface-variant">Jean Dupont</div>
+</div>
+</div>
+<div class="text-sm text-on-surface-variant md:col-span-2 hidden md:block">
+                        24 Oct 2023
+                    </div>
+<div class="md:col-span-3 w-full flex justify-between md:block">
+<div class="text-sm text-on-surface-variant md:hidden">24 Oct 2023</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#dcfce7] text-[#166534]">
+                            Succès
+                        </span>
+</div>
+<div class="md:col-span-3 text-right w-full font-label-numeric font-bold text-primary">
+                        + 15 000 FCFA
+                    </div>
+</div>
+<!-- Item 2 (Received - Pending) -->
+<div class="p-4 flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 items-start md:items-center hover:bg-surface-variant/20 transition-colors">
+<div class="flex items-center gap-3 md:col-span-4 w-full">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="hourglass_empty">hourglass_empty</span>
+</div>
+<div>
+<div class="font-semibold text-on-background">Consultation Électricité</div>
+<div class="text-sm text-on-surface-variant">Marie Curie</div>
+</div>
+</div>
+<div class="text-sm text-on-surface-variant md:col-span-2 hidden md:block">
+                        23 Oct 2023
+                    </div>
+<div class="md:col-span-3 w-full flex justify-between md:block">
+<div class="text-sm text-on-surface-variant md:hidden">23 Oct 2023</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#fef3c7] text-[#b45309]">
+                            En attente
+                        </span>
+</div>
+<div class="md:col-span-3 text-right w-full font-label-numeric font-bold text-on-background">
+                        + 30 000 FCFA
+                    </div>
+</div>
+<!-- Item 3 (Paid - Success) -->
+<div class="p-4 flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 items-start md:items-center hover:bg-surface-variant/20 transition-colors">
+<div class="flex items-center gap-3 md:col-span-4 w-full">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="arrow_upward">arrow_upward</span>
+</div>
+<div>
+<div class="font-semibold text-on-background">Abonnement Pro</div>
+<div class="text-sm text-on-surface-variant">SmartLink</div>
+</div>
+</div>
+<div class="text-sm text-on-surface-variant md:col-span-2 hidden md:block">
+                        01 Oct 2023
+                    </div>
+<div class="md:col-span-3 w-full flex justify-between md:block">
+<div class="text-sm text-on-surface-variant md:hidden">01 Oct 2023</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#dcfce7] text-[#166534]">
+                            Succès
+                        </span>
+</div>
+<div class="md:col-span-3 text-right w-full font-label-numeric font-bold text-on-background">
+                        - 5 000 FCFA
+                    </div>
+</div>
+<!-- Item 4 (Received - Failed) -->
+<div class="p-4 flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 items-start md:items-center hover:bg-surface-variant/20 transition-colors">
+<div class="flex items-center gap-3 md:col-span-4 w-full">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+</div>
+<div>
+<div class="font-semibold text-on-background">Nettoyage complet</div>
+<div class="text-sm text-on-surface-variant">Client inconnu</div>
+</div>
+</div>
+<div class="text-sm text-on-surface-variant md:col-span-2 hidden md:block">
+                        28 Sep 2023
+                    </div>
+<div class="md:col-span-3 w-full flex justify-between md:block">
+<div class="text-sm text-on-surface-variant md:hidden">28 Sep 2023</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-error-container text-on-error-container">
+                            Échec
+                        </span>
+</div>
+<div class="md:col-span-3 text-right w-full font-label-numeric font-bold text-on-background opacity-50 line-through">
+                        + 12 000 FCFA
+                    </div>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant text-center">
+<button class="text-primary font-button-text hover:underline">Voir plus de transactions</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 h-16 bg-surface dark:bg-surface-dim border-t border-outline-variant dark:border-outline pb-safe">
+<div class="flex justify-around items-center w-full h-full px-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200 min-w-[64px]" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="text-[10px] font-label-numeric leading-none">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200 min-w-[64px]" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="search">search</span>
+<span class="text-[10px] font-label-numeric leading-none">Recherche</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200 min-w-[64px]" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-[10px] font-label-numeric leading-none">Messages</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200 min-w-[64px]" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="assignment">assignment</span>
+<span class="text-[10px] font-label-numeric leading-none">Demandes</span>
+</a>
+<!-- Active Tab -->
+<a class="flex flex-col items-center justify-center min-w-[64px]" href="#">
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 mb-1">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+</div>
+<span class="text-[10px] font-label-numeric font-bold text-on-surface leading-none">Profil</span>
+</a>
+</div>
+</nav>
+</body></html>

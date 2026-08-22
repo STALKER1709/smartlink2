@@ -1,38 +1,38 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Nouvelle demande</h2>
+        <h2 class="font-headline-md text-headline-md text-on-surface">Nouvelle demande</h2>
     </x-slot>
 
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
             @if ($service)
-                <div class="flex items-center gap-3 mb-6 p-3 bg-gray-50 rounded-md border border-gray-200">
-                    <div class="h-12 w-12 rounded-md bg-gray-100 overflow-hidden shrink-0">
+                <div class="flex items-center gap-3 mb-6 p-3 bg-surface-container-low rounded-lg border border-outline-variant">
+                    <div class="h-12 w-12 rounded-lg bg-surface-container overflow-hidden shrink-0">
                         @if ($service->images->isNotEmpty())
                             <img src="{{ asset('storage/'.$service->images->first()->path) }}" alt="" class="h-full w-full object-cover">
                         @endif
                     </div>
                     <div>
-                        <p class="font-medium text-gray-900">{{ $service->title }}</p>
-                        <p class="text-sm text-gray-500">{{ $service->provider?->providerProfile?->business_name ?? $service->provider?->name }}</p>
+                        <p class="font-medium text-on-surface">{{ $service->title }}</p>
+                        <p class="text-sm text-on-surface-variant">{{ $service->provider?->providerProfile?->business_name ?? $service->provider?->name }}</p>
                     </div>
                 </div>
             @elseif ($provider)
-                <div class="flex items-center gap-3 mb-6 p-3 bg-gray-50 rounded-md border border-gray-200">
-                    <div class="h-12 w-12 rounded-full bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                <div class="flex items-center gap-3 mb-6 p-3 bg-surface-container-low rounded-lg border border-outline-variant">
+                    <div class="h-12 w-12 rounded-full bg-surface-container overflow-hidden shrink-0 flex items-center justify-center">
                         @if ($provider->providerProfile?->logo_path)
                             <img src="{{ asset('storage/'.$provider->providerProfile->logo_path) }}" alt="" class="h-full w-full object-cover">
                         @else
-                            <span class="text-gray-400 font-semibold">{{ Str::substr($provider->providerProfile?->business_name ?? $provider->name, 0, 1) }}</span>
+                            <span class="text-on-surface-variant font-semibold">{{ Str::substr($provider->providerProfile?->business_name ?? $provider->name, 0, 1) }}</span>
                         @endif
                     </div>
                     <div>
-                        <p class="font-medium text-gray-900">{{ $provider->providerProfile?->business_name ?? $provider->name }}</p>
-                        <p class="text-sm text-gray-500">{{ $provider->providerProfile?->category?->name }}</p>
+                        <p class="font-medium text-on-surface">{{ $provider->providerProfile?->business_name ?? $provider->name }}</p>
+                        <p class="text-sm text-on-surface-variant">{{ $provider->providerProfile?->category?->name }}</p>
                     </div>
                 </div>
             @else
-                <p class="mb-6 text-sm text-gray-500">
+                <p class="mb-6 text-sm text-on-surface-variant">
                     Décrivez votre besoin ci-dessous. Vous pouvez aussi démarrer une demande directement depuis la page d'un service ou d'un prestataire.
                 </p>
             @endif
@@ -54,7 +54,7 @@
                         rows="5"
                         required
                         maxlength="2000"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary"
                         placeholder="Décrivez votre besoin, le lieu, et toute information utile au prestataire…"
                     >{{ old('message') }}</textarea>
                     <x-input-error :messages="$errors->get('message')" class="mt-2" />
@@ -74,12 +74,12 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-2">
-                    <button type="submit" name="action" value="draft" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    <x-secondary-button type="submit" name="action" value="draft">
                         Enregistrer comme brouillon
-                    </button>
-                    <button type="submit" name="action" value="send" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                    </x-secondary-button>
+                    <x-primary-button type="submit" name="action" value="send">
                         Envoyer la demande
-                    </button>
+                    </x-primary-button>
                 </div>
             </form>
         </div>
