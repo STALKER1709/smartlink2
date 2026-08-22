@@ -58,6 +58,16 @@ return [
         'step2' => 'Cliquez sur « Payer » — vous recevrez une notification sur votre téléphone.',
         'step3' => 'Confirmez le paiement avec votre code PIN Mobile Money.',
     ],
+    'search' => [
+        'natural_label' => 'Décrivez votre besoin',
+        'natural_placeholder' => "J'ai une fuite sous l'évier à Bonamoussadi",
+        'natural_hint' => 'Écrivez comme vous parlez : la catégorie, la ville et le quartier sont reconnus automatiquement.',
+        'natural_submit' => 'Chercher',
+        'understood' => 'Compris :',
+        'understood_urgent' => 'demande urgente',
+        'understood_reset' => 'Repartir de zéro',
+        'or_filter' => 'ou filtrer précisément',
+    ],
     'plans' => [
         'essential' => [
             'name' => 'Essentiel',

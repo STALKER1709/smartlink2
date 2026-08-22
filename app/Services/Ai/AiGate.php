@@ -2,6 +2,7 @@
 
 namespace App\Services\Ai;
 
+use App\Models\AiUsage;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
@@ -26,12 +27,12 @@ class AiGate
 
     public function __construct(private readonly AiUsageRecorder $usage) {}
 
-    public function allows(?User $user): bool
+    public function allows(?User $user, string $feature = AiUsage::FEATURE_CHAT): bool
     {
-        return $this->decide($user) === self::REASON_ALLOWED;
+        return $this->decide($user, $feature) === self::REASON_ALLOWED;
     }
 
-    public function decide(?User $user): string
+    public function decide(?User $user, string $feature = AiUsage::FEATURE_CHAT): string
     {
         if (config('ai.driver') !== 'claude') {
             return self::REASON_DRIVER_OFF;
@@ -57,9 +58,15 @@ class AiGate
             return self::REASON_BUDGET;
         }
 
+        // Le quota quotidien ne borne que la conversation : c'est elle qui
+        // coûte cher. L'extraction de recherche reste bornée par le plafond
+        // mensuel, sans quoi un utilisateur bavard ne pourrait plus chercher.
         $daily = (int) config('ai.limits.daily_messages_per_user');
 
-        if ($user !== null && $daily > 0 && $this->usage->messagesToday($user) >= $daily) {
+        if ($feature === AiUsage::FEATURE_CHAT
+            && $user !== null
+            && $daily > 0
+            && $this->usage->messagesToday($user) >= $daily) {
             return self::REASON_DAILY_QUOTA;
         }
 

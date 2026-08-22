@@ -58,6 +58,16 @@ return [
         'step2' => 'Tap "Pay" — you will receive a prompt on your phone.',
         'step3' => 'Confirm the payment with your Mobile Money PIN.',
     ],
+    'search' => [
+        'natural_label' => 'Describe what you need',
+        'natural_placeholder' => 'I have a leak under the sink in Bonamoussadi',
+        'natural_hint' => 'Write it as you would say it: category, city and neighbourhood are recognised automatically.',
+        'natural_submit' => 'Search',
+        'understood' => 'Understood:',
+        'understood_urgent' => 'urgent request',
+        'understood_reset' => 'Start over',
+        'or_filter' => 'or filter precisely',
+    ],
     'plans' => [
         'essential' => [
             'name' => 'Essential',

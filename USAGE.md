@@ -65,6 +65,16 @@ Accessible sur `/admin` (rôle `admin` requis) :
 
 Chaque action de modération est enregistrée dans le journal d'audit (`AuditLogService`).
 
+## Chercher un prestataire
+
+Deux façons de chercher, sur la page `/services` :
+
+**Décrire son besoin en une phrase.** « J'ai une fuite sous l'évier à Bonamoussadi » suffit : la catégorie, la ville, le quartier et le caractère urgent sont reconnus automatiquement, et les filtres se remplissent tout seuls. Un bandeau rappelle ce qui a été compris, et les filtres restent modifiables juste en dessous — la reconnaissance propose, vous corrigez.
+
+**Filtrer précisément.** Catégorie, ville, quartier, mot-clé, disponibilité et tri restent accessibles directement, sans passer par la phrase.
+
+L'adresse obtenue après une recherche par phrase est une adresse de recherche classique : elle se partage, se met en favori et se rafraîchit sans surprise. Si la reconnaissance n'aboutit pas — pour une phrase trop vague, ou quand la fonction est momentanément indisponible — la phrase est traitée comme un simple mot-clé, sans message d'erreur.
+
 ## L'assistant
 
 L'assistant répond aux questions sur la prise en main du site, la recherche d'un prestataire, l'envoi et le suivi d'une demande, la création de compte et les paliers d'abonnement. Interrogé sur le prix ou le paiement, il énonce le modèle réel : **SmartLink ne prélève rien sur les prestations**, le règlement se fait directement entre client et prestataire, et seuls les prestataires paient un abonnement mensuel à la plateforme.

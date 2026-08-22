@@ -88,6 +88,18 @@ Le résultat est mis en cache une heure et **stable d'un appel à l'autre**, ce 
 
 Un modèle par tâche : le plus capable pour ce qu'un humain lit (conversation, rédaction), le plus économique pour l'extraction et le classement en volume (recherche, modération).
 
+#### La recherche en langage naturel
+
+`SearchIntentExtractor` traduit une phrase libre — « J'ai une fuite sous l'évier à Bonamoussadi » — en filtres de recherche classiques : catégorie, ville, quartier, mots-clés, urgence. Il s'appuie sur les **sorties structurées** de l'API : le schéma contraint la catégorie et la ville à des valeurs prises dans le catalogue réel, ce qui écarte d'emblée la plupart des inventions.
+
+La contrainte de schéma ne suffit pas à faire confiance. `toIntent()` est la **barrière** : chaque champ est revérifié contre la base, une catégorie qui ne correspond à aucune ligne est abandonnée plutôt que propagée, et les champs libres sont tronqués. C'est cette méthode qui est publique et testée directement, parce que c'est par elle que la sortie du modèle entre dans l'application.
+
+Le contrôleur **redirige** ensuite vers la recherche classique avec les paramètres résolus, plutôt que d'afficher les résultats directement. Ce détour a trois effets : l'URL obtenue est partageable, les filtres restent visibles et modifiables — l'IA propose, l'utilisateur corrige — et un rafraîchissement de page ne refacture pas d'extraction.
+
+Tout échec ramène silencieusement à la recherche par mot-clé : IA coupée, plafond atteint, visiteur anonyme, extraction inexploitable ou intention vide. L'utilisateur obtient des résultats dans tous les cas, simplement moins bien ciblés.
+
+Le quota quotidien par compte ne borne que la conversation : sans cela, un utilisateur bavard se retrouverait privé de recherche. L'extraction reste bornée par le plafond de dépense mensuel, et elle s'appuie sur le modèle le plus économique.
+
 #### L'historique vient du navigateur
 
 `ConversationHistory` remet en état l'historique envoyé par le client avant de le transmettre : rôles inconnus écartés, contenus vides ou non textuels écartés, tours consécutifs du même rôle dédoublonnés, conversation tronquée aux derniers tours et forcée à commencer par un tour utilisateur. Rien de ce qui vient du navigateur n'est transmis tel quel.
