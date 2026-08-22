@@ -20,7 +20,7 @@
 
                 <div class="mt-4">
                     <x-input-label for="category_id" value="Catégorie principale" />
-                    <select id="category_id" name="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                    <select id="category_id" name="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="">Choisir une catégorie</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}" @selected(old('category_id', $providerProfile->category_id) == $category->id)>{{ $category->name }}</option>
@@ -31,14 +31,14 @@
 
                 <div class="mt-4">
                     <x-input-label for="description" value="Description (facultatif)" />
-                    <textarea id="description" name="description" rows="4" maxlength="2000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">{{ old('description', $providerProfile->description) }}</textarea>
+                    <textarea id="description" name="description" rows="4" maxlength="2000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $providerProfile->description) }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
                 </div>
 
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="city" :value="__('ui.provider.city')" />
-                        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm">
+                        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                             <option value="">— {{ __('ui.provider.choose_city') }} —</option>
                             @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
                                 <option value="{{ $ville }}" @selected(old('city', $providerProfile->city) === $ville)>{{ $ville }}</option>
@@ -110,7 +110,7 @@
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
                                 <img src="{{ asset('storage/'.$providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-gray-200">
                             @else
-                                <a href="{{ asset('storage/'.$providerProfile->id_card_path) }}" target="_blank" class="text-brand-600 text-sm hover:underline">Voir le document</a>
+                                <a href="{{ asset('storage/'.$providerProfile->id_card_path) }}" target="_blank" class="text-indigo-600 text-sm hover:underline">Voir le document</a>
                             @endif
                             @if ($providerProfile->id_card_verified)
                                 <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Vérifié</span>
@@ -129,11 +129,11 @@
                     <x-input-label value="Zones d'intervention (facultatif)" />
                     <template x-for="(area, index) in areas" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-md border-gray-300 text-sm focus:border-brand-500 focus:ring-brand-500">
+                            <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <button type="button" @click="areas.splice(index, 1)" class="text-red-600 text-sm px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="areas.push('')" class="mt-2 text-sm text-brand-600 hover:text-brand-800">
+                    <button type="button" @click="areas.push('')" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">
                         + Ajouter une zone
                     </button>
                     <x-input-error :messages="$errors->get('service_areas')" class="mt-2" />
@@ -144,11 +144,11 @@
                     <x-input-label value="Moyens de contact (facultatif)" />
                     <template x-for="(contact, index) in contacts" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-md border-gray-300 text-sm focus:border-brand-500 focus:ring-brand-500">
+                            <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <button type="button" @click="contacts.splice(index, 1)" class="text-red-600 text-sm px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="contacts.push('')" class="mt-2 text-sm text-brand-600 hover:text-brand-800">
+                    <button type="button" @click="contacts.push('')" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">
                         + Ajouter un contact
                     </button>
                     <x-input-error :messages="$errors->get('contact_methods')" class="mt-2" />
@@ -167,7 +167,7 @@
                                     name="opening_hours[{{ $day }}]"
                                     value="{{ old('opening_hours.'.$day, $providerProfile->opening_hours[$day] ?? '') }}"
                                     placeholder="ex: 8h-18h"
-                                    class="flex-1 rounded-md border-gray-300 text-sm focus:border-brand-500 focus:ring-brand-500"
+                                    class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
                             </div>
                         @endforeach
@@ -187,7 +187,7 @@
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                    <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                         {{ __('ui.save') }}
                     </button>
                 </div>

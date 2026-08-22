@@ -11,7 +11,7 @@
 
     <div class="flex-1 flex flex-col p-4">
         <div class="flex items-center justify-between gap-2">
-            <span class="text-xs font-medium text-brand-600">{{ $service->category?->name }}</span>
+            <span class="text-xs font-medium text-indigo-600">{{ $service->category?->name }}</span>
             @if (! $service->is_available)
                 <x-status-badge status="inactive" class="!bg-amber-100 !text-amber-700" />
             @endif

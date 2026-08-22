@@ -55,7 +55,7 @@
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-semibold text-gray-900">Derniers utilisateurs inscrits</h3>
-                    <a href="{{ route('admin.users.index') }}" class="text-sm font-medium text-brand-600 hover:text-brand-800">Voir tout →</a>
+                    <a href="{{ route('admin.users.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Voir tout →</a>
                 </div>
                 <ul class="divide-y divide-gray-100">
                     @foreach ($recentUsers as $user)

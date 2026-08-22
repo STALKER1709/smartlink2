@@ -54,7 +54,7 @@
                         rows="5"
                         required
                         maxlength="2000"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         placeholder="Décrivez votre besoin, le lieu, et toute information utile au prestataire…"
                     >{{ old('message') }}</textarea>
                     <x-input-error :messages="$errors->get('message')" class="mt-2" />
@@ -77,7 +77,7 @@
                     <button type="submit" name="action" value="draft" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                         Enregistrer comme brouillon
                     </button>
-                    <button type="submit" name="action" value="send" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                    <button type="submit" name="action" value="send" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                         Envoyer la demande
                     </button>
                 </div>

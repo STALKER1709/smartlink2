@@ -20,7 +20,7 @@
                             <div class="flex items-center gap-2">
                                 <h1 class="text-xl font-bold text-gray-900">{{ $providerProfile->business_name }}</h1>
                                 @if ($providerProfile->is_verified)
-                                    <span class="text-brand-600" title="Prestataire vérifié">
+                                    <span class="text-indigo-600" title="Prestataire vérifié">
                                         <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M10 1l2.39 1.73 2.95-.1.91 2.8 2.39 1.74-1.13 2.83 1.13 2.83-2.39 1.74-.91 2.8-2.95-.1L10 19l-2.39-1.73-2.95.1-.91-2.8-2.39-1.74 1.13-2.83-1.13-2.83 2.39-1.74.91-2.8 2.95.1L10 1z"/></svg>
                                     </span>
                                 @endif
@@ -148,7 +148,7 @@
                         @can('create', \App\Models\ServiceRequest::class)
                             <a
                                 href="{{ route('requests.create', ['provider_id' => $providerProfile->user_id]) }}"
-                                class="block w-full text-center rounded-md bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+                                class="block w-full text-center rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
                             >
                                 Contacter ce prestataire
                             </a>
@@ -160,7 +160,7 @@
                     @else
                         <a
                             href="{{ route('login') }}"
-                            class="block w-full text-center rounded-md bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+                            class="block w-full text-center rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
                         >
                             Se connecter pour contacter
                         </a>

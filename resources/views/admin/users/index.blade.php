@@ -17,7 +17,7 @@
             </div>
             <div>
                 <x-input-label for="role" value="Rôle" />
-                <select id="role" name="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                <select id="role" name="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     <option value="">Tous</option>
                     <option value="{{ \App\Models\User::ROLE_CLIENT }}" @selected(request('role') === \App\Models\User::ROLE_CLIENT)>Client</option>
                     <option value="{{ \App\Models\User::ROLE_PROVIDER }}" @selected(request('role') === \App\Models\User::ROLE_PROVIDER)>Prestataire</option>
@@ -25,7 +25,7 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
                     Filtrer
                 </button>
             </div>

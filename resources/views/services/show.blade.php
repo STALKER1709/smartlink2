@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <nav class="text-sm text-gray-500 mb-4">
-            <a href="{{ route('services.index') }}" class="hover:text-brand-600">Services</a>
+            <a href="{{ route('services.index') }}" class="hover:text-indigo-600">Services</a>
             <span class="mx-1">/</span>
             <span class="text-gray-700">{{ $service->title }}</span>
         </nav>
@@ -23,7 +23,7 @@
 
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-sm font-medium text-brand-600">{{ $service->category?->name }}</span>
+                            <span class="text-sm font-medium text-indigo-600">{{ $service->category?->name }}</span>
                             <x-status-badge :status="$service->is_available ? 'active' : 'inactive'" />
                         </div>
 
@@ -82,7 +82,7 @@
                         @can('create', \App\Models\ServiceRequest::class)
                             <a
                                 href="{{ route('requests.create', ['service_id' => $service->id]) }}"
-                                class="block w-full text-center rounded-md bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+                                class="block w-full text-center rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
                             >
                                 Faire une demande
                             </a>
@@ -94,7 +94,7 @@
                     @else
                         <a
                             href="{{ route('login') }}"
-                            class="block w-full text-center rounded-md bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+                            class="block w-full text-center rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
                         >
                             Se connecter pour faire une demande
                         </a>

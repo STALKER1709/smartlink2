@@ -51,7 +51,7 @@
 
                         <div class="mt-4 flex flex-wrap items-center gap-3">
                             @if ($isService && $content !== null)
-                                <a href="{{ route('services.show', $content) }}" class="text-sm text-brand-600 hover:text-brand-800">
+                                <a href="{{ route('services.show', $content) }}" class="text-sm text-indigo-600 hover:text-indigo-800">
                                     {{ __('ui.moderation.view_content') }}
                                 </a>
                             @endif

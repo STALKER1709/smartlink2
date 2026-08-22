@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Gérer les catégories</h2>
-            <a href="{{ route('admin.categories.create') }}" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+            <a href="{{ route('admin.categories.create') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
                 Nouvelle catégorie
             </a>
         </div>
@@ -31,7 +31,7 @@
                         <x-status-badge :status="$category->is_active ? 'active' : 'inactive'" />
 
                         <div class="flex items-center gap-3 shrink-0">
-                            <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-brand-600 hover:text-brand-800">
+                            <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
                                 Modifier
                             </a>
                             <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('Supprimer cette catégorie ?');">

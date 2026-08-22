@@ -17,14 +17,14 @@
             </div>
             <div>
                 <x-input-label for="status" value="Statut" />
-                <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     <option value="">Tous</option>
                     <option value="{{ \App\Models\Service::STATUS_ACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_ACTIVE)>Actif</option>
                     <option value="{{ \App\Models\Service::STATUS_INACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_INACTIVE)>Inactif</option>
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
                     Filtrer
                 </button>
             </div>
@@ -47,7 +47,7 @@
                         <x-status-badge :status="$service->status" />
 
                         <div class="flex items-center gap-3 shrink-0">
-                            <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-brand-600 hover:text-brand-800">
+                            <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
                                 Voir
                             </a>
                             <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST" class="inline">

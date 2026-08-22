@@ -50,7 +50,7 @@
     <!-- Toggle Button -->
     <button
         @click="open = ! open"
-        class="flex items-center justify-center h-14 w-14 rounded-full bg-brand-600 text-white shadow-lg hover:bg-brand-700 transition focus:outline-none"
+        class="flex items-center justify-center h-14 w-14 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition focus:outline-none"
         aria-label="{{ __('ui.assistant.title') }}"
     >
         <svg x-show="! open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,9 +69,9 @@
         class="absolute bottom-16 right-0 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col overflow-hidden"
         style="height: 28rem;"
     >
-        <div class="bg-brand-600 text-white px-4 py-3">
+        <div class="bg-indigo-600 text-white px-4 py-3">
             <h3 class="font-semibold">{{ __('ui.assistant.title') }}</h3>
-            <p class="text-xs text-brand-100">{{ __('ui.assistant.subtitle') }}</p>
+            <p class="text-xs text-indigo-100">{{ __('ui.assistant.subtitle') }}</p>
         </div>
 
         <div x-ref="messages" class="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50">
@@ -84,7 +84,7 @@
             <template x-for="(entry, index) in history" :key="index">
                 <div :class="entry.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
                     <div
-                        :class="entry.role === 'user' ? 'bg-brand-600 text-white' : 'bg-white text-gray-800 border border-gray-200'"
+                        :class="entry.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-800 border border-gray-200'"
                         class="rounded-lg px-3 py-2 text-sm max-w-[85%] whitespace-pre-wrap"
                         x-text="entry.content"
                     ></div>
@@ -104,12 +104,12 @@
                 x-model="message"
                 :disabled="sending"
                 placeholder="{{ __('ui.assistant.placeholder') }}"
-                class="flex-1 rounded-md border-gray-300 text-sm focus:border-brand-500 focus:ring-brand-500"
+                class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
             <button
                 type="submit"
                 :disabled="sending || ! message.trim()"
-                class="inline-flex items-center justify-center rounded-md bg-brand-600 px-3 py-2 text-white hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9-7-9-7v6.5L3 12l9 1.5V19z" />

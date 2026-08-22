@@ -28,11 +28,11 @@
             <x-input-label :value="__('Je suis un(e)...')" />
             <div class="flex gap-6 mt-2">
                 <label class="inline-flex items-center">
-                    <input type="radio" name="role" value="client" x-model="role" class="text-brand-600 focus:ring-brand-500">
+                    <input type="radio" name="role" value="client" x-model="role" class="text-indigo-600 focus:ring-indigo-500">
                     <span class="ms-2 text-sm text-gray-700">{{ __('Client') }}</span>
                 </label>
                 <label class="inline-flex items-center">
-                    <input type="radio" name="role" value="provider" x-model="role" class="text-brand-600 focus:ring-brand-500">
+                    <input type="radio" name="role" value="provider" x-model="role" class="text-indigo-600 focus:ring-indigo-500">
                     <span class="ms-2 text-sm text-gray-700">{{ __('Prestataire') }}</span>
                 </label>
             </div>
@@ -70,7 +70,7 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" href="{{ route('login') }}">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
 

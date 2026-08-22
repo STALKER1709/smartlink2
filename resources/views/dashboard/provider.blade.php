@@ -26,10 +26,10 @@
         <div class="mt-8 flex flex-wrap items-center justify-between gap-3">
             <h3 class="font-semibold text-gray-900">Demandes récentes</h3>
             <div class="flex gap-3">
-                <a href="{{ route('provider.services.create') }}" class="text-sm font-medium text-white bg-brand-600 rounded-md px-3 py-1.5 hover:bg-brand-700">
+                <a href="{{ route('provider.services.create') }}" class="text-sm font-medium text-white bg-indigo-600 rounded-md px-3 py-1.5 hover:bg-indigo-700">
                     Publier un service
                 </a>
-                <a href="{{ route('requests.index') }}" class="text-sm font-medium text-brand-600 hover:text-brand-800">Voir tout →</a>
+                <a href="{{ route('requests.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Voir tout →</a>
             </div>
         </div>
 
