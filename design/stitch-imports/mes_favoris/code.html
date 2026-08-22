@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Favoris - SmartLink</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e7e8e6",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#83d7ad",
+                        "tertiary-fixed-dim": "#ffb68e",
+                        "on-tertiary-fixed": "#331200",
+                        "surface": "#f9faf7",
+                        "surface-dim": "#d9dad7",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191c1b",
+                        "inverse-surface": "#2e312f",
+                        "surface-container": "#edeeeb",
+                        "secondary": "#2a694f",
+                        "background": "#f9faf7",
+                        "surface-bright": "#f9faf7",
+                        "on-secondary-fixed": "#002114",
+                        "on-tertiary-container": "#ffd4bf",
+                        "tertiary": "#7b3500",
+                        "outline-variant": "#bec9c0",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#aff1cf",
+                        "outline": "#6f7a72",
+                        "surface-variant": "#e2e3e0",
+                        "primary": "#005538",
+                        "surface-container-highest": "#e2e3e0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#191c1b",
+                        "secondary-fixed-dim": "#93d4b3",
+                        "on-secondary-fixed-variant": "#095138",
+                        "inverse-on-surface": "#f0f1ee",
+                        "on-secondary-container": "#317054",
+                        "on-tertiary-fixed-variant": "#763300",
+                        "surface-tint": "#086c49",
+                        "secondary-container": "#aff1cf",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#a04700",
+                        "on-surface-variant": "#3f4943",
+                        "surface-container-low": "#f3f4f1",
+                        "on-primary-container": "#9aefc3",
+                        "tertiary-fixed": "#ffdbca",
+                        "primary-fixed": "#9ff4c8",
+                        "primary-container": "#0f6f4c",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#83d7ad",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-primary-fixed": "#002113"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max-width": "1200px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["\"Source Sans 3\""],
+                        "label-numeric": ["JetBrains Mono"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-md": ["\"Source Sans 3\""],
+                        "button-text": ["\"Source Sans 3\""]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "label-numeric": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim w-full top-0 sticky border-b border-outline-variant dark:border-outline z-40">
+<div class="flex items-center justify-between px-margin-mobile h-14 w-full max-w-container-max-width mx-auto">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A realistic close-up portrait of a professional Cameroonian user on the SmartLink platform, friendly expression, well-lit natural lighting, minimalist background to highlight the face, representing a user profile avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpG0XkYkG_zlhj6EIx4_XbdTa5S5p3i3HhqDh8uyXM7pCHH6w-7Zff9cAB6hv9KSg_w8RHFphVLlWFN5RCVcdq3euiy2aJLuId-2VACnWI6xCtwRJg4uCQgBgCiz__KDo0e1sx2SWe7LUP4ZDDhmWsRih8mvwUzlp9royyc1neFZXi2oPBjgx9hOe_0P0r-gYXwDxBvvStFZeucCDsWt_9gzVbMwOZg-hvBFfguK4lgOKfy7Va7xBb"/>
+</div>
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed">SmartLink</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:opacity-80 text-on-surface-variant dark:text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Layout Container -->
+<div class="flex-1 flex max-w-container-max-width mx-auto w-full">
+<!-- NavigationDrawer (Desktop) -->
+<aside class="hidden md:flex h-full w-64 fixed left-0 top-14 bg-inverse-surface dark:bg-surface-container-lowest border-r border-outline dark:border-outline-variant flex-col py-6 gap-2 z-30">
+<div class="font-headline-md text-headline-md text-inverse-primary dark:text-primary mb-8 px-4">SmartLink Admin</div>
+<!-- Note: Since this is a user-facing 'Favorites' page, and the nav drawer JSON provided is for 'SmartLink Admin', I am leaving them unselected as this page intent doesn't perfectly match admin roles. If 'Favoris' was in the nav, it would be highlighted. -->
+<a class="text-inverse-on-surface dark:text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 rounded-lg hover:bg-on-surface-variant/10 transition-colors active:bg-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Tableau de bord</span>
+</a>
+<a class="text-inverse-on-surface dark:text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 rounded-lg hover:bg-on-surface-variant/10 transition-colors active:bg-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Utilisateurs</span>
+</a>
+<a class="text-inverse-on-surface dark:text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 rounded-lg hover:bg-on-surface-variant/10 transition-colors active:bg-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span>Prestataires</span>
+</a>
+<a class="text-inverse-on-surface dark:text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 rounded-lg hover:bg-on-surface-variant/10 transition-colors active:bg-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Transactions</span>
+</a>
+<a class="text-inverse-on-surface dark:text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 rounded-lg hover:bg-on-surface-variant/10 transition-colors active:bg-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span>Litiges</span>
+</a>
+<a class="text-inverse-on-surface dark:text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 rounded-lg hover:bg-on-surface-variant/10 transition-colors active:bg-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Paramètres</span>
+</a>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 w-full px-margin-mobile md:px-margin-desktop py-8 pb-24 md:pb-8 md:ml-64">
+<div class="mb-8">
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-2">Favoris</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Vos prestataires de confiance sauvegardés.</p>
+</div>
+<!-- Empty State (Hidden by default, can be toggled via JS if needed, but showing populated state for design demonstration) -->
+<div class="hidden flex-col items-center justify-center py-16 text-center" id="empty-state">
+<span class="material-symbols-outlined text-6xl text-outline-variant mb-4" data-icon="heart_broken">heart_broken</span>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Vous n'avez pas encore de favoris.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto">Explorez les prestataires et appuyez sur le cœur pour les ajouter à cette liste pour un accès rapide.</p>
+<button class="mt-6 bg-primary text-on-primary font-button-text text-button-text px-8 py-3 rounded-full hover:bg-surface-tint transition-colors active:scale-95 duration-100 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+                    Trouver un prestataire
+                </button>
+</div>
+<!-- Populated State: Bento-ish Grid for Providers -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="populated-state">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-4 relative">
+<button aria-label="Retirer des favoris" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:bg-surface-variant transition-colors z-10">
+<span class="material-symbols-outlined filled text-error" data-icon="favorite">favorite</span>
+</button>
+<div class="flex gap-4 items-start">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional portrait of a male plumber in Douala, wearing clean work clothes, friendly and trustworthy expression, well-lit outdoor setting, high quality photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC26AWWaI3uK8zSb7TL9cJhKHjHvtiKZGGGykBhDyiWRCxKJiYt_U-8Q-00no5GsZDg2vtEW56yeDq_Avh5gtvaB2UL5L5BzA7tjRSFXNd_3S1mZXwgBbr8c3KZz45-9GXHnlt2p2dx9cPKLNpmkL7IrVPpYuGaJvyHK-N_poIlH831raThYt3fp2f_zBw3TT4RhX1Fo_O2n7ltNH_4QFV0toNyEd1bwi-dhrEAb-B-I5TLjlNhUghJ"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1">Jean-Paul T.</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Plombier Expert</p>
+<div class="flex items-center gap-1 mt-1 text-primary">
+<span class="material-symbols-outlined text-lg filled" data-icon="star">star</span>
+<span class="font-label-numeric text-label-numeric font-bold">4.8</span>
+<span class="font-body-md text-body-md text-on-surface-variant ml-1">(124 avis)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant mt-2 border-t border-outline-variant pt-3">
+<span class="material-symbols-outlined text-lg" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">Akwa, Douala</span>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-numeric text-label-numeric">Dispo. immédiate</span>
+<button class="font-button-text text-button-text text-primary hover:text-surface-tint px-4 py-2 rounded-full border border-primary hover:bg-surface-container-low transition-colors">Contacter</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-4 relative">
+<button aria-label="Retirer des favoris" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:bg-surface-variant transition-colors z-10">
+<span class="material-symbols-outlined filled text-error" data-icon="favorite">favorite</span>
+</button>
+<div class="flex gap-4 items-start">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional portrait of a female electrician in Yaoundé, wearing safety gear and a hard hat, confident smile, holding a tool, clear bright lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHBOSsUAFtFuZWT9k3-ok2JzpXH636Tb4fDCdVqWrBYuVk5ETqs_Ep-4fT92ExlWoTj-jWDn3vY2gvlYPolzt35RztDTP8xr3pAMjQuATTiUhF_4fMoONSenwicP9KZaZ1TtzkBsiTqoQeoyP8OFJTeou7E9bP1Z-gNi1E9IXMZ69G7CkcFnl8jHEBHeuI__pvSp6t0oXcPgMBViVoVWPgpPlDCNpRD76sdyMZtO0YoTV_LlORhW83"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1">Marie K.</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Électricienne</p>
+<div class="flex items-center gap-1 mt-1 text-primary">
+<span class="material-symbols-outlined text-lg filled" data-icon="star">star</span>
+<span class="font-label-numeric text-label-numeric font-bold">4.9</span>
+<span class="font-body-md text-body-md text-on-surface-variant ml-1">(89 avis)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant mt-2 border-t border-outline-variant pt-3">
+<span class="material-symbols-outlined text-lg" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">Bastos, Yaoundé</span>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2">
+<span class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full font-label-numeric text-label-numeric">Sur RDV</span>
+<button class="font-button-text text-button-text text-primary hover:text-surface-tint px-4 py-2 rounded-full border border-primary hover:bg-surface-container-low transition-colors">Contacter</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-4 relative">
+<button aria-label="Retirer des favoris" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:bg-surface-variant transition-colors z-10">
+<span class="material-symbols-outlined filled text-error" data-icon="favorite">favorite</span>
+</button>
+<div class="flex gap-4 items-start">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Portrait of a professional carpenter working in his workshop in Bepanda, Douala. Wood dust in the air, warm lighting, focused expression, authentic craftsman vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj1SDfX_JIO9l3Z_pYKXk4pGIU5AzvoM1Mtm-Eh_zx3um8RCaG_t91ffsIjDpau5BhPzjycqom7V9uTmiNtRnTrZBKk_S47ezBJOmRvuRgxi99Wp2RQX9zBB9Skr_5jOBSah4JK0o9Ama1gx-oTRPM9z6rAHqtj6DrybtzRdb8bhhSxzEfqy7p1VBm8e6_YRdqoNjbJH005ygeNg1DCqfWXPJcRgiYz73DAwZCgcgUqycscxsR9xk7"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1">Samuel N.</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Menuisier</p>
+<div class="flex items-center gap-1 mt-1 text-primary">
+<span class="material-symbols-outlined text-lg filled" data-icon="star">star</span>
+<span class="font-label-numeric text-label-numeric font-bold">4.6</span>
+<span class="font-body-md text-body-md text-on-surface-variant ml-1">(45 avis)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant mt-2 border-t border-outline-variant pt-3">
+<span class="material-symbols-outlined text-lg" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">Bepanda, Douala</span>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-numeric text-label-numeric">Dispo. immédiate</span>
+<button class="font-button-text text-button-text text-primary hover:text-surface-tint px-4 py-2 rounded-full border border-primary hover:bg-surface-container-low transition-colors">Contacter</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface dark:bg-surface-dim fixed bottom-0 w-full z-50 border-t border-outline-variant dark:border-outline pb-safe flex justify-around items-center h-16 w-full">
+<!-- Assuming generic app navigation since JSON provided was for admin drawer -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-numeric text-label-numeric">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-numeric text-label-numeric">Recherche</span>
+</a>
+<!-- Assuming 'Demandes' could loosely map to active bookings, but 'Favoris' isn't explicitly in the bottom nav JSON provided. Highlighting none specifically based strictly on the JSON, but visually indicating inactivity for all to maintain rule compliance. -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-numeric text-label-numeric">Demandes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-numeric text-label-numeric">Profil</span>
+</a>
+</nav>
+</body></html>

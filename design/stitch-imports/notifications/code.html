@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notifications - SmartLink</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#aff1cf",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1b",
+                        "on-tertiary-fixed-variant": "#763300",
+                        "on-secondary-fixed": "#002114",
+                        "primary-fixed": "#9ff4c8",
+                        "surface-container-high": "#e7e8e6",
+                        "surface-bright": "#f9faf7",
+                        "inverse-on-surface": "#f0f1ee",
+                        "on-primary-container": "#9aefc3",
+                        "outline": "#6f7a72",
+                        "surface": "#f9faf7",
+                        "inverse-primary": "#83d7ad",
+                        "tertiary": "#7b3500",
+                        "primary-container": "#0f6f4c",
+                        "secondary-fixed-dim": "#93d4b3",
+                        "on-tertiary-container": "#ffd4bf",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#d9dad7",
+                        "surface-variant": "#e2e3e0",
+                        "background": "#f9faf7",
+                        "on-tertiary-fixed": "#331200",
+                        "surface-container-highest": "#e2e3e0",
+                        "surface-tint": "#086c49",
+                        "surface-container": "#edeeeb",
+                        "on-secondary-fixed-variant": "#095138",
+                        "on-background": "#191c1b",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e312f",
+                        "outline-variant": "#bec9c0",
+                        "on-primary-fixed": "#002113",
+                        "primary-fixed-dim": "#83d7ad",
+                        "secondary-fixed": "#aff1cf",
+                        "surface-container-low": "#f3f4f1",
+                        "on-primary-fixed-variant": "#005236",
+                        "tertiary-container": "#a04700",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffdbca",
+                        "on-secondary-container": "#317054",
+                        "primary": "#005538",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb68e",
+                        "on-surface-variant": "#3f4943",
+                        "secondary": "#2a694f",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max-width": "1200px"
+                    },
+                    "fontFamily": {
+                        "label-numeric": ["JetBrains Mono"],
+                        "body-lg": ["\"Source Sans 3\""],
+                        "body-md": ["\"Source Sans 3\""],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "button-text": ["\"Source Sans 3\""],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-numeric": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col pb-14 md:pb-0">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface border-b border-outline-variant flex justify-between items-center px-margin-mobile py-unit w-full z-40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-surface-container-highest">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A professional portrait of an African woman in her late 20s, wearing casual smart attire. The lighting is soft and natural, emphasizing a friendly and approachable demeanor. Shot with a shallow depth of field against a blurred urban background, reflecting a modern, pragmatic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPmhgnPu9lfTVHkG_rKvXMVKsNUM24cFWl2-ck5Em2POJqXbUiZz6mWqWXIq_zcWG_N6_eozZNRFtifOCgk5qrQ1lGJ-VO-pVkUby4rrzGqWiR_H_ItYVgcwf2UVFCWjT_EQBaSVRcW_POh1FmRGnyecSKVTnW1X91g30zXxnO-cskBzpu_PS-vcPXqfVRsLpYRX-VK0M7z6BtHpNLfDI-iZakZpJocHT-cIN4fd7LSrVcW8M4CFrN"/>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">SmartLink</h1>
+</div>
+<button aria-label="Notifications" class="w-10 h-10 flex items-center justify-center rounded-full text-primary hover:bg-surface-container-low active:opacity-80 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications" data-weight="fill">notifications</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-6 flex flex-col gap-6">
+<!-- Header Section -->
+<div class="flex justify-between items-end pb-2 border-b border-outline-variant">
+<h2 class="font-headline-xl text-headline-xl text-on-surface">Notifications</h2>
+<button class="font-button-text text-button-text text-primary hover:text-primary-container active:opacity-80 transition-opacity bg-transparent border-none p-0 cursor-pointer mb-2">
+                Tout marquer comme lu
+            </button>
+</div>
+<!-- Notifications List -->
+<div class="flex flex-col gap-3">
+<!-- Unread Notification 1 -->
+<div class="group relative flex items-start gap-4 p-4 rounded-lg bg-secondary-container/20 border border-outline-variant hover:bg-secondary-container/30 transition-colors cursor-pointer">
+<!-- Unread Indicator -->
+<div class="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary"></div>
+<!-- Icon -->
+<div class="shrink-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<!-- Content -->
+<div class="flex-grow">
+<p class="font-body-md text-body-md text-on-surface mb-1">
+                        Votre demande a été acceptée par <span class="font-bold">Jean-Paul Plomberie</span>.
+                    </p>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant block">Il y a 10 min</span>
+</div>
+</div>
+<!-- Unread Notification 2 -->
+<div class="group relative flex items-start gap-4 p-4 rounded-lg bg-secondary-container/20 border border-outline-variant hover:bg-secondary-container/30 transition-colors cursor-pointer">
+<div class="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary"></div>
+<div class="shrink-0 w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+</div>
+<div class="flex-grow">
+<p class="font-body-md text-body-md text-on-surface mb-1">
+                        Vous avez reçu un nouveau message de <span class="font-bold">Service Client</span>.
+                    </p>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant block">Il y a 1 heure</span>
+</div>
+</div>
+<!-- Read Notification 1 -->
+<div class="group relative flex items-start gap-4 p-4 rounded-lg bg-surface border border-outline-variant hover:bg-surface-container-low transition-colors cursor-pointer">
+<!-- No unread indicator -->
+<div class="shrink-0 w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="star">star</span>
+</div>
+<div class="flex-grow">
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">
+<span class="font-bold">Aïcha Mballa</span> a laissé un avis 5 étoiles pour votre prestation de nettoyage.
+                    </p>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant block">Hier</span>
+</div>
+</div>
+<!-- Read Notification 2 -->
+<div class="group relative flex items-start gap-4 p-4 rounded-lg bg-surface border border-outline-variant hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="shrink-0 w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+</div>
+<div class="flex-grow">
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">
+                        Rappel : Rendez-vous demain à 14:00 pour "Réparation climatisation".
+                    </p>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant block">23 Mai</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface border-t border-outline-variant flex justify-around items-center h-14 w-full px-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-numeric text-label-numeric">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-numeric text-label-numeric">Recherche</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-numeric text-label-numeric">Demandes</span>
+</a>
+<!-- 'Profil' is not active here as this is a Notifications view, which might fall under a different section or be a standalone overlay. For navigation integrity, we leave them all inactive if no direct match. -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-numeric text-label-numeric">Profil</span>
+</a>
+</nav>
+</body></html>
