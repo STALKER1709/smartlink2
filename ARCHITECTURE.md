@@ -44,26 +44,53 @@ Les profils (`ClientProfile`/`ProviderProfile`) sont créés systématiquement �
 - **`AuditLogService`** — enregistre qui a fait quoi sur quelle ressource (`user_id`, `action`, `auditable_type/id`, `metadata`, `ip_address`), utilisée par les actions d'administration et `RequestService`.
 - **`ChatbotService`** — délègue à une implémentation de `App\Contracts\ChatbotProvider`.
 
-### Abstraction du chatbot
+### La couche IA
 
 Le chatbot est défini par une interface unique :
 
 ```php
 interface ChatbotProvider
 {
-    public function respond(string $message, array $history = []): string;
+    public function respond(string $message, array $history = [], ?User $user = null): string;
 }
 ```
 
-L'implémentation par défaut, `RuleBasedChatbotProvider`, répond par correspondance de mots-clés (sans dépendance externe ni coût d'API). Elle reste en place en permanence : c'est le mode vers lequel la plateforme rabat dès qu'un garde-fou de coût se déclenche (visiteur anonyme, quota quotidien atteint, plafond mensuel dépassé). Le binding se fait dans `AppServiceProvider` :
+Deux implémentations coexistent en permanence. `RuleBasedChatbotProvider` répond par correspondance de mots-clés, sans dépendance externe ni coût. `ClaudeChatbotProvider` appelle l'API Claude via le SDK officiel `anthropic-ai/sdk`. Le pilote (`AI_DRIVER`) choisit laquelle le conteneur construit, mais **le mode par règles n'est jamais retiré** : `ChatbotService` y rabat à chaque refus et à chaque échec.
 
-```php
-$this->app->bind(ChatbotProvider::class, RuleBasedChatbotProvider::class);
+```
+message
+  → ChatbotService
+      → AiGate : ce message a-t-il le droit de partir vers l'IA ?
+          ↳ non  → RuleBasedChatbotProvider
+          ↳ oui  → ClaudeChatbotProvider
+                     ↳ exception → RuleBasedChatbotProvider
 ```
 
-Pour brancher un vrai service d'IA, il suffit d'écrire une nouvelle classe implémentant `ChatbotProvider` et de changer ce binding — aucun autre code de l'application n'a besoin d'être modifié. La configuration vit dans `config/ai.php` : pilote, clé d'API, modèle par tâche, tarifs servant au calcul du coût, et garde-fous (authentification requise, quota quotidien par compte, plafond mensuel en dollars).
+L'assistant est **informatif seul** : il ne consulte aucune donnée de compte et ne peut déclencher aucune action. Cela tient à deux choses — le prompt le lui interdit explicitement, et rien dans le code ne lui donne accès à autre chose que le catalogue public.
 
-Quel que soit le driver, l'assistant doit décrire fidèlement le modèle économique : SmartLink ne prélève rien sur les prestations, et seuls les prestataires paient un abonnement. C'est vérifié par des tests dédiés (`ChatbotTest`, `RuleBasedChatbotProviderTest`).
+#### Ce que l'assistant sait
+
+`SmartLinkContext` construit le prompt système à partir des données réelles : catégories actives, villes où des prestataires sont visibles, paliers et prix lus en base, cycle de vie d'une demande, pages de l'application. Il énonce surtout le modèle économique — c'est le point sur lequel l'ancien chatbot se trompait, et un test dédié vérifie que le contexte ne peut pas retomber dans l'erreur.
+
+Le résultat est mis en cache une heure et **stable d'un appel à l'autre**, ce qui permet la mise en cache du prompt côté API (`cacheControl`) : seuls les messages varient, le contexte est facturé une fois puis relu à faible coût. Modifier un palier ou une catégorie invalide le cache immédiatement, via les événements de modèle.
+
+#### Les garde-fous de coût
+
+`AiGate` tranche appel par appel, dans cet ordre :
+
+1. **Pilote** — `AI_DRIVER` différent de `claude` : rien ne part.
+2. **Clé** — clé d'API absente : rien ne part, sans erreur pour l'utilisateur.
+3. **Visiteur anonyme** — `AI_REQUIRE_AUTH` renvoie les visiteurs au mode par règles ; la dépense devient un motif d'inscription.
+4. **Plafond mensuel** — au-delà de `AI_MONTHLY_BUDGET_USD`, toute la plateforme bascule en mode par règles, avec alerte dans les journaux.
+5. **Quota quotidien** — au-delà de `AI_DAILY_MESSAGES` messages, ce compte-là seulement bascule.
+
+`AiUsageRecorder` enregistre chaque appel dans `ai_usages` — fonction, modèle, jetons, coût calculé d'après la grille tarifaire de `config/ai.php`. C'est cette table qui alimente les deux derniers garde-fous.
+
+Un modèle par tâche : le plus capable pour ce qu'un humain lit (conversation, rédaction), le plus économique pour l'extraction et le classement en volume (recherche, modération).
+
+#### L'historique vient du navigateur
+
+`ConversationHistory` remet en état l'historique envoyé par le client avant de le transmettre : rôles inconnus écartés, contenus vides ou non textuels écartés, tours consécutifs du même rôle dédoublonnés, conversation tronquée aux derniers tours et forcée à commencer par un tour utilisateur. Rien de ce qui vient du navigateur n'est transmis tel quel.
 
 ## Autorisation : middleware + policies
 

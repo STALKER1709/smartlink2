@@ -3,6 +3,7 @@
 namespace App\Services\Chatbot;
 
 use App\Contracts\ChatbotProvider;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 /**
@@ -59,7 +60,7 @@ class RuleBasedChatbotProvider implements ChatbotProvider
         ],
     ];
 
-    public function respond(string $message, array $history = []): string
+    public function respond(string $message, array $history = [], ?User $user = null): string
     {
         $normalized = Str::lower(Str::ascii($message));
 

@@ -27,10 +27,10 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    this.history.push({ role: 'assistant', content: data.reply ?? 'Désolé, une erreur est survenue.' });
+                    this.history.push({ role: 'assistant', content: data.reply ?? '{{ __('ui.assistant.error') }}' });
                 })
                 .catch(() => {
-                    this.history.push({ role: 'assistant', content: 'Désolé, une erreur est survenue. Veuillez réessayer.' });
+                    this.history.push({ role: 'assistant', content: '{{ __('ui.assistant.error') }}' });
                 })
                 .finally(() => {
                     this.sending = false;
@@ -51,7 +51,7 @@
     <button
         @click="open = ! open"
         class="flex items-center justify-center h-14 w-14 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition focus:outline-none"
-        aria-label="Assistant SmartLink"
+        aria-label="{{ __('ui.assistant.title') }}"
     >
         <svg x-show="! open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.97-4.03 9-9 9-1.6 0-3.1-.41-4.4-1.13L3 21l1.18-3.54A8.96 8.96 0 013 12c0-4.97 4.03-9 9-9s9 4.03 9 9z" />
@@ -70,14 +70,14 @@
         style="height: 28rem;"
     >
         <div class="bg-indigo-600 text-white px-4 py-3">
-            <h3 class="font-semibold">Assistant SmartLink</h3>
-            <p class="text-xs text-indigo-100">Posez vos questions, je suis là pour vous aider</p>
+            <h3 class="font-semibold">{{ __('ui.assistant.title') }}</h3>
+            <p class="text-xs text-indigo-100">{{ __('ui.assistant.subtitle') }}</p>
         </div>
 
         <div x-ref="messages" class="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50">
             <template x-if="history.length === 0">
                 <p class="text-sm text-gray-400 text-center mt-4">
-                    Bonjour ! Comment puis-je vous aider aujourd'hui ?
+                    {{ __('ui.assistant.greeting') }}
                 </p>
             </template>
 
@@ -93,7 +93,7 @@
 
             <div x-show="sending" x-cloak class="flex justify-start">
                 <div class="bg-white text-gray-400 border border-gray-200 rounded-lg px-3 py-2 text-sm">
-                    En train d'écrire…
+                    {{ __('ui.assistant.typing') }}
                 </div>
             </div>
         </div>
@@ -103,7 +103,7 @@
                 type="text"
                 x-model="message"
                 :disabled="sending"
-                placeholder="Écrivez votre message…"
+                placeholder="{{ __('ui.assistant.placeholder') }}"
                 class="flex-1 rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
             <button

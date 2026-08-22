@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Ai\SmartLinkContext;
 use Database\Factories\ServiceCategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,14 @@ class ServiceCategory extends Model
 {
     /** @use HasFactory<ServiceCategoryFactory> */
     use HasFactory, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        // Le contexte de l'assistant énonce le catalogue des catégories :
+        // il doit être reconstruit dès qu'il change.
+        static::saved(fn () => app(SmartLinkContext::class)->forget());
+        static::deleted(fn () => app(SmartLinkContext::class)->forget());
+    }
 
     protected function casts(): array
     {

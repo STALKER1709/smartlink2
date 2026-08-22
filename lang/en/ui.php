@@ -102,6 +102,14 @@ return [
         'cycle_note' => 'Your subscription covers :days days from the payment.',
         'extend_note' => 'This payment extends your subscription by :days days beyond the current due date.',
     ],
+    'assistant' => [
+        'title' => 'SmartLink Assistant',
+        'subtitle' => 'Ask me anything, I am here to help',
+        'greeting' => 'Hello! How can I help you today?',
+        'typing' => 'Typing…',
+        'placeholder' => 'Write your message…',
+        'error' => 'Sorry, something went wrong. Please try again.',
+    ],
     'phone_verification' => [
         'title' => 'Verify your number',
         'description' => 'A 6-digit code has been sent to :phone. Enter it below to confirm your number.',

@@ -102,6 +102,14 @@ return [
         'cycle_note' => 'Votre abonnement couvre :days jours à compter du paiement.',
         'extend_note' => 'Ce paiement prolonge votre abonnement de :days jours au-delà de l\'échéance actuelle.',
     ],
+    'assistant' => [
+        'title' => 'Assistant SmartLink',
+        'subtitle' => 'Posez vos questions, je suis là pour vous aider',
+        'greeting' => 'Bonjour ! Comment puis-je vous aider aujourd\'hui ?',
+        'typing' => 'En train d\'écrire…',
+        'placeholder' => 'Écrivez votre message…',
+        'error' => 'Désolé, une erreur est survenue. Veuillez réessayer.',
+    ],
     'phone_verification' => [
         'title' => 'Vérifiez votre numéro',
         'description' => 'Un code à 6 chiffres a été envoyé au :phone. Entrez-le ci-dessous pour confirmer votre numéro.',

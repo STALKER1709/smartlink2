@@ -15,6 +15,7 @@ class ChatbotController extends Controller
         $reply = $this->chatbot->ask(
             $request->string('message')->toString(),
             $request->input('history', []),
+            $request->user(),
         );
 
         return response()->json(['reply' => $reply]);

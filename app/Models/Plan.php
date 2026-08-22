@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Ai\SmartLinkContext;
 use Database\Factories\PlanFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,14 @@ class Plan extends Model
     public const CODE_ESSENTIAL = 'essential';
 
     public const CODE_PRO = 'pro';
+
+    protected static function booted(): void
+    {
+        // Le contexte de l'assistant énonce les paliers et les catégories :
+        // il doit être reconstruit dès que l'un d'eux change.
+        static::saved(fn () => app(SmartLinkContext::class)->forget());
+        static::deleted(fn () => app(SmartLinkContext::class)->forget());
+    }
 
     protected function casts(): array
     {

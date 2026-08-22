@@ -69,7 +69,11 @@ Chaque action de modération est enregistrée dans le journal d'audit (`AuditLog
 
 L'assistant répond aux questions sur la prise en main du site, la recherche d'un prestataire, l'envoi et le suivi d'une demande, la création de compte et les paliers d'abonnement. Interrogé sur le prix ou le paiement, il énonce le modèle réel : **SmartLink ne prélève rien sur les prestations**, le règlement se fait directement entre client et prestataire, et seuls les prestataires paient un abonnement mensuel à la plateforme.
 
-Deux modes coexistent. Le mode par règles répond par correspondance de mots-clés, sans appel externe ni coût. Le mode IA, quand il est activé, s'appuie sur le catalogue réel. La plateforme rabat automatiquement sur le mode par règles pour les visiteurs non connectés, au-delà du quota quotidien d'un compte, ou lorsque le plafond de dépense mensuel est atteint.
+Il connaît le catalogue réel — les catégories publiées, les villes où des prestataires sont effectivement visibles, les paliers et leurs prix — et répond dans la langue de la personne.
+
+**Ce qu'il ne fait pas.** Il n'a accès à aucune donnée personnelle : ni votre compte, ni vos demandes, ni vos messages, ni vos paiements. À « où en est ma demande ? », il vous renvoie vers la page concernée plutôt que d'inventer une réponse. Il ne peut pas non plus agir à votre place : ni créer une demande, ni envoyer un message, ni modifier un abonnement.
+
+**Deux modes.** Le mode par règles répond par mots-clés, sans appel externe ni coût. Le mode IA s'appuie sur le catalogue réel. La plateforme rabat automatiquement sur le mode par règles pour les visiteurs non connectés, au-delà du quota quotidien d'un compte, lorsque le plafond de dépense mensuel est atteint, ou si l'IA est momentanément injoignable. L'assistant répond donc toujours — il répond simplement moins finement.
 
 ## L'argent sur la plateforme
 
