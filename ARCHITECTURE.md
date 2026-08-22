@@ -100,6 +100,21 @@ Trois tables portent le modèle :
 - **`subscriptions`** — l'abonnement d'un prestataire à un palier, avec son statut (`trialing`, `active`, `expired`, `cancelled`) et sa date d'échéance. L'essai gratuit n'est pas un palier distinct : c'est un abonnement au palier `pro` en statut `trialing`, ce qui évite de dupliquer la logique de droits.
 - **`payments`** — les règlements Mobile Money d'un abonnement. La table ne référence plus de demande de service : elle appartient à une `Subscription`.
 
+### Visibilité : un booléen dénormalisé
+
+Un prestataire n'apparaît dans les recherches que si son abonnement est en cours **et** que son plafond mensuel de demandes n'est pas atteint. Évaluer cette condition à chaque recherche obligerait à corréler l'abonnement, son palier et un décompte mensuel : elle est donc dénormalisée en deux colonnes sur `provider_profiles`, `is_listed` (visible) et `is_promoted` (mis en avant par le palier Pro), recalculées par `QuotaService::refreshListing()`.
+
+Ce recalcul est déclenché à l'ouverture de l'essai, au renouvellement, à chaque demande nouvellement lue, et une fois par jour par la commande `subscriptions:refresh` — c'est ce passage quotidien qui fait réapparaître, au changement de mois, les prestataires qui étaient au plafond. Le compteur mensuel lui-même (`requests_read_count` / `requests_read_period`) se remet à zéro tout seul : il ne compte que si la période enregistrée est le mois courant.
+
+Les recherches ne filtrent plus que sur ce booléen indexé (`Service::scopeFromListedProvider()`, `ProviderProfile::scopeListed()`). Les fiches publiques d'un prestataire masqué répondent 404 pour les visiteurs et les clients — sans quoi un lien direct laisserait envoyer une demande qui ne serait jamais lue — mais restent accessibles au prestataire lui-même et aux administrateurs.
+
+### Ce que le palier autorise
+
+`QuotaService` est le point d'entrée unique pour « qu'ai-je le droit de faire en ce moment » : publier un service de plus, lire une nouvelle demande, combien il en reste. Deux règles encadrent l'expiration :
+
+- **Publier** exige un abonnement en cours (`ServicePolicy::create`). Modifier ou supprimer un service déjà publié reste toujours permis.
+- **Lire une demande** ne consomme un point de quota qu'à la première ouverture, quand la demande passe de « envoyée » à « vue ». Une demande déjà ouverte reste lisible indéfiniment, quel que soit l'état de l'abonnement : ce qui est engagé le reste.
+
 `Subscription::isUsable()` est le point de vérité unique : un abonnement ouvre des droits s'il est en essai ou actif **et** que son échéance est devant. Dès qu'il ne l'est plus, `User::activeSubscription()` renvoie `null` et le prestataire disparaît des recherches, sans que son compte ni ses conversations soient touchés.
 
 ### Renouvellement : manuel par nature

@@ -13,6 +13,7 @@ return [
         'register' => "S'inscrire",
         'logout' => 'Se déconnecter',
         'notifications' => 'Notifications',
+        'subscription' => 'Mon abonnement',
         'my_provider_profile' => 'Mon profil prestataire',
         'my_client_profile' => 'Mon profil client',
         'account_settings' => 'Paramètres du compte',
@@ -86,6 +87,10 @@ return [
         'quota_reached' => 'Vous avez atteint votre plafond de :count demandes ce mois-ci.',
         'quota_hidden' => 'Vos services sont retirés des recherches jusqu\'au mois prochain, pour ne pas laisser de client sans réponse.',
         'quota_upgrade' => 'Passez au palier Pro pour lire toutes vos demandes et rester visible.',
+        'services_used' => 'Services publiés',
+        'requests_used' => 'Demandes lues ce mois-ci',
+        'see_plans' => 'Voir les paliers',
+        'back_to_requests' => 'Retour à mes demandes',
     ],
     'phone_verification' => [
         'title' => 'Vérifiez votre numéro',

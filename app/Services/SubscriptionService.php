@@ -42,6 +42,22 @@ class SubscriptionService
     }
 
     /**
+     * Bascule en « expiré » les abonnements dont l'échéance est passée.
+     * Sans cela, un abonnement échu resterait affiché comme actif : c'est
+     * `isUsable()` qui fait autorité, ce passage ne fait qu'aligner le statut.
+     */
+    public function expireLapsed(): int
+    {
+        return Subscription::query()
+            ->whereIn('status', [Subscription::STATUS_TRIALING, Subscription::STATUS_ACTIVE])
+            ->where('ends_at', '<=', now())
+            ->update([
+                'status' => Subscription::STATUS_EXPIRED,
+                'updated_at' => now(),
+            ]);
+    }
+
+    /**
      * Un paiement abouti prolonge l'abonnement d'un cycle. Si l'échéance est
      * encore devant, le cycle s'ajoute à la fin ; sinon il repart de maintenant.
      */

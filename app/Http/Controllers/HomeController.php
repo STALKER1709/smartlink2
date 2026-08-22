@@ -15,6 +15,7 @@ class HomeController extends Controller
         $recentServices = Service::query()
             ->active()
             ->available()
+            ->fromListedProvider()
             ->with(['provider.providerProfile', 'category', 'images'])
             ->latest()
             ->take(8)

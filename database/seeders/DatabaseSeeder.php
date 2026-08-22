@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             PlanSeeder::class,
             ServiceCategorySeeder::class,
             UserSeeder::class,
+            SubscriptionSeeder::class,
             ServiceSeeder::class,
             RequestSeeder::class,
         ]);

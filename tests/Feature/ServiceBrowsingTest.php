@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\ProviderProfile;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -42,7 +41,6 @@ class ServiceBrowsingTest extends TestCase
     public function test_guest_can_view_an_active_service(): void
     {
         $service = Service::factory()->create();
-        ProviderProfile::factory()->create(['user_id' => $service->provider_id]);
 
         $response = $this->get(route('services.show', $service));
 
@@ -54,7 +52,6 @@ class ServiceBrowsingTest extends TestCase
     {
         $category = ServiceCategory::factory()->create();
         $service = Service::factory()->create(['category_id' => $category->id]);
-        ProviderProfile::factory()->create(['user_id' => $service->provider_id]);
         $related = Service::factory()->create(['category_id' => $category->id]);
         Service::factory()->create();
 

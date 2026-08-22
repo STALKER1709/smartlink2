@@ -18,6 +18,7 @@ use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ProfileController as ProviderProfileController;
 use App\Http\Controllers\Provider\ServiceController as ProviderServiceController;
+use App\Http\Controllers\Provider\SubscriptionController as ProviderSubscriptionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReviewController;
@@ -98,6 +99,8 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
 
     Route::get('/profile', [ProviderProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProviderProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/subscription', [ProviderSubscriptionController::class, 'show'])->name('subscription.show');
 });
 
 /*

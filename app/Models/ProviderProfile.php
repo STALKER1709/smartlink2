@@ -27,6 +27,9 @@ class ProviderProfile extends Model
             'opening_hours' => 'array',
             'contact_methods' => 'array',
             'is_verified' => 'boolean',
+            'is_listed' => 'boolean',
+            'is_promoted' => 'boolean',
+            'requests_read_count' => 'integer',
             'id_card_verified' => 'boolean',
             'rating_avg' => 'decimal:2',
             'latitude' => 'decimal:7',
@@ -65,6 +68,15 @@ class ProviderProfile extends Model
     public function scopeVerified(Builder $query): Builder
     {
         return $query->where('is_verified', true);
+    }
+
+    /**
+     * Prestataires visibles dans les recherches : abonnement en cours et
+     * plafond mensuel de demandes non atteint.
+     */
+    public function scopeListed(Builder $query): Builder
+    {
+        return $query->where('is_listed', true);
     }
 
     public function scopeInCity(Builder $query, string $city): Builder

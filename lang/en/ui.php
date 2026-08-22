@@ -13,6 +13,7 @@ return [
         'register' => 'Register',
         'logout' => 'Log out',
         'notifications' => 'Notifications',
+        'subscription' => 'My subscription',
         'my_provider_profile' => 'My provider profile',
         'my_client_profile' => 'My client profile',
         'account_settings' => 'Account settings',
@@ -86,6 +87,10 @@ return [
         'quota_reached' => 'You have reached your cap of :count requests this month.',
         'quota_hidden' => 'Your services are hidden from search until next month, so no client is left waiting.',
         'quota_upgrade' => 'Move up to Pro to read every request and stay visible.',
+        'services_used' => 'Published services',
+        'requests_used' => 'Requests read this month',
+        'see_plans' => 'See the plans',
+        'back_to_requests' => 'Back to my requests',
     ],
     'phone_verification' => [
         'title' => 'Verify your number',

@@ -27,6 +27,8 @@
                 </header>
             @endisset
 
+            @include('partials.subscription-banner')
+
             @include('partials.flash-messages')
 
             <!-- Page Content -->

@@ -30,6 +30,9 @@
                             <x-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
                                 {{ __('Mes services') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
+                                {{ __('ui.nav.subscription') }}
+                            </x-nav-link>
                         @endif
                         <x-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
                             {{ __('Messages') }}
@@ -146,6 +149,9 @@
                 @if (Auth::user()->isProvider())
                     <x-responsive-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
                         {{ __('Mes services') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
+                        {{ __('ui.nav.subscription') }}
                     </x-responsive-nav-link>
                 @endif
                 <x-responsive-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">

@@ -30,11 +30,14 @@ class ServiceController extends Controller
     {
         $this->authorize('view', $service);
 
+        $this->abortIfProviderIsHidden($service->provider_id);
+
         $service->load(['provider.providerProfile', 'category', 'images']);
 
         $relatedServices = Service::query()
             ->active()
             ->available()
+            ->fromListedProvider()
             ->where('category_id', $service->category_id)
             ->whereKeyNot($service->id)
             ->with(['provider.providerProfile', 'images'])

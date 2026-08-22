@@ -68,6 +68,15 @@ class Service extends Model
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
+    /**
+     * N'expose que les services dont le prestataire est visible : abonnement
+     * en cours et plafond mensuel de demandes non atteint.
+     */
+    public function scopeFromListedProvider(Builder $query): Builder
+    {
+        return $query->whereHas('provider.providerProfile', fn (Builder $q) => $q->listed());
+    }
+
     public function scopeAvailable(Builder $query): Builder
     {
         return $query->where('is_available', true);
