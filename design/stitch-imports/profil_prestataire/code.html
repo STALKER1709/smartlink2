@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SmartLink - Profil Prestataire</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Source+Sans+3:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#9ff4c8",
+                        "surface-container-high": "#e7e8e6",
+                        "surface": "#f9faf7",
+                        "surface-tint": "#086c49",
+                        "tertiary-fixed": "#ffdbca",
+                        "on-primary-container": "#9aefc3",
+                        "on-secondary-fixed-variant": "#095138",
+                        "primary": "#005538",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffd4bf",
+                        "surface-container-highest": "#e2e3e0",
+                        "on-surface-variant": "#3f4943",
+                        "on-secondary-fixed": "#002114",
+                        "surface-container": "#edeeeb",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f9faf7",
+                        "secondary-container": "#aff1cf",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-tertiary-fixed-variant": "#763300",
+                        "primary-container": "#0f6f4c",
+                        "inverse-primary": "#83d7ad",
+                        "background": "#f9faf7",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-container": "#317054",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e2e3e0",
+                        "inverse-surface": "#2e312f",
+                        "on-tertiary-fixed": "#331200",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb68e",
+                        "secondary": "#2a694f",
+                        "secondary-fixed": "#aff1cf",
+                        "tertiary": "#7b3500",
+                        "tertiary-container": "#a04700",
+                        "inverse-on-surface": "#f0f1ee",
+                        "outline-variant": "#bec9c0",
+                        "primary-fixed-dim": "#83d7ad",
+                        "on-background": "#191c1b",
+                        "outline": "#6f7a72",
+                        "surface-dim": "#d9dad7",
+                        "surface-container-low": "#f3f4f1",
+                        "on-surface": "#191c1b",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#93d4b3",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "container-max-width": "1200px",
+                        "margin-desktop": "32px",
+                        "gutter": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "button-text": ["\"Source Sans 3\""],
+                        "body-md": ["\"Source Sans 3\""],
+                        "label-numeric": ["JetBrains Mono"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["\"Source Sans 3\""],
+                        "headline-xl": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-numeric": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col pb-20 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface text-primary border-b border-outline-variant docked full-width top-0 z-40 sticky">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
+<button class="text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="font-headline-lg text-headline-lg font-bold text-primary text-center">SmartLink</div>
+<button class="text-primary hover:bg-surface-container-high transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-6 space-y-8">
+<!-- Profile Header & Actions -->
+<section class="flex flex-col items-center text-center space-y-4">
+<div class="relative">
+<img class="w-32 h-32 rounded-full object-cover border-4 border-surface shadow-sm" data-alt="A clean, professional headshot or company logo of a plumber, bright white background, pragmatic minimalist style, subtle green branding accents, soft realistic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWomQSuKe9lYqQ047aoD0txzdAsYRWTQ3itMUb0t2D8fKHxnLmR4SCy5TqWyF9ewzc4BswPm5nfNwhA6OWrt4760QwR45hRvCO_1pAKUEVnE6Ax_7srETr2KuJabJ5-MeXQxqyPYk5hS2IwP5tG-xHWoWHP4BO2P5hVEXUeJdLq9LKbefeiSbg3JeE0ZfjGcMXNuKP-YgWWW-eihYRsyvzXaxWz8MogO4TtoHYYPw4LNlmN95JHLhb"/>
+<div class="absolute -bottom-2 -right-2 bg-surface-container-lowest rounded-full p-1 border border-outline-variant">
+<span class="material-symbols-outlined text-primary fill text-3xl" data-icon="verified">verified</span>
+</div>
+</div>
+<div class="space-y-1">
+<h1 class="font-headline-xl text-headline-xl text-on-surface">Jean-Paul Plomberie</h1>
+<div class="flex items-center justify-center space-x-2 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-lg" data-icon="plumbing">plumbing</span>
+<span>Plomberie &amp; Chauffage</span>
+<span>•</span>
+<span class="material-symbols-outlined text-lg" data-icon="location_on">location_on</span>
+<span>Douala, CM</span>
+</div>
+<div class="flex items-center justify-center space-x-1 mt-2">
+<span class="material-symbols-outlined text-tertiary-container fill text-xl" data-icon="star">star</span>
+<span class="font-label-numeric text-label-numeric text-on-surface">4.8</span>
+<span class="text-on-surface-variant text-sm">(124 avis)</span>
+</div>
+</div>
+<div class="flex flex-wrap justify-center gap-2 mt-2">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold flex items-center border border-primary/20">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="workspace_premium">workspace_premium</span>
+                    Prestataire vérifié
+                </span>
+<span class="bg-tertiary-container/10 text-tertiary-container px-3 py-1 rounded-full text-sm font-semibold flex items-center border border-tertiary-container/20">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="stars">stars</span>
+                    Prestataire Pro
+                </span>
+</div>
+<div class="flex flex-col sm:flex-row w-full gap-3 pt-4">
+<button class="flex-1 bg-primary text-on-primary font-button-text text-button-text py-3 px-6 rounded-full hover:opacity-90 transition-opacity flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined mr-2" data-icon="mail">mail</span>
+                    Envoyer une demande
+                </button>
+<button class="flex-1 bg-surface-container-lowest text-primary border border-primary font-button-text text-button-text py-3 px-6 rounded-full hover:bg-surface-container-low transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined mr-2" data-icon="chat">chat</span>
+                    WhatsApp
+                </button>
+</div>
+</section>
+<!-- About Block -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-3 flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary" data-icon="info">info</span>
+                    À propos
+                </h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Spécialiste en plomberie sanitaire et thermique avec plus de 10 ans d'expérience. Interventions rapides pour les fuites, installations de chauffe-eau, et rénovations complètes de salles de bain. Travail soigné et garanti.
+                </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<h3 class="font-button-text text-button-text text-on-surface mb-2 flex items-center">
+<span class="material-symbols-outlined mr-2 text-on-surface-variant text-sm" data-icon="schedule">schedule</span>
+                        Horaires
+                    </h3>
+<ul class="space-y-1 font-body-md text-body-md text-on-surface-variant">
+<li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Lun - Ven</span> <span>08:00 - 18:00</span></li>
+<li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Sam</span> <span>09:00 - 14:00</span></li>
+<li class="flex justify-between text-error pb-1"><span>Dim</span> <span>Fermé</span></li>
+</ul>
+</div>
+<div>
+<h3 class="font-button-text text-button-text text-on-surface mb-2 flex items-center">
+<span class="material-symbols-outlined mr-2 text-on-surface-variant text-sm" data-icon="map">map</span>
+                        Zones d'intervention
+                    </h3>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-sm">Akwa</span>
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-sm">Bonanjo</span>
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-sm">Deido</span>
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-sm">Bonapriso</span>
+</div>
+</div>
+</div>
+<div class="rounded-xl overflow-hidden border border-outline-variant h-48 relative">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist map interface centered on Douala, Cameroon, featuring light grey roads and a soft green primary marker pin indicating a service location, pragmatic ui map aesthetic." data-location="Douala" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwR5k8wWZFmYWPUJ88K9FAPtFa5rdfQZCI0hUpnuRcyRJQPziSPZM-o8mmibn4ymJpwqPo6rXozOvjsbsA_kgpSNJSUmlEoGo1dq7-AGKS-A81-BTdAEoAZJstMctiYMq1ZiI_2TDobwyZmHHDKdaKRhX2WoqjfVRvdJw9eQCRvyOcVl0HmuXWolERrGOz7SLLuxyFzXDkcwBRaGQ_rAqKKC4jjNZGZHQLeafGX1jbHmQryXPRZMry"/>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<span class="material-symbols-outlined text-primary fill text-4xl drop-shadow-md" data-icon="location_on">location_on</span>
+</div>
+</div>
+</section>
+<!-- Services Block -->
+<section>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4 flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary" data-icon="home_repair_service">home_repair_service</span>
+                Ses services
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Service Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:border-primary transition-colors flex flex-col justify-between h-full">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Réparation Fuite d'Eau</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Intervention rapide pour tout type de fuite apparente ou encastrée.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-outline-variant/50">
+<span class="font-label-numeric text-label-numeric text-primary font-bold">À partir de 15 000 FCFA</span>
+<button class="text-primary p-2 hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:border-primary transition-colors flex flex-col justify-between h-full">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Installation Chauffe-eau</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Pose et raccordement complet de chauffe-eau électrique ou gaz.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-outline-variant/50">
+<span class="font-label-numeric text-label-numeric text-primary font-bold">Sur devis</span>
+<button class="text-primary p-2 hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Service Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:border-primary transition-colors flex flex-col justify-between h-full">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Débouchage Canalisations</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Dégorgement professionnel d'éviers, lavabos et WC avec équipement adapté.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-outline-variant/50">
+<span class="font-label-numeric text-label-numeric text-primary font-bold">25 000 FCFA</span>
+<button class="text-primary p-2 hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-6">
+<div class="flex space-x-1">
+<button class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-numeric">1</button>
+<button class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high flex items-center justify-center font-label-numeric">2</button>
+<button class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high flex items-center justify-center font-label-numeric">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Visible only on md:hidden, assuming this is considered a top-level context for demonstration, though normally a profile detail might not have it. Based on prompt request for a 'public profile' on 'SmartLink', we will keep it as requested in shared components for standard navigation). -->
+<nav class="bg-surface border-t border-outline-variant fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 md:hidden safe-area-bottom">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors py-1 px-4" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-numeric text-[12px] mt-1">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-transform scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-numeric text-[12px] mt-1">Recherche</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors py-1 px-4" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-numeric text-[12px] mt-1">Demandes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors py-1 px-4" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-numeric text-[12px] mt-1">Profil</span>
+</a>
+</nav>
+<!-- Footer for Desktop -->
+<footer class="w-full py-8 px-margin-mobile md:px-margin-desktop mt-auto bg-surface-container-highest border-t border-outline-variant hidden md:block">
+<div class="max-w-container-max-width mx-auto flex flex-col md:flex-row justify-between items-center text-on-surface-variant font-body-md text-body-md">
+<div class="font-headline-md text-primary mb-4 md:mb-0">SmartLink</div>
+<div class="flex space-x-6">
+<a class="hover:text-primary underline" href="#">Mentions Légales</a>
+<a class="hover:text-primary underline" href="#">CGU</a>
+<a class="hover:text-primary underline" href="#">Confidentialité</a>
+<a class="hover:text-primary underline" href="#">Aide</a>
+</div>
+<div class="mt-4 md:mt-0 text-sm">© 2024 SmartLink Cameroun. Tous droits réservés.</div>
+</div>
+</footer>
+</body></html>

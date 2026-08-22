@@ -47,6 +47,7 @@ class ServiceManagementTest extends TestCase
         Storage::fake('public');
 
         $provider = User::factory()->provider()->create();
+        $this->subscribeProvider($provider);
         $category = ServiceCategory::factory()->create();
 
         $response = $this->actingAs($provider)->post(route('provider.services.store'), [

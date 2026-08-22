@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Models\OtpCode;
-use Illuminate\Support\Str;
 
 class OtpService
 {
     private const EXPIRY_MINUTES = 10;
+
     private const MAX_ATTEMPTS = 3;
 
     public function __construct(private readonly SmsService $sms) {}
@@ -48,15 +48,18 @@ class OtpService
 
         if ($otp->attempts >= self::MAX_ATTEMPTS) {
             $otp->delete();
+
             return false;
         }
 
         if (! hash_equals($otp->code, hash('sha256', $code))) {
             $otp->increment('attempts');
+
             return false;
         }
 
         $otp->update(['used_at' => now()]);
+
         return true;
     }
 }

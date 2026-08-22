@@ -1,3 +1,75 @@
+@if (app(\App\Services\Ai\ServiceDraftWriter::class)->isAvailableFor(auth()->user()))
+    <div
+        x-data="{
+            notes: '',
+            working: false,
+            applied: false,
+            error: '',
+            propose() {
+                if (! this.notes.trim() || this.working) return;
+
+                this.working = true;
+                this.applied = false;
+                this.error = '';
+
+                fetch('{{ route('provider.services.draft') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                    },
+                    body: JSON.stringify({
+                        notes: this.notes,
+                        category_id: document.getElementById('category_id')?.value || null,
+                        city: document.getElementById('city')?.value || null,
+                    }),
+                })
+                    .then(async response => {
+                        const data = await response.json();
+                        if (! response.ok) throw new Error(data.message ?? @js(__('ui.draft.failed')));
+                        return data;
+                    })
+                    .then(data => {
+                        document.getElementById('title').value = data.title;
+                        document.getElementById('description').value = data.description;
+                        this.applied = true;
+                    })
+                    .catch(e => { this.error = e.message || @js(__('ui.draft.failed')); })
+                    .finally(() => { this.working = false; });
+            },
+        }"
+        class="mb-6 rounded-lg border border-outline-variant bg-secondary-container/20 p-4"
+    >
+        <label for="ai-notes" class="block text-sm font-medium text-on-secondary-container">{{ __('ui.draft.label') }}</label>
+        <p class="mt-1 text-xs text-on-secondary-container">{{ __('ui.draft.hint') }}</p>
+
+        <textarea
+            id="ai-notes"
+            x-model="notes"
+            rows="2"
+            maxlength="600"
+            placeholder="{{ __('ui.draft.placeholder') }}"
+            class="mt-3 block w-full rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary"
+        ></textarea>
+
+        <div class="mt-3 flex flex-wrap items-center gap-3">
+            <button
+                type="button"
+                @click="propose"
+                :disabled="working || ! notes.trim()"
+                class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                <span x-show="! working">{{ __('ui.draft.submit') }}</span>
+                <span x-show="working" x-cloak>{{ __('ui.draft.working') }}</span>
+            </button>
+
+            <p x-show="applied" x-cloak class="text-sm text-secondary">{{ __('ui.draft.applied') }}</p>
+            <p x-show="error" x-cloak x-text="error" class="text-sm text-error"></p>
+        </div>
+    </div>
+@endif
+
 <div>
     <x-input-label for="title" value="Titre du service" />
     <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title', $service?->title)" required />
@@ -6,7 +78,7 @@
 
 <div class="mt-4">
     <x-input-label for="category_id" value="Catégorie" />
-    <select id="category_id" name="category_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+    <select id="category_id" name="category_id" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
         <option value="">Choisir une catégorie</option>
         @foreach ($categories as $category)
             <option value="{{ $category->id }}" @selected(old('category_id', $service?->category_id) == $category->id)>{{ $category->name }}</option>
@@ -17,7 +89,7 @@
 
 <div class="mt-4">
     <x-input-label for="description" value="Description" />
-    <textarea id="description" name="description" rows="5" required maxlength="3000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $service?->description) }}</textarea>
+    <textarea id="description" name="description" rows="5" required maxlength="3000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">{{ old('description', $service?->description) }}</textarea>
     <x-input-error :messages="$errors->get('description')" class="mt-2" />
 </div>
 
@@ -37,7 +109,7 @@
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
         <x-input-label for="city" value="Ville" />
-        <select id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary text-sm">
             <option value="">— Choisir une ville —</option>
             @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
                 <option value="{{ $ville }}" @selected(old('city', $service?->city) === $ville)>{{ $ville }}</option>
@@ -59,9 +131,9 @@
 </div>
 
 <div class="mt-4">
-    <label class="flex items-center gap-2 text-sm text-gray-700">
+    <label class="flex items-center gap-2 text-sm text-on-surface-variant">
         <input type="hidden" name="is_available" value="0">
-        <input type="checkbox" name="is_available" value="1" class="rounded border-gray-300" @checked(old('is_available', $service?->is_available ?? true))>
+        <input type="checkbox" name="is_available" value="1" class="rounded border-outline-variant text-primary focus:ring-primary" @checked(old('is_available', $service?->is_available ?? true))>
         Disponible actuellement
     </label>
 </div>
@@ -75,7 +147,7 @@
 @if ($service)
     <div class="mt-4">
         <x-input-label for="status" value="Statut" />
-        <select id="status" name="status" required class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        <select id="status" name="status" required class="mt-1 block rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
             <option value="active" @selected(old('status', $service->status) === 'active')>Actif</option>
             <option value="inactive" @selected(old('status', $service->status) === 'inactive')>Inactif</option>
         </select>
@@ -84,25 +156,25 @@
 
     @if ($service->images->isNotEmpty())
         <div class="mt-4">
-            <p class="block font-medium text-sm text-gray-700 mb-2">Images actuelles</p>
+            <p class="block font-medium text-sm text-on-surface-variant mb-2">Images actuelles</p>
             <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
                 @foreach ($service->images as $image)
                     <label class="relative block cursor-pointer">
                         <img src="{{ asset('storage/'.$image->path) }}" class="h-20 w-full object-cover rounded-md">
                         <span class="absolute top-1 right-1 bg-white/90 rounded-full p-1">
-                            <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded border-gray-300">
+                            <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded border-outline-variant text-primary focus:ring-primary">
                         </span>
                     </label>
                 @endforeach
             </div>
-            <p class="mt-1 text-xs text-gray-400">Cochez les images à supprimer.</p>
+            <p class="mt-1 text-xs text-on-surface-variant">Cochez les images à supprimer.</p>
         </div>
     @endif
 @endif
 
 <div class="mt-4">
     <x-input-label for="images" value="Ajouter des images (max 5, facultatif)" />
-    <input id="images" name="images[]" type="file" multiple accept="image/*" class="mt-1 block w-full text-sm text-gray-700">
+    <input id="images" name="images[]" type="file" multiple accept="image/*" class="mt-1 block w-full text-sm text-on-surface-variant">
     <x-input-error :messages="$errors->get('images')" class="mt-2" />
     <x-input-error :messages="$errors->get('images.0')" class="mt-1" />
 </div>

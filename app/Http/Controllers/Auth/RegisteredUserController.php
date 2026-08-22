@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\ClientProfile;
 use App\Models\ProviderProfile;
 use App\Models\User;
+use App\Services\SubscriptionService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,8 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
+    public function __construct(private readonly SubscriptionService $subscriptions) {}
+
     /**
      * Display the registration view.
      */
@@ -43,6 +46,10 @@ class RegisteredUserController extends Controller
                 'user_id' => $user->id,
                 'business_name' => $validated['business_name'],
             ]);
+
+            // Un prestataire entre par 30 jours d'essai au palier le plus
+            // complet : le catalogue se remplit sans barrière à l'entrée.
+            $this->subscriptions->startTrial($user);
         } else {
             ClientProfile::create([
                 'user_id' => $user->id,

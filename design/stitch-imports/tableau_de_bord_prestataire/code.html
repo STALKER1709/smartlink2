@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tableau de bord Prestataire</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Source+Sans+3:wght@400;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container": "#edeeeb",
+                      "primary-fixed-dim": "#83d7ad",
+                      "surface-container-highest": "#e2e3e0",
+                      "on-tertiary-fixed-variant": "#763300",
+                      "error": "#ba1a1a",
+                      "inverse-primary": "#83d7ad",
+                      "tertiary-fixed": "#ffdbca",
+                      "inverse-surface": "#2e312f",
+                      "surface-container-high": "#e7e8e6",
+                      "secondary-fixed-dim": "#93d4b3",
+                      "background": "#f9faf7",
+                      "outline": "#6f7a72",
+                      "surface-tint": "#086c49",
+                      "secondary-container": "#aff1cf",
+                      "on-primary-container": "#9aefc3",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed-dim": "#ffb68e",
+                      "tertiary-container": "#a04700",
+                      "primary": "#005538",
+                      "primary-container": "#0f6f4c",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed-variant": "#005236",
+                      "on-surface-variant": "#3f4943",
+                      "surface-bright": "#f9faf7",
+                      "secondary-fixed": "#aff1cf",
+                      "primary-fixed": "#9ff4c8",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed-variant": "#095138",
+                      "tertiary": "#7b3500",
+                      "on-error": "#ffffff",
+                      "on-primary-fixed": "#002113",
+                      "inverse-on-surface": "#f0f1ee",
+                      "outline-variant": "#bec9c0",
+                      "surface-variant": "#e2e3e0",
+                      "on-background": "#191c1b",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-container": "#317054",
+                      "surface": "#f9faf7",
+                      "secondary": "#2a694f",
+                      "on-secondary-fixed": "#002114",
+                      "on-tertiary-container": "#ffd4bf",
+                      "surface-dim": "#d9dad7",
+                      "surface-container-low": "#f3f4f1",
+                      "error-container": "#ffdad6",
+                      "on-surface": "#191c1b",
+                      "on-tertiary-fixed": "#331200"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "container-max-width": "1200px",
+                      "unit": "4px",
+                      "gutter": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "label-numeric": [
+                              "JetBrains Mono"
+                      ],
+                      "body-md": [
+                              "\"Source Sans 3\""
+                      ],
+                      "button-text": [
+                              "\"Source Sans 3\""
+                      ],
+                      "headline-xl": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-lg": [
+                              "\"Source Sans 3\""
+                      ]
+              },
+              "fontSize": {
+                      "label-numeric": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "button-text": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "headline-md": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "26px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col pb-20 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-on-background w-full top-0 sticky border-b border-outline-variant dark:border-outline flex justify-between items-center px-margin-mobile h-14 w-full z-40 transition-colors">
+<button class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim">
+            ProxiServ Cameroun
+        </h1>
+<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded-full active:opacity-80 transition-opacity">
+<img alt="Photo de profil utilisateur" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A clean, professional portrait photo of an African male service provider, well-lit, smiling subtly, wearing practical work attire, set against a neutral light background to match the application's clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAotlYsIM0HOe8c6nuip8av49gHNSl_FvSRgYCcwduPTwKFiWwxuC7JLyonHQSt4Hjlf4QpeOH0nnTOvM0tcxWBEDGPus8nwc2MTgDMq0kM9IpT-OjnPoIhp8YSzHTgZ8QnSJlA77sNHgOaup2IwSD4eyjVg0vpumO3UYF8_DJBFk2V0MAZVayeFDO5kqjFF9eC34a1F5_hdc4tbkMnCFxb47P9aJr7IcX8_iwZv6TixLmucwxlyRZI"/>
+</button>
+</header>
+<!-- Main Content -->
+<main class="w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-gutter flex flex-col gap-8 flex-grow">
+<!-- Alert Banner -->
+<div class="w-full bg-tertiary-fixed text-on-tertiary-fixed flex flex-col md:flex-row items-start md:items-center justify-between p-4 border border-tertiary-fixed-dim rounded-lg gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+<span class="font-body-md text-body-md font-semibold">Essai gratuit — 6 jours restants</span>
+</div>
+<button class="bg-tertiary text-on-tertiary font-button-text text-button-text px-6 py-2 rounded-full hover:opacity-90 active:scale-95 transition-all self-end md:self-auto">
+                Souscrire
+            </button>
+</div>
+<!-- Greeting -->
+<section>
+<h2 class="font-headline-xl text-headline-xl text-on-background">Bonjour Jean-Paul</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Voici le résumé de votre activité.</p>
+</section>
+<!-- Stats Bento Grid -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div class="bg-surface border border-outline-variant p-4 rounded-xl flex flex-col justify-between">
+<div class="text-on-surface-variant mb-2">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-primary font-label-numeric">12</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-tight mt-1">Demandes reçues<br/><span class="text-sm opacity-80">ce mois-ci</span></div>
+</div>
+<div class="bg-surface border border-outline-variant p-4 rounded-xl flex flex-col justify-between">
+<div class="text-tertiary mb-2">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-primary font-label-numeric">3</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-tight mt-1">Demandes<br/>en attente</div>
+</div>
+<div class="bg-surface border border-outline-variant p-4 rounded-xl flex flex-col justify-between">
+<div class="text-secondary mb-2">
+<span class="material-symbols-outlined" data-icon="handyman">handyman</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-primary font-label-numeric">2</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-tight mt-1">Prestations<br/>en cours</div>
+</div>
+<div class="bg-surface border border-outline-variant p-4 rounded-xl flex flex-col justify-between">
+<div class="text-tertiary mb-2 flex items-center gap-1">
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill">star</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-primary font-label-numeric">4.8</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-tight mt-1">Note<br/>moyenne</div>
+</div>
+</section>
+<!-- Main Content 2 Columns -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Left Col: Demandes à traiter -->
+<section class="md:col-span-8 flex flex-col gap-4">
+<div class="flex items-center justify-between border-b border-outline-variant pb-2">
+<h3 class="font-headline-md text-headline-md text-on-background">Demandes à traiter</h3>
+<span class="font-label-numeric text-label-numeric bg-error-container text-on-error-container px-2 py-1 rounded-full">2</span>
+</div>
+<!-- Request Card 1 -->
+<article class="bg-surface border border-outline-variant p-4 rounded-xl flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+<div class="flex gap-4 items-start">
+<img class="w-12 h-12 rounded-full bg-surface-container border border-outline-variant object-cover" data-alt="A small circular avatar placeholder image showing an abstract silhouette of a female customer, minimalist style, light grey background, perfectly matching a clean UI design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJGqOgNh6ngqf_r6ZPvKNS_FtpH7AyZ3ANrtxhVP8HLNWlD657lFCDknDFS4rrkUCxO7BNG2-rrpl8F5aioSWoGeXN665ZSCXXE3J3dYWsMt5ehWVVgW9f0DSxH2bnChDODWE1gsDUHC-DuEjzfm9LgfWGhegVN9d5ZhKu5SwPYjfvSKiuokvt6UKGXB1Xb-QsFQLLrTWbZN5qGbWABLeUaGAoUb3o6-dv4QU9kZI8ViHvb4Nqi4qf"/>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-background text-lg">Aïcha</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Plomberie - Réparation de fuite</p>
+<div class="flex items-center gap-1 text-sm text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span>Douala, Akwa</span>
+<span class="mx-2 text-outline-variant">•</span>
+<span class="font-label-numeric">Aujourd'hui, 14:00</span>
+</div>
+</div>
+</div>
+<div class="flex w-full md:w-auto gap-2 mt-2 md:mt-0">
+<button class="flex-1 md:flex-none border border-outline text-on-surface-variant font-button-text text-button-text px-4 py-2 rounded-full hover:bg-surface-container-low transition-colors">
+                            Refuser
+                        </button>
+<button class="flex-1 md:flex-none bg-primary text-on-primary font-button-text text-button-text px-6 py-2 rounded-full hover:bg-primary-container transition-colors">
+                            Accepter
+                        </button>
+</div>
+</article>
+<!-- Request Card 2 -->
+<article class="bg-surface border border-outline-variant p-4 rounded-xl flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+<div class="flex gap-4 items-start">
+<img class="w-12 h-12 rounded-full bg-surface-container border border-outline-variant object-cover" data-alt="A small circular avatar placeholder image showing an abstract silhouette of a male customer, minimalist style, light grey background, aligning with the application's clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyEbyKfIeBx9qGEmuvAPzPLBEhwB_QWBrPrq9TJ6dwd8j7wi814N2JNZujqpXuS49wjvrelHn4XWbntlTybxcNGBJ_qXOftoWpctv6KhwcrnXjL59fYIEPbsTEQTELQO0U7IleWApGJoIrjvhZbbyXOmtyGsIlFOeer1nrejJlS5EKqEmaR4PdA2TEBR79qRzbze0a1gXIo1mWKnkP9IpqnBsdHqrhnKd8sM73yejnZbF2XcEI7zdz"/>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-background text-lg">Marc</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Installation - Climatisation</p>
+<div class="flex items-center gap-1 text-sm text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span>Yaoundé, Bastos</span>
+<span class="mx-2 text-outline-variant">•</span>
+<span class="font-label-numeric">Demain, 09:00</span>
+</div>
+</div>
+</div>
+<div class="flex w-full md:w-auto gap-2 mt-2 md:mt-0">
+<button class="flex-1 md:flex-none border border-outline text-on-surface-variant font-button-text text-button-text px-4 py-2 rounded-full hover:bg-surface-container-low transition-colors">
+                            Refuser
+                        </button>
+<button class="flex-1 md:flex-none bg-primary text-on-primary font-button-text text-button-text px-6 py-2 rounded-full hover:bg-primary-container transition-colors">
+                            Accepter
+                        </button>
+</div>
+</article>
+</section>
+<!-- Right Col: Vos services -->
+<section class="md:col-span-4 flex flex-col gap-4">
+<div class="flex items-center justify-between border-b border-outline-variant pb-2">
+<h3 class="font-headline-md text-headline-md text-on-background">Vos services</h3>
+</div>
+<div class="flex flex-col gap-2">
+<div class="bg-surface border border-outline-variant p-3 rounded-lg flex items-center justify-between group cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="bg-secondary-container text-on-secondary-container p-2 rounded-md">
+<span class="material-symbols-outlined" data-icon="plumbing">plumbing</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-background">Dépannage Plomberie</h4>
+<span class="font-label-numeric text-label-numeric text-primary">À partir de 15 000 FCFA</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="bg-surface border border-outline-variant p-3 rounded-lg flex items-center justify-between group cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="bg-secondary-container text-on-secondary-container p-2 rounded-md">
+<span class="material-symbols-outlined" data-icon="ac_unit">ac_unit</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-background">Installation Clim</h4>
+<span class="font-label-numeric text-label-numeric text-primary">À partir de 25 000 FCFA</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="bg-surface border border-outline-variant p-3 rounded-lg flex items-center justify-between group cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="bg-secondary-container text-on-secondary-container p-2 rounded-md">
+<span class="material-symbols-outlined" data-icon="water_drop">water_drop</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-background">Entretien Chauffe-eau</h4>
+<span class="font-label-numeric text-label-numeric text-primary">Forfait 10 000 FCFA</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<a class="text-primary font-button-text text-button-text flex items-center gap-1 mt-2 hover:underline" href="#">
+                    Gérer mes services
+                    <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden bg-surface dark:bg-inverse-surface fixed bottom-0 w-full z-50 border-t border-outline-variant dark:border-outline flex justify-around items-center h-16 w-full px-2">
+<!-- Active: Accueil (Dashboard) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-full px-4 py-1 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-numeric text-label-numeric text-[12px]">Accueil</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full px-4 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-numeric text-label-numeric text-[12px]">Recherche</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full px-4 active:scale-95 transition-transform duration-150 relative">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="absolute top-1 right-3 w-2 h-2 bg-error rounded-full"></span>
+<span class="font-label-numeric text-label-numeric text-[12px]">Demandes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full px-4 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-numeric text-label-numeric text-[12px]">Profil</span>
+</button>
+</nav>
+</body></html>

@@ -32,9 +32,18 @@ class ProviderProfileFactory extends Factory
                 'whatsapp' => fake()->numerify('6########'),
             ],
             'is_verified' => false,
+            // Visible par défaut : les tests de navigation portent sur la
+            // navigation, pas sur la facturation. ProviderVisibilityTest
+            // couvre le lien réel entre abonnement et visibilité.
+            'is_listed' => true,
             'rating_avg' => 0,
             'rating_count' => 0,
         ];
+    }
+
+    public function unlisted(): static
+    {
+        return $this->state(fn () => ['is_listed' => false]);
     }
 
     public function verified(): static

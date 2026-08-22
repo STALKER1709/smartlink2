@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Widget Assistant SmartLink</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=Source+Sans+3:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#086c49",
+                    "primary-container": "#0f6f4c",
+                    "surface-container-low": "#f3f4f1",
+                    "secondary-fixed-dim": "#93d4b3",
+                    "tertiary-container": "#a04700",
+                    "surface-bright": "#f9faf7",
+                    "on-primary-container": "#9aefc3",
+                    "on-primary-fixed-variant": "#005236",
+                    "surface-variant": "#e2e3e0",
+                    "background": "#f9faf7",
+                    "inverse-primary": "#83d7ad",
+                    "surface-dim": "#d9dad7",
+                    "inverse-on-surface": "#f0f1ee",
+                    "tertiary-fixed-dim": "#ffb68e",
+                    "on-tertiary-fixed-variant": "#763300",
+                    "surface-container": "#edeeeb",
+                    "surface-container-high": "#e7e8e6",
+                    "secondary-container": "#aff1cf",
+                    "on-tertiary-container": "#ffd4bf",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#2e312f",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#9ff4c8",
+                    "primary-fixed-dim": "#83d7ad",
+                    "on-secondary-container": "#317054",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#bec9c0",
+                    "on-surface-variant": "#3f4943",
+                    "primary": "#005538",
+                    "on-secondary-fixed-variant": "#095138",
+                    "secondary-fixed": "#aff1cf",
+                    "on-error": "#ffffff",
+                    "tertiary": "#7b3500",
+                    "outline": "#6f7a72",
+                    "on-primary-fixed": "#002113",
+                    "secondary": "#2a694f",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#331200",
+                    "tertiary-fixed": "#ffdbca",
+                    "surface-container-highest": "#e2e3e0",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f9faf7",
+                    "on-background": "#191c1b",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#191c1b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "16px",
+                    "container-max-width": "1200px",
+                    "margin-desktop": "32px",
+                    "margin-mobile": "16px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "button-text": ["Source Sans 3"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-md": ["Source Sans 3"],
+                    "body-lg": ["Source Sans 3"],
+                    "label-numeric": ["JetBrains Mono"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: #bec9c0 transparent;
+        }
+        
+        .chat-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #bec9c0;
+            border-radius: 10px;
+        }
+
+        @keyframes typing {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        .typing-dot {
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        .widget-shadow {
+            box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low min-h-screen font-body-md text-on-surface">
+<!-- Background Content Simulation -->
+<div class="p-8 max-w-4xl mx-auto opacity-40 select-none pointer-events-none">
+<h1 class="text-headline-xl mb-6 text-primary">Tableau de Bord SmartLink</h1>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="h-32 bg-white rounded-xl border border-outline-variant p-4">
+<div class="w-1/2 h-4 bg-surface-container rounded mb-2"></div>
+<div class="w-3/4 h-8 bg-secondary-container rounded"></div>
+</div>
+<div class="h-32 bg-white rounded-xl border border-outline-variant p-4">
+<div class="w-1/2 h-4 bg-surface-container rounded mb-2"></div>
+<div class="w-3/4 h-8 bg-primary-container rounded"></div>
+</div>
+<div class="h-32 bg-white rounded-xl border border-outline-variant p-4">
+<div class="w-1/2 h-4 bg-surface-container rounded mb-2"></div>
+<div class="w-3/4 h-8 bg-tertiary-container rounded"></div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="h-4 bg-surface-container-highest rounded w-full"></div>
+<div class="h-4 bg-surface-container-highest rounded w-5/6"></div>
+<div class="h-4 bg-surface-container-highest rounded w-4/6"></div>
+</div>
+</div>
+<!-- WIDGET WRAPPER -->
+<div class="fixed bottom-4 right-4 z-50 flex flex-col items-end" id="smartlink-assistant-widget">
+<!-- OPENED STATE: CHAT PANEL -->
+<div class="w-[360px] h-[450px] max-h-[calc(100vh-32px)] max-w-[calc(100vw-32px)] bg-surface-lowest rounded-xl flex flex-col overflow-hidden widget-shadow border border-outline-variant mb-4 transition-all duration-300 transform scale-100 origin-bottom-right" id="chat-panel">
+<!-- SHARED COMPONENT: TopAppBar (Strict Integrity) -->
+<!-- Note: Modified slightly in logic but kept visually identical to provided asset for the header area -->
+<div class="flex items-center bg-primary-container p-4 pb-3 justify-between text-white">
+<div class="flex items-center gap-3">
+<div class="flex size-10 shrink-0 items-center justify-center bg-white/20 rounded-full text-white" data-icon="X">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-white text-base font-bold leading-tight tracking-[-0.015em]">Assistant SmartLink</h2>
+<p class="text-on-primary-container text-xs font-normal">Posez vos questions...</p>
+</div>
+</div>
+<button class="flex w-8 h-8 items-center justify-center hover:bg-white/10 rounded-full transition-colors" onclick="toggleWidget()">
+<span class="material-symbols-outlined text-white" style="font-size: 20px;">close</span>
+</button>
+</div>
+<!-- MESSAGES ZONE -->
+<div class="flex-1 overflow-y-auto chat-container p-4 space-y-4 bg-surface">
+<!-- Assistant Message -->
+<div class="flex items-end gap-3 max-w-[85%]">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 shrink-0 border border-outline-variant" data-alt="A profile photo of a professional AI assistant avatar, styled as a friendly and clean 3D character with soft teal colors, set against a minimalist studio background with soft directional lighting." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZxhQBNdiZYzYEtyyBB0r1HvX4cIx_RXCEWUSaktRKB2yvmSLJSzQAagPNkcYpFZM-tnramn-6uR_QKXIpxr-Imd7nRlkCiU0-8nRzbn6Ddf0z3NXcm2CajH4KzRd4QiVTfx5mawhXUEYFLH2slQI2l8wz0ZMX1Tenptxthd0nX9RgijwVHy0Hv4Lw1dkgx0ybAyPgUqCgnXNgm5kce7n4BNN9fYaswQdQzgoRifuSzs0iWuJE3gk8")'></div>
+<div class="flex flex-col gap-1 items-start">
+<p class="text-secondary text-[11px] font-semibold leading-none ml-1 uppercase tracking-wider">Assistant</p>
+<p class="text-sm font-normal leading-relaxed rounded-xl rounded-bl-none px-4 py-2.5 bg-white border border-outline-variant text-on-surface shadow-sm">
+                            Bonjour ! Je suis votre assistant SmartLink. Comment puis-je vous aider aujourd'hui ?
+                        </p>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-end gap-3 justify-end ml-auto max-w-[85%]">
+<div class="flex flex-col gap-1 items-end">
+<p class="text-secondary text-[11px] font-semibold leading-none mr-1 uppercase tracking-wider">Moi</p>
+<p class="text-sm font-normal leading-relaxed rounded-xl rounded-br-none px-4 py-2.5 bg-primary-container text-white shadow-sm">
+                            Est-ce que SmartLink prend une commission sur mes ventes ?
+                        </p>
+</div>
+</div>
+<!-- Assistant Message -->
+<div class="flex items-end gap-3 max-w-[85%]">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 shrink-0 border border-outline-variant" data-alt="A profile photo of a professional AI assistant avatar, styled as a friendly and clean 3D character with soft teal colors, set against a minimalist studio background with soft directional lighting." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDs4XbaXjz6UqgzIhEPemS8GFOP4U9oaFQ953MKoCeJ7lw5lSGeGQBimpSAnzWlhFT6ccFYsMpi5JWH0eqUe527kl8M8CxgmOF3e0dT5uhIDv0FBrE9Hbb8JCwZTuru1D4xjYqSr91BcEFT70iKkQB5kWSQV2RtAWpsm0AbFP6DrBjcRznazj5DeXNxctcNreVpmyaPyFIEWphbR4upx8Af3kEGTJ9pzCsU2tBiW19PAWbY4mSLzmCR")'></div>
+<div class="flex flex-col gap-1 items-start">
+<p class="text-secondary text-[11px] font-semibold leading-none ml-1 uppercase tracking-wider">Assistant</p>
+<p class="text-sm font-normal leading-relaxed rounded-xl rounded-bl-none px-4 py-2.5 bg-white border border-outline-variant text-on-surface shadow-sm">
+                            Non, <span class="font-bold text-primary">SmartLink ne prélève absolument rien</span> sur vos transactions. Nous ne sommes pas une place de marché, mais un outil pour vos propres ventes directes.
+                        </p>
+</div>
+</div>
+<!-- Typing Indicator -->
+<div class="flex items-center gap-2 px-2 pt-1">
+<div class="flex space-x-1 py-2 px-3 bg-surface-container-high rounded-full w-fit">
+<div class="w-1.5 h-1.5 bg-secondary rounded-full typing-dot"></div>
+<div class="w-1.5 h-1.5 bg-secondary rounded-full typing-dot"></div>
+<div class="w-1.5 h-1.5 bg-secondary rounded-full typing-dot"></div>
+</div>
+<p class="text-on-surface-variant text-[11px] font-medium italic">En train d'écrire...</p>
+</div>
+</div>
+<!-- INPUT BAR -->
+<div class="p-3 bg-white border-t border-outline-variant">
+<form class="flex items-center gap-2 bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors" onsubmit="event.preventDefault();">
+<input class="bg-transparent border-none focus:ring-0 text-sm flex-1 text-on-surface placeholder-on-surface-variant/60 py-1" placeholder="Écrivez votre message..." type="text"/>
+<button class="text-primary hover:text-primary-container transition-colors flex items-center justify-center" data-icon="send" type="submit">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</form>
+<p class="text-center text-[10px] text-on-surface-variant/70 mt-2">
+                    Propulsé par SmartLink AI • <a class="underline" href="#">Confidentialité</a>
+</p>
+</div>
+</div>
+<!-- TOGGLE BUTTON (Hidden when open) -->
+<button class="hidden w-14 h-14 bg-primary-container text-white rounded-full flex items-center justify-center widget-shadow hover:scale-105 active:scale-95 transition-all" id="widget-trigger" onclick="toggleWidget()">
+<span class="material-symbols-outlined" style="font-size: 32px;">chat</span>
+</button>
+</div>
+<script>
+        const chatPanel = document.getElementById('chat-panel');
+        const widgetTrigger = document.getElementById('widget-trigger');
+        let isOpen = true;
+
+        function toggleWidget() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                chatPanel.classList.remove('hidden', 'scale-0', 'opacity-0');
+                chatPanel.classList.add('flex', 'scale-100', 'opacity-100');
+                widgetTrigger.classList.add('hidden');
+            } else {
+                chatPanel.classList.add('scale-0', 'opacity-0');
+                setTimeout(() => {
+                    chatPanel.classList.add('hidden');
+                    chatPanel.classList.remove('flex');
+                    widgetTrigger.classList.remove('hidden');
+                }, 300);
+            }
+        }
+
+        // Initialize state
+        if (!isOpen) {
+            chatPanel.classList.add('hidden');
+            widgetTrigger.classList.remove('hidden');
+        } else {
+            widgetTrigger.classList.add('hidden');
+        }
+
+        // Auto-scroll messages to bottom
+        const container = document.querySelector('.chat-container');
+        container.scrollTop = container.scrollHeight;
+    </script>
+</body></html>

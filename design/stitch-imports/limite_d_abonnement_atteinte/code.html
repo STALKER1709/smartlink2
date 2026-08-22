@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Plafond Atteint</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#aff1cf",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1b",
+                        "on-tertiary-fixed-variant": "#763300",
+                        "on-secondary-fixed": "#002114",
+                        "primary-fixed": "#9ff4c8",
+                        "surface-container-high": "#e7e8e6",
+                        "surface-bright": "#f9faf7",
+                        "inverse-on-surface": "#f0f1ee",
+                        "on-primary-container": "#9aefc3",
+                        "outline": "#6f7a72",
+                        "surface": "#f9faf7",
+                        "inverse-primary": "#83d7ad",
+                        "tertiary": "#7b3500",
+                        "primary-container": "#0f6f4c",
+                        "secondary-fixed-dim": "#93d4b3",
+                        "on-tertiary-container": "#ffd4bf",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#d9dad7",
+                        "surface-variant": "#e2e3e0",
+                        "background": "#f9faf7",
+                        "on-tertiary-fixed": "#331200",
+                        "surface-container-highest": "#e2e3e0",
+                        "surface-tint": "#086c49",
+                        "surface-container": "#edeeeb",
+                        "on-secondary-fixed-variant": "#095138",
+                        "on-background": "#191c1b",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e312f",
+                        "outline-variant": "#bec9c0",
+                        "on-primary-fixed": "#002113",
+                        "primary-fixed-dim": "#83d7ad",
+                        "secondary-fixed": "#aff1cf",
+                        "surface-container-low": "#f3f4f1",
+                        "on-primary-fixed-variant": "#005236",
+                        "tertiary-container": "#a04700",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffdbca",
+                        "on-secondary-container": "#317054",
+                        "primary": "#005538",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb68e",
+                        "on-surface-variant": "#3f4943",
+                        "secondary": "#2a694f",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max-width": "1200px"
+                    },
+                    "fontFamily": {
+                        "label-numeric": ["JetBrains Mono"],
+                        "body-lg": ["\"Source Sans 3\""],
+                        "body-md": ["\"Source Sans 3\""],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "button-text": ["\"Source Sans 3\""],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-numeric": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface-container-low font-body-md text-on-background antialiased min-h-screen flex items-center justify-center p-margin-mobile">
+<!-- Block Screen Canvas (Navigation Suppressed intentionally for transactional state) -->
+<main class="w-full max-w-[440px]">
+<!-- Main Card Container following Pragmatic Minimalism (1px structural border, no shadow) -->
+<article class="bg-surface border border-outline-variant rounded-xl p-6 md:p-8 flex flex-col items-center text-center w-full">
+<!-- Prominent Visual Indicator -->
+<div class="w-20 h-20 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">pause_circle</span>
+</div>
+<!-- Title -->
+<h1 class="font-headline-md text-headline-md text-on-surface mb-4">
+                Vous avez atteint votre plafond de 20 demandes ce mois-ci.
+            </h1>
+<!-- Explanatory Content -->
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 px-2">
+                Vos services sont temporairement masqués aux nouveaux clients. Mettez à niveau votre abonnement pour continuer à recevoir des opportunités.
+            </p>
+<!-- Reassuring Microcopy Block -->
+<div class="w-full bg-surface-container border border-outline-variant rounded-lg p-4 flex items-start gap-3 mb-8">
+<span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="font-label-numeric text-label-numeric text-on-surface-variant text-left flex-1">
+                    Cette demande vous attend...
+                </p>
+</div>
+<!-- Action Buttons (Dimensionnés pour le français avec padding généreux) -->
+<div class="w-full flex flex-col gap-4 mt-auto">
+<button class="w-full bg-primary text-on-primary font-button-text text-button-text py-[14px] px-8 rounded-full flex justify-center items-center active:scale-[0.98] transition-transform" type="button">
+                    Voir les paliers
+                </button>
+<button class="w-full bg-surface border border-primary text-primary font-button-text text-button-text py-[14px] px-8 rounded-full flex justify-center items-center active:bg-surface-container-low transition-colors" type="button">
+                    Retour à mes demandes
+                </button>
+</div>
+</article>
+</main>
+</body></html>

@@ -36,7 +36,25 @@ DB_DATABASE=smartlink
 DB_USERNAME=root
 DB_PASSWORD=
 
-CHATBOT_DRIVER=rule
+AI_DRIVER=rule
+```
+
+### Services externes
+
+Trois intégrations ont chacune un mode simulé, qui permet de développer et de tester sans aucun compte. Renseigner les identifiants suffit à basculer sur le service réel — aucun code ne change.
+
+| Service | Variables | Sans identifiants |
+|---|---|---|
+| **HR-Skills Pay** (Mobile Money) | `PAYMENT_PROVIDER=hrskills`, `HRSKILLS_CLE_A`, `HRSKILLS_CLE_B`, `HRSKILLS_WEBHOOK_SECRET` | Encaissement simulé : montant pair, succès ; impair, échec |
+| **Africa's Talking** (SMS) | `AT_API_KEY`, `AT_SENDER_ID` | Les SMS sont écrits dans les journaux |
+| **Claude** (IA) | `ANTHROPIC_API_KEY`, `AI_DRIVER=claude` | L'assistant répond par mots-clés, sans coût |
+
+> **`HRSKILLS_WEBHOOK_SECRET` est obligatoire en production.** Le rappel du fournisseur est le seul canal qui crédite un abonnement. Sans secret configuré, tout rappel est refusé : c'est délibéré, il vaut mieux ne rien créditer que de créditer n'importe qui. Renseignez la même valeur côté HR-Skills et dans `.env`.
+>
+> **Les deux clés doivent porter le même environnement** — soit les deux en `_test_`, soit les deux en `_live_`. Elles se copient séparément depuis le tableau de bord, et un mélange enverrait des appels de production authentifiés par un secret de test.
+
+```bash
+php artisan payment:check   # vérifie clés, environnement et secret de rappel
 ```
 
 ### Base de données
@@ -108,13 +126,50 @@ php artisan route:cache
 php artisan view:cache
 ```
 
-## 6. Lancer les tests
+## 6. Mise en production : deux processus indispensables
+
+En développement, `composer dev` lance déjà tout. **En production, deux processus doivent tourner en permanence**, sans quoi des fonctions entières restent silencieusement inertes.
+
+### La file d'attente
+
+La modération automatique des annonces et des avis y passe. Sans consommateur, les contenus sont publiés mais jamais examinés — sans le moindre message d'erreur.
+
+```bash
+php artisan queue:work --tries=3 --timeout=120
+```
+
+À superviser avec systemd, supervisor ou l'équivalent de votre hébergeur, avec redémarrage automatique.
+
+### Le planificateur
+
+Il fait tourner `subscriptions:refresh` chaque nuit à 2 h. Sans lui : aucune relance SMS avant échéance, aucun abonnement ne passe en « expiré », et les prestataires arrivés à leur plafond mensuel de demandes ne réapparaissent jamais dans les recherches au changement de mois.
+
+```bash
+php artisan schedule:work
+```
+
+Ou, en cron classique :
+
+```cron
+* * * * * cd /chemin/vers/smartlink && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### Vérifier que tout est en place
+
+```bash
+php artisan payment:check          # clés, environnement, secret de rappel
+php artisan schedule:list          # doit lister subscriptions:refresh
+php artisan subscriptions:refresh  # exécution manuelle, pour contrôle
+php artisan queue:monitor default  # profondeur de la file
+```
+
+## 7. Lancer les tests
 
 ```bash
 php artisan test
 ```
 
-## 7. Vérifier le style de code (optionnel)
+## 8. Vérifier le style de code (optionnel)
 
 Le projet utilise [Laravel Pint](https://laravel.com/docs/pint) :
 

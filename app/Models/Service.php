@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\ModerateContent;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,6 +37,16 @@ class Service extends Model
 
     protected static function booted(): void
     {
+        static::created(fn (Service $service) => ModerateContent::dispatch($service));
+
+        static::updated(function (Service $service) {
+            // Seul un changement de texte justifie un nouvel examen : changer
+            // un prix ou une photo n'a pas à repasser par la modération.
+            if ($service->wasChanged(['title', 'description'])) {
+                ModerateContent::dispatch($service);
+            }
+        });
+
         static::creating(function (Service $service) {
             if (empty($service->slug)) {
                 $service->slug = Str::slug($service->title).'-'.Str::random(6);
@@ -66,6 +77,15 @@ class Service extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    /**
+     * N'expose que les services dont le prestataire est visible : abonnement
+     * en cours et plafond mensuel de demandes non atteint.
+     */
+    public function scopeFromListedProvider(Builder $query): Builder
+    {
+        return $query->whereHas('provider.providerProfile', fn (Builder $q) => $q->listed());
     }
 
     public function scopeAvailable(Builder $query): Builder

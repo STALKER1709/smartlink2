@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Notifications</h2>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Notifications</h2>
             @if ($notifications->isNotEmpty())
                 <form action="{{ route('notifications.read-all') }}" method="POST">
                     @csrf
-                    <button type="submit" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                    <button type="submit" class="text-sm font-semibold text-primary hover:text-primary-container">
                         Tout marquer comme lu
                     </button>
                 </form>
@@ -13,11 +13,14 @@
         </div>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if ($notifications->isEmpty())
-            <p class="text-gray-500">Aucune notification pour le moment.</p>
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
+                <span class="material-symbols-outlined text-5xl text-outline mb-3">notifications</span>
+                <p class="text-on-surface-variant">Aucune notification pour le moment.</p>
+            </div>
         @else
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-100">
+            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($notifications as $notification)
                     @php
                         $data = $notification->data;
@@ -28,24 +31,24 @@
                             default => null,
                         };
                     @endphp
-                    <div class="flex items-start gap-3 p-4 {{ $notification->read_at ? '' : 'bg-indigo-50' }}">
-                        <div class="h-2 w-2 mt-2 rounded-full {{ $notification->read_at ? 'bg-gray-300' : 'bg-indigo-600' }} shrink-0"></div>
+                    <div class="flex items-start gap-3 p-4 {{ $notification->read_at ? '' : 'bg-secondary-container/25' }}">
+                        <div class="h-2 w-2 mt-2 rounded-full {{ $notification->read_at ? 'bg-outline-variant' : 'bg-primary' }} shrink-0"></div>
 
                         <div class="flex-1 min-w-0">
                             @if ($link)
-                                <a href="{{ $link }}" class="text-sm text-gray-900 hover:text-indigo-600">
+                                <a href="{{ $link }}" class="text-sm text-on-surface hover:text-primary">
                                     {{ $data['message'] ?? 'Notification' }}
                                 </a>
                             @else
-                                <p class="text-sm text-gray-900">{{ $data['message'] ?? 'Notification' }}</p>
+                                <p class="text-sm text-on-surface">{{ $data['message'] ?? 'Notification' }}</p>
                             @endif
-                            <p class="text-xs text-gray-400 mt-0.5">{{ $notification->created_at->diffForHumans() }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $notification->created_at->diffForHumans() }}</p>
                         </div>
 
                         @if (! $notification->read_at)
                             <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="text-xs text-gray-400 hover:text-gray-600">
+                                <button type="submit" class="text-xs text-on-surface-variant hover:text-on-surface">
                                     Marquer comme lu
                                 </button>
                             </form>

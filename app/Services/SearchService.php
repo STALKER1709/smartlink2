@@ -13,7 +13,10 @@ class SearchService
      */
     public function searchServices(array $filters = [], int $perPage = 12): LengthAwarePaginator
     {
-        $query = Service::query()->active()->with(['provider.providerProfile', 'category', 'images']);
+        $query = Service::query()
+            ->active()
+            ->fromListedProvider()
+            ->with(['provider.providerProfile', 'category', 'images']);
 
         if (! empty($filters['category_id'])) {
             $query->inCategory((int) $filters['category_id']);
@@ -35,6 +38,14 @@ class SearchService
             $query->available();
         }
 
+        // Les prestataires du palier Pro remontent, à critère de tri égal.
+        $query->orderByDesc(
+            ProviderProfile::query()
+                ->select('is_promoted')
+                ->whereColumn('provider_profiles.user_id', 'services.provider_id')
+                ->limit(1)
+        );
+
         match ($filters['sort'] ?? null) {
             'price_asc' => $query->orderBy('price_amount'),
             'price_desc' => $query->orderByDesc('price_amount'),
@@ -49,7 +60,7 @@ class SearchService
      */
     public function searchProviders(array $filters = [], int $perPage = 12): LengthAwarePaginator
     {
-        $query = ProviderProfile::query()->with(['user', 'category']);
+        $query = ProviderProfile::query()->listed()->with(['user', 'category']);
 
         if (! empty($filters['category_id'])) {
             $query->where('category_id', $filters['category_id']);
@@ -71,6 +82,10 @@ class SearchService
             });
         }
 
-        return $query->orderByDesc('rating_avg')->paginate($perPage)->withQueryString();
+        return $query
+            ->orderByDesc('is_promoted')
+            ->orderByDesc('rating_avg')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 }

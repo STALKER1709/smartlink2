@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ModerationController;
+use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\ProviderVerificationController;
 use App\Http\Controllers\Admin\ServiceCategoryController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
@@ -9,15 +11,21 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LocaleController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PhoneVerificationController;
+use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ProfileController as ProviderProfileController;
+use App\Http\Controllers\Provider\ReviewController as ProviderReviewController;
 use App\Http\Controllers\Provider\ServiceController as ProviderServiceController;
+use App\Http\Controllers\Provider\ServiceDraftController;
+use App\Http\Controllers\Provider\StatisticsController as ProviderStatisticsController;
+use App\Http\Controllers\Provider\SubscriptionController as ProviderSubscriptionController;
+use App\Http\Controllers\Provider\TransactionController as ProviderTransactionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReviewController;
@@ -43,6 +51,8 @@ Route::post('/chatbot', [ChatbotController::class, 'ask'])
     ->name('chatbot.ask');
 
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+
+Route::get('/aide', [HelpCenterController::class, 'index'])->name('help.index');
 
 Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('payments.webhook');
 
@@ -85,11 +95,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])
         ->middleware('throttle:10,1')
         ->name('phone.verify.check');
-
-    Route::get('/requests/{serviceRequest}/payment', [PaymentController::class, 'show'])->name('payments.show');
-    Route::post('/requests/{serviceRequest}/payment', [PaymentController::class, 'initiate'])
-        ->middleware('throttle:5,1')
-        ->name('payments.initiate');
 });
 
 /*
@@ -101,8 +106,22 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider.')->group(function () {
     Route::resource('services', ProviderServiceController::class)->except('show');
 
+    Route::post('/services/draft', [ServiceDraftController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('services.draft');
+
     Route::get('/profile', [ProviderProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProviderProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/statistics', [ProviderStatisticsController::class, 'index'])->name('statistics.index');
+    Route::get('/reviews', [ProviderReviewController::class, 'index'])->name('reviews.index');
+    Route::get('/transactions', [ProviderTransactionController::class, 'index'])->name('transactions.index');
+
+    Route::get('/subscription', [ProviderSubscriptionController::class, 'show'])->name('subscription.show');
+    Route::get('/subscription/{plan}', [ProviderSubscriptionController::class, 'checkout'])->name('subscription.checkout');
+    Route::post('/subscription/{plan}', [ProviderSubscriptionController::class, 'subscribe'])
+        ->middleware('throttle:5,1')
+        ->name('subscription.subscribe');
 });
 
 /*
@@ -134,6 +153,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
 
     Route::resource('categories', ServiceCategoryController::class)->except('show');
+
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+    Route::get('/plans/{plan}/edit', [PlanController::class, 'edit'])->name('plans.edit');
+    Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
+
+    Route::get('/moderation', [ModerationController::class, 'index'])->name('moderation.index');
+    Route::post('/moderation/{report}/dismiss', [ModerationController::class, 'dismiss'])->name('moderation.dismiss');
 
     Route::get('/verifications', [ProviderVerificationController::class, 'index'])->name('verifications.index');
     Route::post('/verifications/{providerProfile}/approve', [ProviderVerificationController::class, 'approve'])->name('verifications.approve');

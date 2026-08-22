@@ -15,21 +15,36 @@
         'suspended' => 'Suspendu',
     ];
 
+    // Chaque statut porte sa propre couleur : sur la liste des demandes, la
+    // pastille doit dire d'un coup d'œil ce qui attend une réponse, ce qui est
+    // engagé et ce qui est clos. Regrouper « Envoyée », « Vue », « Acceptée »
+    // et « Terminée » sous une même teinte vide la pastille de son sens — le
+    // libellé seul ne se lit pas en balayant une liste.
     $colors = [
-        'draft' => 'bg-gray-100 text-gray-700',
-        'sent' => 'bg-blue-100 text-blue-700',
-        'viewed' => 'bg-indigo-100 text-indigo-700',
-        'accepted' => 'bg-teal-100 text-teal-700',
-        'refused' => 'bg-red-100 text-red-700',
-        'in_progress' => 'bg-amber-100 text-amber-700',
-        'completed' => 'bg-green-100 text-green-700',
-        'cancelled' => 'bg-gray-200 text-gray-600',
-        'active' => 'bg-green-100 text-green-700',
-        'inactive' => 'bg-gray-200 text-gray-600',
-        'suspended' => 'bg-red-100 text-red-700',
+        // En attente d'une action du prestataire : teinte chaude, distincte
+        // de tous les verts.
+        'draft' => 'bg-surface-container-high text-on-surface-variant',
+        'sent' => 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+        'viewed' => 'bg-secondary-container text-on-secondary-container',
+
+        // Engagé.
+        'accepted' => 'bg-secondary-fixed-dim text-on-secondary-fixed-variant',
+        'in_progress' => 'bg-tertiary-container text-on-tertiary-container',
+
+        // Clos.
+        'completed' => 'bg-primary-container text-on-primary-container',
+        'refused' => 'bg-error-container text-on-error-container',
+        // Le barré encode l'abandon par la forme, ce qui distingue « Annulée »
+        // de « Brouillon » sans ajouter une huitième teinte.
+        'cancelled' => 'bg-surface-container-high text-on-surface-variant line-through',
+
+        // États de service et de compte.
+        'active' => 'bg-secondary-container text-on-secondary-container',
+        'inactive' => 'bg-surface-container-high text-on-surface-variant',
+        'suspended' => 'bg-error-container text-on-error-container',
     ];
 @endphp
 
-<span {{ $attributes->merge(['class' => 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium '.($colors[$status] ?? 'bg-gray-100 text-gray-700')]) }}>
+<span {{ $attributes->merge(['class' => 'inline-flex items-center rounded-full px-3 py-1 font-button-text text-xs font-semibold '.($colors[$status] ?? 'bg-surface-container-high text-on-surface-variant')]) }}>
     {{ $labels[$status] ?? $status }}
 </span>

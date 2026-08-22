@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProviderProfile;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\User;
@@ -33,7 +34,7 @@ class ServiceFactory extends Factory
         $city = fake()->randomElement(['Douala', 'Yaoundé', 'Bafoussam', 'Garoua', 'Bamenda', 'Maroua']);
 
         return [
-            'provider_id' => User::factory()->provider(),
+            'provider_id' => User::factory()->provider()->has(ProviderProfile::factory(), 'providerProfile'),
             'category_id' => ServiceCategory::factory(),
             'title' => $title,
             'slug' => Str::slug($title).'-'.fake()->unique()->numerify('######'),

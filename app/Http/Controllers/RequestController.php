@@ -7,6 +7,7 @@ use App\Http\Requests\StoreServiceRequestRequest;
 use App\Models\Service;
 use App\Models\ServiceRequest;
 use App\Models\User;
+use App\Services\QuotaService;
 use App\Services\RequestService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,7 +15,10 @@ use Illuminate\View\View;
 
 class RequestController extends Controller
 {
-    public function __construct(private readonly RequestService $requests) {}
+    public function __construct(
+        private readonly RequestService $requests,
+        private readonly QuotaService $quotas,
+    ) {}
 
     public function index(Request $request): View
     {
@@ -40,8 +44,21 @@ class RequestController extends Controller
 
         $user = $request->user();
 
-        if ($user->isProvider() && $user->id === $serviceRequest->provider_id) {
+        // Le plafond mensuel se consomme à la première lecture d'une demande.
+        // Une demande déjà ouverte reste lisible sans rien décompter : ce qui
+        // est engagé le reste, quel que soit l'état de l'abonnement.
+        if ($user->isProvider()
+            && $user->id === $serviceRequest->provider_id
+            && $serviceRequest->status === ServiceRequest::STATUS_SENT) {
+            if (! $this->quotas->hasRequestQuotaLeft($user)) {
+                return view('requests.locked', [
+                    'serviceRequest' => $serviceRequest,
+                    'plan' => $this->quotas->plan($user),
+                ]);
+            }
+
             $this->requests->markViewed($serviceRequest, $user);
+            $this->quotas->consumeRequestRead($user);
         }
 
         $serviceRequest->load([

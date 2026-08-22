@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 #[Fillable([
     'user_id', 'category_id', 'business_name', 'description', 'address', 'city', 'quarter',
@@ -26,6 +27,9 @@ class ProviderProfile extends Model
             'opening_hours' => 'array',
             'contact_methods' => 'array',
             'is_verified' => 'boolean',
+            'is_listed' => 'boolean',
+            'is_promoted' => 'boolean',
+            'requests_read_count' => 'integer',
             'id_card_verified' => 'boolean',
             'rating_avg' => 'decimal:2',
             'latitude' => 'decimal:7',
@@ -42,10 +46,11 @@ class ProviderProfile extends Model
         if (! str_starts_with($digits, '237')) {
             $digits = '237'.$digits;
         }
+
         return 'https://wa.me/'.$digits;
     }
 
-    public function payments(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function payments(): HasManyThrough
     {
         return $this->hasManyThrough(Payment::class, User::class, 'id', 'payer_id', 'user_id');
     }
@@ -63,6 +68,15 @@ class ProviderProfile extends Model
     public function scopeVerified(Builder $query): Builder
     {
         return $query->where('is_verified', true);
+    }
+
+    /**
+     * Prestataires visibles dans les recherches : abonnement en cours et
+     * plafond mensuel de demandes non atteint.
+     */
+    public function scopeListed(Builder $query): Builder
+    {
+        return $query->where('is_listed', true);
     }
 
     public function scopeInCity(Builder $query, string $city): Builder

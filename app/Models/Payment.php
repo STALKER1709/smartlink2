@@ -2,23 +2,27 @@
 
 namespace App\Models;
 
+use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-    'request_id', 'payer_id', 'amount_xaf', 'operator', 'phone',
-    'type', 'status', 'campay_reference', 'internal_reference',
-    'failure_reason', 'paid_at',
+    'subscription_id', 'plan_id', 'payer_id', 'amount_xaf', 'operator', 'phone',
+    'status', 'provider_reference', 'internal_reference', 'failure_reason', 'paid_at',
 ])]
 class Payment extends Model
 {
-    public const TYPE_DEPOSIT = 'deposit';
-    public const TYPE_FINAL = 'final';
+    /** @use HasFactory<PaymentFactory> */
+    use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_SUCCESS = 'success';
+
     public const STATUS_FAILED = 'failed';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     protected function casts(): array
@@ -29,9 +33,14 @@ class Payment extends Model
         ];
     }
 
-    public function request(): BelongsTo
+    public function subscription(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequest::class, 'request_id');
+        return $this->belongsTo(Subscription::class);
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 
     public function payer(): BelongsTo

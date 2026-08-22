@@ -24,6 +24,7 @@ class ServiceRequestLifecycleTest extends TestCase
 
         $this->client = User::factory()->client()->create();
         $this->provider = User::factory()->provider()->create();
+        $this->subscribeProvider($this->provider);
         $this->service = Service::factory()->create(['provider_id' => $this->provider->id]);
     }
 

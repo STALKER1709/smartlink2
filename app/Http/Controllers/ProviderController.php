@@ -30,6 +30,8 @@ class ProviderController extends Controller
     {
         $this->authorize('view', $providerProfile);
 
+        $this->abortIfProviderIsHidden($providerProfile->user_id);
+
         $providerProfile->load('user', 'category');
 
         $services = $providerProfile->user
