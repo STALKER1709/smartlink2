@@ -15,15 +15,30 @@
         'suspended' => 'Suspendu',
     ];
 
+    // Chaque statut porte sa propre couleur : sur la liste des demandes, la
+    // pastille doit dire d'un coup d'œil ce qui attend une réponse, ce qui est
+    // engagé et ce qui est clos. Regrouper « Envoyée », « Vue », « Acceptée »
+    // et « Terminée » sous une même teinte vide la pastille de son sens — le
+    // libellé seul ne se lit pas en balayant une liste.
     $colors = [
+        // En attente d'une action du prestataire : teinte chaude, distincte
+        // de tous les verts.
         'draft' => 'bg-surface-container-high text-on-surface-variant',
-        'sent' => 'bg-secondary-container text-on-secondary-container',
+        'sent' => 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
         'viewed' => 'bg-secondary-container text-on-secondary-container',
-        'accepted' => 'bg-secondary-container text-on-secondary-container',
+
+        // Engagé.
+        'accepted' => 'bg-secondary-fixed-dim text-on-secondary-fixed-variant',
+        'in_progress' => 'bg-tertiary-container text-on-tertiary-container',
+
+        // Clos.
+        'completed' => 'bg-primary-container text-on-primary-container',
         'refused' => 'bg-error-container text-on-error-container',
-        'in_progress' => 'bg-tertiary-container/20 text-tertiary',
-        'completed' => 'bg-secondary-container text-on-secondary-container',
-        'cancelled' => 'bg-surface-container-high text-on-surface-variant',
+        // Le barré encode l'abandon par la forme, ce qui distingue « Annulée »
+        // de « Brouillon » sans ajouter une huitième teinte.
+        'cancelled' => 'bg-surface-container-high text-on-surface-variant line-through',
+
+        // États de service et de compte.
         'active' => 'bg-secondary-container text-on-secondary-container',
         'inactive' => 'bg-surface-container-high text-on-surface-variant',
         'suspended' => 'bg-error-container text-on-error-container',

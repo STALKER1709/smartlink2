@@ -24,14 +24,27 @@ l'utilisateur plutôt que de supposer.
 SmartLink met en relation des **clients** et des **prestataires de services** au
 Cameroun (plomberie, ménage, coiffure, cours particuliers, etc.).
 
-⚠️ Les fichiers `README.md` / `ARCHITECTURE.md` / `USAGE.md` d'origine décrivaient un
-produit **sans aucun paiement en ligne**. Ce n'est plus vrai : le projet a évolué vers un
-modèle avec acompte et abonnement prestataire payés en Mobile Money (le fournisseur est
-passé de Campay à **HR-Skills Pay**), plus un assistant IA (recherche en langage
-naturel, aide à la rédaction, modération automatique) basé sur `anthropic-ai/sdk`. Cette
-doc n'a pas encore été remise à jour pour refléter ce changement — ne te fie pas
-aveuglément à son contenu concernant le paiement, vérifie plutôt le code
-(`app/Services`, `app/Http/Controllers`, `routes/web.php`).
+### Le modèle économique, à ne pas se tromper dessus
+
+**Un seul flux d'argent existe : du prestataire vers SmartLink**, sous forme d'un
+abonnement mensuel réglé en Mobile Money via **HR-Skills Pay**. Tout prestataire
+commence par 30 jours d'essai gratuit.
+
+**Aucune somme ne transite entre client et prestataire.** Il n'y a ni panier, ni
+**acompte**, ni facture de prestation, ni commission — l'acompte de 25 % qui existait au
+début du projet a été retiré, et la table `payments` appartient désormais à une
+`Subscription`, plus à une demande de service. Le règlement de la prestation se convient
+directement entre les deux parties, hors plateforme. Les prix affichés sur les services
+sont indicatifs.
+
+Cette contrainte se vérifie dans le code (`app/Services/SubscriptionService.php`,
+`app/Models/Payment.php`), dans les réponses de l'assistant
+(`app/Services/Ai/SmartLinkContext.php`) et dans les tests. `README.md`,
+`ARCHITECTURE.md` et `USAGE.md` sont à jour sur ce point depuis la refonte.
+
+Le projet comprend par ailleurs un assistant IA (assistant conversationnel, recherche en
+langage naturel, aide à la rédaction, modération automatique) basé sur `anthropic-ai/sdk`,
+avec un repli permanent sur un mode par règles sans coût.
 
 ## Stack
 
@@ -57,10 +70,21 @@ aveuglément à son contenu concernant le paiement, vérifie plutôt le code
 
 ```bash
 composer install    # composer.lock est gitignored : régénère-le localement si besoin
+php artisan view:clear   # voir ci-dessous — indispensable après un changement de couleurs
 npm install && npm run build
 php artisan test
 vendor/bin/pint --test
 ```
+
+⚠️ Le glob de contenu de Tailwind inclut `storage/framework/views`, le cache des vues
+Blade compilées. Après un changement de classes, les anciennes survivent dans la feuille
+produite tant que ce cache n'est pas vidé — on croit alors avoir une régression de style
+alors que le code est juste. `php artisan view:clear` avant `npm run build`.
+
+⚠️ Si tu travailles depuis un `git worktree` avec un `vendor/` lié par symlink,
+l'autoloader optimisé pointe vers l'autre checkout et les classes nouvelles paraissent
+manquantes (`Class ... does not exist`, routes « not defined »). Lance
+`composer dump-autoload` dans le checkout que tu testes, ou teste sans worktree.
 
 ## Setup local rapide
 

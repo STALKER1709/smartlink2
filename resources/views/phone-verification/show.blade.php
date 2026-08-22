@@ -36,7 +36,7 @@
     <div class="mt-4 flex items-center justify-between text-sm">
         <form method="POST" action="{{ route('phone.verify.send') }}">
             @csrf
-            <button type="submit" class="text-indigo-600 hover:text-indigo-800 underline">
+            <button type="submit" class="text-primary hover:text-primary-container underline">
                 {{ __('ui.phone_verification.resend') }}
             </button>
         </form>
