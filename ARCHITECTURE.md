@@ -80,7 +80,7 @@ Le résultat est mis en cache une heure et **stable d'un appel à l'autre**, ce 
 
 1. **Pilote** — `AI_DRIVER` différent de `claude` : rien ne part.
 2. **Clé** — clé d'API absente : rien ne part, sans erreur pour l'utilisateur.
-3. **Visiteur anonyme** — `AI_REQUIRE_AUTH` renvoie les visiteurs au mode par règles ; la dépense devient un motif d'inscription.
+3. **Visiteur anonyme** — `AI_REQUIRE_AUTH` renvoie les visiteurs au mode par règles ; la dépense devient un motif d'inscription. `AI_GUEST_FEATURES` liste les exceptions : la recherche en langage naturel y figure, parce que c'est précisément la fonction qui donne envie de créer un compte, et qu'exiger un compte avant de l'avoir essayée serait absurde.
 4. **Plafond mensuel** — au-delà de `AI_MONTHLY_BUDGET_USD`, toute la plateforme bascule en mode par règles, avec alerte dans les journaux.
 5. **Quota quotidien** — au-delà de `AI_DAILY_MESSAGES` messages, ce compte-là seulement bascule.
 
@@ -99,6 +99,8 @@ Le contrôleur **redirige** ensuite vers la recherche classique avec les paramè
 Tout échec ramène silencieusement à la recherche par mot-clé : IA coupée, plafond atteint, visiteur anonyme, extraction inexploitable ou intention vide. L'utilisateur obtient des résultats dans tous les cas, simplement moins bien ciblés.
 
 Le quota quotidien par compte ne borne que la conversation : sans cela, un utilisateur bavard se retrouverait privé de recherche. L'extraction reste bornée par le plafond de dépense mensuel, et elle s'appuie sur le modèle le plus économique.
+
+La recherche étant ouverte aux visiteurs sur une page publique et sans limite, le plafond par compte n'y protège plus rien : il est remplacé par un plafond quotidien **par adresse IP** (`AI_GUEST_SEARCHES_PER_DAY`), appliqué dans le contrôleur — c'est la couche HTTP qui connaît l'adresse. Au-delà, retour silencieux à la recherche par mot-clé, comme pour tout autre refus. Mettre ce plafond à zéro referme la fonction aux visiteurs sans toucher au reste.
 
 #### La rédaction assistée
 

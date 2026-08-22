@@ -8,6 +8,7 @@ use App\Services\Ai\SearchIntentExtractor;
 use App\Services\SearchService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
 
 class ServiceController extends Controller
@@ -71,7 +72,9 @@ class ServiceController extends Controller
     {
         $query = mb_substr(trim($request->string('q')->toString()), 0, 300);
 
-        $intent = $this->intents->extract($query, $request->user());
+        $intent = $this->guestAllowance($request)
+            ? $this->intents->extract($query, $request->user())
+            : null;
 
         if ($intent === null || $intent->isEmpty()) {
             return redirect()->route('services.index', ['term' => $query]);
@@ -80,5 +83,36 @@ class ServiceController extends Controller
         return redirect()
             ->route('services.index', $intent->toQueryParameters())
             ->with('searchIntent', $intent->summary());
+    }
+
+    /**
+     * La recherche en langage naturel est ouverte aux visiteurs : c'est elle
+     * qui donne envie de créer un compte. Mais la page est publique et sans
+     * limite, donc le plafond par compte ne protège plus rien : il est
+     * remplacé par un plafond quotidien par adresse. Au-delà, on retombe
+     * silencieusement sur la recherche par mot-clé, comme pour tout autre
+     * refus.
+     */
+    private function guestAllowance(Request $request): bool
+    {
+        if ($request->user() !== null) {
+            return true;
+        }
+
+        $perDay = (int) config('ai.limits.guest_searches_per_day');
+
+        if ($perDay <= 0) {
+            return false;
+        }
+
+        $key = 'ai-search:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($key, $perDay)) {
+            return false;
+        }
+
+        RateLimiter::hit($key, decaySeconds: 60 * 60 * 24);
+
+        return true;
     }
 }

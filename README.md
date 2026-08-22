@@ -23,7 +23,7 @@ Quatre fonctions, toutes bornées par les mêmes garde-fous de coût, et toutes 
 | Fonction | Ce qu'elle apporte | Repli |
 |---|---|---|
 | **Assistant** | Répond sur le fonctionnement de la plateforme, en connaissant le catalogue réel | Réponses par mots-clés |
-| **Recherche en langage naturel** | « J'ai une fuite sous l'évier à Bonamoussadi » remplit les filtres tout seul | Recherche par mot-clé |
+| **Recherche en langage naturel** | « J'ai une fuite sous l'évier à Bonamoussadi » remplit les filtres tout seul — accessible sans compte | Recherche par mot-clé |
 | **Rédaction assistée** | Propose titre et description à un prestataire à partir de quelques mots | Le prestataire écrit lui-même |
 | **Modération** | Pré-filtre annonces et avis, signale à l'administration | Contenu publié sans examen |
 

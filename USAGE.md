@@ -74,6 +74,8 @@ Deux façons de chercher, sur la page `/services` :
 
 **Filtrer précisément.** Catégorie, ville, quartier, mot-clé, disponibilité et tri restent accessibles directement, sans passer par la phrase.
 
+La recherche par phrase est accessible **sans compte** : inutile de s'inscrire pour l'essayer. Les visiteurs non connectés disposent d'un nombre de recherches par jour ; au-delà, leur phrase est traitée comme un mot-clé ordinaire.
+
 L'adresse obtenue après une recherche par phrase est une adresse de recherche classique : elle se partage, se met en favori et se rafraîchit sans surprise. Si la reconnaissance n'aboutit pas — pour une phrase trop vague, ou quand la fonction est momentanément indisponible — la phrase est traitée comme un simple mot-clé, sans message d'erreur.
 
 ## L'assistant

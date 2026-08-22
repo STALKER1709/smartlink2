@@ -36,6 +36,25 @@ return [
          */
         'require_authentication' => (bool) env('AI_REQUIRE_AUTH', true),
 
+        /*
+         * Exceptions à la règle ci-dessus. La recherche en langage naturel est
+         * ouverte aux visiteurs : c'est précisément la fonction qui donne envie
+         * de créer un compte, et l'exiger avant de l'avoir essayée est absurde.
+         * Elle tourne sur le modèle le plus économique et reste bornée par le
+         * plafond par adresse ci-dessous.
+         */
+        'guest_features' => array_filter(array_map(
+            'trim',
+            explode(',', (string) env('AI_GUEST_FEATURES', 'search')),
+        )),
+
+        /*
+         * Recherches en langage naturel accordées par jour et par adresse IP,
+         * pour les visiteurs non connectés. Au-delà, retour à la recherche par
+         * mot-clé, sans message d'erreur.
+         */
+        'guest_searches_per_day' => (int) env('AI_GUEST_SEARCHES_PER_DAY', 10),
+
         /* Messages d'assistant par compte et par jour. */
         'daily_messages_per_user' => (int) env('AI_DAILY_MESSAGES', 20),
 

@@ -42,9 +42,12 @@ class AiGate
             return self::REASON_NO_KEY;
         }
 
-        // Les visiteurs anonymes gardent le mode par règles : la dépense
-        // devient un motif d'inscription plutôt qu'une charge ouverte.
-        if (config('ai.limits.require_authentication') && $user === null) {
+        // Les visiteurs anonymes gardent le mode par règles, sauf pour les
+        // fonctions explicitement ouvertes : la dépense devient un motif
+        // d'inscription plutôt qu'une charge ouverte.
+        if ($user === null
+            && config('ai.limits.require_authentication')
+            && ! $this->isOpenToGuests($feature)) {
             return self::REASON_GUEST;
         }
 
@@ -71,5 +74,10 @@ class AiGate
         }
 
         return self::REASON_ALLOWED;
+    }
+
+    public function isOpenToGuests(string $feature): bool
+    {
+        return in_array($feature, config('ai.limits.guest_features', []), true);
     }
 }

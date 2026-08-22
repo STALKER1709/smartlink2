@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Ai;
 
+use App\Models\AiUsage;
 use App\Models\Plan;
 use App\Models\ProviderProfile;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\User;
+use App\Services\Ai\AiGate;
 use App\Services\Ai\SearchIntent;
 use App\Services\Ai\SearchIntentExtractor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -131,15 +133,76 @@ class NaturalLanguageSearchTest extends TestCase
         $this->assertNull($extractor->extract('un plombier à Douala', User::factory()->client()->create()));
     }
 
-    public function test_a_guest_gets_the_keyword_fallback_rather_than_an_error(): void
+    public function test_a_guest_may_use_the_natural_search(): void
     {
         config()->set('ai.driver', 'claude');
         config()->set('ai.api_key', 'cle-de-test');
         config()->set('ai.limits.require_authentication', true);
 
-        $extractor = $this->app->make(SearchIntentExtractor::class);
+        // C'est la fonction qui donne envie de créer un compte : l'exiger
+        // avant de l'avoir essayée serait absurde.
+        $gate = $this->app->make(AiGate::class);
 
-        $this->assertNull($extractor->extract('un plombier à Douala', null));
+        $this->assertSame(
+            AiGate::REASON_ALLOWED,
+            $gate->decide(null, AiUsage::FEATURE_SEARCH),
+        );
+    }
+
+    public function test_a_guest_is_still_refused_the_conversation(): void
+    {
+        config()->set('ai.driver', 'claude');
+        config()->set('ai.api_key', 'cle-de-test');
+        config()->set('ai.limits.require_authentication', true);
+
+        $gate = $this->app->make(AiGate::class);
+
+        $this->assertSame(
+            AiGate::REASON_GUEST,
+            $gate->decide(null, AiUsage::FEATURE_CHAT),
+        );
+    }
+
+    public function test_a_visitor_beyond_the_daily_allowance_falls_back_to_keywords(): void
+    {
+        config()->set('ai.limits.guest_searches_per_day', 2);
+
+        $intent = new SearchIntent(categoryId: $this->plumbing->id, categoryName: 'Plomberie');
+        $this->fakeExtraction($intent);
+
+        // Les deux premières recherches sont interprétées…
+        foreach (range(1, 2) as $ignored) {
+            $this->get(route('services.index', ['q' => 'un plombier']))
+                ->assertSessionHas('searchIntent');
+        }
+
+        // …la troisième retombe sur le mot-clé, sans message d'erreur.
+        $this->get(route('services.index', ['q' => 'un plombier']))
+            ->assertRedirect(route('services.index', ['term' => 'un plombier']))
+            ->assertSessionMissing('searchIntent');
+    }
+
+    public function test_the_daily_allowance_does_not_apply_to_signed_in_users(): void
+    {
+        config()->set('ai.limits.guest_searches_per_day', 1);
+
+        $this->fakeExtraction(new SearchIntent(categoryId: $this->plumbing->id, categoryName: 'Plomberie'));
+        $user = User::factory()->client()->create();
+
+        foreach (range(1, 4) as $ignored) {
+            $this->actingAs($user)
+                ->get(route('services.index', ['q' => 'un plombier']))
+                ->assertSessionHas('searchIntent');
+        }
+    }
+
+    public function test_setting_the_allowance_to_zero_closes_it_to_visitors(): void
+    {
+        config()->set('ai.limits.guest_searches_per_day', 0);
+        $this->fakeExtraction(new SearchIntent(categoryId: $this->plumbing->id, categoryName: 'Plomberie'));
+
+        $this->get(route('services.index', ['q' => 'un plombier']))
+            ->assertRedirect(route('services.index', ['term' => 'un plombier']));
     }
 
     public function test_a_category_the_model_invented_is_dropped_rather_than_trusted(): void
