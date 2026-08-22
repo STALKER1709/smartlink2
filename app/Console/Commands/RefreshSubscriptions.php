@@ -14,12 +14,14 @@ class RefreshSubscriptions extends Command
 
     public function handle(SubscriptionService $subscriptions, QuotaService $quotas): int
     {
+        $reminded = $subscriptions->sendExpiryReminders();
         $expired = $subscriptions->expireLapsed();
 
         // Le compteur mensuel repart de zéro au changement de mois : ce passage
         // fait réapparaître dans les recherches ceux qui étaient au plafond.
         $counts = $quotas->refreshAllListings();
 
+        $this->info("Relances envoyées : {$reminded}");
         $this->info("Abonnements expirés : {$expired}");
         $this->info("Prestataires visibles : {$counts['listed']} — masqués : {$counts['unlisted']}");
 

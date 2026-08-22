@@ -93,6 +93,13 @@
                             <li>· {{ __('ui.plans.stats') }}</li>
                         @endif
                     </ul>
+
+                    <a href="{{ route('provider.subscription.checkout', $plan) }}"
+                       class="mt-6 block rounded-md bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-indigo-700">
+                        {{ $isCurrent && $subscription && ! $subscription->isTrial()
+                            ? __('ui.subscription.renew')
+                            : __('ui.subscription.choose_plan') }}
+                    </a>
                 </div>
             @endforeach
         </div>

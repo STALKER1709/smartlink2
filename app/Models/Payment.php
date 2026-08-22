@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-    'subscription_id', 'payer_id', 'amount_xaf', 'operator', 'phone',
+    'subscription_id', 'plan_id', 'payer_id', 'amount_xaf', 'operator', 'phone',
     'status', 'campay_reference', 'internal_reference', 'failure_reason', 'paid_at',
 ])]
 class Payment extends Model
@@ -36,6 +36,11 @@ class Payment extends Model
     public function subscription(): BelongsTo
     {
         return $this->belongsTo(Subscription::class);
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 
     public function payer(): BelongsTo

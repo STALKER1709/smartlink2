@@ -38,7 +38,8 @@ Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts 
 5. **Traiter les demandes reçues** (`/requests`) : accepter ou refuser une demande, démarrer la prestation, puis la marquer comme terminée.
 6. **Messagerie** (`/conversations`) : échanger avec le client une fois la demande acceptée.
 7. **Suivre sa réputation** : la note moyenne et le nombre d'avis affichés sur son profil sont recalculés automatiquement à chaque nouvel avis.
-8. **Gérer son abonnement** : l'inscription ouvre 30 jours d'essai gratuit au niveau Pro. Avant l'échéance, des SMS de relance invitent à choisir un palier et à le régler en Mobile Money.
+8. **Gérer son abonnement** (`/provider/subscription`) : l'inscription ouvre 30 jours d'essai gratuit au niveau Pro. La page affiche le palier en cours, l'échéance, le nombre de services publiés et de demandes lues ce mois-ci, et le comparatif des paliers.
+9. **Régler son abonnement** : choisir un palier, sélectionner MTN Mobile Money ou Orange Money, saisir son numéro. Une demande de confirmation arrive sur le téléphone ; composer son code Mobile Money valide le paiement. **Il n'existe aucun prélèvement automatique** — l'opérateur ne le permet pas — donc chaque cycle se renouvelle par une validation explicite, annoncée par SMS 3 jours puis 1 jour avant l'échéance.
 
 ### Cycle de vie d'une demande
 

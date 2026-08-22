@@ -101,6 +101,10 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::put('/profile', [ProviderProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/subscription', [ProviderSubscriptionController::class, 'show'])->name('subscription.show');
+    Route::get('/subscription/{plan}', [ProviderSubscriptionController::class, 'checkout'])->name('subscription.checkout');
+    Route::post('/subscription/{plan}', [ProviderSubscriptionController::class, 'subscribe'])
+        ->middleware('throttle:5,1')
+        ->name('subscription.subscribe');
 });
 
 /*

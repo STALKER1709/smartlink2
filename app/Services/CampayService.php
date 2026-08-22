@@ -35,6 +35,14 @@ class CampayService
         return $this->token;
     }
 
+    /**
+     * Demande de collecte Mobile Money. Campay ne propose ni mandat récurrent
+     * ni prélèvement automatique : le payeur valide chaque opération sur son
+     * téléphone. L'appel renvoie donc presque toujours PENDING, et c'est le
+     * rappel de l'opérateur qui confirme.
+     *
+     * @return array{reference: ?string, status: string, ussd_code?: ?string, operator?: ?string, error?: string}
+     */
     public function collect(string $phone, int $amountXaf, string $description, string $externalRef): array
     {
         if ($this->isSandboxWithoutCredentials()) {
@@ -67,12 +75,38 @@ class CampayService
                 return ['reference' => null, 'status' => 'FAILED', 'error' => $response->body()];
             }
 
-            return $response->json();
+            return $this->normalizeCollectResponse($response->json());
         } catch (\Throwable $e) {
             Log::error('[Campay] Exception', ['error' => $e->getMessage()]);
 
             return ['reference' => null, 'status' => 'FAILED', 'error' => $e->getMessage()];
         }
+    }
+
+    /**
+     * Une collecte acceptée renvoie une référence, sans champ de statut : la
+     * traiter comme un échec ferait échouer tout paiement réel. Sans référence
+     * en revanche, rien n'a été engagé.
+     *
+     * @param  array<string, mixed>|null  $body
+     * @return array{reference: ?string, status: string, ussd_code?: ?string, operator?: ?string, error?: string}
+     */
+    private function normalizeCollectResponse(?array $body): array
+    {
+        $reference = $body['reference'] ?? null;
+
+        if ($reference === null) {
+            return ['reference' => null, 'status' => 'FAILED', 'error' => 'Réponse Campay sans référence.'];
+        }
+
+        $status = strtoupper((string) ($body['status'] ?? 'PENDING'));
+
+        return [
+            'reference' => $reference,
+            'status' => in_array($status, ['SUCCESSFUL', 'FAILED', 'CANCELLED'], true) ? $status : 'PENDING',
+            'ussd_code' => $body['ussd_code'] ?? null,
+            'operator' => $body['operator'] ?? null,
+        ];
     }
 
     public function getTransactionStatus(string $reference): array

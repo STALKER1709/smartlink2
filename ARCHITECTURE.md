@@ -119,7 +119,23 @@ Les recherches ne filtrent plus que sur ce booléen indexé (`Service::scopeFrom
 
 ### Renouvellement : manuel par nature
 
-Le Mobile Money camerounais n'autorise pas le prélèvement automatique : chaque cycle exige une validation du prestataire sur son téléphone. Le renouvellement est donc **annoncé par SMS avant l'échéance** (`config/subscription.php`, clé `reminder_days`), puis déclenché par le prestataire lui-même. `PaymentController::webhook()` est le seul canal qui confirme un règlement — d'où son exemption CSRF explicite dans `bootstrap/app.php`, compensée par la vérification de signature partagée.
+L'API Campay expose `collect`, `initCollect`, `get_transaction_status`, `get_payment_link`, `disburse` et `get_balance` — **aucun mandat récurrent, aucun prélèvement sans validation du payeur**. Chaque cycle exige donc que le prestataire compose son code sur son téléphone. Le renouvellement est **annoncé par SMS avant l'échéance** (`config/subscription.php`, clé `reminder_days`), puis déclenché par le prestataire lui-même.
+
+Le parcours de règlement suit trois temps :
+
+1. `SubscriptionService::requestPayment()` crée un `Payment` en attente portant le palier visé, puis demande la collecte à Campay. Une collecte déjà en attente **pour le même palier** est réutilisée plutôt que relancée : sans cela, un double clic ferait payer deux fois. Un changement de palier en cours de route abandonne la collecte précédente au lieu de la réutiliser avec le mauvais montant.
+2. Campay répond presque toujours `PENDING` : le prestataire n'a pas encore validé. Le palier visé n'est **pas** appliqué à ce stade — un changement de formule ne prend effet qu'au règlement abouti.
+3. `PaymentController::webhook()` reçoit la confirmation de l'opérateur, seul canal qui fait foi. Il est exempté de la vérification CSRF dans `bootstrap/app.php` — un rappel externe ne peut pas porter de jeton — la légitimité étant vérifiée par la signature partagée.
+
+`CampayService::collect()` normalise la réponse de l'opérateur : une collecte acceptée renvoie une référence sans champ de statut, et la traiter comme un échec ferait échouer tout paiement réel.
+
+### Le passage quotidien
+
+`subscriptions:refresh` (planifié à 2 h) enchaîne trois tâches dans cet ordre :
+
+1. **Relances** — un SMS par seuil franchi (`reminder_days`, par défaut 3 jours puis 1 jour avant l'échéance). `last_reminder_day` sur l'abonnement retient le dernier seuil envoyé, ce qui évite de renvoyer le même message à chaque passage. À un jour restant, les seuils 3 et 1 sont tous deux franchis : c'est le plus proche de l'échéance qui vaut.
+2. **Expiration** — les abonnements échus basculent en `expired`, avec journal d'audit et SMS de notification. C'est le moment où les services sortent des recherches.
+3. **Visibilité** — recalcul de `is_listed` / `is_promoted` pour tout le monde, ce qui fait notamment réapparaître au changement de mois les prestataires qui étaient au plafond de demandes.
 
 ## Tests (`tests/`)
 

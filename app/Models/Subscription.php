@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id', 'plan_id', 'status', 'starts_at', 'ends_at', 'cancelled_at'])]
+#[Fillable(['user_id', 'plan_id', 'status', 'starts_at', 'ends_at', 'cancelled_at', 'last_reminder_day'])]
 class Subscription extends Model
 {
     /** @use HasFactory<SubscriptionFactory> */
@@ -30,6 +30,7 @@ class Subscription extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'cancelled_at' => 'datetime',
+            'last_reminder_day' => 'integer',
         ];
     }
 
