@@ -48,7 +48,7 @@ Sans clé d'API, l'application fonctionne intégralement en mode par règles, sa
 - **Backend** : Laravel 13 (PHP 8.3+), architecture MVC
 - **Base de données** : MySQL en production, SQLite en développement/tests
 - **Frontend** : Blade, Tailwind CSS, Alpine.js, Vite — interface responsive (mobile-first)
-- **Paiement** : Mobile Money via Campay (MTN MoMo, Orange Money) — abonnements uniquement
+- **Paiement** : Mobile Money via HR-Skills Pay (MTN MoMo, Orange Money) — abonnements uniquement, avec un mode simulé sans compte
 - **SMS** : Africa's Talking (vérification de numéro, relances d'échéance)
 - **IA** : Claude (Anthropic), avec repli permanent sur un mode par règles sans coût
 - **Tests** : PHPUnit (tests Feature + Unit)

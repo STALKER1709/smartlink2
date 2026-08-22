@@ -157,7 +157,7 @@ Trois tables portent le modèle :
 
 - **`plans`** — les paliers commerciaux (`essential`, `pro`) et leurs limites : nombre de services publiables, nombre de demandes lisibles par mois, mise en avant, accès à la rédaction assistée, statistiques. Les prix sont stockés en base et modifiables sans redéploiement ; les libellés viennent des fichiers de langue, ce qui préserve le bilinguisme.
 - **`subscriptions`** — l'abonnement d'un prestataire à un palier, avec son statut (`trialing`, `active`, `expired`, `cancelled`) et sa date d'échéance. L'essai gratuit n'est pas un palier distinct : c'est un abonnement au palier `pro` en statut `trialing`, ce qui évite de dupliquer la logique de droits.
-- **`payments`** — les règlements Mobile Money d'un abonnement. La table ne référence plus de demande de service : elle appartient à une `Subscription`.
+- **`payments`** — les règlements Mobile Money d'un abonnement. La table ne référence plus de demande de service : elle appartient à une `Subscription`. `provider_reference` porte la référence du fournisseur, `internal_reference` la nôtre.
 
 ### Visibilité : un booléen dénormalisé
 
@@ -176,17 +176,42 @@ Les recherches ne filtrent plus que sur ce booléen indexé (`Service::scopeFrom
 
 `Subscription::isUsable()` est le point de vérité unique : un abonnement ouvre des droits s'il est en essai ou actif **et** que son échéance est devant. Dès qu'il ne l'est plus, `User::activeSubscription()` renvoie `null` et le prestataire disparaît des recherches, sans que son compte ni ses conversations soient touchés.
 
-### Renouvellement : manuel par nature
+### Le fournisseur d'encaissement
 
-L'API Campay expose `collect`, `initCollect`, `get_transaction_status`, `get_payment_link`, `disburse` et `get_balance` — **aucun mandat récurrent, aucun prélèvement sans validation du payeur**. Chaque cycle exige donc que le prestataire compose son code sur son téléphone. Le renouvellement est **annoncé par SMS avant l'échéance** (`config/subscription.php`, clé `reminder_days`), puis déclenché par le prestataire lui-même.
+Le paiement passe par une interface, `App\Contracts\PaymentProvider`, exactement comme le chatbot passe par `ChatbotProvider`. Deux implémentations :
+
+- **`HrSkillsPayProvider`** — HR-Skills Pay, encaissement Mobile Money (MTN, Orange) au Cameroun. Portée depuis le projet NILE, où elle est éprouvée en bac à sable.
+- **`MockPaymentProvider`** — encaissement simulé, pilote par défaut, pour développer et tester sans compte ni réseau. Il reproduit la convention de bac à sable de HR-Skills : montant pair, succès ; montant impair, échec.
+
+`PAYMENT_PROVIDER` choisit l'implémentation. Rien dans le reste de l'application ne connaît le fournisseur retenu.
+
+#### Authentification à double clé
+
+La clé A voyage dans `Authorization: Bearer`, la clé B est échangée contre un **token de transaction** valable 45 minutes, mis en cache et renouvelé cinq minutes avant sa fin. La clé B accompagne aussi chaque appel dans `X-API-Secret`.
+
+Les deux clés doivent porter le **même environnement** — `_test_` ou `_live_`. Elles se copient séparément depuis le tableau de bord, et rien n'empêche matériellement d'associer une clé A de production à une clé B de test : l'application choisissant son chemin d'après la clé A, un tel mélange enverrait des appels de production authentifiés par un secret de test. `php artisan payment:check` le vérifie avant qu'un vrai paiement ne s'en charge. Une clé illisible n'est jamais traitée comme « production » par défaut : partir en live sur une clé qu'on ne sait pas lire est le pire des deux échecs.
+
+En test, les appels qui consomment le token ne sont servis que sous `/sandbox`. Ce préfixe n'est documenté nulle part — il vient du refus renvoyé par l'API — et reste donc susceptible de disparaître : si les encaissements de test répondaient un jour 404, c'est là qu'il faut regarder en premier.
+
+#### Idempotence
+
+`Idempotency-Key` est dérivée de notre référence de paiement de façon **déterministe** : deux tentatives sur le même paiement produisent la même clé. C'est tout l'intérêt de l'en-tête — une clé tirée au hasard à chaque appel ne protégerait de rien, alors que le vrai risque de double débit est qu'un prestataire relance un paiement resté en attente après une réponse perdue. Nos références n'étant pas des UUID, on en dérive une empreinte mise à la forme d'un UUID v4, format annoncé par la documentation.
+
+#### Renouvellement : manuel par nature
+
+Le Mobile Money camerounais n'autorise aucun mandat récurrent : chaque cycle exige que le prestataire valide l'opération sur son téléphone. Le renouvellement est **annoncé par SMS avant l'échéance** (`config/subscription.php`, clé `reminder_days`), puis déclenché par le prestataire lui-même.
 
 Le parcours de règlement suit trois temps :
 
-1. `SubscriptionService::requestPayment()` crée un `Payment` en attente portant le palier visé, puis demande la collecte à Campay. Une collecte déjà en attente **pour le même palier** est réutilisée plutôt que relancée : sans cela, un double clic ferait payer deux fois. Un changement de palier en cours de route abandonne la collecte précédente au lieu de la réutiliser avec le mauvais montant.
-2. Campay répond presque toujours `PENDING` : le prestataire n'a pas encore validé. Le palier visé n'est **pas** appliqué à ce stade — un changement de formule ne prend effet qu'au règlement abouti.
-3. `PaymentController::webhook()` reçoit la confirmation de l'opérateur, seul canal qui fait foi. Il est exempté de la vérification CSRF dans `bootstrap/app.php` — un rappel externe ne peut pas porter de jeton — la légitimité étant vérifiée par la signature partagée.
+1. `SubscriptionService::requestPayment()` crée un `Payment` en attente portant le palier visé, puis demande la collecte. Une collecte déjà en attente **pour le même palier** est réutilisée plutôt que relancée : sans cela, un double clic ferait payer deux fois. Un changement de palier en cours de route abandonne la collecte précédente au lieu de la réutiliser avec le mauvais montant.
+2. Le fournisseur répond « en attente » : le prestataire n'a pas encore validé. Le palier visé n'est **pas** appliqué à ce stade — un changement de formule ne prend effet qu'au règlement abouti.
+3. `PaymentController::webhook()` reçoit la confirmation, seul canal qui fait foi. Il est exempté de la vérification CSRF dans `bootstrap/app.php` — un rappel externe ne peut pas porter de jeton — la légitimité étant établie par une signature HMAC-SHA256 sur le corps brut.
 
-`CampayService::collect()` normalise la réponse de l'opérateur : une collecte acceptée renvoie une référence sans champ de statut, et la traiter comme un échec ferait échouer tout paiement réel.
+#### Le statut annoncé n'est jamais cru
+
+Un corps signé prouve l'**origine** du message, pas l'**état courant** de la transaction. Le contrôleur relit donc systématiquement le statut chez le fournisseur avant de créditer quoi que ce soit. `HOLD` — revue anti-blanchiment — ne conclut rien : le laisser en attente évite d'ouvrir un abonnement encore refusable.
+
+La structure des rappels n'étant documentée par aucun exemple, la lecture est tolérante : la référence est cherchée à la racine comme sous `data`. Quand elle échoue, la **structure** reçue est journalisée — ses clés, jamais ses valeurs, un corps de rappel transportant un numéro de téléphone et un montant. C'est la seule façon d'apprendre comment le fournisseur nomme ses champs sans deviner sur une API de paiement.
 
 ### Le passage quotidien
 

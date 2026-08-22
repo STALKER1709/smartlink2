@@ -11,6 +11,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
@@ -28,7 +29,18 @@ class ProviderJourneyTest extends TestCase
         $essential = Plan::factory()->create();
         $pro = Plan::factory()->pro()->create();
         $category = ServiceCategory::factory()->create();
-        config()->set('campay.webhook_secret', 'le-vrai-secret');
+
+        // Le parcours exerce le vrai fournisseur, pas l'encaissement simulé :
+        // la collecte part en attente et c'est le rappel signé qui la confirme.
+        config()->set('payment.driver', 'hrskills');
+        config()->set('payment.hrskills.key_a', 'hrsk_pk_test_a');
+        config()->set('payment.hrskills.key_b', 'hrsk_sk_test_b');
+        config()->set('payment.hrskills.webhook_secret', 'secret-de-rappel');
+        Http::fake([
+            '*/transaction-token' => Http::response(['transaction_token' => 'jeton', 'expires_in' => 2700]),
+            '*/payin/*' => Http::response(['data' => ['reference' => 'ref_journey']], 202),
+            '*/v1/payments/*' => Http::response(['data' => ['status' => 'SUCCESS']]),
+        ]);
 
         // 1. Inscription : l'essai s'ouvre et le prestataire est visible.
         $this->post(route('register'), [
@@ -98,12 +110,23 @@ class ProviderJourneyTest extends TestCase
         $this->assertSame($essential->id, $payment->plan_id);
 
         // 6. L'opérateur confirme : le palier prend effet, le service revient.
-        $this->withHeader('X-Campay-Signature', 'le-vrai-secret')
-            ->postJson(route('payments.webhook'), [
-                'external_reference' => $payment->internal_reference,
-                'status' => 'SUCCESSFUL',
-                'reference' => 'CAMPAY-OK',
-            ])->assertOk();
+        $body = json_encode([
+            'data' => [
+                'reference' => $payment->provider_reference,
+                'metadata' => ['reference_interne' => $payment->internal_reference],
+            ],
+        ]);
+
+        $this->call(
+            'POST',
+            route('payments.webhook'),
+            [], [], [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_HUB_SIGNATURE' => 'sha256='.hash_hmac('sha256', $body, 'secret-de-rappel'),
+            ],
+            $body,
+        )->assertOk();
 
         $subscription = $provider->activeSubscription();
         $this->assertSame(Subscription::STATUS_ACTIVE, $subscription->status);

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'subscription_id', 'plan_id', 'payer_id', 'amount_xaf', 'operator', 'phone',
-    'status', 'campay_reference', 'internal_reference', 'failure_reason', 'paid_at',
+    'status', 'provider_reference', 'internal_reference', 'failure_reason', 'paid_at',
 ])]
 class Payment extends Model
 {

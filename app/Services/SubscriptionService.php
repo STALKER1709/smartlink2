@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Contracts\PaymentProvider;
 use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\Payment\CollectionResult;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -14,7 +16,7 @@ class SubscriptionService
 {
     public function __construct(
         private readonly AuditLogService $auditLog,
-        private readonly CampayService $campay,
+        private readonly PaymentProvider $payments,
         private readonly QuotaService $quotas,
         private readonly SmsService $sms,
     ) {}
@@ -50,11 +52,12 @@ class SubscriptionService
     }
 
     /**
-     * Engage le règlement d'un palier. Campay n'offrant aucun mandat, le
-     * prestataire valide l'opération sur son téléphone : la collecte part en
-     * « en attente » et c'est le rappel de l'opérateur qui la confirme.
+     * Engage le règlement d'un palier. Le Mobile Money n'offrant aucun mandat
+     * récurrent, le prestataire valide l'opération sur son téléphone : la
+     * collecte part « en attente » et c'est le rappel de l'opérateur qui la
+     * confirme.
      *
-     * @return array{payment: Payment, status: string, ussd_code: ?string}
+     * @return array{payment: Payment, status: string}
      */
     public function requestPayment(User $provider, Plan $plan, string $phone, string $operator): array
     {
@@ -94,36 +97,31 @@ class SubscriptionService
             ]);
         });
 
-        $result = $this->campay->collect(
+        $result = $this->payments->collect(
             phone: $phone,
+            operator: $operator,
             amountXaf: $plan->price_xaf,
             description: 'Abonnement SmartLink '.$plan->name(),
-            externalRef: $payment->internal_reference,
+            reference: $payment->internal_reference,
         );
 
-        $status = $result['status'] ?? 'FAILED';
+        if ($result->providerReference !== null) {
+            $payment->update(['provider_reference' => $result->providerReference]);
+        }
 
-        if ($status === 'SUCCESSFUL') {
-            $payment->update([
-                'status' => Payment::STATUS_SUCCESS,
-                'campay_reference' => $result['reference'] ?? null,
-                'paid_at' => now(),
-            ]);
-
+        if ($result->status === CollectionResult::STATUS_SUCCESS) {
+            $payment->update(['status' => Payment::STATUS_SUCCESS, 'paid_at' => now()]);
             $this->recordSuccessfulPayment($payment->refresh());
-        } elseif ($status !== 'PENDING') {
+        } elseif ($result->status === CollectionResult::STATUS_FAILED) {
             $payment->update([
                 'status' => Payment::STATUS_FAILED,
-                'failure_reason' => mb_substr((string) ($result['error'] ?? 'Paiement non abouti.'), 0, 500),
+                'failure_reason' => mb_substr($result->error ?? 'Paiement non abouti.', 0, 500),
             ]);
-        } else {
-            $payment->update(['campay_reference' => $result['reference'] ?? null]);
         }
 
         return [
             'payment' => $payment->refresh(),
-            'status' => $status,
-            'ussd_code' => $result['ussd_code'] ?? null,
+            'status' => $result->status,
         ];
     }
 

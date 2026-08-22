@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Provider;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Provider\SubscribeRequest;
 use App\Models\Plan;
+use App\Services\Payment\CollectionResult;
 use App\Services\QuotaService;
 use App\Services\SubscriptionService;
 use Illuminate\Http\RedirectResponse;
@@ -55,7 +56,7 @@ class SubscriptionController extends Controller
         );
 
         return match ($result['status']) {
-            'SUCCESSFUL' => redirect()
+            CollectionResult::STATUS_SUCCESS => redirect()
                 ->route('provider.subscription.show')
                 ->with('status', __('ui.subscription.payment_confirmed', [
                     'plan' => $plan->name(),
@@ -64,7 +65,7 @@ class SubscriptionController extends Controller
 
             // Le prestataire doit encore composer son code sur le téléphone :
             // le rappel de l'opérateur confirmera, ou non.
-            'PENDING' => redirect()
+            CollectionResult::STATUS_PENDING => redirect()
                 ->route('provider.subscription.show')
                 ->with('status', __('ui.subscription.payment_pending', [
                     'reference' => $result['payment']->internal_reference,

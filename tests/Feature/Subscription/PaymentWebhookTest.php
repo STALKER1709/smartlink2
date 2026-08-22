@@ -2,31 +2,31 @@
 
 namespace Tests\Feature\Subscription;
 
+use App\Contracts\PaymentProvider;
+use App\Contracts\WebhookEvent;
 use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\Payment\CollectionResult;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Tests\TestCase;
 
+/**
+ * Comportement du contrôleur de rappel, indépendamment du fournisseur :
+ * l'authentification et la lecture lui sont déléguées, le contrôleur décide
+ * seulement de ce qu'il en fait.
+ */
 class PaymentWebhookTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // Le rappel exige désormais un secret : sans lui, il se ferme.
-        config()->set('campay.webhook_secret', 'le-vrai-secret');
-        $this->withHeader('X-Campay-Signature', 'le-vrai-secret');
-    }
-
     /**
-     * Le rappel de l'opérateur vient de l'extérieur et ne peut pas porter de
-     * jeton CSRF. La protection étant désactivée d'office pendant les tests,
-     * l'exemption se vérifie sur la configuration du middleware lui-même.
+     * Le rappel vient de l'extérieur et ne peut pas porter de jeton CSRF. La
+     * protection étant désactivée d'office pendant les tests, l'exemption se
+     * vérifie sur la configuration du middleware lui-même.
      */
     public function test_the_webhook_path_is_exempt_from_csrf_verification(): void
     {
@@ -35,64 +35,92 @@ class PaymentWebhookTest extends TestCase
         $this->assertContains('payments/webhook', $middleware->getExcludedPaths());
     }
 
-    public function test_a_successful_callback_marks_the_payment_and_extends_the_subscription(): void
+    public function test_a_confirmed_payment_extends_the_subscription(): void
     {
         $payment = $this->pendingPayment();
         $endsAt = $payment->subscription->ends_at;
+        $this->fakeProvider($payment->internal_reference, 'success');
 
-        $response = $this->postJson(route('payments.webhook'), [
-            'external_reference' => $payment->internal_reference,
-            'status' => 'SUCCESSFUL',
-            'reference' => 'CAMPAY-123',
-        ]);
-
-        $response->assertOk()->assertJson(['status' => 'ok']);
+        $this->postJson(route('payments.webhook'), [])
+            ->assertOk()
+            ->assertJson(['status' => 'ok']);
 
         $payment->refresh();
         $this->assertSame(Payment::STATUS_SUCCESS, $payment->status);
-        $this->assertSame('CAMPAY-123', $payment->campay_reference);
+        $this->assertSame('HRSK-REF', $payment->provider_reference);
         $this->assertNotNull($payment->paid_at);
 
         $subscription = $payment->subscription->fresh();
         $this->assertSame(Subscription::STATUS_ACTIVE, $subscription->status);
         $this->assertTrue($subscription->ends_at->greaterThan($endsAt));
-        $this->assertTrue($subscription->isUsable());
     }
 
-    public function test_a_failed_callback_records_the_reason_without_extending_the_subscription(): void
+    public function test_a_refused_payment_is_recorded_without_extending_anything(): void
     {
         $payment = $this->pendingPayment();
         $endsAt = $payment->subscription->ends_at;
+        $this->fakeProvider($payment->internal_reference, 'failed');
 
-        $this->postJson(route('payments.webhook'), [
-            'external_reference' => $payment->internal_reference,
-            'status' => 'FAILED',
-            'message' => 'Solde insuffisant',
-        ])->assertOk();
+        $this->postJson(route('payments.webhook'), [])->assertOk();
 
-        $payment->refresh();
-        $this->assertSame(Payment::STATUS_FAILED, $payment->status);
-        $this->assertSame('Solde insuffisant', $payment->failure_reason);
+        $this->assertSame(Payment::STATUS_FAILED, $payment->fresh()->status);
         $this->assertEquals(
             $endsAt->timestamp,
             $payment->subscription->fresh()->ends_at->timestamp,
         );
     }
 
-    public function test_replaying_a_callback_does_not_extend_the_subscription_twice(): void
+    /**
+     * PENDING et HOLD — la revue anti-blanchiment — ne concluent rien. Créditer
+     * sur un HOLD reviendrait à ouvrir un abonnement encore refusable.
+     */
+    public function test_a_status_that_settles_nothing_leaves_the_payment_pending(): void
+    {
+        $payment = $this->pendingPayment();
+        $this->fakeProvider($payment->internal_reference, null);
+
+        $this->postJson(route('payments.webhook'), [])
+            ->assertOk()
+            ->assertJson(['status' => 'pending']);
+
+        $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
+    }
+
+    /**
+     * Le statut annoncé dans le rappel n'est jamais cru : le contrôleur relit
+     * l'état chez le fournisseur, qui seul fait foi.
+     */
+    public function test_the_announced_status_is_never_trusted_over_the_api(): void
     {
         $payment = $this->pendingPayment();
 
-        $body = [
-            'external_reference' => $payment->internal_reference,
-            'status' => 'SUCCESSFUL',
-            'reference' => 'CAMPAY-123',
-        ];
+        // Le rappel prétend « SUCCESS », l'API dit que rien n'est réglé.
+        $this->fakeProvider($payment->internal_reference, 'failed');
 
-        $this->postJson(route('payments.webhook'), $body)->assertOk();
+        $this->postJson(route('payments.webhook'), ['status' => 'SUCCESS'])->assertOk();
+
+        $this->assertSame(Payment::STATUS_FAILED, $payment->fresh()->status);
+    }
+
+    public function test_an_unauthenticated_callback_is_refused(): void
+    {
+        $payment = $this->pendingPayment();
+        $this->fakeProvider(null, 'success');
+
+        $this->postJson(route('payments.webhook'), [])->assertForbidden();
+
+        $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
+    }
+
+    public function test_replaying_a_callback_does_not_extend_the_subscription_twice(): void
+    {
+        $payment = $this->pendingPayment();
+        $this->fakeProvider($payment->internal_reference, 'success');
+
+        $this->postJson(route('payments.webhook'), [])->assertOk();
         $afterFirst = $payment->subscription->fresh()->ends_at;
 
-        $this->postJson(route('payments.webhook'), $body)->assertOk();
+        $this->postJson(route('payments.webhook'), [])->assertOk();
 
         $this->assertEquals(
             $afterFirst->timestamp,
@@ -100,63 +128,52 @@ class PaymentWebhookTest extends TestCase
         );
     }
 
-    public function test_a_callback_with_a_wrong_signature_is_refused(): void
+    public function test_a_callback_on_an_unknown_payment_is_acknowledged_without_effect(): void
     {
-        $payment = $this->pendingPayment();
+        $this->fakeProvider('SL-INCONNUE', 'success');
 
-        $this->withoutHeader('X-Campay-Signature')
-            ->postJson(route('payments.webhook').'?token=mauvais', [
-                'external_reference' => $payment->internal_reference,
-                'status' => 'SUCCESSFUL',
-            ])->assertForbidden();
-
-        $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
+        $this->postJson(route('payments.webhook'), [])
+            ->assertOk()
+            ->assertJson(['status' => 'ok']);
     }
 
-    public function test_a_callback_with_the_right_signature_is_accepted(): void
+    /**
+     * Le fournisseur est remplacé par un double : le contrôleur ne doit rien
+     * savoir de la signature ni de la forme des charges utiles.
+     */
+    private function fakeProvider(?string $internalReference, ?string $status): void
     {
-        $payment = $this->pendingPayment();
+        $fake = new class($internalReference, $status) implements PaymentProvider
+        {
+            public function __construct(
+                private readonly ?string $internalReference,
+                private readonly ?string $status,
+            ) {}
 
-        $this->postJson(route('payments.webhook'), [
-            'external_reference' => $payment->internal_reference,
-            'status' => 'SUCCESSFUL',
-        ])->assertOk();
+            public function collect(
+                string $phone,
+                string $operator,
+                int $amountXaf,
+                string $description,
+                string $reference,
+            ): CollectionResult {
+                return CollectionResult::pending('HRSK-REF');
+            }
 
-        $this->assertSame(Payment::STATUS_SUCCESS, $payment->fresh()->status);
-    }
+            public function status(string $providerReference): ?string
+            {
+                return $this->status;
+            }
 
-    public function test_without_a_configured_secret_the_callback_refuses_to_credit_anything(): void
-    {
-        config()->set('campay.webhook_secret', '');
-        $payment = $this->pendingPayment();
-        $endsAt = $payment->subscription->ends_at;
+            public function readWebhook(Request $request): ?WebhookEvent
+            {
+                return $this->internalReference === null
+                    ? null
+                    : new WebhookEvent('HRSK-REF', $this->internalReference);
+            }
+        };
 
-        // Le payeur lit sa propre référence à l'écran : sans secret, il lui
-        // suffirait de rejouer ce rappel pour s'offrir un cycle gratuit.
-        $this->postJson(route('payments.webhook'), [
-            'external_reference' => $payment->internal_reference,
-            'status' => 'SUCCESSFUL',
-        ])->assertStatus(503);
-
-        $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
-        $this->assertEquals(
-            $endsAt->timestamp,
-            $payment->subscription->fresh()->ends_at->timestamp,
-        );
-    }
-
-    public function test_an_incomplete_callback_is_rejected(): void
-    {
-        $this->postJson(route('payments.webhook'), ['status' => 'SUCCESSFUL'])
-            ->assertStatus(400);
-    }
-
-    public function test_an_unknown_reference_is_ignored_without_error(): void
-    {
-        $this->postJson(route('payments.webhook'), [
-            'external_reference' => 'SL-INCONNUE',
-            'status' => 'SUCCESSFUL',
-        ])->assertOk();
+        $this->app->instance(PaymentProvider::class, $fake);
     }
 
     private function pendingPayment(): Payment

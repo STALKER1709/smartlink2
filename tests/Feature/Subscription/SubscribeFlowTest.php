@@ -29,8 +29,8 @@ class SubscribeFlowTest extends TestCase
         $this->provider = User::factory()->provider()->create(['phone' => '677001122']);
         $this->subscribeProvider($this->provider, Plan::CODE_PRO);
 
-        // Le rappel de l'opérateur exige un secret : sans lui, il se ferme.
-        config()->set('campay.webhook_secret', 'le-vrai-secret');
+        // Le rappel exige un secret : sans lui, il se ferme.
+        config()->set('payment.hrskills.webhook_secret', 'secret-de-rappel');
     }
 
     public function test_a_provider_reaches_the_checkout_page_for_a_plan(): void
@@ -45,7 +45,7 @@ class SubscribeFlowTest extends TestCase
 
     public function test_a_confirmed_payment_activates_the_chosen_plan_and_extends_the_due_date(): void
     {
-        // Sans identifiants, Campay répond SUCCESSFUL immédiatement.
+        // En mode simulé, un montant pair aboutit immédiatement.
         $before = $this->provider->activeSubscription()->ends_at;
 
         $this->actingAs($this->provider)
@@ -70,7 +70,9 @@ class SubscribeFlowTest extends TestCase
 
     public function test_a_pending_collection_leaves_the_plan_untouched_until_the_callback(): void
     {
-        $this->withRealCampay(['reference' => 'CAMPAY-PENDING', 'ussd_code' => '*126#']);
+        // La collecte part en attente quoi qu'il arrive : c'est sa réponse
+        // 202 qui le décide, pas l'état lu ensuite chez le fournisseur.
+        $this->withRealProvider(['reference' => 'ref_pending']);
 
         $this->actingAs($this->provider)
             ->post(route('provider.subscription.subscribe', $this->essential), [
@@ -81,24 +83,20 @@ class SubscribeFlowTest extends TestCase
 
         $payment = Payment::firstOrFail();
         $this->assertSame(Payment::STATUS_PENDING, $payment->status);
-        $this->assertSame('CAMPAY-PENDING', $payment->campay_reference);
+        $this->assertSame('ref_pending', $payment->provider_reference);
 
         // Le palier ne change qu'au règlement effectif.
         $this->assertSame($this->pro->id, $this->provider->activeSubscription()->plan_id);
 
-        $this->withHeader('X-Campay-Signature', 'le-vrai-secret')
-            ->postJson(route('payments.webhook'), [
-                'external_reference' => $payment->internal_reference,
-                'status' => 'SUCCESSFUL',
-                'reference' => 'CAMPAY-PENDING',
-            ])->assertOk();
+        // Le statut relu chez le fournisseur fait foi.
+        $this->postSignedWebhook('ref_pending', $payment->internal_reference);
 
         $this->assertSame($this->essential->id, $this->provider->activeSubscription()->plan_id);
     }
 
     public function test_a_refused_collection_reports_the_failure_without_charging_the_plan(): void
     {
-        $this->withRealCampay([]);
+        $this->withRealProvider(null);
 
         $this->actingAs($this->provider)
             ->post(route('provider.subscription.subscribe', $this->essential), [
@@ -114,7 +112,7 @@ class SubscribeFlowTest extends TestCase
 
     public function test_a_second_attempt_reuses_the_pending_collection_instead_of_charging_twice(): void
     {
-        $this->withRealCampay(['reference' => 'CAMPAY-PENDING']);
+        $this->withRealProvider(['reference' => 'ref_pending'], statusResponse: 'PENDING');
 
         foreach (range(1, 2) as $ignored) {
             $this->actingAs($this->provider)
@@ -129,7 +127,7 @@ class SubscribeFlowTest extends TestCase
 
     public function test_changing_plan_mid_flight_abandons_the_pending_collection(): void
     {
-        $this->withRealCampay(['reference' => 'CAMPAY-PENDING']);
+        $this->withRealProvider(['reference' => 'ref_pending'], statusResponse: 'PENDING');
 
         $this->actingAs($this->provider)
             ->post(route('provider.subscription.subscribe', $this->essential), [
@@ -206,19 +204,48 @@ class SubscribeFlowTest extends TestCase
     }
 
     /**
-     * Bascule Campay en mode « identifiants renseignés » pour exercer le
-     * vrai chemin HTTP plutôt que la réponse simulée du bac à sable.
+     * Bascule sur le fournisseur HR-Skills pour exercer le vrai chemin HTTP
+     * plutôt que l'encaissement simulé du mode de développement.
      *
-     * @param  array<string, mixed>  $collectResponse
+     * Une seule fois par test : Http::fake() empile les doublures et retient
+     * la PREMIÈRE qui correspond, donc un second appel serait sans effet.
+     *
+     * @param  array<string, mixed>|null  $collectResponse  null pour un refus
      */
-    private function withRealCampay(array $collectResponse): void
+    private function withRealProvider(?array $collectResponse, string $statusResponse = 'SUCCESS'): void
     {
-        config()->set('campay.username', 'compte-test');
-        config()->set('campay.password', 'secret-test');
+        config()->set('payment.driver', 'hrskills');
+        config()->set('payment.hrskills.key_a', 'hrsk_pk_test_a');
+        config()->set('payment.hrskills.key_b', 'hrsk_sk_test_b');
 
         Http::fake([
-            '*/token/' => Http::response(['token' => 'jeton-test']),
-            '*/collect/' => Http::response($collectResponse),
+            '*/transaction-token' => Http::response(['transaction_token' => 'jeton', 'expires_in' => 2700]),
+            '*/payin/*' => $collectResponse === null
+                ? Http::response(['error' => 'refused'], 402)
+                : Http::response(['data' => $collectResponse], 202),
+            '*/v1/payments/*' => Http::response(['data' => ['status' => $statusResponse]]),
         ]);
+    }
+
+    /** Rappel signé du fournisseur, tel qu'il arriverait réellement. */
+    private function postSignedWebhook(string $providerReference, string $internalReference): void
+    {
+        $body = json_encode([
+            'data' => [
+                'reference' => $providerReference,
+                'metadata' => ['reference_interne' => $internalReference],
+            ],
+        ]);
+
+        $this->call(
+            'POST',
+            route('payments.webhook'),
+            [], [], [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_HUB_SIGNATURE' => 'sha256='.hash_hmac('sha256', $body, 'secret-de-rappel'),
+            ],
+            $body,
+        )->assertOk()->assertJson(['status' => 'ok']);
     }
 }

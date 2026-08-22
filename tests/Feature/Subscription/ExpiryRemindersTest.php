@@ -102,8 +102,8 @@ class ExpiryRemindersTest extends TestCase
         $subscription = $this->subscriptionEndingIn(3);
         $this->subscriptions->sendExpiryReminders();
 
-        config()->set('campay.sandbox', true);
-        config()->set('campay.username', null);
+        // Encaissement simulé : montant pair, donc succès immédiat.
+        config()->set('payment.driver', 'mock');
         Http::preventStrayRequests();
 
         $this->subscriptions->requestPayment(

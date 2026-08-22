@@ -45,11 +45,17 @@ Trois intégrations ont chacune un mode simulé, qui permet de développer et de
 
 | Service | Variables | Sans identifiants |
 |---|---|---|
-| **Campay** (Mobile Money) | `CAMPAY_USERNAME`, `CAMPAY_PASSWORD`, `CAMPAY_WEBHOOK_SECRET` | Toute collecte réussit immédiatement, en simulation |
+| **HR-Skills Pay** (Mobile Money) | `PAYMENT_PROVIDER=hrskills`, `HRSKILLS_CLE_A`, `HRSKILLS_CLE_B`, `HRSKILLS_WEBHOOK_SECRET` | Encaissement simulé : montant pair, succès ; impair, échec |
 | **Africa's Talking** (SMS) | `AT_API_KEY`, `AT_SENDER_ID` | Les SMS sont écrits dans les journaux |
 | **Claude** (IA) | `ANTHROPIC_API_KEY`, `AI_DRIVER=claude` | L'assistant répond par mots-clés, sans coût |
 
-> **`CAMPAY_WEBHOOK_SECRET` est obligatoire en production.** Le rappel de l'opérateur est le seul canal qui crédite un abonnement, et le payeur lit sa propre référence de paiement à l'écran. Sans secret configuré, ce point d'entrée refuse tout et répond 503 : c'est délibéré, il vaut mieux ne rien créditer que de créditer n'importe qui. Renseignez la même valeur côté Campay et dans `.env`.
+> **`HRSKILLS_WEBHOOK_SECRET` est obligatoire en production.** Le rappel du fournisseur est le seul canal qui crédite un abonnement. Sans secret configuré, tout rappel est refusé : c'est délibéré, il vaut mieux ne rien créditer que de créditer n'importe qui. Renseignez la même valeur côté HR-Skills et dans `.env`.
+>
+> **Les deux clés doivent porter le même environnement** — soit les deux en `_test_`, soit les deux en `_live_`. Elles se copient séparément depuis le tableau de bord, et un mélange enverrait des appels de production authentifiés par un secret de test.
+
+```bash
+php artisan payment:check   # vérifie clés, environnement et secret de rappel
+```
 
 ### Base de données
 
@@ -151,6 +157,7 @@ Ou, en cron classique :
 ### Vérifier que tout est en place
 
 ```bash
+php artisan payment:check          # clés, environnement, secret de rappel
 php artisan schedule:list          # doit lister subscriptions:refresh
 php artisan subscriptions:refresh  # exécution manuelle, pour contrôle
 php artisan queue:monitor default  # profondeur de la file
