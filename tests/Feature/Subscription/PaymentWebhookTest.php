@@ -14,6 +14,15 @@ class PaymentWebhookTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Le rappel exige désormais un secret : sans lui, il se ferme.
+        config()->set('campay.webhook_secret', 'le-vrai-secret');
+        $this->withHeader('X-Campay-Signature', 'le-vrai-secret');
+    }
+
     /**
      * Le rappel de l'opérateur vient de l'extérieur et ne peut pas porter de
      * jeton CSRF. La protection étant désactivée d'office pendant les tests,
@@ -93,29 +102,47 @@ class PaymentWebhookTest extends TestCase
 
     public function test_a_callback_with_a_wrong_signature_is_refused(): void
     {
-        config()->set('campay.webhook_secret', 'le-vrai-secret');
         $payment = $this->pendingPayment();
 
-        $this->postJson(route('payments.webhook').'?token=mauvais', [
-            'external_reference' => $payment->internal_reference,
-            'status' => 'SUCCESSFUL',
-        ])->assertForbidden();
+        $this->withoutHeader('X-Campay-Signature')
+            ->postJson(route('payments.webhook').'?token=mauvais', [
+                'external_reference' => $payment->internal_reference,
+                'status' => 'SUCCESSFUL',
+            ])->assertForbidden();
 
         $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
     }
 
     public function test_a_callback_with_the_right_signature_is_accepted(): void
     {
-        config()->set('campay.webhook_secret', 'le-vrai-secret');
         $payment = $this->pendingPayment();
 
-        $this->withHeader('X-Campay-Signature', 'le-vrai-secret')
-            ->postJson(route('payments.webhook'), [
-                'external_reference' => $payment->internal_reference,
-                'status' => 'SUCCESSFUL',
-            ])->assertOk();
+        $this->postJson(route('payments.webhook'), [
+            'external_reference' => $payment->internal_reference,
+            'status' => 'SUCCESSFUL',
+        ])->assertOk();
 
         $this->assertSame(Payment::STATUS_SUCCESS, $payment->fresh()->status);
+    }
+
+    public function test_without_a_configured_secret_the_callback_refuses_to_credit_anything(): void
+    {
+        config()->set('campay.webhook_secret', '');
+        $payment = $this->pendingPayment();
+        $endsAt = $payment->subscription->ends_at;
+
+        // Le payeur lit sa propre référence à l'écran : sans secret, il lui
+        // suffirait de rejouer ce rappel pour s'offrir un cycle gratuit.
+        $this->postJson(route('payments.webhook'), [
+            'external_reference' => $payment->internal_reference,
+            'status' => 'SUCCESSFUL',
+        ])->assertStatus(503);
+
+        $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
+        $this->assertEquals(
+            $endsAt->timestamp,
+            $payment->subscription->fresh()->ends_at->timestamp,
+        );
     }
 
     public function test_an_incomplete_callback_is_rejected(): void

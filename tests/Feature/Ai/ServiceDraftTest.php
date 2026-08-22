@@ -115,6 +115,20 @@ class ServiceDraftTest extends TestCase
             ->assertDontSee(__('ui.draft.label'));
     }
 
+    public function test_french_apostrophes_do_not_break_the_inline_script(): void
+    {
+        // Une apostrophe échappée en &#039; est redécodée par l'analyseur HTML
+        // avant qu'Alpine ne lise le JavaScript : la chaîne se referme au
+        // mauvais endroit et tout l'encart cesse de fonctionner.
+        $html = $this->actingAs($this->provider)
+            ->get(route('provider.services.create'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringNotContainsString('n&#039;a pas abouti', $html);
+        $this->assertStringContainsString('\u0027a pas abouti', $html);
+    }
+
     /**
      * @param  array{title: string, description: string}|null  $draft
      */

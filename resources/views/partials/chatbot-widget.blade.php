@@ -27,10 +27,10 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    this.history.push({ role: 'assistant', content: data.reply ?? '{{ __('ui.assistant.error') }}' });
+                    this.history.push({ role: 'assistant', content: data.reply ?? @js(__('ui.assistant.error')) });
                 })
                 .catch(() => {
-                    this.history.push({ role: 'assistant', content: '{{ __('ui.assistant.error') }}' });
+                    this.history.push({ role: 'assistant', content: @js(__('ui.assistant.error')) });
                 })
                 .finally(() => {
                     this.sending = false;

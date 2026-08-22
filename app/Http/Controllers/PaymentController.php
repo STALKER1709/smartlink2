@@ -24,14 +24,23 @@ class PaymentController extends Controller
 
     public function webhook(Request $request): JsonResponse
     {
-        $secret = config('campay.webhook_secret');
-        if (! empty($secret)) {
-            $provided = $request->header('X-Campay-Signature') ?? $request->query('token');
-            if (! hash_equals($secret, (string) $provided)) {
-                Log::warning('[Campay] Webhook signature mismatch', ['ip' => $request->ip()]);
+        $secret = (string) config('campay.webhook_secret');
 
-                return response()->json(['status' => 'forbidden'], 403);
-            }
+        // Sans secret configuré, ce point d'entrée créditerait un abonnement à
+        // quiconque connaît une référence de paiement — or le payeur lit la
+        // sienne à l'écran. Il se ferme donc plutôt que de s'ouvrir à tous.
+        if ($secret === '') {
+            Log::error('[Campay] Rappel refusé : CAMPAY_WEBHOOK_SECRET n\'est pas configuré.');
+
+            return response()->json(['status' => 'not_configured'], 503);
+        }
+
+        $provided = $request->header('X-Campay-Signature') ?? $request->query('token');
+
+        if (! hash_equals($secret, (string) $provided)) {
+            Log::warning('[Campay] Webhook signature mismatch', ['ip' => $request->ip()]);
+
+            return response()->json(['status' => 'forbidden'], 403);
         }
 
         $ref = $request->input('external_reference');

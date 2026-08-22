@@ -16,15 +16,32 @@ SmartLink est une plateforme web qui met en relation des **clients** et des **pr
 
 À l'expiration d'un abonnement, les services du prestataire sont **retirés des recherches**, mais son compte, ses demandes en cours et ses conversations restent intacts : régler l'abonnement le fait réapparaître immédiatement.
 
+## Ce que fait l'IA
+
+Quatre fonctions, toutes bornées par les mêmes garde-fous de coût, et toutes accompagnées d'un repli qui laisse la plateforme utilisable si l'IA est coupée, injoignable ou hors budget.
+
+| Fonction | Ce qu'elle apporte | Repli |
+|---|---|---|
+| **Assistant** | Répond sur le fonctionnement de la plateforme, en connaissant le catalogue réel | Réponses par mots-clés |
+| **Recherche en langage naturel** | « J'ai une fuite sous l'évier à Bonamoussadi » remplit les filtres tout seul | Recherche par mot-clé |
+| **Rédaction assistée** | Propose titre et description à un prestataire à partir de quelques mots | Le prestataire écrit lui-même |
+| **Modération** | Pré-filtre annonces et avis, signale à l'administration | Contenu publié sans examen |
+
+**L'assistant ne consulte aucune donnée personnelle et n'agit jamais à votre place** : ni votre compte, ni vos demandes, ni vos messages. Ce n'est pas qu'une consigne — rien dans le code ne lui donne accès à autre chose que le catalogue public.
+
+**La modération signale, elle ne supprime jamais.** Un administrateur tranche.
+
+Sans clé d'API, l'application fonctionne intégralement en mode par règles, sans aucun coût.
+
 ## Rôles
 
 | Rôle | Ce qu'il peut faire |
 |---|---|
-| **Visiteur** | Parcourir les services et les profils prestataires, utiliser le chatbot |
+| **Visiteur** | Parcourir les services et les profils prestataires, décrire son besoin, utiliser l'assistant |
 | **Client** | Demander un service, échanger des messages, suivre ses demandes, laisser un avis |
 | **Prestataire** | Publier/gérer ses services, répondre aux demandes, échanger avec ses clients, gérer son abonnement |
-| **Administrateur** | Modérer les utilisateurs, les services et les catégories |
-| **Assistant IA** | Répondre aux questions sur la plateforme, les paliers et le suivi des demandes |
+| **Administrateur** | Modérer les utilisateurs, les services et les catégories, traiter les contenus signalés |
+| **Assistant IA** | Répondre aux questions sur la plateforme, les paliers et le fonctionnement des demandes |
 
 ## Stack technique
 
@@ -55,6 +72,8 @@ composer dev
 ```
 
 Voir [INSTALL.md](INSTALL.md) pour le détail de chaque étape, et [USAGE.md](USAGE.md) pour les comptes de démonstration créés par le seeder.
+
+> **En production**, deux processus doivent tourner en permanence : un consommateur de file d'attente (`queue:work`, pour la modération) et le planificateur (`schedule:work`, pour les relances d'échéance et l'expiration des abonnements). Sans eux, ces fonctions restent inertes sans le moindre message d'erreur — voir [INSTALL.md](INSTALL.md#6-mise-en-production--deux-processus-indispensables).
 
 ## Tests
 

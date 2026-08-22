@@ -27,7 +27,7 @@
                 })
                     .then(async response => {
                         const data = await response.json();
-                        if (! response.ok) throw new Error(data.message ?? '{{ __('ui.draft.failed') }}');
+                        if (! response.ok) throw new Error(data.message ?? @js(__('ui.draft.failed')));
                         return data;
                     })
                     .then(data => {
@@ -35,7 +35,7 @@
                         document.getElementById('description').value = data.description;
                         this.applied = true;
                     })
-                    .catch(e => { this.error = e.message || '{{ __('ui.draft.failed') }}'; })
+                    .catch(e => { this.error = e.message || @js(__('ui.draft.failed')); })
                     .finally(() => { this.working = false; });
             },
         }"

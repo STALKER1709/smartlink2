@@ -28,6 +28,9 @@ class SubscribeFlowTest extends TestCase
         $this->pro = Plan::factory()->pro()->create();
         $this->provider = User::factory()->provider()->create(['phone' => '677001122']);
         $this->subscribeProvider($this->provider, Plan::CODE_PRO);
+
+        // Le rappel de l'opérateur exige un secret : sans lui, il se ferme.
+        config()->set('campay.webhook_secret', 'le-vrai-secret');
     }
 
     public function test_a_provider_reaches_the_checkout_page_for_a_plan(): void
@@ -83,11 +86,12 @@ class SubscribeFlowTest extends TestCase
         // Le palier ne change qu'au règlement effectif.
         $this->assertSame($this->pro->id, $this->provider->activeSubscription()->plan_id);
 
-        $this->postJson(route('payments.webhook'), [
-            'external_reference' => $payment->internal_reference,
-            'status' => 'SUCCESSFUL',
-            'reference' => 'CAMPAY-PENDING',
-        ])->assertOk();
+        $this->withHeader('X-Campay-Signature', 'le-vrai-secret')
+            ->postJson(route('payments.webhook'), [
+                'external_reference' => $payment->internal_reference,
+                'status' => 'SUCCESSFUL',
+                'reference' => 'CAMPAY-PENDING',
+            ])->assertOk();
 
         $this->assertSame($this->essential->id, $this->provider->activeSubscription()->plan_id);
     }
