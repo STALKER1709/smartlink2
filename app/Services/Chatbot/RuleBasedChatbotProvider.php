@@ -37,9 +37,16 @@ class RuleBasedChatbotProvider implements ChatbotProvider
                 .'terminée) depuis votre tableau de bord.',
         ],
         [
+            'keywords' => ['abonnement', 'palier', 'formule', 'essai'],
+            'reply' => 'Les prestataires démarrent avec 30 jours d\'essai gratuit, puis choisissent un abonnement '
+                .'mensuel : Essentiel à 2 500 FCFA ou Pro à 7 500 FCFA. Le paiement se fait par MTN Mobile Money '
+                .'ou Orange Money. Pour les clients, SmartLink est entièrement gratuit.',
+        ],
+        [
             'keywords' => ['paiement', 'payer', 'argent', 'prix', 'tarif'],
-            'reply' => 'SmartLink ne gère aucun paiement en ligne. Les modalités financières sont à convenir '
-                .'directement entre vous et le prestataire, hors plateforme.',
+            'reply' => 'SmartLink ne prélève rien sur vos prestations : le règlement du service se convient et se '
+                .'règle directement entre le client et le prestataire, hors plateforme. Seuls les prestataires '
+                .'paient un abonnement mensuel à SmartLink pour publier leurs services.',
         ],
         [
             'keywords' => ['compte', 'inscription', 'inscrire', 'mot de passe'],

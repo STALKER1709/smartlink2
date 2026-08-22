@@ -33,11 +33,12 @@ Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts 
 
 1. **Inscription** (`/register`) en choisissant le rôle "Prestataire" et un nom d'activité — crée automatiquement un profil prestataire.
 2. **Compléter son profil** (`/provider/profile`) : nom de l'activité, catégorie, description, ville, zones d'intervention, horaires, moyens de contact, logo.
-3. **Publier un service** (`/provider/services/create`) : titre, catégorie, description, prix indicatif (optionnel — purement informatif, aucun paiement n'est traité par SmartLink), ville, disponibilité, jusqu'à 5 photos.
+3. **Publier un service** (`/provider/services/create`) : titre, catégorie, description, prix indicatif (optionnel — purement informatif, SmartLink ne prélève rien dessus), ville, disponibilité, jusqu'à 5 photos. Le nombre de services publiables dépend du palier d'abonnement.
 4. **Gérer ses services** (`/provider/services`) : modifier, activer/désactiver, supprimer, ajouter ou retirer des photos.
 5. **Traiter les demandes reçues** (`/requests`) : accepter ou refuser une demande, démarrer la prestation, puis la marquer comme terminée.
 6. **Messagerie** (`/conversations`) : échanger avec le client une fois la demande acceptée.
 7. **Suivre sa réputation** : la note moyenne et le nombre d'avis affichés sur son profil sont recalculés automatiquement à chaque nouvel avis.
+8. **Gérer son abonnement** : l'inscription ouvre 30 jours d'essai gratuit au niveau Pro. Avant l'échéance, des SMS de relance invitent à choisir un palier et à le régler en Mobile Money.
 
 ### Cycle de vie d'une demande
 
@@ -63,10 +64,24 @@ Accessible sur `/admin` (rôle `admin` requis) :
 
 Chaque action de modération est enregistrée dans le journal d'audit (`AuditLogService`).
 
-## Le chatbot (FAQ automatisée)
+## L'assistant
 
-Le chatbot répond par mots-clés (sans dépendance externe) aux questions sur : la prise en main du site, la recherche d'un prestataire, l'envoi d'une demande, le suivi d'une demande, la création de compte, et les remerciements. Il rappelle explicitement, si on l'interroge sur le prix ou le paiement, que **SmartLink ne gère aucun paiement en ligne** et que les échanges financiers se font hors plateforme.
+L'assistant répond aux questions sur la prise en main du site, la recherche d'un prestataire, l'envoi et le suivi d'une demande, la création de compte et les paliers d'abonnement. Interrogé sur le prix ou le paiement, il énonce le modèle réel : **SmartLink ne prélève rien sur les prestations**, le règlement se fait directement entre client et prestataire, et seuls les prestataires paient un abonnement mensuel à la plateforme.
 
-## Rappel : aucun paiement sur la plateforme
+Deux modes coexistent. Le mode par règles répond par correspondance de mots-clés, sans appel externe ni coût. Le mode IA, quand il est activé, s'appuie sur le catalogue réel. La plateforme rabat automatiquement sur le mode par règles pour les visiteurs non connectés, au-delà du quota quotidien d'un compte, ou lorsque le plafond de dépense mensuel est atteint.
 
-SmartLink est un outil de mise en relation. Il n'y a pas de panier, pas de passerelle de paiement, pas de facture, pas d'historique de transaction. Les champs de prix affichés sur les services sont indicatifs ; le règlement du service se négocie et s'effectue directement entre le client et le prestataire, en dehors de l'application.
+## L'argent sur la plateforme
+
+Un seul flux d'argent existe : **du prestataire vers SmartLink**, sous forme d'abonnement mensuel réglé en MTN Mobile Money ou Orange Money.
+
+| Palier | Prix | Services publiés | Demandes lisibles / mois | Mise en avant | Rédaction IA | Statistiques |
+|---|---|---|---|---|---|---|
+| Essai (30 j) | gratuit | illimité | illimité | oui | oui | oui |
+| Essentiel | 2 500 FCFA | 3 | 20 | non | oui | non |
+| Pro | 7 500 FCFA | illimité | illimité | oui | oui | oui |
+
+Aucune somme ne transite entre le client et le prestataire dans l'application : ni panier, ni acompte, ni facture, ni commission. Les prix affichés sur les services sont indicatifs et se règlent directement entre les deux parties, en dehors de la plateforme.
+
+**À l'expiration**, les services du prestataire sortent des recherches. Son compte, ses demandes en cours et ses conversations restent accessibles — il peut honorer ce qu'il a déjà engagé. Le règlement de l'abonnement le fait réapparaître immédiatement.
+
+**Plafond mensuel de demandes** : un prestataire au palier Essentiel qui atteint ses 20 demandes lisibles sort lui aussi des recherches jusqu'au mois suivant. C'est délibéré : sans cela, un client enverrait une demande que le prestataire ne pourrait pas lire.

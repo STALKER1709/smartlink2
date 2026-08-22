@@ -30,11 +30,21 @@ class RuleBasedChatbotProviderTest extends TestCase
         $this->assertStringContainsString('assistant SmartLink', $reply);
     }
 
-    public function test_payment_keyword_returns_no_online_payment_reply(): void
+    public function test_payment_keyword_explains_smartlink_takes_no_cut(): void
     {
         $reply = $this->provider->respond('Quel est le prix et comment payer ?');
 
-        $this->assertStringContainsString('ne gère aucun paiement en ligne', $reply);
+        $this->assertStringContainsString('ne prélève rien sur vos prestations', $reply);
+        $this->assertStringContainsString('hors plateforme', $reply);
+    }
+
+    public function test_subscription_keyword_describes_the_provider_plans(): void
+    {
+        $reply = $this->provider->respond('Comment fonctionne l\'abonnement ?');
+
+        $this->assertStringContainsString('30 jours d\'essai gratuit', $reply);
+        $this->assertStringContainsString('2 500 FCFA', $reply);
+        $this->assertStringContainsString('7 500 FCFA', $reply);
     }
 
     public function test_unknown_message_returns_fallback_reply(): void

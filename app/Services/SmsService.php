@@ -13,6 +13,7 @@ class SmsService
 
         if (config('africastalking.sandbox') && empty(config('africastalking.api_key'))) {
             Log::channel('single')->info('[SMS][sandbox] To: '.$phone.' | '.$message);
+
             return true;
         }
 
@@ -36,9 +37,11 @@ class SmsService
             }
 
             Log::warning('[SMS] Failed', ['phone' => $phone, 'body' => $response->body()]);
+
             return false;
         } catch (\Throwable $e) {
             Log::error('[SMS] Exception', ['phone' => $phone, 'error' => $e->getMessage()]);
+
             return false;
         }
     }

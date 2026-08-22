@@ -27,13 +27,26 @@ class ChatbotTest extends TestCase
         $response->assertJsonValidationErrors('message');
     }
 
-    public function test_chatbot_never_mentions_online_payment_processing(): void
+    public function test_chatbot_states_smartlink_takes_no_cut_of_the_service(): void
     {
         $response = $this->postJson(route('chatbot.ask'), [
             'message' => 'Quel est le prix ?',
         ]);
 
         $response->assertOk();
-        $this->assertStringContainsString('hors plateforme', $response->json('reply'));
+
+        $reply = $response->json('reply');
+        $this->assertStringContainsString('hors plateforme', $reply);
+        $this->assertStringContainsString('abonnement', $reply);
+    }
+
+    public function test_chatbot_can_describe_the_provider_subscription(): void
+    {
+        $response = $this->postJson(route('chatbot.ask'), [
+            'message' => 'Quels sont vos paliers d\'abonnement ?',
+        ]);
+
+        $response->assertOk();
+        $this->assertStringContainsString('essai gratuit', $response->json('reply'));
     }
 }

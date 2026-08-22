@@ -29,6 +29,10 @@ Requête HTTP
 | `Review` | Avis client (note 1-5 + commentaire), un par demande **terminée**, unique (`request_id` unique) |
 | `Setting` | Paramètres clé/valeur de l'application |
 | `AuditLog` | Journal des actions sensibles (suspension, modération, changements de statut) |
+| `Plan` | Palier commercial et ses limites (services, demandes mensuelles, mise en avant, IA) |
+| `Subscription` | Abonnement d'un prestataire à un palier, avec statut et échéance |
+| `Payment` | Règlement Mobile Money d'un abonnement (aucun lien avec une prestation) |
+| `AiUsage` | Consommation IA par appel : fonction, modèle, jetons, coût — base des garde-fous |
 
 Les profils (`ClientProfile`/`ProviderProfile`) sont créés systématiquement à l'inscription par `RegisteredUserController` — c'est un invariant de l'application : un compte client ou prestataire a toujours un profil associé.
 
@@ -51,15 +55,15 @@ interface ChatbotProvider
 }
 ```
 
-L'implémentation par défaut, `RuleBasedChatbotProvider`, répond par correspondance de mots-clés (sans dépendance externe ni coût d'API). Le binding se fait dans `AppServiceProvider` :
+L'implémentation par défaut, `RuleBasedChatbotProvider`, répond par correspondance de mots-clés (sans dépendance externe ni coût d'API). Elle reste en place en permanence : c'est le mode vers lequel la plateforme rabat dès qu'un garde-fou de coût se déclenche (visiteur anonyme, quota quotidien atteint, plafond mensuel dépassé). Le binding se fait dans `AppServiceProvider` :
 
 ```php
 $this->app->bind(ChatbotProvider::class, RuleBasedChatbotProvider::class);
 ```
 
-Pour brancher un vrai service d'IA (OpenAI, Anthropic, etc.), il suffit d'écrire une nouvelle classe implémentant `ChatbotProvider` et de changer ce binding — aucun autre code de l'application n'a besoin d'être modifié. `CHATBOT_DRIVER` dans `.env.example` documente cette intention mais n'est pas encore lu dynamiquement : le choix se fait aujourd'hui au niveau du binding, pas par variable d'environnement.
+Pour brancher un vrai service d'IA, il suffit d'écrire une nouvelle classe implémentant `ChatbotProvider` et de changer ce binding — aucun autre code de l'application n'a besoin d'être modifié. La configuration vit dans `config/ai.php` : pilote, clé d'API, modèle par tâche, tarifs servant au calcul du coût, et garde-fous (authentification requise, quota quotidien par compte, plafond mensuel en dollars).
 
-Quel que soit le driver, le chatbot ne doit jamais évoquer de paiement en ligne : c'est vérifié par un test dédié (`ChatbotTest::test_chatbot_never_mentions_online_payment_processing`).
+Quel que soit le driver, l'assistant doit décrire fidèlement le modèle économique : SmartLink ne prélève rien sur les prestations, et seuls les prestataires paient un abonnement. C'est vérifié par des tests dédiés (`ChatbotTest`, `RuleBasedChatbotProviderTest`).
 
 ## Autorisation : middleware + policies
 
@@ -77,14 +81,30 @@ Chaque action d'écriture a son propre `FormRequest` (`app/Http/Requests/...`), 
 
 Logos, photos de profil et images de service sont stockés sur le disque `public` (`storage/app/public`, exposé via `php artisan storage:link`). Les contrôleurs suppriment l'ancien fichier avant d'enregistrer le nouveau (logo, photo) ou suppriment le fichier physique en même temps que l'enregistrement `ServiceImage` (retrait d'une image de service).
 
-## Aucun paiement : un choix d'architecture, pas une omission
+## Modèle économique : un seul flux d'argent
+
+SmartLink se finance par l'abonnement des prestataires. C'est le **seul** mouvement d'argent de l'application, et il va du prestataire vers la plateforme.
 
 Il n'existe dans ce projet :
-- aucune table de transaction, facture ou paiement ;
-- aucune route, contrôleur ou vue de type *checkout* ;
-- aucune intégration de passerelle de paiement (Stripe, Orange Money, MTN Mobile Money, etc.).
+- aucun panier, aucun acompte, aucune facture de prestation ;
+- aucun reversement d'argent d'un utilisateur vers un autre ;
+- aucune commission prélevée sur le montant d'une prestation.
 
-Le champ `price_amount` sur `Service` est purement informatif (affichage d'un tarif indicatif). La mise en relation s'arrête à l'organisation de la prestation ; le règlement se fait hors plateforme, entre le client et le prestataire. C'est une contrainte fonctionnelle du produit, respectée à la fois dans le schéma de base de données, dans les vues, et dans les réponses du chatbot — et couverte par un test automatisé.
+Le champ `price_amount` sur `Service` reste purement informatif : il affiche un tarif indicatif. Le règlement de la prestation se convient et s'effectue directement entre le client et le prestataire, hors plateforme. Cette contrainte est respectée dans le schéma de base de données, dans les vues, dans les réponses du chatbot, et couverte par des tests automatisés.
+
+### Abonnements
+
+Trois tables portent le modèle :
+
+- **`plans`** — les paliers commerciaux (`essential`, `pro`) et leurs limites : nombre de services publiables, nombre de demandes lisibles par mois, mise en avant, accès à la rédaction assistée, statistiques. Les prix sont stockés en base et modifiables sans redéploiement ; les libellés viennent des fichiers de langue, ce qui préserve le bilinguisme.
+- **`subscriptions`** — l'abonnement d'un prestataire à un palier, avec son statut (`trialing`, `active`, `expired`, `cancelled`) et sa date d'échéance. L'essai gratuit n'est pas un palier distinct : c'est un abonnement au palier `pro` en statut `trialing`, ce qui évite de dupliquer la logique de droits.
+- **`payments`** — les règlements Mobile Money d'un abonnement. La table ne référence plus de demande de service : elle appartient à une `Subscription`.
+
+`Subscription::isUsable()` est le point de vérité unique : un abonnement ouvre des droits s'il est en essai ou actif **et** que son échéance est devant. Dès qu'il ne l'est plus, `User::activeSubscription()` renvoie `null` et le prestataire disparaît des recherches, sans que son compte ni ses conversations soient touchés.
+
+### Renouvellement : manuel par nature
+
+Le Mobile Money camerounais n'autorise pas le prélèvement automatique : chaque cycle exige une validation du prestataire sur son téléphone. Le renouvellement est donc **annoncé par SMS avant l'échéance** (`config/subscription.php`, clé `reminder_days`), puis déclenché par le prestataire lui-même. `PaymentController::webhook()` est le seul canal qui confirme un règlement — d'où son exemption CSRF explicite dans `bootstrap/app.php`, compensée par la vérification de signature partagée.
 
 ## Tests (`tests/`)
 

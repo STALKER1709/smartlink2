@@ -116,32 +116,6 @@
                     </div>
                 @endif
 
-                <!-- Payment (deposit) -->
-                @if ($serviceRequest->status === 'accepted' && Auth::user()->id === $serviceRequest->client_id)
-                    @php
-                        $successPayment = $serviceRequest->payments()->where('status', 'success')->first();
-                    @endphp
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h3 class="font-semibold text-gray-900 mb-3">Acompte Mobile Money</h3>
-                        @if ($successPayment)
-                            <div class="flex items-center gap-3 text-green-700">
-                                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <div class="text-sm">
-                                    <p class="font-medium">Acompte payé — {{ number_format($successPayment->amount_xaf, 0, ',', ' ') }} FCFA</p>
-                                    <p class="text-green-600 text-xs">Réf. {{ $successPayment->internal_reference }}</p>
-                                </div>
-                            </div>
-                        @else
-                            <p class="text-sm text-gray-600 mb-4">Payez un acompte pour confirmer votre réservation et démarrer la prestation.</p>
-                            <a href="{{ route('payments.show', $serviceRequest) }}" class="inline-block rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-                                Payer l'acompte
-                            </a>
-                        @endif
-                    </div>
-                @endif
-
                 <!-- Review -->
                 @can('create', [\App\Models\Review::class, $serviceRequest])
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">

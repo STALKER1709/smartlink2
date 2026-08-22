@@ -111,6 +111,34 @@ class User extends Authenticatable
         return $this->hasMany(AuditLog::class);
     }
 
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * L'abonnement qui ouvre les droits en ce moment : essai ou payé, non échu.
+     * Renvoie null dès l'expiration — c'est ce qui masque les services.
+     */
+    public function activeSubscription(): ?Subscription
+    {
+        return $this->subscriptions()
+            ->usable()
+            ->with('plan')
+            ->latest('ends_at')
+            ->first();
+    }
+
+    public function currentPlan(): ?Plan
+    {
+        return $this->activeSubscription()?->plan;
+    }
+
+    public function hasUsableSubscription(): bool
+    {
+        return $this->activeSubscription() !== null;
+    }
+
     public function isClient(): bool
     {
         return $this->role === self::ROLE_CLIENT;

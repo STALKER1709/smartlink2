@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 #[Fillable([
     'user_id', 'category_id', 'business_name', 'description', 'address', 'city', 'quarter',
@@ -42,10 +43,11 @@ class ProviderProfile extends Model
         if (! str_starts_with($digits, '237')) {
             $digits = '237'.$digits;
         }
+
         return 'https://wa.me/'.$digits;
     }
 
-    public function payments(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function payments(): HasManyThrough
     {
         return $this->hasManyThrough(Payment::class, User::class, 'id', 'payer_id', 'user_id');
     }

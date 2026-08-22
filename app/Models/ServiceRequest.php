@@ -74,16 +74,6 @@ class ServiceRequest extends Model
         return $this->hasOne(Review::class, 'request_id');
     }
 
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class, 'request_id');
-    }
-
-    public function successfulPayments(): HasMany
-    {
-        return $this->hasMany(Payment::class, 'request_id')->where('status', Payment::STATUS_SUCCESS);
-    }
-
     public function isFinal(): bool
     {
         return in_array($this->status, [

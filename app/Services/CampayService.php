@@ -31,6 +31,7 @@ class CampayService
         }
 
         $this->token = $response->json('token');
+
         return $this->token;
     }
 
@@ -39,6 +40,7 @@ class CampayService
         if ($this->isSandboxWithoutCredentials()) {
             $simulatedRef = 'MOCK_'.strtoupper(Str::random(10));
             Log::info('[Campay][mock] collect', compact('phone', 'amountXaf', 'description', 'externalRef', 'simulatedRef'));
+
             return ['reference' => $simulatedRef, 'status' => 'SUCCESSFUL', 'operator' => 'MTN'];
         }
 
@@ -61,12 +63,14 @@ class CampayService
 
             if (! $response->successful()) {
                 Log::warning('[Campay] collect failed', ['body' => $response->body()]);
+
                 return ['reference' => null, 'status' => 'FAILED', 'error' => $response->body()];
             }
 
             return $response->json();
         } catch (\Throwable $e) {
             Log::error('[Campay] Exception', ['error' => $e->getMessage()]);
+
             return ['reference' => null, 'status' => 'FAILED', 'error' => $e->getMessage()];
         }
     }
@@ -80,6 +84,7 @@ class CampayService
         try {
             $token = $this->getToken();
             $response = Http::withToken($token)->get($this->baseUrl().'/transaction/'.$reference.'/');
+
             return $response->successful() ? $response->json() : ['status' => 'FAILED'];
         } catch (\Throwable $e) {
             return ['status' => 'FAILED', 'error' => $e->getMessage()];

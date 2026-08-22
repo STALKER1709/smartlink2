@@ -9,12 +9,12 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LocaleController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ProfileController as ProviderProfileController;
 use App\Http\Controllers\Provider\ServiceController as ProviderServiceController;
@@ -85,11 +85,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])
         ->middleware('throttle:10,1')
         ->name('phone.verify.check');
-
-    Route::get('/requests/{serviceRequest}/payment', [PaymentController::class, 'show'])->name('payments.show');
-    Route::post('/requests/{serviceRequest}/payment', [PaymentController::class, 'initiate'])
-        ->middleware('throttle:5,1')
-        ->name('payments.initiate');
 });
 
 /*
