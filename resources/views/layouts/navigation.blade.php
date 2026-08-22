@@ -2,7 +2,7 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex min-w-0 flex-1">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center gap-2">
                     <a href="{{ route('home') }}" class="flex items-center gap-2">
@@ -12,7 +12,7 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden min-w-0 space-x-4 overflow-x-auto sm:-my-px sm:ms-6 sm:flex sm:flex-nowrap">
                     <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.*')">
                         {{ __('Services') }}
                     </x-nav-link>
@@ -34,14 +34,6 @@
                             <x-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
                                 {{ __('Mes services') }}
                             </x-nav-link>
-                            @if (Auth::user()->currentPlan()?->has_stats)
-                                <x-nav-link :href="route('provider.statistics.index')" :active="request()->routeIs('provider.statistics.*')">
-                                    {{ __('ui.nav.statistics') }}
-                                </x-nav-link>
-                            @endif
-                            <x-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
-                                {{ __('ui.nav.subscription') }}
-                            </x-nav-link>
                         @endif
                         <x-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
                             {{ __('Messages') }}
@@ -55,7 +47,7 @@
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6 gap-3">
+            <div class="hidden shrink-0 sm:flex sm:items-center sm:ms-6 gap-3">
                 {{-- Language switcher --}}
                 @php $currentLocale = app()->getLocale(); @endphp
                 <div class="flex rounded-full border border-outline-variant overflow-hidden text-xs font-semibold">
@@ -80,10 +72,10 @@
                     <!-- Settings Dropdown -->
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center gap-1 px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-full text-on-surface-variant bg-surface-container-lowest hover:text-on-surface hover:bg-surface-container-low focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
+                            <button class="inline-flex items-center gap-1 px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-full text-on-surface-variant bg-surface-container-lowest hover:text-on-surface hover:bg-surface-container-low focus:outline-none transition ease-in-out duration-150 max-w-[10rem]">
+                                <span class="truncate">{{ Auth::user()->name }}</span>
 
-                                <span class="material-symbols-outlined" style="font-size: 18px;">expand_more</span>
+                                <span class="material-symbols-outlined shrink-0" style="font-size: 18px;">expand_more</span>
                             </button>
                         </x-slot>
 
@@ -95,6 +87,14 @@
                             @elseif (Auth::user()->isProvider())
                                 <x-dropdown-link :href="route('provider.profile.edit')">
                                     {{ __('Mon profil prestataire') }}
+                                </x-dropdown-link>
+                                @if (Auth::user()->currentPlan()?->has_stats)
+                                    <x-dropdown-link :href="route('provider.statistics.index')">
+                                        {{ __('ui.nav.statistics') }}
+                                    </x-dropdown-link>
+                                @endif
+                                <x-dropdown-link :href="route('provider.subscription.show')">
+                                    {{ __('ui.nav.subscription') }}
                                 </x-dropdown-link>
                                 <x-dropdown-link :href="route('provider.reviews.index')">
                                     Mes avis
@@ -160,14 +160,6 @@
                     <x-responsive-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
                         {{ __('Mes services') }}
                     </x-responsive-nav-link>
-                    @if (Auth::user()->currentPlan()?->has_stats)
-                        <x-responsive-nav-link :href="route('provider.statistics.index')" :active="request()->routeIs('provider.statistics.*')">
-                            {{ __('ui.nav.statistics') }}
-                        </x-responsive-nav-link>
-                    @endif
-                    <x-responsive-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
-                        {{ __('ui.nav.subscription') }}
-                    </x-responsive-nav-link>
                 @endif
                 <x-responsive-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
                     {{ __('Messages') }}
@@ -212,6 +204,14 @@
                     @elseif (Auth::user()->isProvider())
                         <x-responsive-nav-link :href="route('provider.profile.edit')">
                             {{ __('Mon profil prestataire') }}
+                        </x-responsive-nav-link>
+                        @if (Auth::user()->currentPlan()?->has_stats)
+                            <x-responsive-nav-link :href="route('provider.statistics.index')" :active="request()->routeIs('provider.statistics.*')">
+                                {{ __('ui.nav.statistics') }}
+                            </x-responsive-nav-link>
+                        @endif
+                        <x-responsive-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
+                            {{ __('ui.nav.subscription') }}
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('provider.reviews.index')">
                             Mes avis
