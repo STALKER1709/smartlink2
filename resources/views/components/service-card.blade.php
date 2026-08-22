@@ -21,6 +21,7 @@
 
         <p class="mt-1 text-sm text-gray-500">
             {{ $service->provider?->providerProfile?->business_name ?? $service->provider?->name }}
+            <x-promoted-badge :profile="$service->provider?->providerProfile" class="ml-1 align-middle" />
             @if ($service->city)
                 · {{ $service->city }}
             @endif

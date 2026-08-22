@@ -24,6 +24,7 @@
                                         <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M10 1l2.39 1.73 2.95-.1.91 2.8 2.39 1.74-1.13 2.83 1.13 2.83-2.39 1.74-.91 2.8-2.95-.1L10 19l-2.39-1.73-2.95.1-.91-2.8-2.39-1.74 1.13-2.83-1.13-2.83 2.39-1.74.91-2.8 2.95.1L10 1z"/></svg>
                                     </span>
                                 @endif
+                                <x-promoted-badge :profile="$providerProfile" />
                             </div>
                             <p class="text-sm text-gray-500">{{ $providerProfile->category?->name }} @if ($providerProfile->city) · {{ $providerProfile->city }} @endif</p>
                             <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" class="mt-1" />

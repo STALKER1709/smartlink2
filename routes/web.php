@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ModerationController;
+use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\ProviderVerificationController;
 use App\Http\Controllers\Admin\ServiceCategoryController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ProfileController as ProviderProfileController;
 use App\Http\Controllers\Provider\ServiceController as ProviderServiceController;
 use App\Http\Controllers\Provider\ServiceDraftController;
+use App\Http\Controllers\Provider\StatisticsController as ProviderStatisticsController;
 use App\Http\Controllers\Provider\SubscriptionController as ProviderSubscriptionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
@@ -106,6 +108,8 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::get('/profile', [ProviderProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProviderProfileController::class, 'update'])->name('profile.update');
 
+    Route::get('/statistics', [ProviderStatisticsController::class, 'index'])->name('statistics.index');
+
     Route::get('/subscription', [ProviderSubscriptionController::class, 'show'])->name('subscription.show');
     Route::get('/subscription/{plan}', [ProviderSubscriptionController::class, 'checkout'])->name('subscription.checkout');
     Route::post('/subscription/{plan}', [ProviderSubscriptionController::class, 'subscribe'])
@@ -142,6 +146,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
 
     Route::resource('categories', ServiceCategoryController::class)->except('show');
+
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+    Route::get('/plans/{plan}/edit', [PlanController::class, 'edit'])->name('plans.edit');
+    Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
 
     Route::get('/moderation', [ModerationController::class, 'index'])->name('moderation.index');
     Route::post('/moderation/{report}/dismiss', [ModerationController::class, 'dismiss'])->name('moderation.dismiss');

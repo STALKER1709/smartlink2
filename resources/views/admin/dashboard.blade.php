@@ -81,6 +81,9 @@
             <a href="{{ route('admin.categories.index') }}" class="rounded-md bg-white border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                 Gérer les catégories
             </a>
+            <a href="{{ route('admin.plans.index') }}" class="rounded-md bg-white border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                {{ __('ui.admin_plans.title') }}
+            </a>
             <a href="{{ route('admin.moderation.index') }}" class="rounded-md bg-white border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                 {{ __('ui.moderation.title') }}
                 @if (($stats['moderation_pending'] ?? 0) > 0)

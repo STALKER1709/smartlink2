@@ -18,6 +18,7 @@
                 </span>
             @endif
         </div>
+        <x-promoted-badge :profile="$providerProfile" class="mt-1" />
         <p class="text-sm text-gray-500 truncate">{{ $providerProfile->category?->name }} @if ($providerProfile->city) · {{ $providerProfile->city }} @endif</p>
         <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" class="mt-1" />
     </div>

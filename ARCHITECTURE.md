@@ -167,6 +167,19 @@ Ce recalcul est déclenché à l'ouverture de l'essai, au renouvellement, à cha
 
 Les recherches ne filtrent plus que sur ce booléen indexé (`Service::scopeFromListedProvider()`, `ProviderProfile::scopeListed()`). Les fiches publiques d'un prestataire masqué répondent 404 pour les visiteurs et les clients — sans quoi un lien direct laisserait envoyer une demande qui ne serait jamais lue — mais restent accessibles au prestataire lui-même et aux administrateurs.
 
+### Ce que le palier ouvre en propre
+
+Deux avantages du palier Pro se voient directement :
+
+- **Le badge et la mise en avant.** `is_promoted` est calculé en même temps que `is_listed` par `QuotaService::refreshListing()`. Il fait remonter le prestataire dans les résultats à critère de tri égal, et affiche un badge sur sa fiche, dans les listes et sur ses annonces. Il tombe avec l'abonnement.
+- **Les statistiques.** `ProviderStatisticsService` les calcule à partir des données déjà présentes — demandes, avis, horodatages de réponse : rien n'est pisté en plus pour les produire. Deux choix de mesure méritent d'être connus : le taux d'acceptation ne porte que sur les demandes auxquelles le prestataire a **répondu** (une demande jamais ouverte ne dit rien de sa façon de travailler), et le délai de réponse est une **médiane** (une seule demande oubliée trois semaines fausserait une moyenne au point de la rendre inutilisable). Quand rien ne peut être calculé, la valeur est absente plutôt que nulle : afficher « 0 % d'acceptation » à qui n'a encore rien refusé serait un mensonge.
+
+### L'administration des paliers
+
+`/admin/plans` modifie prix, limites et avantages sans redéploiement, et retire un palier de la vente sans toucher aux abonnements en cours. Les paliers se modifient mais ne se créent ni ne se suppriment : leur code est un ensemble fermé sur lequel s'appuient le reste du code et les fichiers de langue.
+
+Une modification de limites déclenche un recalcul de visibilité pour les prestataires concernés : relever un plafond doit les faire réapparaître tout de suite, pas au passage de nuit.
+
 ### Ce que le palier autorise
 
 `QuotaService` est le point d'entrée unique pour « qu'ai-je le droit de faire en ce moment » : publier un service de plus, lire une nouvelle demande, combien il en reste. Deux règles encadrent l'expiration :

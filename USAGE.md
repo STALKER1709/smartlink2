@@ -39,8 +39,9 @@ Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts 
 6. **Traiter les demandes reçues** (`/requests`) : accepter ou refuser une demande, démarrer la prestation, puis la marquer comme terminée.
 7. **Messagerie** (`/conversations`) : échanger avec le client une fois la demande acceptée.
 8. **Suivre sa réputation** : la note moyenne et le nombre d'avis affichés sur son profil sont recalculés automatiquement à chaque nouvel avis.
-9. **Gérer son abonnement** (`/provider/subscription`) : l'inscription ouvre 30 jours d'essai gratuit au niveau Pro. La page affiche le palier en cours, l'échéance, le nombre de services publiés et de demandes lues ce mois-ci, et le comparatif des paliers.
-10. **Régler son abonnement** : choisir un palier, sélectionner MTN Mobile Money ou Orange Money, saisir son numéro. Une demande de confirmation arrive sur le téléphone ; composer son code Mobile Money valide le paiement. **Il n'existe aucun prélèvement automatique** — l'opérateur ne le permet pas — donc chaque cycle se renouvelle par une validation explicite, annoncée par SMS 3 jours puis 1 jour avant l'échéance.
+9. **Consulter ses statistiques** (`/provider/statistics`, palier Pro) : demandes reçues, taux d'acceptation, prestations menées à terme, délai de réponse médian, répartition des notes et services les plus demandés. Tout est calculé à partir des données déjà présentes — rien n'est pisté en plus.
+10. **Gérer son abonnement** (`/provider/subscription`) : l'inscription ouvre 30 jours d'essai gratuit au niveau Pro. La page affiche le palier en cours, l'échéance, le nombre de services publiés et de demandes lues ce mois-ci, et le comparatif des paliers.
+11. **Régler son abonnement** : choisir un palier, sélectionner MTN Mobile Money ou Orange Money, saisir son numéro. Une demande de confirmation arrive sur le téléphone ; composer son code Mobile Money valide le paiement. **Il n'existe aucun prélèvement automatique** — l'opérateur ne le permet pas — donc chaque cycle se renouvelle par une validation explicite, annoncée par SMS 3 jours puis 1 jour avant l'échéance.
 
 ### Cycle de vie d'une demande
 
@@ -63,6 +64,7 @@ Accessible sur `/admin` (rôle `admin` requis) :
 - **Utilisateurs** (`/admin/users`) : recherche/filtre par rôle, **suspendre** ou **réactiver** un compte (un administrateur ne peut pas se suspendre lui-même). Un compte suspendu est déconnecté immédiatement et ne peut plus se reconnecter tant qu'il n'est pas réactivé.
 - **Services** (`/admin/services`) : vue d'ensemble, activer/désactiver ou supprimer un service en cas d'abus.
 - **Catégories** (`/admin/categories`) : créer, modifier, supprimer les catégories de services (nom unique).
+- **Paliers d'abonnement** (`/admin/plans`) : modifier les prix et les limites sans redéploiement, ouvrir ou fermer un avantage, retirer un palier de la vente. Un palier retiré n'est plus proposé à la souscription, mais les abonnements en cours courent jusqu'à leur échéance. Relever un plafond fait réapparaître immédiatement les prestataires qui l'avaient atteint.
 
 Chaque action de modération est enregistrée dans le journal d'audit (`AuditLogService`).
 
@@ -107,5 +109,7 @@ Un seul flux d'argent existe : **du prestataire vers SmartLink**, sous forme d'a
 Aucune somme ne transite entre le client et le prestataire dans l'application : ni panier, ni acompte, ni facture, ni commission. Les prix affichés sur les services sont indicatifs et se règlent directement entre les deux parties, en dehors de la plateforme.
 
 **À l'expiration**, les services du prestataire sortent des recherches. Son compte, ses demandes en cours et ses conversations restent accessibles — il peut honorer ce qu'il a déjà engagé. Le règlement de l'abonnement le fait réapparaître immédiatement.
+
+Les prestataires du palier Pro portent un **badge « Prestataire Pro »** sur leur fiche, dans les résultats de recherche et sur leurs annonces, et remontent dans les résultats à critère de tri égal.
 
 **Plafond mensuel de demandes** : un prestataire au palier Essentiel qui atteint ses 20 demandes lisibles sort lui aussi des recherches jusqu'au mois suivant. C'est délibéré : sans cela, un client enverrait une demande que le prestataire ne pourrait pas lire.

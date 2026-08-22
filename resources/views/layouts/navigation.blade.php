@@ -30,6 +30,11 @@
                             <x-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
                                 {{ __('Mes services') }}
                             </x-nav-link>
+                            @if (Auth::user()->currentPlan()?->has_stats)
+                                <x-nav-link :href="route('provider.statistics.index')" :active="request()->routeIs('provider.statistics.*')">
+                                    {{ __('ui.nav.statistics') }}
+                                </x-nav-link>
+                            @endif
                             <x-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
                                 {{ __('ui.nav.subscription') }}
                             </x-nav-link>
@@ -150,6 +155,11 @@
                     <x-responsive-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
                         {{ __('Mes services') }}
                     </x-responsive-nav-link>
+                    @if (Auth::user()->currentPlan()?->has_stats)
+                        <x-responsive-nav-link :href="route('provider.statistics.index')" :active="request()->routeIs('provider.statistics.*')">
+                            {{ __('ui.nav.statistics') }}
+                        </x-responsive-nav-link>
+                    @endif
                     <x-responsive-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
                         {{ __('ui.nav.subscription') }}
                     </x-responsive-nav-link>
