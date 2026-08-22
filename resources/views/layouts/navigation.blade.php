@@ -19,6 +19,9 @@
                     <x-nav-link :href="route('providers.index')" :active="request()->routeIs('providers.*')">
                         {{ __('Prestataires') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('help.index')" :active="request()->routeIs('help.*')">
+                        Aide
+                    </x-nav-link>
 
                     @auth
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -93,6 +96,12 @@
                                 <x-dropdown-link :href="route('provider.profile.edit')">
                                     {{ __('Mon profil prestataire') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('provider.reviews.index')">
+                                    Mes avis
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('provider.transactions.index')">
+                                    Mes transactions
+                                </x-dropdown-link>
                             @endif
 
                             <x-dropdown-link :href="route('profile.edit')">
@@ -135,6 +144,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('providers.index')" :active="request()->routeIs('providers.*')">
                 {{ __('Prestataires') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('help.index')" :active="request()->routeIs('help.*')">
+                Aide
             </x-responsive-nav-link>
 
             @auth
@@ -200,6 +212,12 @@
                     @elseif (Auth::user()->isProvider())
                         <x-responsive-nav-link :href="route('provider.profile.edit')">
                             {{ __('Mon profil prestataire') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('provider.reviews.index')">
+                            Mes avis
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('provider.transactions.index')">
+                            Mes transactions
                         </x-responsive-nav-link>
                     @endif
 

@@ -11,6 +11,7 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MessageController;
@@ -19,10 +20,12 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ProfileController as ProviderProfileController;
+use App\Http\Controllers\Provider\ReviewController as ProviderReviewController;
 use App\Http\Controllers\Provider\ServiceController as ProviderServiceController;
 use App\Http\Controllers\Provider\ServiceDraftController;
 use App\Http\Controllers\Provider\StatisticsController as ProviderStatisticsController;
 use App\Http\Controllers\Provider\SubscriptionController as ProviderSubscriptionController;
+use App\Http\Controllers\Provider\TransactionController as ProviderTransactionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReviewController;
@@ -48,6 +51,8 @@ Route::post('/chatbot', [ChatbotController::class, 'ask'])
     ->name('chatbot.ask');
 
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+
+Route::get('/aide', [HelpCenterController::class, 'index'])->name('help.index');
 
 Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('payments.webhook');
 
@@ -109,6 +114,8 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::put('/profile', [ProviderProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/statistics', [ProviderStatisticsController::class, 'index'])->name('statistics.index');
+    Route::get('/reviews', [ProviderReviewController::class, 'index'])->name('reviews.index');
+    Route::get('/transactions', [ProviderTransactionController::class, 'index'])->name('transactions.index');
 
     Route::get('/subscription', [ProviderSubscriptionController::class, 'show'])->name('subscription.show');
     Route::get('/subscription/{plan}', [ProviderSubscriptionController::class, 'checkout'])->name('subscription.checkout');
