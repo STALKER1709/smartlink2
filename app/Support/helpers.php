@@ -37,3 +37,17 @@ if (! function_exists('media_url')) {
         return Storage::disk(media_disk())->url($path);
     }
 }
+
+if (! function_exists('is_serverless')) {
+    /**
+     * L'application tourne-t-elle dans une fonction éphémère ?
+     *
+     * Vercel expose la variable VERCEL dans l'environnement d'exécution. Ce
+     * qui en dépend n'est jamais une question de goût : sans disque durable,
+     * sans worker et sans cron, trois fonctions cassent en silence.
+     */
+    function is_serverless(): bool
+    {
+        return getenv('VERCEL') !== false || env('SERVERLESS', false) === true;
+    }
+}

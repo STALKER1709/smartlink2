@@ -27,6 +27,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'payments/webhook',
         ]);
 
+        // Derrière le répartiteur d'un hébergeur (Vercel, Cloudflare, un
+        // reverse proxy classique), la requête arrive en HTTP même quand le
+        // visiteur est en HTTPS. Sans cette ligne, Laravel génère des URL en
+        // http:// : contenu mixte bloqué par le navigateur, et boucle de
+        // redirection sur les formulaires. Les en-têtes X-Forwarded-* de
+        // l'hébergeur font foi.
+        $middleware->trustProxies(at: '*');
+
         $middleware->appendToGroup('web', EnsureAccountIsActive::class);
         $middleware->appendToGroup('web', SetLocale::class);
     })

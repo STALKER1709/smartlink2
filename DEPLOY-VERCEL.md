@@ -28,7 +28,10 @@ ailleurs, joignable depuis Internet.
 
 Le runtime PHP de Vercel est **communautaire** (`vercel-php`), pas un runtime
 officiel. C'est un choix qui fonctionne, mais qui n'a pas le support de Vercel
-derrière lui — à garder en tête pour une mise en production sérieuse.
+derrière lui — à garder en tête pour une mise en production sérieuse. Le dépôt
+est figé sur `vercel-php@0.8.0`, qui embarque PHP 8.4 — la version sur laquelle
+les tests tournent. `0.9.0` existe et embarque PHP 8.5 : n'y passez qu'après
+avoir relancé la suite sur cette version.
 
 ---
 
@@ -154,10 +157,41 @@ Ce que fait `vercel.json` :
   existe, par PHP sinon.
 - `crons` : `/cron/subscriptions-refresh` tous les jours à 01:00 **UTC**, soit
   02:00 à Douala — la même heure que le `schedule:run` de `routes/console.php`.
+- `regions: ["cdg1"]` : Paris, la région la plus proche du Cameroun. Si votre
+  plan refuse le choix de région, retirez simplement cette ligne.
+
+`composer.lock`, `package-lock.json` et `public/build` sont **versionnés** dans
+ce dépôt, contrairement à l'habitude Laravel. Deux raisons, toutes deux propres
+au serverless : la fonction PHP doit trouver `public/build/manifest.json` dans
+son propre système de fichiers pour construire les URL des assets, et la
+reconstruction sur Vercel doit produire exactement les mêmes fichiers hachés que
+ceux servis par le CDN — ce que seules des dépendances figées garantissent.
+
+`/vendor` est en revanche exclu du dépôt Vercel (`.vercelignore`) : le runtime
+lance `composer install` lui-même pendant la construction de la fonction.
 
 ---
 
 ## 5. Vérifier après le premier déploiement
+
+Une seule commande répond à la question « est-ce que tout est réellement en
+place ». Elle interroge l'application depuis l'intérieur de la production et
+vérifie nommément les trois fonctions qui cassent sans message d'erreur :
+
+```bash
+curl -s -H "Authorization: Bearer $CRON_SECRET" \
+     https://votre-projet.vercel.app/cron/health | jq
+```
+
+Elle répond `200` avec `"status": "ok"` quand rien ne bloque, `500` avec
+`"status": "failed"` sinon — chaque point listé avec ce qui manque et la
+conséquence. La même chose en local, avant de déployer :
+
+```bash
+php artisan deploy:check
+```
+
+Ensuite, les vérifications de base :
 
 ```bash
 curl -s https://votre-projet.vercel.app/up          # doit répondre 200
@@ -184,6 +218,14 @@ en-tête, il doit répondre 403 ; sans `CRON_SECRET` configuré, 503.
 
 ---
 
+### Un mot sur HTTPS
+
+L'application fait confiance aux en-têtes `X-Forwarded-*` du répartiteur
+(`bootstrap/app.php`). Sans cela, Vercel transmettant la requête en HTTP en
+interne, Laravel générerait des URL en `http://` : feuilles de style bloquées
+pour contenu mixte et boucles de redirection sur les formulaires. Rien à
+configurer, mais c'est la raison d'être de cette ligne — ne la retirez pas.
+
 ## 6. Le rappel de paiement HR-Skills
 
 L'URL à déclarer côté HR-Skills est :
@@ -204,11 +246,12 @@ un abonnement réglé.
   Blade dans `/tmp` : comptez une seconde de plus. Les suivantes sont rapides.
 - **`php artisan` n'est pas disponible en ligne.** Migrations, seeds et
   commandes ponctuelles se lancent depuis votre machine, `.env` pointé sur la
-  base de production.
-- **`composer.lock` et `package-lock.json` sont ignorés par git** dans ce dépôt.
-  Vercel résout donc les dépendances à neuf à chaque déploiement : c'est plus
-  lent, et une version publiée entre deux déploiements peut changer le résultat.
-  Pour un déploiement reproductible, versionnez ces deux fichiers.
+  base de production. Seul le contrôle d'après-déploiement a son pendant HTTP
+  (`/cron/health`), justement parce qu'il doit voir la production de
+  l'intérieur.
+- **Toute nouvelle tâche planifiée doit avoir son pendant HTTP.** Ajouter une
+  ligne à `routes/console.php` ne suffit pas ici : il faut une route protégée
+  par `CRON_SECRET` et une entrée dans `crons` de `vercel.json`.
 - **La modération IA s'exécute dans la requête.** En `sync`, publier un service
   attend la réponse du modèle. Avec `AI_DRIVER=rule`, c'est instantané ; avec
   `AI_DRIVER=claude`, l'utilisateur attend l'appel.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\DeploymentCheckService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Artisan;
 
@@ -15,6 +16,23 @@ use Illuminate\Support\Facades\Artisan;
  */
 class CronController extends Controller
 {
+    /**
+     * Contrôle d'après-déploiement, en HTTP parce que `php artisan` n'est pas
+     * disponible sur un hébergement serverless : c'est le seul moyen de voir
+     * ce que l'application constate depuis l'intérieur de la production.
+     */
+    public function health(DeploymentCheckService $checker): JsonResponse
+    {
+        $checks = $checker->run();
+        $blocking = $checker->hasErrors($checks);
+
+        return response()->json([
+            'serverless' => is_serverless(),
+            'status' => $blocking ? 'failed' : 'ok',
+            'checks' => $checks,
+        ], $blocking ? 500 : 200);
+    }
+
     public function subscriptionsRefresh(): JsonResponse
     {
         $status = Artisan::call('subscriptions:refresh');

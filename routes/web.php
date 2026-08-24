@@ -64,6 +64,13 @@ Route::get('/cron/subscriptions-refresh', [CronController::class, 'subscriptions
     ->middleware('cron')
     ->name('cron.subscriptions.refresh');
 
+// Contrôle d'après-déploiement. Même protection : ce que renvoie cette route
+// décrit la configuration de la production, ça ne se laisse pas lire par tout
+// le monde.
+Route::get('/cron/health', [CronController::class, 'health'])
+    ->middleware('cron')
+    ->name('cron.health');
+
 /*
 |--------------------------------------------------------------------------
 | Routes pour tout utilisateur authentifié et actif
