@@ -108,9 +108,9 @@
                         <div class="mb-3 flex items-center gap-3">
                             @php $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION); @endphp
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <img src="{{ asset('storage/'.$providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
+                                <img src="{{ media_url($providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
                             @else
-                                <a href="{{ asset('storage/'.$providerProfile->id_card_path) }}" target="_blank" class="text-primary text-sm hover:underline">Voir le document</a>
+                                <a href="{{ media_url($providerProfile->id_card_path) }}" target="_blank" class="text-primary text-sm hover:underline">Voir le document</a>
                             @endif
                             @if ($providerProfile->id_card_verified)
                                 <span class="inline-flex items-center rounded-full bg-secondary-container/40 px-2.5 py-0.5 text-xs font-medium text-on-secondary-container">Vérifié</span>
@@ -179,7 +179,7 @@
                     <x-input-label value="Logo (facultatif)" />
                     <div class="mt-1 flex items-center gap-4">
                         @if ($providerProfile->logo_path)
-                            <img src="{{ asset('storage/'.$providerProfile->logo_path) }}" class="h-16 w-16 rounded-full object-cover">
+                            <img src="{{ media_url($providerProfile->logo_path) }}" class="h-16 w-16 rounded-full object-cover">
                         @endif
                         <input type="file" name="logo" accept="image/*" class="text-sm text-on-surface-variant">
                     </div>

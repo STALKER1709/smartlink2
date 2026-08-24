@@ -17,7 +17,7 @@
                     <div class="flex items-center gap-4 p-4">
                         <div class="h-14 w-14 rounded-md bg-surface-container overflow-hidden shrink-0">
                             @if ($service->images->isNotEmpty())
-                                <img src="{{ asset('storage/'.$service->images->first()->path) }}" alt="" class="h-full w-full object-cover">
+                                <img src="{{ media_url($service->images->first()->path) }}" alt="" class="h-full w-full object-cover">
                             @endif
                         </div>
 

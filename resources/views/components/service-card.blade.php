@@ -3,7 +3,7 @@
 <a href="{{ route('services.show', $service) }}" class="flex flex-col bg-surface-container-lowest rounded-lg border border-outline-variant overflow-hidden hover:bg-surface-container-low transition-colors">
     <div class="h-40 bg-surface-container flex items-center justify-center overflow-hidden">
         @if ($service->images->isNotEmpty())
-            <img src="{{ asset('storage/'.$service->images->first()->path) }}" alt="{{ $service->title }}" class="h-full w-full object-cover">
+            <img src="{{ media_url($service->images->first()->path) }}" alt="{{ $service->title }}" class="h-full w-full object-cover">
         @else
             <span class="text-on-surface-variant text-sm">Aucune image</span>
         @endif

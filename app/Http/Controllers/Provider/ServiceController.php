@@ -76,7 +76,7 @@ class ServiceController extends Controller
             /** @var ServiceImage|null $image */
             $image = $service->images()->whereKey($imageId)->first();
             if ($image) {
-                Storage::disk('public')->delete($image->path);
+                Storage::disk(media_disk())->delete($image->path);
                 $image->delete();
             }
         }
@@ -107,7 +107,7 @@ class ServiceController extends Controller
         foreach ($images as $image) {
             $position++;
             $service->images()->create([
-                'path' => $image->store('services', 'public'),
+                'path' => $image->store('services', media_disk()),
                 'position' => $position,
             ]);
         }

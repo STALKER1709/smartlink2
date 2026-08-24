@@ -10,7 +10,7 @@
                     <div class="flex items-center gap-4">
                         <div class="h-20 w-20 rounded-full bg-surface-container flex items-center justify-center overflow-hidden shrink-0 border border-outline-variant">
                             @if ($providerProfile->logo_path)
-                                <img src="{{ asset('storage/'.$providerProfile->logo_path) }}" alt="{{ $providerProfile->business_name }}" class="h-full w-full object-cover">
+                                <img src="{{ media_url($providerProfile->logo_path) }}" alt="{{ $providerProfile->business_name }}" class="h-full w-full object-cover">
                             @else
                                 <span class="text-2xl font-semibold text-on-surface-variant">{{ Str::substr($providerProfile->business_name, 0, 1) }}</span>
                             @endif

@@ -17,6 +17,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Disque des fichiers déposés par les utilisateurs
+    |--------------------------------------------------------------------------
+    |
+    | Photos de profil, logos, images de services, pièces d'identité. En local
+    | « public » suffit : le lien symbolique storage/ les sert. Sur un
+    | hébergement au système de fichiers éphémère (Vercel et les plateformes
+    | serverless en général), ces fichiers disparaissent d'une requête à
+    | l'autre — il faut y pointer MEDIA_DISK sur « s3 ».
+    |
+    */
+
+    'media' => env('MEDIA_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
@@ -56,6 +71,7 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'visibility' => env('AWS_VISIBILITY', 'public'),
             'throw' => false,
             'report' => false,
         ],

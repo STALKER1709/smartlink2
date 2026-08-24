@@ -39,7 +39,7 @@
                     <x-input-label value="Photo de profil (facultatif)" />
                     <div class="mt-1 flex items-center gap-4">
                         @if ($clientProfile->photo_path)
-                            <img src="{{ asset('storage/'.$clientProfile->photo_path) }}" class="h-16 w-16 rounded-full object-cover">
+                            <img src="{{ media_url($clientProfile->photo_path) }}" class="h-16 w-16 rounded-full object-cover">
                         @endif
                         <input type="file" name="photo" accept="image/*" class="text-sm text-on-surface-variant">
                     </div>
