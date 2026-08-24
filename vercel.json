@@ -1,0 +1,23 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "framework": null,
+    "regions": ["cdg1"],
+    "installCommand": "npm ci",
+    "buildCommand": "npm run build",
+    "outputDirectory": "public",
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.8.0",
+            "memory": 1024,
+            "maxDuration": 30
+        }
+    },
+    "routes": [
+        { "src": "^/(index\\.php|hot|storage/.*)$", "dest": "/api/index.php" },
+        { "handle": "filesystem" },
+        { "src": "/(.*)", "dest": "/api/index.php" }
+    ],
+    "crons": [
+        { "path": "/cron/subscriptions-refresh", "schedule": "0 1 * * *" }
+    ]
+}

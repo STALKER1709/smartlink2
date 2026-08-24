@@ -163,6 +163,10 @@ php artisan subscriptions:refresh  # exécution manuelle, pour contrôle
 php artisan queue:monitor default  # profondeur de la file
 ```
 
+## 6 bis. Hébergement serverless (Vercel)
+
+Sur un hébergement serverless, aucun de ces deux processus ne peut tourner et le disque ne survit pas d'une requête à l'autre. Le déploiement demande alors trois adaptations — stockage S3, file d'attente en `sync`, passage quotidien déclenché par HTTP — décrites dans [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md).
+
 ## 7. Lancer les tests
 
 ```bash

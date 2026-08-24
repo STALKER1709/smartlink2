@@ -12,7 +12,7 @@
                     @if ($service->images->isNotEmpty())
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-1">
                             @foreach ($service->images as $image)
-                                <img src="{{ asset('storage/'.$image->path) }}" alt="{{ $service->title }}" class="h-40 w-full object-cover">
+                                <img src="{{ media_url($image->path) }}" alt="{{ $service->title }}" class="h-40 w-full object-cover">
                             @endforeach
                         </div>
                     @else

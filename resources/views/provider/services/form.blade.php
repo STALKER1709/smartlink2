@@ -160,7 +160,7 @@
             <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
                 @foreach ($service->images as $image)
                     <label class="relative block cursor-pointer">
-                        <img src="{{ asset('storage/'.$image->path) }}" class="h-20 w-full object-cover rounded-md">
+                        <img src="{{ media_url($image->path) }}" class="h-20 w-full object-cover rounded-md">
                         <span class="absolute top-1 right-1 bg-white/90 rounded-full p-1">
                             <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded border-outline-variant text-primary focus:ring-primary">
                         </span>

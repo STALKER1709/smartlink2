@@ -14,9 +14,6 @@
 /.zed
 /auth.json
 /node_modules
-/public/build
-/composer.lock
-/package-lock.json
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
@@ -27,3 +24,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# composer.lock, package-lock.json et public/build sont volontairement versionnés :
+# le déploiement serverless (DEPLOY-VERCEL.md) a besoin que la fonction PHP
+# trouve public/build/manifest.json, et que la reconstruction sur l'hébergeur
+# produise exactement les mêmes fichiers hachés que ceux testés localement.

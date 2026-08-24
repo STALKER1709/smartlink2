@@ -34,16 +34,16 @@ class ProfileController extends Controller
 
         if ($request->hasFile('logo')) {
             if ($providerProfile->logo_path) {
-                Storage::disk('public')->delete($providerProfile->logo_path);
+                Storage::disk(media_disk())->delete($providerProfile->logo_path);
             }
-            $data['logo_path'] = $request->file('logo')->store('logos', 'public');
+            $data['logo_path'] = $request->file('logo')->store('logos', media_disk());
         }
 
         if ($request->hasFile('id_card')) {
             if ($providerProfile->id_card_path) {
-                Storage::disk('public')->delete($providerProfile->id_card_path);
+                Storage::disk(media_disk())->delete($providerProfile->id_card_path);
             }
-            $data['id_card_path'] = $request->file('id_card')->store('id_cards', 'public');
+            $data['id_card_path'] = $request->file('id_card')->store('id_cards', media_disk());
             $data['id_card_verified'] = false;
         }
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
@@ -55,6 +56,20 @@ Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('local
 Route::get('/aide', [HelpCenterController::class, 'index'])->name('help.index');
 
 Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('payments.webhook');
+
+// Passage quotidien déclenché en HTTP, pour les hébergements serverless où
+// aucun `schedule:run` ne tourne (voir DEPLOY-VERCEL.md). Protégé par
+// CRON_SECRET ; sans ce secret la route répond 503.
+Route::get('/cron/subscriptions-refresh', [CronController::class, 'subscriptionsRefresh'])
+    ->middleware('cron')
+    ->name('cron.subscriptions.refresh');
+
+// Contrôle d'après-déploiement. Même protection : ce que renvoie cette route
+// décrit la configuration de la production, ça ne se laisse pas lire par tout
+// le monde.
+Route::get('/cron/health', [CronController::class, 'health'])
+    ->middleware('cron')
+    ->name('cron.health');
 
 /*
 |--------------------------------------------------------------------------

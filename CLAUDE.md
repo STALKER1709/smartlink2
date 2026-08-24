@@ -69,7 +69,7 @@ avec un repli permanent sur un mode par règles sans coût.
 ## Avant de committer
 
 ```bash
-composer install    # composer.lock est gitignored : régénère-le localement si besoin
+composer install    # composer.lock est versionné : ne le régénère que pour un changement de dépendance
 php artisan view:clear   # voir ci-dessous — indispensable après un changement de couleurs
 npm install && npm run build
 php artisan test
@@ -95,3 +95,38 @@ touch database/database.sqlite   # ou configurer MySQL comme dans .env.example
 php artisan migrate --seed
 npm run build
 ```
+
+## Hébergement
+
+Le déploiement de référence reste un serveur classique (`INSTALL.md`) : disque persistant,
+`queue:work` et `schedule:work` en continu.
+
+Un déploiement serverless sur Vercel est aussi possible (`DEPLOY-VERCEL.md`,
+`vercel.json`, `api/index.php`). Trois contraintes y sont structurelles et ne doivent pas
+être reperdues :
+
+- **Les fichiers déposés ne passent plus par `Storage::disk('public')` en dur.** Utilise
+  `media_disk()` dans les contrôleurs et `media_url()` dans les vues
+  (`app/Support/helpers.php`) : c'est ce qui permet de basculer sur S3 via `MEDIA_DISK`.
+  Un `disk('public')` en dur réintroduit la perte silencieuse des images au déploiement.
+- **Aucun worker ne tourne** : la file passe en `sync`. Ne compte pas sur un traitement
+  différé pour quoi que ce soit d'indispensable.
+- **Aucun `schedule:run`** : le passage quotidien est déclenché par
+  `GET /cron/subscriptions-refresh`, protégé par `CRON_SECRET` (403 sans jeton, 503 sans
+  secret configuré). Toute nouvelle tâche planifiée doit avoir son pendant HTTP.
+
+⚠️ `composer.lock`, `package-lock.json` et `public/build` sont **versionnés**, contrairement
+à l'habitude Laravel. La fonction PHP déployée doit trouver `public/build/manifest.json`, et
+la reconstruction sur l'hébergeur doit produire exactement les fichiers hachés qui ont été
+testés. Conséquence : `npm run build` fait partie de la préparation d'un commit dès qu'une
+classe Tailwind ou un asset change, et le résultat se commite avec le reste.
+
+⚠️ `php artisan deploy:check` (ou `GET /cron/health` en ligne, avec le jeton) vérifie que
+l'hébergement porte réellement les trois fonctions qui cassent en silence : stockage des
+fichiers, file d'attente, passage quotidien. À lancer après chaque déploiement.
+
+⚠️ `database/factories/ServiceCategoryFactory.php` tire ses noms dans un vivier
+**volontairement disjoint** des noms que les tests posent en dur (« Plomberie »,
+« Ménage », « Coiffure »…). `name` et `slug` sont uniques en base : un tirage au sort
+inséré avant qu'un test n'impose le même nom fait échouer le test, de façon
+intermittente. N'ajoute jamais au vivier un nom utilisé tel quel dans `tests/`.

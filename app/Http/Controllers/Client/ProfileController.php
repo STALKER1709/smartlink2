@@ -32,9 +32,9 @@ class ProfileController extends Controller
 
         if ($request->hasFile('photo')) {
             if ($clientProfile->photo_path) {
-                Storage::disk('public')->delete($clientProfile->photo_path);
+                Storage::disk(media_disk())->delete($clientProfile->photo_path);
             }
-            $data['photo_path'] = $request->file('photo')->store('avatars', 'public');
+            $data['photo_path'] = $request->file('photo')->store('avatars', media_disk());
         }
 
         $clientProfile->update($data);
