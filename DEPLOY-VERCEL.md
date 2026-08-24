@@ -376,3 +376,70 @@ Si ces limites gênent, une plateforme qui exécute Laravel nativement — Railw
 Render, Fly.io, Laravel Cloud, ou un simple VPS avec `INSTALL.md` — évite
 l'ensemble de ces contorsions : disque persistant, worker de file d'attente et
 cron système y fonctionnent sans adaptation.
+
+---
+
+## Annexe — sous Windows (PowerShell)
+
+Les commandes de ce guide sont écrites pour un shell POSIX. Sous PowerShell,
+quatre constructions n'existent pas : `grep`, le préfixe `VAR=valeur commande`,
+`export`, et `curl` (qui y est un alias vers `Invoke-WebRequest`, de syntaxe
+différente). Voici les équivalents.
+
+### L'extension PostgreSQL
+
+Elle est livrée avec PHP sous Windows, mais commentée dans `php.ini`.
+
+```powershell
+php -m | Select-String pdo_pgsql     # si rien ne sort, elle est inactive
+php --ini                            # donne le chemin du php.ini chargé
+```
+
+Décommentez-y `extension=pdo_pgsql` et `extension=pgsql`, enregistrez, puis
+rouvrez PowerShell.
+
+### Les secrets
+
+```powershell
+php artisan key:generate --show
+-join ((1..32) | ForEach-Object { '{0:x2}' -f (Get-Random -Maximum 256) })
+```
+
+La seconde ligne remplace `openssl rand -hex 32` pour `CRON_SECRET`.
+
+### Les variables d'environnement d'une commande artisan
+
+PowerShell n'accepte pas de préfixer une commande. On pose les variables, elles
+valent pour toute la fenêtre :
+
+```powershell
+$env:DB_CONNECTION       = "pgsql"
+$env:DB_HOST             = "aws-0-eu-west-3.pooler.supabase.com"
+$env:DB_PORT             = "6543"
+$env:DB_DATABASE         = "postgres"
+$env:DB_USERNAME         = "postgres.VOTRE_REF"
+$env:DB_PASSWORD         = "VOTRE_MDP"
+$env:DB_SSLMODE          = "require"
+$env:DB_EMULATE_PREPARES = "true"
+```
+
+⚠️ **Ces variables survivent à la commande.** Un `php artisan test` lancé
+ensuite dans la même fenêtre irait taper dans la base de production. Fermez la
+fenêtre une fois les migrations passées, ou nettoyez :
+
+```powershell
+Remove-Item Env:\DB_CONNECTION, Env:\DB_HOST, Env:\DB_PORT, Env:\DB_DATABASE, `
+            Env:\DB_USERNAME, Env:\DB_PASSWORD, Env:\DB_SSLMODE, Env:\DB_EMULATE_PREPARES
+```
+
+### Les appels HTTP de vérification
+
+Appelez le vrai binaire, `curl.exe`, livré avec Windows 10 et 11 :
+
+```powershell
+curl.exe -s -H "Authorization: Bearer VOTRE_CRON_SECRET" `
+         https://votre-projet.vercel.app/cron/health | ConvertFrom-Json | ConvertTo-Json -Depth 5
+```
+
+Le caractère de continuation de ligne est l'accent grave (`` ` ``), pas la
+barre oblique inverse.
