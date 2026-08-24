@@ -48,8 +48,35 @@ machine, avec le `.env` pointé sur cette base :
 
 ```bash
 php artisan migrate --force
-php artisan db:seed --force   # catégories, formules d'abonnement, compte admin
 ```
+
+Puis les données indispensables — et **elles seules** :
+
+```bash
+php artisan db:seed --class=PlanSeeder --force            # formules d'abonnement
+php artisan db:seed --class=ServiceCategorySeeder --force # catégories de services
+```
+
+⚠️ **Ne lancez pas `php artisan db:seed` sans `--class` en production.** Le
+seeder complet crée les comptes de démonstration décrits dans `USAGE.md`, dont
+`admin@smartlink.cm` avec le mot de passe `password` : un compte
+administrateur ouvert à qui a lu le dépôt.
+
+Le compte administrateur se crée à la main, avec un mot de passe que vous
+choisissez :
+
+```bash
+php artisan tinker
+>>> App\Models\User::create([
+...     'name' => 'Votre nom',
+...     'email' => 'vous@votredomaine.cm',
+...     'phone' => '+2376XXXXXXXX',
+...     'password' => 'un-mot-de-passe-solide',
+...     'role' => App\Models\User::ROLE_ADMIN,
+... ]);
+```
+
+Le mot de passe est haché automatiquement par le modèle.
 
 ### 2.2 Un stockage compatible S3
 
