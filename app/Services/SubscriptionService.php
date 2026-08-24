@@ -80,9 +80,19 @@ class SubscriptionService
 
             // Il a changé de palier en cours de route : les collectes en attente
             // pour l'ancien montant sont abandonnées plutôt que réutilisées.
+            //
+            // La référence du fournisseur est libérée au passage. Elle est
+            // unique en base, et rien ne garantit que la collecte suivante en
+            // reçoive une différente : la garder sur une collecte abandonnée
+            // ferait échouer l'enregistrement de la nouvelle. On la conserve en
+            // clair dans le motif, qui n'est là que pour la trace. Un rappel
+            // tardif sur cette collecte reste rattachable : le webhook cherche
+            // d'abord par référence interne, qui, elle, ne bouge pas.
             $pending->each(fn (Payment $stale) => $stale->update([
                 'status' => Payment::STATUS_CANCELLED,
-                'failure_reason' => 'Abandonnée : changement de palier avant validation.',
+                'provider_reference' => null,
+                'failure_reason' => 'Abandonnée : changement de palier avant validation.'
+                    .($stale->provider_reference !== null ? ' Référence opérateur : '.$stale->provider_reference.'.' : ''),
             ]));
 
             return Payment::create([

@@ -135,13 +135,21 @@ class SubscribeFlowTest extends TestCase
                 'operator' => 'mtn',
             ]);
 
+        // Le fournisseur peut très bien renvoyer la même référence : elle est
+        // unique en base, donc la collecte abandonnée doit la libérer. Sans
+        // cela, cette seconde demande partait en erreur 500.
         $this->actingAs($this->provider)
             ->post(route('provider.subscription.subscribe', $this->pro), [
                 'phone' => '677001122',
                 'operator' => 'mtn',
-            ]);
+            ])
+            ->assertRedirect();
 
         $this->assertSame(2, Payment::count());
+
+        $abandoned = Payment::where('status', Payment::STATUS_CANCELLED)->firstOrFail();
+        $this->assertNull($abandoned->provider_reference);
+        $this->assertStringContainsString('ref_pending', (string) $abandoned->failure_reason);
         $this->assertSame(
             Payment::STATUS_CANCELLED,
             Payment::where('plan_id', $this->essential->id)->firstOrFail()->status,
