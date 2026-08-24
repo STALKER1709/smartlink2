@@ -37,13 +37,31 @@ avoir relancé la suite sur cette version.
 
 ## 2. Les services à ouvrir avant de déployer
 
-### 2.1 Une base de données MySQL joignable depuis Internet
+### 2.1 Un projet Supabase (PostgreSQL)
 
-Au choix : PlanetScale, Railway, Aiven, Scaleway, ou un MySQL managé chez
-n'importe quel hébergeur. Notez l'hôte, le port, le nom de la base,
-l'utilisateur et le mot de passe.
+Créez un projet sur [supabase.com](https://supabase.com) et choisissez une
+région proche du Cameroun — `eu-west-3` (Paris) fait l'affaire. Notez le mot de
+passe de la base : il n'est affiché qu'une fois.
 
-Après le premier déploiement, il faut y appliquer les migrations. Depuis votre
+Dans **Project Settings → Database → Connection string**, prenez la chaîne
+**Transaction pooler**, pas la connexion directe. En serverless chaque
+invocation ouvre sa propre connexion : sans mutualisation, la limite du projet
+est atteinte en pleine charge. L'hôte du pooler contient `pooler` —
+`deploy:check` le vérifie et vous prévient si vous vous êtes trompé.
+
+Trois réglages en découlent, chacun réglant une panne qui ne se signale pas
+toute seule :
+
+| Variable | Valeur | Pourquoi |
+|---|---|---|
+| `DB_HOST` | `aws-0-eu-west-3.pooler.supabase.com` | Le pooler, pas `db.<ref>.supabase.co` |
+| `DB_SSLMODE` | `require` | Le défaut de Laravel (`prefer`) accepte une connexion en clair |
+| `DB_EMULATE_PREPARES` | `true` | Le pooler en mode transaction ne garde pas les requêtes préparées côté serveur |
+
+Le port du pooler en mode transaction est **6543**, l'utilisateur
+`postgres.<ref-projet>` et la base `postgres`.
+
+Après le premier déploiement, il faut appliquer les migrations. Depuis votre
 machine, avec le `.env` pointé sur cette base :
 
 ```bash
@@ -78,25 +96,71 @@ php artisan tinker
 
 Le mot de passe est haché automatiquement par le modèle.
 
-### 2.2 Un stockage compatible S3
+### 2.2 Le stockage Supabase
 
-Les photos de profil, logos, images de services et pièces d'identité y sont
-déposés. Cloudflare R2, Backblaze B2, Scaleway Object Storage ou Amazon S3 font
-tous l'affaire.
+Le même projet Supabase porte les photos de profil, logos, images de services
+et pièces d'identité. Rien d'autre à ouvrir.
 
-Le bucket doit être **lisible publiquement** (les images sont affichées dans des
-balises `<img>`), et vous devez connaître son domaine public — c'est la valeur
-de `AWS_URL`.
+1. **Storage → New bucket** : nommez-le `smartlink` et cochez **Public bucket**.
+   Les images s'affichent dans des balises `<img>` : un bucket privé les rendrait
+   toutes cassées.
+2. **Project Settings → Storage → S3 access keys → New access key** : notez la
+   clé et le secret, ils ne sont montrés qu'une fois.
 
-Pour R2 ou B2, renseignez aussi `AWS_ENDPOINT`. Si le fournisseur n'accepte pas
-les ACL par objet, mettez `AWS_VISIBILITY=private` et rendez le bucket public au
-niveau du bucket : l'ACL par objet ferait échouer chaque dépôt.
+Les trois valeurs qui en découlent, `<ref>` étant la référence du projet :
 
-### 2.3 Un compte HR-Skills Pay et une clé Anthropic (facultatif au départ)
+```dotenv
+AWS_ENDPOINT=https://<ref>.supabase.co/storage/v1/s3
+AWS_URL=https://<ref>.supabase.co/storage/v1/object/public/smartlink
+AWS_USE_PATH_STYLE_ENDPOINT=true
+```
 
-L'application démarre sans : `PAYMENT_PROVIDER=mock` et `AI_DRIVER=rule` ne
-demandent ni compte ni réseau. C'est le bon réglage pour une première mise en
-ligne de démonstration.
+⚠️ **`AWS_VISIBILITY=private`** avec Supabase. Ça paraît contre-intuitif pour un
+bucket public, mais ce réglage ne décrit pas la visibilité du bucket : il dit à
+Laravel de poser une ACL sur chaque objet déposé. Supabase ne gère pas les ACL
+par objet et refuserait le dépôt. La lecture publique vient du bucket, cochée à
+l'étape 1.
+
+Cloudflare R2 se configure exactement pareil ; Amazon S3 accepte, lui,
+`AWS_VISIBILITY=public`.
+
+### 2.3 Un compte HR-Skills Pay
+
+C'est le seul flux d'argent du produit : l'abonnement mensuel que le prestataire
+règle en Mobile Money. Trois valeurs à récupérer, et un contrôle à passer.
+
+```dotenv
+PAYMENT_PROVIDER=hrskills
+HRSKILLS_CLE_A=hrsk_pk_live_…
+HRSKILLS_CLE_B=hrsk_sk_live_…
+HRSKILLS_WEBHOOK_SECRET=…
+```
+
+Les deux clés doivent porter le **même** environnement — les deux en `_live_`,
+ou les deux en `_test_`. Un mélange enverrait des appels de production
+authentifiés par un secret de test. Vérifiez avant de déployer :
+
+```bash
+php artisan payment:check
+```
+
+⚠️ **`HRSKILLS_WEBHOOK_SECRET` n'est pas optionnel.** Sans lui, la signature des
+rappels ne peut pas être vérifiée : la route se ferme (503) et **aucun
+abonnement n'est jamais crédité**. Si elle s'ouvrait à la place, n'importe qui
+connaissant une référence — le payeur la voit à l'écran — pourrait s'offrir des
+cycles d'abonnement gratuits.
+
+L'URL à déclarer chez HR-Skills est indiquée au §6.
+
+Pour une première mise en ligne de démonstration, `PAYMENT_PROVIDER=mock`
+n'appelle aucune API et ne demande aucun compte.
+
+### 2.4 Une clé Anthropic (facultatif)
+
+`AI_DRIVER=rule` ne demande ni compte ni réseau et ne coûte rien : l'assistant
+répond par règles. `AI_DRIVER=claude` avec `ANTHROPIC_API_KEY` active les
+réponses du modèle — en gardant à l'esprit que la file d'attente est en `sync`
+sur Vercel, donc la modération d'une annonce attend la réponse du modèle.
 
 ---
 
@@ -120,12 +184,15 @@ APP_FALLBACK_LOCALE=fr
 LOG_CHANNEL=stderr
 LOG_LEVEL=error
 
-DB_CONNECTION=mysql
-DB_HOST=…
-DB_PORT=3306
-DB_DATABASE=smartlink
-DB_USERNAME=…
+# Supabase, via le pooler en mode transaction — pas la connexion directe.
+DB_CONNECTION=pgsql
+DB_HOST=aws-0-eu-west-3.pooler.supabase.com
+DB_PORT=6543
+DB_DATABASE=postgres
+DB_USERNAME=postgres.<ref-projet>
 DB_PASSWORD=…
+DB_SSLMODE=require            # « prefer » accepterait une connexion en clair
+DB_EMULATE_PREPARES=true      # exigé par le pooler en mode transaction
 
 SESSION_DRIVER=database
 CACHE_STORE=database
@@ -139,23 +206,41 @@ MEDIA_DISK=s3
 FILESYSTEM_DISK=s3
 AWS_ACCESS_KEY_ID=…
 AWS_SECRET_ACCESS_KEY=…
-AWS_DEFAULT_REGION=auto
+AWS_DEFAULT_REGION=eu-west-3
 AWS_BUCKET=smartlink
-AWS_URL=https://cdn.example.com
-AWS_ENDPOINT=                 # R2, B2, Scaleway…
-AWS_USE_PATH_STYLE_ENDPOINT=false
+AWS_ENDPOINT=https://<ref-projet>.supabase.co/storage/v1/s3
+AWS_URL=https://<ref-projet>.supabase.co/storage/v1/object/public/smartlink
+AWS_USE_PATH_STYLE_ENDPOINT=true
+AWS_VISIBILITY=private        # Supabase ne gère pas les ACL par objet
 
 # Protège la route appelée par Vercel Cron. Vercel envoie automatiquement
 # « Authorization: Bearer <CRON_SECRET> » dès que cette variable existe.
 CRON_SECRET=…                 # openssl rand -hex 32
 
+PAYMENT_PROVIDER=hrskills
+HRSKILLS_CLE_A=hrsk_pk_live_…
+HRSKILLS_CLE_B=hrsk_sk_live_…
+HRSKILLS_WEBHOOK_SECRET=…
+
 AI_DRIVER=rule
-PAYMENT_PROVIDER=mock
 ```
 
 Ne cochez pas *Automatically expose System Environment Variables* pour y
 chercher `APP_KEY` : générez-la vous-même et collez-la. Sans `APP_KEY`, aucune
 session ne fonctionne.
+
+**Les six lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
+celles que `deploy:check` et `/cron/health` contrôlent nommément, parce que
+l'application démarre parfaitement sans elles :
+
+| Ligne | Ce qui casse en silence |
+|---|---|
+| `QUEUE_CONNECTION=sync` | La modération des annonces et des avis ne s'exécute jamais |
+| `MEDIA_DISK=s3` | Chaque image déposée disparaît au déploiement suivant |
+| `AWS_VISIBILITY=private` | Chaque dépôt d'image échoue chez Supabase |
+| `CRON_SECRET` | Aucun abonnement n'expire, aucune relance n'est envoyée |
+| `DB_SSLMODE=require` | La connexion à la base peut passer en clair |
+| `HRSKILLS_WEBHOOK_SECRET` | Aucun abonnement n'est jamais crédité |
 
 ---
 

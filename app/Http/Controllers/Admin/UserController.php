@@ -21,7 +21,8 @@ class UserController extends Controller
             ->when($request->filled('role'), fn ($q) => $q->ofRole($request->string('role')))
             ->when($request->filled('term'), function ($q) use ($request) {
                 $term = $request->string('term');
-                $q->where(fn ($q) => $q->where('name', 'like', "%{$term}%")->orWhere('email', 'like', "%{$term}%"));
+                $q->where(fn ($q) => $q->whereLike('name', "%{$term}%", caseSensitive: false)
+                    ->orWhereLike('email', "%{$term}%", caseSensitive: false));
             })
             ->latest()
             ->paginate(15)

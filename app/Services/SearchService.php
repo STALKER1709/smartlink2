@@ -27,7 +27,7 @@ class SearchService
         }
 
         if (! empty($filters['quarter'])) {
-            $query->where('quarter', 'like', '%'.$filters['quarter'].'%');
+            $query->whereLike('quarter', '%'.$filters['quarter'].'%', caseSensitive: false);
         }
 
         if (! empty($filters['term'])) {
@@ -77,8 +77,8 @@ class SearchService
         if (! empty($filters['term'])) {
             $term = $filters['term'];
             $query->where(function ($q) use ($term) {
-                $q->where('business_name', 'like', "%{$term}%")
-                    ->orWhere('description', 'like', "%{$term}%");
+                $q->whereLike('business_name', "%{$term}%", caseSensitive: false)
+                    ->orWhereLike('description', "%{$term}%", caseSensitive: false);
             });
         }
 

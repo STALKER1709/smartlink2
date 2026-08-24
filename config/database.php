@@ -97,6 +97,18 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+
+            /*
+             * Un pooler en mode transaction (Supavisor sur le port 6543 chez
+             * Supabase) ne conserve pas l'état de session entre deux requêtes :
+             * les requêtes préparées côté serveur, que PDO utilise par défaut,
+             * y échouent dès qu'une connexion est réutilisée. Les préparer côté
+             * client règle la question. Inutile en connexion directe ou en mode
+             * session, où le défaut est plus efficace.
+             */
+            'options' => array_filter([
+                PDO::ATTR_EMULATE_PREPARES => env('DB_EMULATE_PREPARES', false) ? true : null,
+            ], fn ($value) => $value !== null),
         ],
 
         'sqlsrv' => [

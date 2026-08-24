@@ -35,6 +35,7 @@ class DeploymentCheckService
         return [
             ...$this->applicationChecks(),
             ...$this->databaseChecks(),
+            ...$this->databaseTransportChecks(),
             ...$this->mediaChecks(),
             ...$this->queueChecks(),
             ...$this->scheduleChecks(),
@@ -113,6 +114,44 @@ class DeploymentCheckService
         $checks[] = DB::table('plans')->exists()
             ? $this->ok('Formules', 'Au moins une formule d\'abonnement existe.')
             : $this->error('Formules', 'Aucune formule en base : aucun prestataire ne pourra s\'abonner. Lancer php artisan db:seed --force.');
+
+        return $checks;
+    }
+
+    /**
+     * Deux réglages de transport que rien ne signale à l'exécution : une
+     * connexion en clair fonctionne parfaitement, et une connexion non
+     * mutualisée ne se voit qu'une fois la limite du fournisseur atteinte, en
+     * pleine charge.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function databaseTransportChecks(): array
+    {
+        $connection = (string) config('database.default');
+
+        if (config("database.connections.{$connection}.driver") !== 'pgsql') {
+            return [];
+        }
+
+        $checks = [];
+        $sslmode = (string) config("database.connections.{$connection}.sslmode");
+
+        $checks[] = in_array($sslmode, ['require', 'verify-ca', 'verify-full'], true)
+            ? $this->ok('DB_SSLMODE', "« {$sslmode} » : la connexion est chiffrée.")
+            : $this->error(
+                'DB_SSLMODE',
+                "« {$sslmode} » accepte une connexion en clair vers une base distante. Mettre DB_SSLMODE=require.",
+            );
+
+        $host = (string) config("database.connections.{$connection}.host");
+
+        if (is_serverless() && $host !== '' && ! str_contains($host, 'pooler')) {
+            $checks[] = $this->warning(
+                'Mutualisation',
+                "L'hôte « {$host} » n'a pas l'air d'être un pooler. Chaque invocation ouvrant sa propre connexion, la limite du fournisseur est atteinte en pleine charge — passer par le pooler (Supavisor chez Supabase).",
+            );
+        }
 
         return $checks;
     }

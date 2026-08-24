@@ -48,7 +48,10 @@ avec un repli permanent sur un mode par règles sans coût.
 
 ## Stack
 
-- Backend : Laravel 13 (PHP 8.3+), MySQL en prod / SQLite en dev-tests
+- Backend : Laravel 13 (PHP 8.3+)
+- Base : PostgreSQL (Supabase) en production, SQLite en dev-tests, MySQL possible.
+  La suite tourne sur SQLite **et** sur PostgreSQL — vérifie les deux avant de
+  toucher à une requête.
 - Frontend : Blade, Tailwind CSS, Alpine.js, Vite
 - Tests : PHPUnit (`php artisan test`)
 
@@ -74,6 +77,13 @@ php artisan view:clear   # voir ci-dessous — indispensable après un changemen
 npm install && npm run build
 php artisan test
 vendor/bin/pint --test
+```
+
+Et, dès que tu touches à une requête, à une contrainte ou à une migration, le
+second passage sur le moteur de la production :
+
+```bash
+php artisan test --configuration=phpunit.pgsql.xml   # PostgreSQL local requis
 ```
 
 ⚠️ Le glob de contenu de Tailwind inclut `storage/framework/views`, le cache des vues
@@ -124,6 +134,13 @@ classe Tailwind ou un asset change, et le résultat se commite avec le reste.
 ⚠️ `php artisan deploy:check` (ou `GET /cron/health` en ligne, avec le jeton) vérifie que
 l'hébergement porte réellement les trois fonctions qui cassent en silence : stockage des
 fichiers, file d'attente, passage quotidien. À lancer après chaque déploiement.
+
+⚠️ **N'écris jamais `where(..., 'like', ...)` à la main.** `like` est sensible à
+la casse sur PostgreSQL et ne l'est pas sur MySQL ni SQLite : la recherche
+renvoyait une page vide à qui tapait en minuscules, sans erreur nulle part et
+sans qu'aucun test ne rougisse. Utilise `whereLike($colonne, $valeur,
+caseSensitive: false)`, que Laravel compile en `ilike` sur PostgreSQL.
+`tests/Feature/CaseInsensitiveSearchTest.php` monte la garde.
 
 ⚠️ `database/factories/ServiceCategoryFactory.php` tire ses noms dans un vivier
 **volontairement disjoint** des noms que les tests posent en dur (« Plomberie »,

@@ -16,9 +16,13 @@ class DeploymentCheckTest extends TestCase
 {
     use RefreshDatabase;
 
+    private string $defaultConnection;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->defaultConnection = (string) config('database.default');
 
         // Une base sans formule est un vrai point bloquant — c'est justement
         // ce que le contrôle signale. Ces tests portent sur autre chose : on
@@ -46,6 +50,13 @@ class DeploymentCheckTest extends TestCase
     {
         putenv('VERCEL');
 
+        // RefreshDatabase ouvre sa transaction sur la connexion par défaut au
+        // démarrage et la referme au démontage. Un test qui bascule la
+        // connexion par défaut la laisserait ouverte sur l'ancienne, et le
+        // test suivant échouerait sur « cannot start a transaction within a
+        // transaction » — une panne sans rapport avec ce qu'il vérifie.
+        config(['database.default' => $this->defaultConnection]);
+
         parent::tearDown();
     }
 
@@ -54,6 +65,60 @@ class DeploymentCheckTest extends TestCase
         Plan::query()->forceDelete();
 
         $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('Formules'));
+    }
+
+    public function test_an_unencrypted_postgres_connection_is_an_error(): void
+    {
+        config([
+            'database.default' => 'pgsql',
+            'database.connections.pgsql.host' => 'inexistant.invalid',
+            'database.connections.pgsql.sslmode' => 'prefer',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('DB_SSLMODE'));
+    }
+
+    public function test_a_required_ssl_mode_passes(): void
+    {
+        config([
+            'database.default' => 'pgsql',
+            'database.connections.pgsql.host' => 'inexistant.invalid',
+            'database.connections.pgsql.sslmode' => 'require',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('DB_SSLMODE'));
+    }
+
+    public function test_a_direct_postgres_host_is_flagged_on_a_serverless_host(): void
+    {
+        $this->pretendServerless();
+        config([
+            'database.default' => 'pgsql',
+            'database.connections.pgsql.sslmode' => 'require',
+            'database.connections.pgsql.host' => 'db.abcdef.supabase.invalid',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Mutualisation'));
+    }
+
+    public function test_a_pooled_postgres_host_is_not_flagged(): void
+    {
+        $this->pretendServerless();
+        config([
+            'database.default' => 'pgsql',
+            'database.connections.pgsql.sslmode' => 'require',
+            'database.connections.pgsql.host' => 'aws-0-eu-west-3.pooler.supabase.invalid',
+        ]);
+
+        $this->assertNull($this->statusOf('Mutualisation'));
+    }
+
+    public function test_the_transport_checks_stay_silent_on_other_engines(): void
+    {
+        config(['database.default' => 'sqlite']);
+
+        $this->assertNull($this->statusOf('DB_SSLMODE'));
+        $this->assertNull($this->statusOf('Mutualisation'));
     }
 
     public function test_a_local_media_disk_is_an_error_on_a_serverless_host(): void
@@ -115,6 +180,9 @@ class DeploymentCheckTest extends TestCase
             'queue.default' => 'sync',
             'cron.secret' => 'un-secret',
             'logging.default' => 'stderr',
+            // Sans effet quand la suite tourne sur SQLite ; indispensable
+            // quand elle tourne sur PostgreSQL, où le transport est contrôlé.
+            'database.connections.pgsql.sslmode' => 'require',
         ]);
 
         $checks = app(DeploymentCheckService::class)->run();
@@ -131,7 +199,10 @@ class DeploymentCheckTest extends TestCase
 
     public function test_the_health_route_reports_the_checks_with_the_secret(): void
     {
-        config(['cron.secret' => 'un-secret']);
+        config([
+            'cron.secret' => 'un-secret',
+            'database.connections.pgsql.sslmode' => 'require',
+        ]);
 
         $response = $this->getJson(route('cron.health'), [
             'Authorization' => 'Bearer un-secret',
