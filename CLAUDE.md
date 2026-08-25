@@ -131,6 +131,11 @@ la reconstruction sur l'hébergeur doit produire exactement les fichiers hachés
 testés. Conséquence : `npm run build` fait partie de la préparation d'un commit dès qu'une
 classe Tailwind ou un asset change, et le résultat se commite avec le reste.
 
+⚠️ Dans `vercel.json`, la racine `/` doit être routée vers `api/index.php`
+**avant** `{ "handle": "filesystem" }`. `outputDirectory` vaut `public`, et
+`public/index.php` y est le fichier d'index : sans cette règle, le CDN sert le
+code source du point d'entrée et la page d'accueil devient un téléchargement.
+
 ⚠️ **Rien ne doit être écrit dans l'arborescence du projet à l'exécution.** Sur
 Vercel tout est en lecture seule sauf `/tmp` ; `api/index.php` y déplace
 `storage/` **et** `bootstrap/cache/` — ce dernier parce que Laravel y écrit le

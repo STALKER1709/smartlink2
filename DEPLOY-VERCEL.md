@@ -271,9 +271,15 @@ Ce que fait `vercel.json` :
   servis par le CDN, sans réveiller PHP.
 - `functions` : `api/index.php` devient la fonction qui porte toute
   l'application. Le runtime `vercel-php` y lance `composer install`.
-- `routes` : `/index.php`, `/hot` et `/storage/…` sont renvoyés vers
-  l'application plutôt que servis tels quels ; le reste passe par le CDN s'il
-  existe, par PHP sinon.
+- `routes` : la racine `/` et tout chemin en `.php` sont renvoyés vers
+  l'application **avant** le handler statique, sinon Vercel sert
+  `public/index.php` comme un fichier — le navigateur télécharge le code source
+  au lieu d'afficher le site. `/hot` et `/storage/…` suivent le même chemin. Le
+  reste passe par le CDN s'il existe, par PHP sinon.
+
+  ⚠️ `outputDirectory: public` expose le contenu de `public/` au CDN, et
+  `public/index.php` y est le fichier d'index. C'est la raison d'être de la
+  première règle : sans elle, la page d'accueil est un téléchargement.
 - `crons` : `/cron/subscriptions-refresh` tous les jours à 01:00 **UTC**, soit
   02:00 à Douala — la même heure que le `schedule:run` de `routes/console.php`.
 - `regions: ["cdg1"]` : Paris, la région la plus proche du Cameroun. Si votre
