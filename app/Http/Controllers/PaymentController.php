@@ -9,6 +9,7 @@ use App\Services\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Rappel du fournisseur Mobile Money. C'est l'unique canal de facturation de
@@ -40,7 +41,7 @@ class PaymentController extends Controller
             // la console du fournisseur, ou un événement dont nous n'avons que
             // faire. Le refuser lui ferait croire que notre point d'entrée est
             // en panne — on en accuse réception.
-            return response()->json(['status' => 'acknowledged']);
+            return $this->outcome('acknowledged', 'Rappel authentique sans paiement.');
         }
 
         $payment = Payment::query()
@@ -52,7 +53,9 @@ class PaymentController extends Controller
             // Rappel sur un paiement inconnu ou déjà tranché : rien à faire,
             // mais on accuse réception pour que le fournisseur cesse de le
             // rejouer.
-            return response()->json(['status' => 'ok']);
+            return $this->outcome('ok', $payment === null
+                ? 'Aucun paiement ne porte cette référence.'
+                : "Paiement déjà tranché : « {$payment->status} ».", $event->internalReference);
         }
 
         // Le statut annoncé dans le rappel n'est jamais cru sur parole : un
@@ -63,7 +66,8 @@ class PaymentController extends Controller
         if ($status === null) {
             // PENDING, HOLD (revue anti-blanchiment) ou lecture en échec :
             // rien de définitif, le paiement reste en attente.
-            return response()->json(['status' => 'pending']);
+            return $this->outcome('pending', 'Statut non concluant chez le '
+                .'fournisseur : le paiement reste en attente.', $event->internalReference);
         }
 
         $confirmed = DB::transaction(function () use ($payment, $status, $event) {
@@ -105,6 +109,30 @@ class PaymentController extends Controller
             }
         }
 
-        return response()->json(['status' => 'ok']);
+        // Trois issues, à ne pas confondre dans la trace : créditée, refusée,
+        // ou déjà tranchée par un rappel concurrent — ce dernier cas se
+        // reconnaît à ce que le fournisseur dit « réglé » alors que la
+        // transaction n'a rien eu à mettre à jour.
+        return $this->outcome('ok', match (true) {
+            $confirmed !== null => 'Règlement confirmé, abonnement crédité.',
+            $status === 'success' => 'Déjà tranché par un rappel concurrent.',
+            default => 'Règlement refusé par l\'opérateur.',
+        }, $event->internalReference);
+    }
+
+    /**
+     * Toute issue du rappel laisse une trace, y compris — surtout — le succès.
+     *
+     * Les journaux d'accès de l'hébergeur ne montrent que le code HTTP, et il
+     * vaut 200 pour quatre issues très différentes. Sans cette ligne, la seule
+     * façon de savoir si un abonnement a été crédité serait d'aller regarder
+     * en base.
+     */
+    private function outcome(string $status, string $detail, ?string $reference = null): JsonResponse
+    {
+        Log::info('[Paiement] Rappel · '.$status.' · '.$detail
+            .($reference !== null ? ' · référence: '.$reference : ''));
+
+        return response()->json(['status' => $status]);
     }
 }

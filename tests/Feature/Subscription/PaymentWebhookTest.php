@@ -12,6 +12,8 @@ use App\Services\Payment\CollectionResult;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Monolog\Handler\TestHandler;
 use Tests\TestCase;
 
 /**
@@ -146,6 +148,33 @@ class PaymentWebhookTest extends TestCase
             $afterFirst->timestamp,
             $payment->subscription->fresh()->ends_at->timestamp,
         );
+    }
+
+    /**
+     * Les journaux d'accès de l'hébergeur ne montrent que le code HTTP, et il
+     * vaut 200 aussi bien pour un abonnement crédité que pour un rappel sans
+     * effet. Sans cette trace, savoir ce qui s'est passé en production
+     * demanderait d'aller lire la base.
+     */
+    public function test_every_outcome_leaves_a_trace(): void
+    {
+        // Un vrai gestionnaire Monolog plutôt qu'un double : le contrôleur
+        // n'est pas seul à journaliser pendant la requête, et un double du
+        // gestionnaire complet casse les canaux nommés que d'autres services
+        // utilisent.
+        $capture = new TestHandler;
+        Log::getLogger()->pushHandler($capture);
+
+        $payment = $this->pendingPayment();
+        $this->fakeProvider($payment->internal_reference, 'success');
+
+        $this->postJson(route('payments.webhook'), [])->assertOk();
+
+        $this->assertTrue(
+            $capture->hasInfoThatContains('abonnement crédité'),
+            "L'issue du rappel n'a laissé aucune trace.",
+        );
+        $this->assertTrue($capture->hasInfoThatContains($payment->internal_reference));
     }
 
     public function test_a_callback_on_an_unknown_payment_is_acknowledged_without_effect(): void
