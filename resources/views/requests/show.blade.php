@@ -8,12 +8,16 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-headline-md text-headline-md text-on-surface">
-                Demande #{{ $serviceRequest->id }}
-            </h2>
-            <x-status-badge :status="$serviceRequest->status" />
-        </div>
+        <x-page-header
+            :title="'Demande n° '.$serviceRequest->id"
+            :subtitle="$serviceRequest->created_at->translatedFormat('j F Y')"
+            :back="route('requests.index')"
+            back-label="Mes demandes"
+        >
+            <x-slot name="action">
+                <x-status-badge :status="$serviceRequest->status" />
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">

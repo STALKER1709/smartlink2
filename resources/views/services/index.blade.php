@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Services</h2>
+        <x-page-header title="Services" />
     </x-slot>
 
     @php

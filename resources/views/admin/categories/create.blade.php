@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Nouvelle catégorie</h2>
+        <x-page-header title="Nouvelle catégorie" :back="route('admin.categories.index')" back-label="Catégories" />
     </x-slot>
 
     <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">

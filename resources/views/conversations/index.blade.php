@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Messages</h2>
+        <x-page-header title="Messages" />
     </x-slot>
 
     <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">

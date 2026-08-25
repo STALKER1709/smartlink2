@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Tableau de bord</h2>
+        <x-page-header title="Tableau de bord" />
     </x-slot>
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">

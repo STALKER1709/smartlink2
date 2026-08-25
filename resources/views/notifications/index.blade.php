@@ -1,16 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-headline-md text-headline-md text-on-surface">Notifications</h2>
+        <x-page-header title="Notifications">
             @if ($notifications->isNotEmpty())
-                <form action="{{ route('notifications.read-all') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="text-sm font-semibold text-primary hover:text-primary-container">
-                        Tout marquer comme lu
-                    </button>
-                </form>
+                <x-slot name="action">
+                    <form action="{{ route('notifications.read-all') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1.5 rounded-full border border-outline-variant px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-primary/50">
+                            <span class="material-symbols-outlined text-base">done_all</span>
+                            Tout marquer comme lu
+                        </button>
+                    </form>
+                </x-slot>
             @endif
-        </div>
+        </x-page-header>
     </x-slot>
 
     <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">

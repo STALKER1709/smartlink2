@@ -1,13 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-headline-md text-headline-md text-on-surface">Demandes</h2>
+        <x-page-header title="Demandes" :subtitle="$requests->total().' '.Str::plural('demande', $requests->total())">
             @if (Auth::user()->isClient())
-                <a href="{{ route('requests.create') }}" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                    Nouvelle demande
-                </a>
+                <x-slot name="action">
+                    <a href="{{ route('requests.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                        <span class="material-symbols-outlined text-base">add</span>
+                        Nouvelle demande
+                    </a>
+                </x-slot>
             @endif
-        </div>
+        </x-page-header>
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">

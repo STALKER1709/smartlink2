@@ -1,8 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">
-            {{ __('ui.subscription.checkout_title', ['plan' => $plan->name()]) }}
-        </h2>
+        <x-page-header :title="__('ui.subscription.checkout_title', ['plan' => $plan->name()])" :back="route('provider.subscription.show')" back-label="Mon abonnement" />
     </x-slot>
 
     <div class="max-w-xl mx-auto px-margin-mobile md:px-margin-desktop py-8">

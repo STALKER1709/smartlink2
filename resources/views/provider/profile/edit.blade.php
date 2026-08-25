@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.provider.my_profile') }}</h2>
+        <x-page-header :title="__('ui.provider.my_profile')" />
     </x-slot>
 
     {{-- Leaflet CSS --}}

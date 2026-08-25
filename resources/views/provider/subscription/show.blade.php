@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.nav.subscription') }}</h2>
+        <x-page-header :title="__('ui.nav.subscription')" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-8">

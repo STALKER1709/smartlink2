@@ -1,11 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-headline-md text-headline-md text-on-surface">Gérer les catégories</h2>
-            <a href="{{ route('admin.categories.create') }}" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                Nouvelle catégorie
-            </a>
-        </div>
+        <x-page-header title="Gérer les catégories" :subtitle="$categories->total().' '.Str::plural('catégorie', $categories->total())">
+            <x-slot name="action">
+                <a href="{{ route('admin.categories.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <span class="material-symbols-outlined text-base">add</span>
+                    Nouvelle catégorie
+                </a>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

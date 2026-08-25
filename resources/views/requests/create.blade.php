@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Nouvelle demande</h2>
+        <x-page-header title="Nouvelle demande" :back="route('requests.index')" back-label="Mes demandes" />
     </x-slot>
 
     <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">

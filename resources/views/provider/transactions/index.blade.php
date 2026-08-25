@@ -9,7 +9,7 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Historique des transactions</h2>
+        <x-page-header title="Historique des transactions" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">

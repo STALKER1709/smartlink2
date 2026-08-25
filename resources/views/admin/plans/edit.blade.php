@@ -1,8 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">
-            {{ __('ui.admin_plans.title') }} — {{ $plan->name() }}
-        </h2>
+        <x-page-header :title="__('ui.admin_plans.title') }} — {{ $plan->name()" :back="route('admin.plans.index')" back-label="Formules" />
     </x-slot>
 
     <div class="max-w-xl mx-auto px-margin-mobile md:px-margin-desktop py-8">

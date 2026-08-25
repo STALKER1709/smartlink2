@@ -1,8 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">
-            {{ __('Profile') }}
-        </h2>
+        <x-page-header :title="__('Profile')" />
     </x-slot>
 
     <div class="py-12">

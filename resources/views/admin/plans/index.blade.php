@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.admin_plans.title') }}</h2>
+        <x-page-header :title="__('ui.admin_plans.title')" />
     </x-slot>
 
     <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-4">

@@ -38,7 +38,7 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Centre d'aide</h2>
+        <x-page-header title="Centre d'aide" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
