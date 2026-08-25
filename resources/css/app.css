@@ -9,3 +9,14 @@
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
+
+/*
+ * Les fiches service et prestataire posent une barre d'action fixée en bas sur
+ * mobile. Sans cette règle, la bulle de l'assistant se superpose au bouton
+ * « Faire une demande » — exactement là où le doigt se pose.
+ */
+@media (max-width: 1023px) {
+    body:has(.action-bar) .chat-fab {
+        bottom: 5.5rem;
+    }
+}

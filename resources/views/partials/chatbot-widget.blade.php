@@ -45,7 +45,10 @@
             });
         },
     }"
-    class="fixed bottom-4 right-4 z-50"
+    {{-- Les fiches posent une barre d'action collée en bas sur mobile ; la
+         règle .chat-fab de resources/css/app.css fait remonter la bulle
+         au-dessus plutôt que de la laisser la recouvrir. --}}
+    class="chat-fab fixed bottom-4 right-4 z-50"
 >
     <!-- Toggle Button -->
     <button
