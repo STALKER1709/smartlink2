@@ -105,9 +105,29 @@ class PaymentWebhookTest extends TestCase
     public function test_an_unauthenticated_callback_is_refused(): void
     {
         $payment = $this->pendingPayment();
+        $this->fakeProvider($payment->internal_reference, 'success', authentic: false);
+
+        $this->postJson(route('payments.webhook'), [])
+            ->assertForbidden()
+            ->assertJson(['status' => 'rejected']);
+
+        $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
+    }
+
+    /**
+     * HR-Skills envoie depuis sa console des événements de test qui ne portent
+     * aucun paiement. Ils sont authentiques : les refuser ferait croire au
+     * fournisseur que notre point d'entrée est en panne, et l'a effectivement
+     * fait en production. On en accuse réception.
+     */
+    public function test_an_authentic_callback_without_a_payment_is_acknowledged(): void
+    {
+        $payment = $this->pendingPayment();
         $this->fakeProvider(null, 'success');
 
-        $this->postJson(route('payments.webhook'), [])->assertForbidden();
+        $this->postJson(route('payments.webhook'), ['event' => 'webhook.test'])
+            ->assertOk()
+            ->assertJson(['status' => 'acknowledged']);
 
         $this->assertSame(Payment::STATUS_PENDING, $payment->fresh()->status);
     }
@@ -141,13 +161,14 @@ class PaymentWebhookTest extends TestCase
      * Le fournisseur est remplacé par un double : le contrôleur ne doit rien
      * savoir de la signature ni de la forme des charges utiles.
      */
-    private function fakeProvider(?string $internalReference, ?string $status): void
+    private function fakeProvider(?string $internalReference, ?string $status, bool $authentic = true): void
     {
-        $fake = new class($internalReference, $status) implements PaymentProvider
+        $fake = new class($internalReference, $status, $authentic) implements PaymentProvider
         {
             public function __construct(
                 private readonly ?string $internalReference,
                 private readonly ?string $status,
+                private readonly bool $authentic,
             ) {}
 
             public function collect(
@@ -163,6 +184,11 @@ class PaymentWebhookTest extends TestCase
             public function status(string $providerReference): ?string
             {
                 return $this->status;
+            }
+
+            public function isAuthentic(Request $request): bool
+            {
+                return $this->authentic;
             }
 
             public function readWebhook(Request $request): ?WebhookEvent

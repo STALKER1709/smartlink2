@@ -187,23 +187,51 @@ class HrSkillsPayProviderTest extends TestCase
         $this->assertSame('SL-ABC', $event->internalReference);
     }
 
-    public function test_a_callback_signed_with_the_wrong_secret_is_refused(): void
+    public function test_a_correctly_signed_callback_is_authentic(): void
     {
         $body = json_encode(['data' => ['reference' => 'ref_abc']]);
 
-        $this->assertNull($this->provider->readWebhook($this->signedRequest($body, 'mauvais-secret')));
+        $this->assertTrue($this->provider->isAuthentic($this->signedRequest($body, 'secret-de-rappel')));
     }
 
-    public function test_without_a_configured_secret_every_callback_is_refused(): void
+    public function test_a_callback_signed_with_the_wrong_secret_is_not_authentic(): void
+    {
+        $body = json_encode(['data' => ['reference' => 'ref_abc']]);
+
+        $this->assertFalse($this->provider->isAuthentic($this->signedRequest($body, 'mauvais-secret')));
+    }
+
+    public function test_without_a_configured_secret_no_callback_is_authentic(): void
     {
         config()->set('payment.hrskills.webhook_secret', '');
         $body = json_encode(['data' => ['reference' => 'ref_abc']]);
 
         // Sans secret, n'importe qui pourrait déclarer un abonnement réglé.
-        $this->assertNull($this->provider->readWebhook($this->signedRequest($body, 'peu-importe')));
+        $this->assertFalse($this->provider->isAuthentic($this->signedRequest($body, 'peu-importe')));
     }
 
-    public function test_an_authentic_but_unreadable_callback_is_refused(): void
+    /**
+     * Authenticité et lisibilité sont deux questions distinctes : un événement
+     * de test envoyé depuis la console du fournisseur est parfaitement signé
+     * mais ne porte aucun paiement. La lecture rend null, l'authentification
+     * reste vraie — c'est ce qui permet au contrôleur d'en accuser réception
+     * au lieu de le rejeter.
+     */
+    public function test_an_authentic_callback_without_a_payment_stays_authentic(): void
+    {
+        $body = json_encode([
+            'id' => 'evt_1',
+            'event' => 'webhook.test',
+            'merchant_id' => 'm_1',
+            'data' => ['message' => 'Ceci est un test.'],
+        ]);
+        $request = $this->signedRequest($body, 'secret-de-rappel');
+
+        $this->assertTrue($this->provider->isAuthentic($request));
+        $this->assertNull($this->provider->readWebhook($request));
+    }
+
+    public function test_an_unreadable_body_yields_no_event(): void
     {
         $this->assertNull($this->provider->readWebhook(
             $this->signedRequest('ceci n\'est pas du json', 'secret-de-rappel'),

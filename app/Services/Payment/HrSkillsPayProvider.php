@@ -96,31 +96,35 @@ class HrSkillsPayProvider implements PaymentProvider
         return $raw === null ? null : HrSkillsCore::mapStatus($raw);
     }
 
-    public function readWebhook(Request $request): ?WebhookEvent
+    public function isAuthentic(Request $request): bool
     {
         $secret = (string) config('payment.hrskills.webhook_secret');
 
         if ($secret === '') {
+            // Sans secret, aucune signature n'est vérifiable : on refuse tout
+            // plutôt que d'ouvrir la porte à qui connaît une référence.
             Log::error('[HR-Skills] Rappel refusé : secret de rappel non configuré.');
 
-            return null;
+            return false;
         }
 
-        $raw = $request->getContent();
-
-        // 1) Authenticité : HMAC sur le corps BRUT.
-        $signatures = [
+        $authentique = HrSkillsCore::verifySignature($secret, $request->getContent(), [
             $request->header('X-Hub-Signature'),
             $request->header('X-Hub-Signature-256'),
-        ];
+        ]);
 
-        if (! HrSkillsCore::verifySignature($secret, $raw, $signatures)) {
+        if (! $authentique) {
             Log::warning('[HR-Skills] Signature de rappel invalide', ['ip' => $request->ip()]);
-
-            return null;
         }
 
-        // 2) Contenu : structure non documentée, lecture tolérante.
+        return $authentique;
+    }
+
+    public function readWebhook(Request $request): ?WebhookEvent
+    {
+        $raw = $request->getContent();
+
+        // Contenu : structure non documentée, lecture tolérante.
         $payload = json_decode($raw, true);
 
         if (! is_array($payload)) {
@@ -136,12 +140,15 @@ class HrSkillsPayProvider implements PaymentProvider
         $read = HrSkillsCore::readWebhookPayload($payload);
 
         if ($read === null) {
-            // Authentique mais illisible. La structure est journalisée — clés
-            // seules, jamais les valeurs : c'est la seule façon d'apprendre
-            // comment le fournisseur nomme ses champs, sa documentation n'en
-            // publiant aucun exemple.
-            Log::error('[HR-Skills] Rappel authentique mais illisible · structure reçue: '
-                .HrSkillsCore::jsonShape($payload));
+            // Authentique mais sans rapport avec un paiement : un test depuis
+            // leur console, ou un événement dont nous n'avons que faire. La
+            // structure est journalisée — clés seules, jamais les valeurs —
+            // parce que c'est la seule façon d'apprendre comment le
+            // fournisseur nomme ses champs, sa documentation n'en publiant
+            // aucun exemple. Le nom de l'événement, lui, est utile en clair.
+            Log::info('[HR-Skills] Rappel authentique sans paiement exploitable · événement: '
+                .(is_string($payload['event'] ?? null) ? $payload['event'] : 'non nommé')
+                .' · structure reçue: '.HrSkillsCore::jsonShape($payload));
 
             return null;
         }

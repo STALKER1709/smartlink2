@@ -32,7 +32,20 @@ interface PaymentProvider
     public function status(string $providerReference): ?string;
 
     /**
-     * Authentifie un rappel et en extrait ce qui est exploitable.
+     * Le rappel vient-il bien du fournisseur ?
+     *
+     * Séparé de la lecture parce que les deux questions appellent des réponses
+     * HTTP opposées : un rappel non authentique se refuse, un rappel
+     * authentique mais sans rapport avec un paiement — un test depuis leur
+     * console, par exemple — s'accuse en réception. Répondre « rejeté » à
+     * celui-là ferait croire au fournisseur que notre point d'entrée est en
+     * panne.
+     */
+    public function isAuthentic(Request $request): bool;
+
+    /**
+     * Extrait ce qui est exploitable d'un rappel déjà authentifié.
+     * Renvoie null quand le rappel ne concerne aucun paiement.
      */
     public function readWebhook(Request $request): ?WebhookEvent;
 }

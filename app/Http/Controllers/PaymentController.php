@@ -26,11 +26,21 @@ class PaymentController extends Controller
     public function webhook(Request $request): JsonResponse
     {
         // Authentification et lecture sont l'affaire du fournisseur : lui seul
-        // connaît sa signature et la forme de ses charges utiles.
+        // connaît sa signature et la forme de ses charges utiles. Le contrôleur
+        // pose les deux questions séparément parce qu'elles n'appellent pas la
+        // même réponse HTTP.
+        if (! $this->provider->isAuthentic($request)) {
+            return response()->json(['status' => 'rejected'], 403);
+        }
+
         $event = $this->provider->readWebhook($request);
 
         if ($event === null) {
-            return response()->json(['status' => 'rejected'], 403);
+            // Rappel authentique qui ne parle d'aucun paiement : un test depuis
+            // la console du fournisseur, ou un événement dont nous n'avons que
+            // faire. Le refuser lui ferait croire que notre point d'entrée est
+            // en panne — on en accuse réception.
+            return response()->json(['status' => 'acknowledged']);
         }
 
         $payment = Payment::query()
