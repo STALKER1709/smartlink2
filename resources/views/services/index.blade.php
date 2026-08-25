@@ -133,14 +133,12 @@
         </div>
 
         @if ($services->isEmpty())
-            <div class="rounded-xl border border-dashed border-outline-variant p-12 text-center">
-                <span class="material-symbols-outlined text-4xl text-on-surface-variant/50">search_off</span>
-                <p class="mt-3 font-headline-md text-base font-semibold text-on-surface">Aucun service ne correspond à votre recherche.</p>
-                <p class="mt-1 text-sm text-on-surface-variant">Essayez avec moins de filtres, ou une autre ville.</p>
-                <a href="{{ route('services.index') }}" class="mt-5 inline-flex rounded-full bg-primary px-5 py-2.5 font-button-text text-sm font-semibold text-on-primary hover:bg-primary-container">
-                    Voir tous les services
-                </a>
-            </div>
+            <x-empty-state
+                title="Aucun service ne correspond à votre recherche."
+                description="Essayez avec moins de filtres, ou une autre ville."
+                action-label="Voir tous les services"
+                :action-href="route('services.index')"
+            />
         @else
             <div class="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
                 @foreach ($services as $service)

@@ -76,14 +76,13 @@
         </div>
 
         @if ($providers->isEmpty())
-            <div class="rounded-xl border border-dashed border-outline-variant p-12 text-center">
-                <span class="material-symbols-outlined text-4xl text-on-surface-variant/50">person_search</span>
-                <p class="mt-3 font-headline-md text-base font-semibold text-on-surface">Aucun prestataire ne correspond à votre recherche.</p>
-                <p class="mt-1 text-sm text-on-surface-variant">Essayez une autre ville, ou élargissez la catégorie.</p>
-                <a href="{{ route('providers.index') }}" class="mt-5 inline-flex rounded-full bg-primary px-5 py-2.5 font-button-text text-sm font-semibold text-on-primary hover:bg-primary-container">
-                    Voir tout l'annuaire
-                </a>
-            </div>
+            <x-empty-state
+                icon="person_search"
+                title="Aucun prestataire ne correspond à votre recherche."
+                description="Essayez une autre ville, ou élargissez la catégorie."
+                action-label="Voir tout l'annuaire"
+                :action-href="route('providers.index')"
+            />
         @else
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($providers as $providerProfile)

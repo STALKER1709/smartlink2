@@ -154,10 +154,7 @@
         </div>
 
         @if ($recentServices->isEmpty())
-            <div class="mt-6 rounded-xl border border-dashed border-outline-variant p-10 text-center">
-                <span class="material-symbols-outlined text-4xl text-on-surface-variant/50">search_off</span>
-                <p class="mt-2 text-on-surface-variant">Aucun service disponible pour le moment.</p>
-            </div>
+            <x-empty-state class="mt-6" title="Aucun service disponible pour le moment." />
         @else
             <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
                 @foreach ($recentServices as $service)
