@@ -5,9 +5,8 @@
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if ($pending->isEmpty())
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-8 text-center text-on-surface-variant">
-                Aucune vérification en attente.
-            </div>
+            <x-empty-state icon="shield" title="Aucune vérification en attente."
+                           description="Les pièces d'identité déposées par les prestataires arrivent ici." />
         @else
             <div class="space-y-4">
                 @foreach ($pending as $profile)

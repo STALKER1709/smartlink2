@@ -68,27 +68,29 @@
                 <!-- Actions -->
                 @php $canRespond = Auth::user()->can('respond', $serviceRequest); @endphp
                 @if ($canRespond || Auth::user()->can('cancel', $serviceRequest))
-                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
-                        <h3 class="font-headline-md text-headline-md text-on-surface mb-3">Actions</h3>
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
+                        <h3 class="font-headline-md text-headline-md text-on-surface">Actions</h3>
 
-                        <div class="flex flex-wrap items-center gap-3">
+                        {{-- L'action attendue d'abord, seule et en pleine largeur.
+                             Refus et annulation sont des gestes qu'on ne fait pas
+                             par mégarde : ils demandent d'ouvrir le repli, ce qui
+                             laisse aussi la place d'écrire un motif. --}}
+                        <div class="mt-4 space-y-3">
                             @if ($canRespond && in_array($serviceRequest->status, ['sent', 'viewed'], true))
                                 <form action="{{ route('requests.accept', $serviceRequest) }}" method="POST">
                                     @csrf
-                                    <x-primary-button type="submit">Accepter</x-primary-button>
-                                </form>
-
-                                <form action="{{ route('requests.refuse', $serviceRequest) }}" method="POST" class="flex items-center gap-2">
-                                    @csrf
-                                    <input type="text" name="reason" maxlength="500" placeholder="Motif (facultatif)" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                                    <x-danger-button type="submit">Refuser</x-danger-button>
+                                    <x-primary-button type="submit" class="w-full sm:w-auto">
+                                        <span class="material-symbols-outlined text-base">check</span>
+                                        Accepter la demande
+                                    </x-primary-button>
                                 </form>
                             @endif
 
                             @if ($canRespond && $serviceRequest->status === 'accepted')
                                 <form action="{{ route('requests.start', $serviceRequest) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-tertiary rounded-full font-button-text text-button-text text-on-tertiary hover:opacity-90 active:scale-95 transition-all duration-150">
+                                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-tertiary px-6 py-2.5 font-button-text text-button-text text-on-tertiary transition-all duration-150 hover:opacity-90 active:scale-95 sm:w-auto">
+                                        <span class="material-symbols-outlined text-base">play_arrow</span>
                                         Démarrer la prestation
                                     </button>
                                 </form>
@@ -97,18 +99,49 @@
                             @if ($canRespond && $serviceRequest->status === 'in_progress')
                                 <form action="{{ route('requests.complete', $serviceRequest) }}" method="POST">
                                     @csrf
-                                    <x-primary-button type="submit">Marquer comme terminée</x-primary-button>
+                                    <x-primary-button type="submit" class="w-full sm:w-auto">
+                                        <span class="material-symbols-outlined text-base">done_all</span>
+                                        Marquer comme terminée
+                                    </x-primary-button>
                                 </form>
                             @endif
-
-                            @can('cancel', $serviceRequest)
-                                <form action="{{ route('requests.cancel', $serviceRequest) }}" method="POST" class="flex items-center gap-2">
-                                    @csrf
-                                    <input type="text" name="reason" maxlength="500" placeholder="Motif (facultatif)" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                                    <x-secondary-button type="submit">Annuler la demande</x-secondary-button>
-                                </form>
-                            @endcan
                         </div>
+
+                        @php
+                            $peutRefuser = $canRespond && in_array($serviceRequest->status, ['sent', 'viewed'], true);
+                            $peutAnnuler = Auth::user()->can('cancel', $serviceRequest);
+                        @endphp
+
+                        @if ($peutRefuser || $peutAnnuler)
+                            <details class="group mt-4 border-t border-outline-variant pt-4">
+                                <summary class="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-on-surface-variant hover:text-on-surface">
+                                    <span class="material-symbols-outlined text-base transition-transform group-open:rotate-180">expand_more</span>
+                                    {{ $peutRefuser ? 'Refuser ou annuler' : 'Annuler la demande' }}
+                                </summary>
+
+                                <div class="mt-3 space-y-4">
+                                    @if ($peutRefuser)
+                                        <form action="{{ route('requests.refuse', $serviceRequest) }}" method="POST" class="space-y-2">
+                                            @csrf
+                                            <label for="refuse-reason" class="block text-sm text-on-surface-variant">Motif du refus (facultatif)</label>
+                                            <input id="refuse-reason" type="text" name="reason" maxlength="500" placeholder="Je ne suis pas disponible à cette date…"
+                                                   class="block w-full rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                                            <x-danger-button type="submit">Refuser la demande</x-danger-button>
+                                        </form>
+                                    @endif
+
+                                    @if ($peutAnnuler)
+                                        <form action="{{ route('requests.cancel', $serviceRequest) }}" method="POST" class="space-y-2">
+                                            @csrf
+                                            <label for="cancel-reason" class="block text-sm text-on-surface-variant">Motif de l'annulation (facultatif)</label>
+                                            <input id="cancel-reason" type="text" name="reason" maxlength="500" placeholder="Je n'ai plus besoin de cette prestation…"
+                                                   class="block w-full rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                                            <x-secondary-button type="submit">Annuler la demande</x-secondary-button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </details>
+                        @endif
                     </div>
                 @endif
 
