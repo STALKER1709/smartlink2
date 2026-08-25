@@ -45,11 +45,16 @@ class CheckPaymentConfiguration extends Command
                 $problems[] = "Environnements incohérents : clé A en « {$envA} », clé B en « {$envB} ». "
                     .'Les deux doivent porter le même environnement.';
             } else {
-                $this->info("Clés cohérentes, environnement « {$envA} ».");
-                $this->line('Racine des appels : '.HrSkillsCore::apiRoot(
-                    (string) config('payment.hrskills.base_url'),
-                    $keyA,
-                ));
+                $racine = HrSkillsCore::apiRoot((string) config('payment.hrskills.base_url'), $keyA);
+
+                if (! str_starts_with($racine, 'http')) {
+                    $problems[] = "Racine des appels « {$racine} » : ce n'est pas une URL absolue. "
+                        ."HRSKILLS_BASE_URL est probablement posée à vide sur l'hébergeur — "
+                        .'une variable vide annule la valeur par défaut.';
+                } else {
+                    $this->info("Clés cohérentes, environnement « {$envA} ».");
+                    $this->line('Racine des appels : '.$racine);
+                }
             }
         }
 

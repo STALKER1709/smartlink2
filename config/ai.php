@@ -5,7 +5,7 @@ return [
      * Pilote de l'assistant. « rule » n'appelle aucune API et ne coûte rien :
      * c'est le mode par défaut, et le filet vers lequel tout garde-fou rabat.
      */
-    'driver' => env('AI_DRIVER', 'rule'),
+    'driver' => env_or('AI_DRIVER', 'rule'),
 
     'api_key' => env('ANTHROPIC_API_KEY'),
 
@@ -14,10 +14,10 @@ return [
      * le plus économique pour l'extraction et le classement en volume.
      */
     'models' => [
-        'chat' => env('AI_MODEL_CHAT', 'claude-opus-5'),
-        'writing' => env('AI_MODEL_WRITING', 'claude-opus-5'),
-        'search' => env('AI_MODEL_SEARCH', 'claude-haiku-4-5'),
-        'moderation' => env('AI_MODEL_MODERATION', 'claude-haiku-4-5'),
+        'chat' => env_or('AI_MODEL_CHAT', 'claude-opus-5'),
+        'writing' => env_or('AI_MODEL_WRITING', 'claude-opus-5'),
+        'search' => env_or('AI_MODEL_SEARCH', 'claude-haiku-4-5'),
+        'moderation' => env_or('AI_MODEL_MODERATION', 'claude-haiku-4-5'),
     ],
 
     /*
@@ -34,7 +34,7 @@ return [
          * Les visiteurs anonymes restent sur le mode par règles : l'IA est
          * un motif d'inscription, pas une dépense ouverte à tout venant.
          */
-        'require_authentication' => (bool) env('AI_REQUIRE_AUTH', true),
+        'require_authentication' => (bool) env_or('AI_REQUIRE_AUTH', true),
 
         /*
          * Exceptions à la règle ci-dessus. La recherche en langage naturel est
@@ -45,7 +45,7 @@ return [
          */
         'guest_features' => array_filter(array_map(
             'trim',
-            explode(',', (string) env('AI_GUEST_FEATURES', 'search')),
+            explode(',', (string) env_or('AI_GUEST_FEATURES', 'search')),
         )),
 
         /*
@@ -53,18 +53,18 @@ return [
          * pour les visiteurs non connectés. Au-delà, retour à la recherche par
          * mot-clé, sans message d'erreur.
          */
-        'guest_searches_per_day' => (int) env('AI_GUEST_SEARCHES_PER_DAY', 10),
+        'guest_searches_per_day' => (int) env_or('AI_GUEST_SEARCHES_PER_DAY', 10),
 
         /* Messages d'assistant par compte et par jour. */
-        'daily_messages_per_user' => (int) env('AI_DAILY_MESSAGES', 20),
+        'daily_messages_per_user' => (int) env_or('AI_DAILY_MESSAGES', 20),
 
         /*
          * Plafond de dépense mensuel, en dollars. Au-delà, toute la plateforme
          * bascule en mode par règles et l'administration est alertée.
          */
-        'monthly_budget_usd' => (float) env('AI_MONTHLY_BUDGET_USD', 10),
+        'monthly_budget_usd' => (float) env_or('AI_MONTHLY_BUDGET_USD', 10),
     ],
 
     /* Nombre de messages d'historique renvoyés au modèle à chaque tour. */
-    'history_turns' => (int) env('AI_HISTORY_TURNS', 6),
+    'history_turns' => (int) env_or('AI_HISTORY_TURNS', 6),
 ];

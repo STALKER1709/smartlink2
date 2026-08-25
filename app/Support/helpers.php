@@ -128,3 +128,21 @@ if (! function_exists('serverless_storage_path')) {
         return $root;
     }
 }
+
+if (! function_exists('env_or')) {
+    /**
+     * Lit une variable d'environnement en traitant « vide » comme « absente ».
+     *
+     * `env('X', 30)` ne rend 30 que si X n'existe pas. Si X existe et vaut la
+     * chaîne vide — ce qui arrive dès qu'on colle un bloc .env sans remplir
+     * toutes les lignes — la valeur par défaut est ignorée et l'on récupère ''.
+     * Sur un réglage numérique, `(int) ''` vaut 0 : un abonnement prolongé de
+     * zéro jour, sans la moindre erreur.
+     */
+    function env_or(string $cle, mixed $defaut = null): mixed
+    {
+        $valeur = env($cle);
+
+        return ($valeur === null || $valeur === '') ? $defaut : $valeur;
+    }
+}

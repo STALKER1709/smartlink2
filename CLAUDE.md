@@ -149,6 +149,15 @@ monte la garde.
 l'hébergement porte réellement les trois fonctions qui cassent en silence : stockage des
 fichiers, file d'attente, passage quotidien. À lancer après chaque déploiement.
 
+⚠️ **Dans les fichiers de configuration, utilise `env_or()` et non `env()`** pour
+tout réglage dont une valeur nulle coûterait quelque chose. `env('X', 30)` ne
+rend 30 que si `X` **n'existe pas** : une variable posée à vide sur l'hébergeur
+— ce qui arrive dès qu'on colle un bloc `.env` sans remplir toutes les lignes —
+donne `''`, et `(int) ''` vaut zéro. En production, `SUBSCRIPTION_CYCLE_DAYS`
+vide a donné un abonnement payé couvrant zéro jour, et `HRSKILLS_BASE_URL` vide
+une URL relative qui faisait échouer chaque encaissement.
+`tests/Unit/EnvFallbackTest.php` monte la garde.
+
 ⚠️ **N'écris jamais `where(..., 'like', ...)` à la main.** `like` est sensible à
 la casse sur PostgreSQL et ne l'est pas sur MySQL ni SQLite : la recherche
 renvoyait une page vide à qui tapait en minuscules, sans erreur nulle part et

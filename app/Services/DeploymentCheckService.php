@@ -41,6 +41,7 @@ class DeploymentCheckService
             ...$this->scheduleChecks(),
             ...$this->assetChecks(),
             ...$this->externalServiceChecks(),
+            ...$this->subscriptionChecks(),
         ];
     }
 
@@ -284,11 +285,18 @@ class DeploymentCheckService
         $checks = [];
 
         $payment = (string) config('payment.driver');
-        $checks[] = $payment === 'hrskills'
-            ? ((string) config('payment.hrskills.webhook_secret') === ''
-                ? $this->error('Paiement', 'Pilote hrskills sans HRSKILLS_WEBHOOK_SECRET : tous les rappels seront refusés, donc aucun abonnement crédité.')
-                : $this->ok('Paiement', 'Pilote hrskills configuré. Détail : php artisan payment:check.'))
-            : $this->warning('Paiement', "Pilote « {$payment} » : aucun encaissement réel n'a lieu.");
+
+        if ($payment !== 'hrskills') {
+            $checks[] = $this->warning('Paiement', "Pilote « {$payment} » : aucun encaissement réel n'a lieu.");
+        } elseif ((string) config('payment.hrskills.webhook_secret') === '') {
+            $checks[] = $this->error('Paiement', 'Pilote hrskills sans HRSKILLS_WEBHOOK_SECRET : tous les rappels seront refusés, donc aucun abonnement crédité.');
+        } elseif (! str_starts_with((string) config('payment.hrskills.base_url'), 'http')) {
+            // Une base vide donne une URL relative, et l'appel échoue au visage
+            // du prestataire au moment précis où il paie.
+            $checks[] = $this->error('Paiement', "HRSKILLS_BASE_URL n'est pas une URL absolue : chaque encaissement échouera. Vérifier qu'elle n'est pas posée à vide.");
+        } else {
+            $checks[] = $this->ok('Paiement', 'Pilote hrskills configuré. Détail : php artisan payment:check.');
+        }
 
         $ai = (string) config('ai.driver');
         $checks[] = $ai === 'claude'
@@ -296,6 +304,31 @@ class DeploymentCheckService
                 ? $this->error('IA', 'Pilote claude sans ANTHROPIC_API_KEY : chaque appel retombera sur le mode par règles.')
                 : $this->ok('IA', 'Pilote claude configuré.'))
             : $this->warning('IA', "Pilote « {$ai} » : réponses par règles, aucun coût.");
+
+        return $checks;
+    }
+
+    /**
+     * Une variable d'environnement présente mais vide annule la valeur par
+     * défaut : `(int) ''` vaut zéro. Un cycle de zéro jour laisserait un
+     * prestataire régler son abonnement pour rien, sans la moindre erreur.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function subscriptionChecks(): array
+    {
+        $checks = [];
+
+        foreach ([
+            'SUBSCRIPTION_CYCLE_DAYS' => ['subscription.cycle_days', "la durée d'un cycle payé"],
+            'SUBSCRIPTION_TRIAL_DAYS' => ['subscription.trial_days', "la durée de l'essai gratuit"],
+        ] as $variable => [$cle, $quoi]) {
+            $jours = (int) config($cle);
+
+            $checks[] = $jours > 0
+                ? $this->ok($variable, $jours.' jours.')
+                : $this->error($variable, "À zéro : {$quoi} est nulle. Vérifier que la variable n'est pas posée à vide sur l'hébergeur.");
+        }
 
         return $checks;
     }

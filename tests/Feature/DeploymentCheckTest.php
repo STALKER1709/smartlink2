@@ -68,6 +68,37 @@ class DeploymentCheckTest extends TestCase
         $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('Formules'));
     }
 
+    public function test_a_zero_day_cycle_is_an_error(): void
+    {
+        // Ce qu'on obtient quand la variable existe sur l'hébergeur mais vide :
+        // (int) '' vaut zéro, et l'abonnement payé ne couvre rien.
+        config(['subscription.cycle_days' => 0]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('SUBSCRIPTION_CYCLE_DAYS'));
+    }
+
+    public function test_a_relative_payment_url_is_an_error(): void
+    {
+        config([
+            'payment.driver' => 'hrskills',
+            'payment.hrskills.webhook_secret' => 'un-secret',
+            'payment.hrskills.base_url' => '',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('Paiement'));
+    }
+
+    public function test_an_absolute_payment_url_passes(): void
+    {
+        config([
+            'payment.driver' => 'hrskills',
+            'payment.hrskills.webhook_secret' => 'un-secret',
+            'payment.hrskills.base_url' => 'https://api.hrskills-pay.com',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('Paiement'));
+    }
+
     public function test_a_migration_pushed_but_never_applied_is_an_error(): void
     {
         // On efface la trace de la dernière migration : elle redevient « en
