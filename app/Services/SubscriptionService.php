@@ -259,15 +259,27 @@ class SubscriptionService
     /**
      * Un paiement abouti prolonge l'abonnement d'un cycle. Si l'échéance est
      * encore devant, le cycle s'ajoute à la fin ; sinon il repart de maintenant.
+     *
+     * Un règlement ne crédite qu'une fois. Le statut « success » dit que
+     * l'argent est arrivé, pas qu'un cycle a été accordé : c'est `credited_at`
+     * qui porte cette réponse, posé dans la même transaction que la
+     * prolongation. Sans lui, rejouer un règlement offrait trente jours.
      */
     public function recordSuccessfulPayment(Payment $payment): Subscription
     {
         return DB::transaction(function () use ($payment) {
+            $verrouille = Payment::whereKey($payment->id)->lockForUpdate()->firstOrFail();
             $subscription = $payment->subscription()->lockForUpdate()->firstOrFail();
+
+            if ($verrouille->credited_at !== null) {
+                return $subscription;
+            }
 
             $from = $subscription->ends_at !== null && $subscription->ends_at->isFuture()
                 ? $subscription->ends_at
                 : now();
+
+            $verrouille->forceFill(['credited_at' => now()])->save();
 
             $subscription->update([
                 // Le palier réglé prend effet maintenant : un changement de
