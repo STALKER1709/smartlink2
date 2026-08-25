@@ -1,6 +1,6 @@
 # Guide d'utilisation
 
-## Comptes de démonstration
+## Comptes de démonstration (développement)
 
 Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts à l'emploi (mot de passe : `password`) ainsi que des dizaines de clients/prestataires aléatoires :
 
@@ -9,6 +9,46 @@ Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts 
 | Client | `client@smartlink.cm` | `password` | Aïcha Mballa, Douala |
 | Prestataire | `provider@smartlink.cm` | `password` | Jean-Paul Eto'o, plombier vérifié à Douala |
 | Administrateur | `admin@smartlink.cm` | `password` | Administrateur SmartLink |
+
+⚠️ **`db:seed` sans argument ne doit jamais être lancé en production** : il ouvre un
+administrateur dont le mot de passe est `password`, et remplit les descriptions avec le
+faux latin de Faker.
+
+## Contenu de démonstration (production)
+
+Pour ne pas ouvrir la plateforme sur des pages vides, `DemoSeeder` installe un contenu
+écrit à la main : quatorze prestataires répartis sur six villes, vingt-sept services aux
+descriptions réelles, huit clients, treize demandes couvrant tout le cycle de vie, les
+conversations correspondantes et cinq avis.
+
+```bash
+php artisan db:seed --class=ServiceCategorySeeder   # si ce n'est pas déjà fait
+php artisan db:seed --class=PlanSeeder              # idem
+DEMO_PASSWORD=... php artisan db:seed --class=DemoSeeder
+```
+
+Trois propriétés en font un seeder sûr sur une base réelle :
+
+- **Il n'écrit que sur son propre domaine.** Tous les comptes sont en
+  `@demo.smartlink.cm` ; aucune ligne appartenant à un vrai compte n'est touchée.
+- **Il est rejouable.** Comptes retrouvés par adresse, services par `slug` : le relancer
+  met à jour au lieu de dupliquer. Le mot de passe des comptes existants n'est pas
+  remplacé, sauf si `DEMO_PASSWORD` est posée.
+- **Il ne crée aucun administrateur.** Sans `DEMO_PASSWORD`, un mot de passe est tiré au
+  sort et affiché une seule fois, à la fin.
+
+Les prestataires sont répartis sur tous les états d'abonnement — essai, Pro, Essentiel,
+gratuit, expiré — pour que chaque affichage de l'interface ait des données à montrer.
+
+Pour tout retirer avant l'ouverture réelle :
+
+```bash
+php artisan demo:clear          # demande confirmation
+php artisan demo:clear --force  # sans confirmation
+```
+
+La sélection porte sur le domaine des adresses : les vrais comptes y survivent, et
+`tests/Feature/DemoDataTest.php` monte la garde sur ce point.
 
 ## Parcours Visiteur (non connecté)
 
