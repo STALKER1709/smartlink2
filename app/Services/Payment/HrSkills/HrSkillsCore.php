@@ -51,6 +51,28 @@ class HrSkillsCore
         );
     }
 
+    /**
+     * Empreinte d'une clé, pour un diagnostic lisible sans divulguer le secret.
+     *
+     * Le préfixe (« hrsk_sk_test_… ») n'est pas secret et c'est lui qui trahit
+     * les deux erreurs de configuration les plus fréquentes : deux clés
+     * interverties, ou une clé de test là où l'on croyait être en production.
+     * La longueur, elle, trahit une copie tronquée.
+     */
+    public static function maskKey(string $key): string
+    {
+        if ($key === '') {
+            return '(vide)';
+        }
+
+        $longueur = mb_strlen($key);
+        $empreinte = $longueur <= 8
+            ? str_repeat('•', $longueur)
+            : mb_substr($key, 0, 12).'…'.mb_substr($key, -4);
+
+        return $empreinte." ({$longueur} caractères)";
+    }
+
     public static function isUuidV4(string $value): bool
     {
         return (bool) preg_match(

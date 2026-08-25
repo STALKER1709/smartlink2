@@ -83,9 +83,22 @@ class HrSkillsPayProvider implements PaymentProvider
             // Aucune redirection : le payeur valide sur son téléphone.
             return CollectionResult::pending($providerReference);
         } catch (\Throwable $e) {
-            Log::error('[HR-Skills] Encaissement en échec', ['error' => $e->getMessage()]);
+            // Le détail technique — clé refusée, hôte injoignable, réponse
+            // inattendue — part au journal avec la référence, qui permet de
+            // retrouver le paiement concerné. Il ne remonte pas au prestataire :
+            // « HTTP 401 · {"code":"invalid_api_key"} » ne lui apprend rien
+            // qu'il puisse corriger et expose notre configuration sur une page
+            // publique. Les refus qu'il peut, lui, corriger — numéro
+            // inexploitable, opérateur inconnu, refus de l'opérateur — sont
+            // renvoyés explicitement plus haut.
+            Log::error('[HR-Skills] Encaissement en échec', [
+                'reference' => $reference,
+                'error' => $e->getMessage(),
+            ]);
 
-            return CollectionResult::failed($e->getMessage());
+            return CollectionResult::failed(
+                'Le service de paiement est momentanément indisponible. Réessayez dans quelques minutes.'
+            );
         }
     }
 
