@@ -137,6 +137,9 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::post('/subscription/{plan}', [ProviderSubscriptionController::class, 'subscribe'])
         ->middleware('throttle:5,1')
         ->name('subscription.subscribe');
+    Route::post('/subscription/{plan}/gratuit', [ProviderSubscriptionController::class, 'activateFree'])
+        ->middleware('throttle:5,1')
+        ->name('subscription.free');
 });
 
 /*

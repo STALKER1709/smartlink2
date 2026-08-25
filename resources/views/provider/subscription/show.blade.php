@@ -53,7 +53,7 @@
         </div>
 
         {{-- Paliers --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($plans as $plan)
                 @php $isCurrent = $subscription && $subscription->plan_id === $plan->id; @endphp
                 <div @class([
@@ -79,10 +79,10 @@
                     <ul class="mt-6 space-y-2 text-sm text-on-surface flex-1">
                         <li>· {{ $plan->allowsUnlimitedServices()
                             ? __('ui.plans.services_unlimited')
-                            : __('ui.plans.services_limit', ['count' => $plan->max_services]) }}</li>
+                            : trans_choice('ui.plans.services_limit', $plan->max_services, ['count' => $plan->max_services]) }}</li>
                         <li>· {{ $plan->allowsUnlimitedRequests()
                             ? __('ui.plans.requests_unlimited')
-                            : __('ui.plans.requests_limit', ['count' => $plan->max_monthly_requests]) }}</li>
+                            : trans_choice('ui.plans.requests_limit', $plan->max_monthly_requests, ['count' => $plan->max_monthly_requests]) }}</li>
                         @if ($plan->is_featured)
                             <li>· {{ __('ui.plans.featured') }}</li>
                         @endif
@@ -96,9 +96,15 @@
 
                     <a href="{{ route('provider.subscription.checkout', $plan) }}"
                        class="mt-6 block rounded-full bg-primary px-4 py-2.5 text-center text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                        {{ $isCurrent && $subscription && ! $subscription->isTrial()
-                            ? __('ui.subscription.renew')
-                            : __('ui.subscription.choose_plan') }}
+                        {{-- « Renouveler » n'a pas de sens pour un palier gratuit :
+                             il se reconduit seul et rien n'est à régler. --}}
+                        @if ($plan->isFree())
+                            {{ $isCurrent ? __('ui.subscription.current_plan') : __('ui.subscription.free_confirm') }}
+                        @elseif ($isCurrent && $subscription && ! $subscription->isTrial())
+                            {{ __('ui.subscription.renew') }}
+                        @else
+                            {{ __('ui.subscription.choose_plan') }}
+                        @endif
                     </a>
                 </div>
             @endforeach

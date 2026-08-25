@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Plan;
 use App\Models\ProviderProfile;
+use App\Models\Service;
 use App\Models\User;
 
 /**
@@ -104,10 +105,54 @@ class QuotaService
     }
 
     /**
+     * Ramène le nombre de services actifs sous le plafond du palier.
+     *
+     * Sans ce passage, le plafond ne s'appliquerait qu'à la publication : un
+     * prestataire qui publie dix services pendant son essai au palier Pro les
+     * garderait tous visibles en retombant sur un palier qui n'en autorise
+     * qu'un. Le plafond ne vaudrait alors que pour les nouveaux venus.
+     *
+     * Les plus anciens survivent, arbitrairement mais de façon stable : rien
+     * ne permet de deviner lequel compte le plus, et un ordre qui change à
+     * chaque passage ferait clignoter les annonces. Les surnuméraires passent
+     * en « inactif » — ils restent modifiables et reparaissent tels quels si
+     * le prestataire reprend un palier plus large.
+     *
+     * @return int nombre de services retirés
+     */
+    public function enforceServiceCap(User $provider): int
+    {
+        $plan = $this->plan($provider);
+
+        if ($plan === null || $plan->allowsUnlimitedServices()) {
+            return 0;
+        }
+
+        $surplus = $provider->services()
+            ->where('status', Service::STATUS_ACTIVE)
+            ->orderBy('id')
+            ->pluck('id')
+            ->slice($plan->max_services);
+
+        if ($surplus->isEmpty()) {
+            return 0;
+        }
+
+        Service::whereIn('id', $surplus)->update(['status' => Service::STATUS_INACTIVE]);
+
+        return $surplus->count();
+    }
+
+    /**
      * Recalcule la visibilité d'un prestataire dans les recherches.
      */
     public function refreshListing(User $provider): bool
     {
+        // Le plafond s'applique d'abord, et sans dépendre du profil : un
+        // prestataire sans fiche publique n'apparaît dans aucune recherche,
+        // mais ses services, eux, existent bel et bien.
+        $this->enforceServiceCap($provider);
+
         $profile = $provider->providerProfile;
 
         if ($profile === null) {

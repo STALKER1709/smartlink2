@@ -138,6 +138,10 @@ return [
         'inactive' => 'Withdrawn from sale',
     ],
     'plans' => [
+        'gratuit' => [
+            'name' => 'Free',
+            'tagline' => 'To be found without paying up front',
+        ],
         'essential' => [
             'name' => 'Essential',
             'tagline' => 'To get started and be found',
@@ -149,9 +153,9 @@ return [
         'promoted_badge' => 'Pro provider',
         'promoted_hint' => 'Provider on the Pro plan',
         'per_month' => '/ month',
-        'services_limit' => ':count published services',
+        'services_limit' => '{1} One published service|[2,*] :count published services',
         'services_unlimited' => 'Unlimited published services',
-        'requests_limit' => ':count readable requests per month',
+        'requests_limit' => '{1} One readable request per month|[2,*] :count readable requests per month',
         'requests_unlimited' => 'Unlimited readable requests',
         'featured' => 'Highlighted in search results, with a provider badge',
         'ai_writing' => 'AI-assisted writing for your listings',
@@ -182,6 +186,15 @@ return [
         'pay_amount' => 'Pay :amount',
         'cycle_note' => 'Your subscription covers :days days from the payment.',
         'extend_note' => 'This payment extends your subscription by :days days beyond the current due date.',
+        'free_title' => 'Switch to the :plan plan',
+        'free_included' => 'What the free plan opens',
+        'free_excluded' => 'What it does not include',
+        'free_cap_warning' => 'Beyond what the plan allows, your most recent services are set to « inactive ». They are not deleted: you will find them intact when you take a paid plan again.',
+        'free_upgrade_hint' => 'You can move to a paid plan at any time; the change takes effect as soon as the payment goes through.',
+        'free_confirm' => 'Switch to the free plan',
+        'free_activated' => ':plan plan activated. Your services stay visible within the limits of the plan.',
+        'free_blocked' => 'Your current subscription still covers :days days. The free plan will be available on its due date — switching now would lose what you have already paid for.',
+        'free_refused' => 'This plan cannot be activated.',
     ],
     'assistant' => [
         'title' => 'SmartLink Assistant',

@@ -19,6 +19,8 @@ class Plan extends Model
     /** @use HasFactory<PlanFactory> */
     use HasFactory;
 
+    public const CODE_FREE = 'gratuit';
+
     public const CODE_ESSENTIAL = 'essential';
 
     public const CODE_PRO = 'pro';
@@ -55,10 +57,30 @@ class Plan extends Model
         return $query->where('is_active', true);
     }
 
+    /**
+     * Un palier sans contrepartie financière. Le prix fait foi, pas le code :
+     * un palier payant ramené à zéro depuis l'administration doit basculer du
+     * même côté, sans quoi il resterait proposé au Mobile Money pour 0 FCFA.
+     */
+    public function isFree(): bool
+    {
+        return $this->price_xaf === 0;
+    }
+
     /** Le palier offert pendant l'essai gratuit. */
     public static function trialPlan(): ?self
     {
         return static::query()->where('code', self::CODE_PRO)->first();
+    }
+
+    /**
+     * Le palier de repli, celui qui reste quand plus rien n'est payé.
+     * Null tant qu'aucun palier gratuit n'est actif : l'absence de repli se
+     * traite alors comme avant, par l'expiration.
+     */
+    public static function freePlan(): ?self
+    {
+        return static::query()->active()->where('price_xaf', 0)->orderBy('sort_order')->first();
     }
 
     public function name(): string

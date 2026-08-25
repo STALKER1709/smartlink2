@@ -52,6 +52,57 @@ class SubscriptionService
     }
 
     /**
+     * Active un palier sans contrepartie financière.
+     *
+     * Il ne passe pas par `requestPayment` : un encaissement de 0 FCFA n'a
+     * pas de sens et serait refusé par l'opérateur. Deux refus le protègent
+     * d'un mauvais usage — un palier payant ne peut pas être activé par ici,
+     * et un abonnement encore en cours ne peut pas être remplacé par lui.
+     *
+     * Ce second refus n'est pas une contrainte technique mais un garde-fou :
+     * basculer sur le palier gratuit alors qu'il reste vingt jours réglés
+     * détruirait ce qui a été payé, sans que rien ne le rende au prestataire.
+     *
+     * @return array{subscription: ?Subscription, error: ?string}
+     */
+    public function activateFreePlan(User $provider, Plan $plan): array
+    {
+        if (! $provider->isProvider()) {
+            return ['subscription' => null, 'error' => 'not_provider'];
+        }
+
+        if (! $plan->isFree() || ! $plan->is_active) {
+            return ['subscription' => null, 'error' => 'not_free'];
+        }
+
+        $subscription = $this->subscriptionFor($provider);
+
+        if ($subscription->isUsable() && $subscription->plan_id !== $plan->id) {
+            return ['subscription' => $subscription, 'error' => 'still_running'];
+        }
+
+        $subscription->update([
+            'plan_id' => $plan->id,
+            'status' => Subscription::STATUS_ACTIVE,
+            'starts_at' => $subscription->starts_at ?? now(),
+            'ends_at' => now()->addDays(config('subscription.cycle_days')),
+            'cancelled_at' => null,
+            'last_reminder_day' => null,
+        ]);
+
+        $this->auditLog->log($provider, 'subscription.free_activated', $subscription, [
+            'plan_id' => $plan->id,
+        ]);
+
+        // Ramène immédiatement les services au plafond du palier gratuit :
+        // sans cela, tout ce qui a été publié pendant l'essai resterait
+        // visible jusqu'au passage quotidien.
+        $this->quotas->refreshListing($provider->refresh());
+
+        return ['subscription' => $subscription->refresh(), 'error' => null];
+    }
+
+    /**
      * Engage le règlement d'un palier. Le Mobile Money n'offrant aucun mandat
      * récurrent, le prestataire valide l'opération sur son téléphone : la
      * collecte part « en attente » et c'est le rappel de l'opérateur qui la
@@ -61,6 +112,12 @@ class SubscriptionService
      */
     public function requestPayment(User $provider, Plan $plan, string $phone, string $operator): array
     {
+        if ($plan->isFree()) {
+            throw new \InvalidArgumentException(
+                'Un palier gratuit ne s\'encaisse pas : passer par activateFreePlan().'
+            );
+        }
+
         $subscription = $this->subscriptionFor($provider);
 
         $payment = DB::transaction(function () use ($subscription, $provider, $plan, $phone, $operator) {
@@ -178,9 +235,14 @@ class SubscriptionService
 
         $sent = 0;
 
+        $gratuit = Plan::freePlan();
+
         Subscription::query()
             ->usable()
             ->where('ends_at', '<=', now()->addDays($widest))
+            // Un abonnement gratuit se reconduit tout seul : le relancer
+            // reviendrait à réclamer un règlement qui n'existe pas.
+            ->when($gratuit !== null, fn ($q) => $q->where('plan_id', '!=', $gratuit->id))
             ->with('user')
             ->chunkById(200, function ($subscriptions) use ($thresholds, &$sent) {
                 foreach ($subscriptions as $subscription) {
@@ -240,12 +302,30 @@ class SubscriptionService
             ->with('user')
             ->get();
 
+        $gratuit = Plan::freePlan();
+        $expires = 0;
+
         foreach ($lapsed as $subscription) {
+            // Un abonnement gratuit ne s'éteint pas : il se reconduit. Le
+            // laisser expirer sortirait le prestataire des recherches tous
+            // les trente jours sans qu'il ait rien à régler, et l'y ferait
+            // rentrer par un formulaire de paiement à 0 FCFA.
+            if ($gratuit !== null && $subscription->plan_id === $gratuit->id) {
+                $subscription->forceFill([
+                    'status' => Subscription::STATUS_ACTIVE,
+                    'ends_at' => now()->addDays(config('subscription.cycle_days')),
+                    'last_reminder_day' => null,
+                ])->save();
+
+                continue;
+            }
+
             $subscription->forceFill([
                 'status' => Subscription::STATUS_EXPIRED,
                 'last_reminder_day' => null,
             ])->save();
 
+            $expires++;
             $this->auditLog->log($subscription->user, 'subscription.expired', $subscription);
 
             if ($subscription->user?->phone !== null) {
@@ -253,7 +333,9 @@ class SubscriptionService
             }
         }
 
-        return $lapsed->count();
+        // Les reconductions gratuites ne comptent pas : le nombre annoncé est
+        // celui des prestataires qui viennent de sortir des recherches.
+        return $expires;
     }
 
     /**

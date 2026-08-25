@@ -138,6 +138,10 @@ return [
         'inactive' => 'Retiré de la vente',
     ],
     'plans' => [
+        'gratuit' => [
+            'name' => 'Gratuit',
+            'tagline' => 'Pour se rendre visible sans rien avancer',
+        ],
         'essential' => [
             'name' => 'Essentiel',
             'tagline' => 'Pour démarrer et se faire connaître',
@@ -149,9 +153,9 @@ return [
         'promoted_badge' => 'Prestataire Pro',
         'promoted_hint' => 'Prestataire abonné au palier Pro',
         'per_month' => '/ mois',
-        'services_limit' => ':count services publiés',
+        'services_limit' => '{1} Un seul service publié|[2,*] :count services publiés',
         'services_unlimited' => 'Services publiés en nombre illimité',
-        'requests_limit' => ':count demandes lisibles par mois',
+        'requests_limit' => '{1} Une seule demande lisible par mois|[2,*] :count demandes lisibles par mois',
         'requests_unlimited' => 'Demandes lisibles en nombre illimité',
         'featured' => 'Mise en avant dans les résultats et badge prestataire',
         'ai_writing' => 'Rédaction de vos annonces assistée par IA',
@@ -181,6 +185,15 @@ return [
         'payment_pending' => 'Demande envoyée. Validez le paiement sur votre téléphone. Référence : :reference.',
         'pay_amount' => 'Payer :amount',
         'cycle_note' => 'Votre abonnement couvre :days jours à compter du paiement.',
+        'free_title' => 'Passer au palier :plan',
+        'free_included' => 'Ce que la formule gratuite ouvre',
+        'free_excluded' => 'Ce qu\'elle ne comprend pas',
+        'free_cap_warning' => 'Au-delà de ce que la formule autorise, les services les plus récents passent en « inactif ». Ils ne sont pas supprimés : vous les retrouverez intacts en reprenant un palier payant.',
+        'free_upgrade_hint' => 'Vous pouvez passer à un palier payant à tout moment ; le changement prend effet dès le règlement.',
+        'free_confirm' => 'Passer à la formule gratuite',
+        'free_activated' => 'Formule :plan activée. Vos services restent visibles dans la limite de la formule.',
+        'free_blocked' => 'Votre abonnement en cours couvre encore :days jours. La formule gratuite sera disponible à son échéance — y basculer maintenant vous ferait perdre ce qui est déjà réglé.',
+        'free_refused' => 'Cette formule ne peut pas être activée.',
         'extend_note' => 'Ce paiement prolonge votre abonnement de :days jours au-delà de l\'échéance actuelle.',
     ],
     'assistant' => [
