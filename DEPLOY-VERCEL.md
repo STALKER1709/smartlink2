@@ -376,6 +376,12 @@ un abonnement réglé.
   `AI_DRIVER=claude`, l'utilisateur attend l'appel.
 - **`maxDuration` est à 30 s.** Le plan Hobby plafonne à 60 s ; un appel IA long
   couplé à une base lointaine peut s'en approcher.
+- **Rien n'est écrit dans le projet à l'exécution.** `storage/` et
+  `bootstrap/cache/` sont déplacés vers `/tmp` par `api/index.php`. Si vous
+  ajoutez du code qui écrit ailleurs dans l'arborescence, il échouera en
+  production sans forcément le dire : le manifeste des fournisseurs de
+  services, lui, se manifestait par un « Target class [view] does not exist »
+  qui ne pointait vers rien.
 - **Le runtime PHP n'est pas officiel.** Une montée de version de Vercel peut
   demander de bouger la version de `vercel-php` dans `vercel.json`.
 

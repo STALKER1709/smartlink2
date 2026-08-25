@@ -131,6 +131,15 @@ la reconstruction sur l'hébergeur doit produire exactement les fichiers hachés
 testés. Conséquence : `npm run build` fait partie de la préparation d'un commit dès qu'une
 classe Tailwind ou un asset change, et le résultat se commite avec le reste.
 
+⚠️ **Rien ne doit être écrit dans l'arborescence du projet à l'exécution.** Sur
+Vercel tout est en lecture seule sauf `/tmp` ; `api/index.php` y déplace
+`storage/` **et** `bootstrap/cache/` — ce dernier parce que Laravel y écrit le
+manifeste de ses fournisseurs de services à la première requête et que ce
+fichier n'est pas versionné. Sans ce déplacement, aucun fournisseur ne
+s'enregistre et l'application meurt sur « Target class [view] does not
+exist », qui ne dit rien de la cause. `tests/Unit/ServerlessPathsTest.php`
+monte la garde.
+
 ⚠️ `php artisan deploy:check` (ou `GET /cron/health` en ligne, avec le jeton) vérifie que
 l'hébergement porte réellement les trois fonctions qui cassent en silence : stockage des
 fichiers, file d'attente, passage quotidien. À lancer après chaque déploiement.

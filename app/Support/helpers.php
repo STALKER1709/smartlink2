@@ -51,3 +51,80 @@ if (! function_exists('is_serverless')) {
         return getenv('VERCEL') !== false || env('SERVERLESS', false) === true;
     }
 }
+
+if (! function_exists('serverless_relocate_bootstrap_cache')) {
+    /**
+     * Déplace vers un dossier écrivable les cinq fichiers de cache que Laravel
+     * écrit dans bootstrap/cache/.
+     *
+     * Sur un hébergement serverless, ce dossier est en lecture seule, et
+     * `services.php` — le manifeste des fournisseurs de services — n'est pas
+     * versionné : Laravel tente de l'écrire à la première requête, échoue,
+     * n'enregistre aucun fournisseur, et meurt sur « Target class [view] does
+     * not exist », un message qui ne dit rien de la vraie cause.
+     *
+     * À appeler AVANT la construction de l'application : les chemins sont lus
+     * au démarrage et le dépôt de variables d'environnement est immuable.
+     *
+     * @return array<string, string> les chemins posés, par variable
+     */
+    function serverless_relocate_bootstrap_cache(string $root, ?string $builtCacheDir = null): array
+    {
+        if (! is_dir($root)) {
+            mkdir($root, 0755, true);
+        }
+
+        // Ce que la construction a déjà produit — package:discover écrit
+        // packages.php — est repris plutôt que recalculé à chaque démarrage.
+        foreach (glob(rtrim((string) $builtCacheDir, '/').'/*.php') ?: [] as $built) {
+            $target = $root.'/'.basename($built);
+
+            if (! file_exists($target)) {
+                copy($built, $target);
+            }
+        }
+
+        $paths = [
+            'APP_SERVICES_CACHE' => $root.'/services.php',
+            'APP_PACKAGES_CACHE' => $root.'/packages.php',
+            'APP_CONFIG_CACHE' => $root.'/config.php',
+            'APP_ROUTES_CACHE' => $root.'/routes-v7.php',
+            'APP_EVENTS_CACHE' => $root.'/events.php',
+        ];
+
+        foreach ($paths as $key => $path) {
+            $_ENV[$key] = $path;
+            $_SERVER[$key] = $path;
+            putenv("{$key}={$path}");
+        }
+
+        return $paths;
+    }
+}
+
+if (! function_exists('serverless_storage_path')) {
+    /**
+     * Prépare un storage/ écrivable et renvoie sa racine.
+     *
+     * Laravel y écrit à chaque requête : vues Blade compilées, verrous de
+     * cache, journaux. Rien n'y est durable — /tmp est partagé entre les
+     * requêtes d'une instance chaude, perdu au démarrage de la suivante.
+     */
+    function serverless_storage_path(string $root): string
+    {
+        foreach ([
+            $root.'/app/public',
+            $root.'/framework/cache/data',
+            $root.'/framework/sessions',
+            $root.'/framework/testing',
+            $root.'/framework/views',
+            $root.'/logs',
+        ] as $directory) {
+            if (! is_dir($directory)) {
+                mkdir($directory, 0755, true);
+            }
+        }
+
+        return $root;
+    }
+}
