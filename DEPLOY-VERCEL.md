@@ -374,6 +374,9 @@ un abonnement réglé.
 - **La modération IA s'exécute dans la requête.** En `sync`, publier un service
   attend la réponse du modèle. Avec `AI_DRIVER=rule`, c'est instantané ; avec
   `AI_DRIVER=claude`, l'utilisateur attend l'appel.
+- **`memory` n'est plus réglable.** Vercel l'ignore sur sa facturation à l'usage
+  processeur ; le réglage a été retiré de `vercel.json`. Seul `maxDuration`
+  compte encore.
 - **`maxDuration` est à 30 s.** Le plan Hobby plafonne à 60 s ; un appel IA long
   couplé à une base lointaine peut s'en approcher.
 - **Rien n'est écrit dans le projet à l'exécution.** `storage/` et
