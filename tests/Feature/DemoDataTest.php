@@ -6,12 +6,14 @@ use App\Models\Conversation;
 use App\Models\Plan;
 use App\Models\Review;
 use App\Models\Service;
+use App\Models\ServiceImage;
 use App\Models\ServiceRequest;
 use App\Models\User;
 use Database\Seeders\DemoSeeder;
 use Database\Seeders\PlanSeeder;
 use Database\Seeders\ServiceCategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -26,6 +28,11 @@ class DemoDataTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Le disque de médias est simulé : le seeder y téléverse réellement
+        // les couvertures, et sans cela chaque exécution de la suite laisserait
+        // vingt-sept fichiers dans le stockage de développement.
+        Storage::fake('public');
 
         $this->seed(ServiceCategorySeeder::class);
         $this->seed(PlanSeeder::class);
@@ -162,6 +169,63 @@ class DemoDataTest extends TestCase
         }
     }
 
+    public function test_every_service_carries_a_cover(): void
+    {
+        $this->seed(DemoSeeder::class);
+
+        foreach (Service::with('images')->get() as $service) {
+            $this->assertNotEmpty(
+                $service->images,
+                "Le service « {$service->title} » n'a pas de couverture.",
+            );
+        }
+    }
+
+    /**
+     * L'image doit exister là où la vue ira la chercher. Une ligne en base sans
+     * fichier sur le disque donne une vignette cassée, ce qui est pire que pas
+     * de photo du tout.
+     */
+    public function test_every_cover_exists_on_the_media_disk(): void
+    {
+        $this->seed(DemoSeeder::class);
+
+        $disque = Storage::disk(media_disk());
+
+        foreach (ServiceImage::all() as $image) {
+            $this->assertTrue(
+                $disque->exists($image->path),
+                "Aucun fichier derrière « {$image->path} ».",
+            );
+            $this->assertStringStartsWith(DemoSeeder::IMAGE_PREFIX, $image->path);
+        }
+    }
+
+    /**
+     * Deux services d'un même métier ne doivent pas afficher exactement la même
+     * image : sur la grille, cela a l'air d'un bogue d'affichage.
+     */
+    public function test_two_services_of_one_provider_do_not_share_a_cover(): void
+    {
+        $this->seed(DemoSeeder::class);
+
+        foreach (User::query()->ofRole(User::ROLE_PROVIDER)->with('services.images')->get() as $provider) {
+            $chemins = $provider->services->pluck('images.0.path')->filter();
+
+            $this->assertSame($chemins->count(), $chemins->unique()->count());
+        }
+    }
+
+    public function test_running_it_twice_does_not_duplicate_the_covers(): void
+    {
+        $this->seed(DemoSeeder::class);
+        $avant = ServiceImage::count();
+
+        $this->seed(DemoSeeder::class);
+
+        $this->assertSame($avant, ServiceImage::count());
+    }
+
     public function test_the_clear_command_removes_everything_it_created(): void
     {
         $this->seed(DemoSeeder::class);
@@ -172,6 +236,8 @@ class DemoDataTest extends TestCase
         $this->assertSame(0, Service::withTrashed()->count());
         $this->assertSame(0, ServiceRequest::withTrashed()->count());
         $this->assertSame(0, Review::withTrashed()->count());
+        $this->assertSame(0, ServiceImage::count());
+        $this->assertEmpty(Storage::disk(media_disk())->files(rtrim(DemoSeeder::IMAGE_PREFIX, '/')));
     }
 
     /**

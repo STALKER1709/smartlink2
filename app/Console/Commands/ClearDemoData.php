@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Retire le contenu de démonstration, et lui seul.
@@ -47,8 +48,35 @@ class ClearDemoData extends Command
         // contenu resterait affiché.
         DB::table('users')->whereIn('id', $comptes->pluck('id'))->delete();
 
+        $images = $this->clearCovers();
+
         $this->info($comptes->count().' comptes supprimés, avec tout ce qui en dépendait.');
 
+        if ($images > 0) {
+            $this->info($images.' illustrations retirées du stockage.');
+        }
+
         return self::SUCCESS;
+    }
+
+    /**
+     * Les couvertures ne partent pas en cascade : la base ignore ce qui vit sur
+     * le disque de médias. Elles sont retrouvées par leur préfixe, qui ne
+     * contient que des illustrations de démonstration — jamais un dépôt de
+     * prestataire.
+     */
+    private function clearCovers(): int
+    {
+        $disque = Storage::disk(media_disk());
+        $prefixe = rtrim(DemoSeeder::IMAGE_PREFIX, '/');
+
+        if (! $disque->directoryExists($prefixe)) {
+            return 0;
+        }
+
+        $fichiers = $disque->files($prefixe);
+        $disque->deleteDirectory($prefixe);
+
+        return count($fichiers);
     }
 }

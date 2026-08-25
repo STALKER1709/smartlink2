@@ -10,12 +10,14 @@ use App\Models\ProviderProfile;
 use App\Models\Review;
 use App\Models\Service;
 use App\Models\ServiceCategory;
+use App\Models\ServiceImage;
 use App\Models\ServiceRequest;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\QuotaService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -42,8 +44,18 @@ class DemoSeeder extends Seeder
     /** Le domaine qui distingue une donnée de démonstration d'une vraie. */
     public const DOMAIN = '@demo.smartlink.cm';
 
+    /**
+     * Préfixe des couvertures sur le disque de médias. Il tient à l'écart des
+     * dépôts des prestataires, et donne à `demo:clear` de quoi les retrouver
+     * sans risquer d'emporter une vraie photo.
+     */
+    public const IMAGE_PREFIX = 'services/demo/';
+
     /** Au moins un compte vient d'être créé : le mot de passe affiché est le sien. */
     private bool $nouveaux = false;
+
+    /** @var array<string, string> catégorie → motif d'illustration */
+    private array $motifs = [];
 
     public function run(): void
     {
@@ -57,6 +69,7 @@ class DemoSeeder extends Seeder
         $hache = Hash::make($motDePasse);
         $ecrasePassword = $impose !== '';
 
+        $this->motifs = $this->loadMotifs();
         $categories = ServiceCategory::query()->get()->keyBy('name');
 
         if ($categories->isEmpty()) {
@@ -83,6 +96,20 @@ class DemoSeeder extends Seeder
         }
 
         $this->report($prestataires, $clients, $motDePasse, $this->nouveaux || $ecrasePassword);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function loadMotifs(): array
+    {
+        $fichier = database_path('seeders/data/images/categories.json');
+
+        if (! is_file($fichier)) {
+            return [];
+        }
+
+        return json_decode(file_get_contents($fichier), true) ?: [];
     }
 
     /**
@@ -172,7 +199,7 @@ class DemoSeeder extends Seeder
             $slug = Str::slug($service['title']).'-demo-'
                 .substr(md5($definition['email'].$index), 0, 6);
 
-            Service::updateOrCreate(
+            $enregistre = Service::updateOrCreate(
                 ['slug' => $slug],
                 [
                     'provider_id' => $provider->id,
@@ -189,7 +216,51 @@ class DemoSeeder extends Seeder
                     'views_count' => 40 + (crc32($slug) % 460),
                 ],
             );
+
+            $this->attachCover($enregistre, $definition['category'], $index);
         }
+    }
+
+    /**
+     * Couverture du service : une illustration du métier, téléversée sur le
+     * disque de médias comme le serait une vraie photo.
+     *
+     * Elle passe par `media_disk()` et non par un chemin en dur : c'est ce qui
+     * fait que les images atterrissent sur S3 en production et dans
+     * `storage/app/public` en développement, sans que la vue ait à distinguer
+     * les deux. Une illustration livrée avec le code et servie depuis
+     * `public/` marcherait aussi, mais elle emprunterait un chemin que rien
+     * d'autre n'emprunte — et ce chemin-là ne serait jamais éprouvé.
+     */
+    private function attachCover(Service $service, string $categorie, int $index): void
+    {
+        $motif = $this->motifs[$categorie] ?? null;
+
+        if ($motif === null) {
+            return;
+        }
+
+        $fichier = $motif.'-'.($index % 3).'.jpg';
+        $source = database_path('seeders/data/images/'.$fichier);
+
+        if (! is_file($source)) {
+            return;
+        }
+
+        $chemin = self::IMAGE_PREFIX.$fichier;
+        $disque = Storage::disk(media_disk());
+
+        // Une seule copie par illustration : plusieurs services partagent le
+        // même fichier, et le retéléverser à chaque exécution coûterait autant
+        // d'allers-retours réseau que de services.
+        if (! $disque->exists($chemin)) {
+            $disque->put($chemin, file_get_contents($source));
+        }
+
+        ServiceImage::updateOrCreate(
+            ['service_id' => $service->id, 'position' => 0],
+            ['path' => $chemin],
+        );
     }
 
     /**

@@ -27,6 +27,21 @@ php artisan db:seed --class=PlanSeeder              # idem
 DEMO_PASSWORD=... php artisan db:seed --class=DemoSeeder
 ```
 
+Chaque service reçoit une **illustration de couverture** de son métier, téléversée sur
+le disque de médias (`MEDIA_DISK`) comme le serait une vraie photo — donc sur S3 en
+production, dans `storage/app/public` en développement.
+
+Ce sont des dessins et non des photographies, délibérément : une photo de stock d'un
+plombier européen dans une cuisine européenne dessert une place de marché camerounaise,
+et une photo trouvée en ligne pose une question de droits qu'on ne veut pas découvrir
+après la mise en ligne. Elles sont produites par
+`database/seeders/data/images/generate.mjs` à partir de la palette de la plateforme :
+aucun tiers, aucune licence. Pour les régénérer après un changement de couleurs :
+
+```bash
+node database/seeders/data/images/generate.mjs
+```
+
 Trois propriétés en font un seeder sûr sur une base réelle :
 
 - **Il n'écrit que sur son propre domaine.** Tous les comptes sont en
@@ -46,6 +61,10 @@ Pour tout retirer avant l'ouverture réelle :
 php artisan demo:clear          # demande confirmation
 php artisan demo:clear --force  # sans confirmation
 ```
+
+Les illustrations partent avec : elles ne relèvent d'aucune cascade en base, et sont
+retrouvées par leur préfixe `services/demo/`, qui ne contient jamais le dépôt d'un vrai
+prestataire.
 
 La sélection porte sur le domaine des adresses : les vrais comptes y survivent, et
 `tests/Feature/DemoDataTest.php` monte la garde sur ce point.
