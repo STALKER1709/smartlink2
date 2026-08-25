@@ -60,7 +60,12 @@ class SearchService
      */
     public function searchProviders(array $filters = [], int $perPage = 12): LengthAwarePaginator
     {
-        $query = ProviderProfile::query()->listed()->with(['user', 'category']);
+        $query = ProviderProfile::query()
+            ->listed()
+            ->with(['user', 'category'])
+            // Le nombre de services affiché sur la carte : un annuaire de profils
+            // vides n'inspire rien, autant que le visiteur le voie tout de suite.
+            ->withCount(['services' => fn ($services) => $services->active()->available()]);
 
         if (! empty($filters['category_id'])) {
             $query->where('category_id', $filters['category_id']);

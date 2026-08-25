@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 #[Fillable([
@@ -63,6 +64,15 @@ class ProviderProfile extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(ServiceCategory::class, 'category_id');
+    }
+
+    /**
+     * Les services appartiennent à l'utilisateur, pas au profil. Cette relation
+     * fait le pont, pour pouvoir les compter sans charger le user au passage.
+     */
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class, 'provider_id', 'user_id');
     }
 
     public function scopeVerified(Builder $query): Builder

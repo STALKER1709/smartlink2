@@ -3,58 +3,95 @@
         <h2 class="font-headline-md text-headline-md text-on-surface">Prestataires</h2>
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
-        <form action="{{ route('providers.index') }}" method="GET" class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <input
-                type="text"
-                name="term"
-                value="{{ request('term') }}"
-                placeholder="Rechercher un prestataire…"
-                class="rounded-lg border-outline-variant text-sm lg:col-span-2 focus:border-primary focus:ring-primary"
-            >
+    @php
+        $actifs = collect([
+            'term' => request('term'),
+            'category_id' => $categories->firstWhere('id', request('category_id'))?->name,
+            'city' => request('city'),
+            'verified_only' => request('verified_only') ? 'Vérifiés uniquement' : null,
+        ])->filter();
+    @endphp
 
-            <select name="category_id" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                <option value="">Toutes les catégories</option>
-                @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
+    <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-desktop">
 
-            <input
-                type="text"
-                name="city"
-                value="{{ request('city') }}"
-                placeholder="Ville"
-                class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary"
-            >
+        <form action="{{ route('providers.index') }}" method="GET">
+            <div class="flex flex-col gap-2 rounded-2xl border border-outline-variant bg-surface-container-lowest p-2 shadow-sm sm:flex-row sm:items-center">
+                <label for="term" class="sr-only">Rechercher un prestataire</label>
+                <div class="flex flex-1 items-center gap-2 px-3">
+                    <span class="material-symbols-outlined text-on-surface-variant">search</span>
+                    <input
+                        type="text"
+                        id="term"
+                        name="term"
+                        value="{{ request('term') }}"
+                        placeholder="Nom d'entreprise, métier…"
+                        class="w-full border-0 bg-transparent py-2.5 text-on-surface placeholder:text-on-surface-variant/70 focus:ring-0"
+                    >
+                </div>
 
-            <label class="flex items-center gap-2 text-sm text-on-surface-variant">
-                <input type="checkbox" name="verified_only" value="1" @checked(request('verified_only')) class="rounded border-outline-variant text-primary focus:ring-primary">
-                Vérifiés uniquement
-            </label>
+                <select name="category_id" class="rounded-xl border-outline-variant text-sm focus:border-primary focus:ring-primary sm:w-48">
+                    <option value="">Toutes les catégories</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
+                    @endforeach
+                </select>
 
-            <div class="lg:col-span-3 flex justify-end gap-2">
-                <a href="{{ route('providers.index') }}" class="text-sm text-on-surface-variant hover:text-on-surface px-3 py-2">Réinitialiser</a>
-                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                    Filtrer
+                <input
+                    type="text"
+                    name="city"
+                    value="{{ request('city') }}"
+                    placeholder="Ville"
+                    class="rounded-xl border-outline-variant text-sm focus:border-primary focus:ring-primary sm:w-40"
+                >
+
+                <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
+                    Chercher
                 </button>
             </div>
+
+            <label class="mt-3 inline-flex items-center gap-2 px-1 text-sm text-on-surface-variant">
+                <input type="checkbox" name="verified_only" value="1" @checked(request('verified_only'))
+                       onchange="this.form.submit()"
+                       class="rounded border-outline-variant text-primary focus:ring-primary">
+                Prestataires vérifiés uniquement
+            </label>
         </form>
 
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="font-label-numeric text-label-numeric text-on-surface-variant">
+                {{ $providers->total() }} {{ Str::plural('prestataire', $providers->total()) }}
+            </p>
+
+            @if ($actifs->isNotEmpty())
+                <div class="flex flex-wrap items-center gap-2">
+                    @foreach ($actifs as $cle => $valeur)
+                        <a href="{{ route('providers.index', collect(request()->query())->except($cle)->all()) }}"
+                           class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-xs font-medium text-on-surface hover:border-primary/50">
+                            {{ $valeur }}
+                            <span class="material-symbols-outlined text-sm text-on-surface-variant">close</span>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
         @if ($providers->isEmpty())
-            <p class="mt-8 text-on-surface-variant">Aucun prestataire ne correspond à votre recherche.</p>
+            <div class="rounded-xl border border-dashed border-outline-variant p-12 text-center">
+                <span class="material-symbols-outlined text-4xl text-on-surface-variant/50">person_search</span>
+                <p class="mt-3 font-headline-md text-base font-semibold text-on-surface">Aucun prestataire ne correspond à votre recherche.</p>
+                <p class="mt-1 text-sm text-on-surface-variant">Essayez une autre ville, ou élargissez la catégorie.</p>
+                <a href="{{ route('providers.index') }}" class="mt-5 inline-flex rounded-full bg-primary px-5 py-2.5 font-button-text text-sm font-semibold text-on-primary hover:bg-primary-container">
+                    Voir tout l'annuaire
+                </a>
+            </div>
         @else
-            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($providers as $providerProfile)
                     <x-provider-card :provider-profile="$providerProfile" />
                 @endforeach
             </div>
 
-            <div class="mt-8">
-                {{ $providers->links() }}
-            </div>
+            <div>{{ $providers->links() }}</div>
         @endif
     </div>
 </x-app-layout>
