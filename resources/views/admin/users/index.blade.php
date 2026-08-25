@@ -32,9 +32,10 @@
         </form>
 
         @if ($users->isEmpty())
-            <p class="text-on-surface-variant">Aucun utilisateur trouvé.</p>
+            <x-empty-state icon="person_search" title="Aucun utilisateur trouvé." description="Aucun compte ne correspond à ces critères." />
         @else
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+            <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+                <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-outline-variant text-sm">
                     <thead class="bg-surface-container-low">
                         <tr>
@@ -76,6 +77,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
             </div>
 
             <div class="mt-6">

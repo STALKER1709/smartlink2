@@ -31,7 +31,7 @@
         </form>
 
         @if ($services->isEmpty())
-            <p class="text-on-surface-variant">Aucun service trouvé.</p>
+            <x-empty-state icon="home_repair_service" title="Aucun service trouvé." description="Aucun service ne correspond à ces critères." />
         @else
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($services as $service)

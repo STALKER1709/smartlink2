@@ -18,7 +18,7 @@
         @endif
 
         @if ($categories->isEmpty())
-            <p class="text-on-surface-variant">Aucune catégorie pour le moment.</p>
+            <x-empty-state icon="grid_view" title="Aucune catégorie pour le moment." description="Les catégories structurent la recherche : sans elles, rien n'est classable." />
         @else
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($categories as $category)

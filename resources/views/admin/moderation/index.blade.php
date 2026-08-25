@@ -7,7 +7,7 @@
         <p class="text-sm text-on-surface-variant">{{ __('ui.moderation.intro') }}</p>
 
         @if ($reports->isEmpty())
-            <p class="text-on-surface-variant">{{ __('ui.moderation.empty') }}</p>
+            <x-empty-state icon="shield" :title="__('ui.moderation.empty')" description="Aucun contenu signalé : la modération automatique n'a rien relevé." />
         @else
             <div class="space-y-4">
                 @foreach ($reports as $report)

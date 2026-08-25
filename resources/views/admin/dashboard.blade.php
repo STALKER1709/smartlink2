@@ -12,31 +12,20 @@
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
-                <p class="font-label-numeric text-2xl text-on-surface">{{ $stats['clients'] }}</p>
-                <p class="text-sm text-on-surface-variant">Clients</p>
-            </div>
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
-                <p class="font-label-numeric text-2xl text-on-surface">{{ $stats['providers'] }}</p>
-                <p class="text-sm text-on-surface-variant">Prestataires</p>
-            </div>
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
-                <p class="font-label-numeric text-2xl text-error">{{ $stats['suspended_users'] }}</p>
-                <p class="text-sm text-on-surface-variant">Comptes suspendus</p>
-            </div>
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
-                <p class="font-label-numeric text-2xl text-on-surface">{{ $stats['services_active'] }}</p>
-                <p class="text-sm text-on-surface-variant">Services actifs</p>
-            </div>
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
-                <p class="font-label-numeric text-2xl text-on-surface">{{ $stats['services_total'] }}</p>
-                <p class="text-sm text-on-surface-variant">Services au total</p>
-            </div>
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
-                <p class="font-label-numeric text-2xl text-on-surface">{{ $stats['requests_total'] }}</p>
-                <p class="text-sm text-on-surface-variant">Demandes au total</p>
-            </div>
+        {{-- Chaque compteur mène là où l'on agit dessus. « Comptes suspendus »
+             et « Demandes » n'ont pas d'écran filtré dédié : ils restent
+             muets plutôt que de promettre un lien qui n'existe pas. --}}
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+            <x-stat-tile label="Clients" :value="$stats['clients']" icon="person"
+                         :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_CLIENT])" />
+            <x-stat-tile label="Prestataires" :value="$stats['providers']" icon="handyman"
+                         :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_PROVIDER])" />
+            <x-stat-tile label="Comptes suspendus" :value="$stats['suspended_users']" icon="lock" tone="error" />
+            <x-stat-tile label="Services actifs" :value="$stats['services_active']" icon="check_circle" tone="primary"
+                         :href="route('admin.services.index')" />
+            <x-stat-tile label="Services au total" :value="$stats['services_total']" icon="home_repair_service"
+                         :href="route('admin.services.index')" />
+            <x-stat-tile label="Demandes au total" :value="$stats['requests_total']" icon="inbox" />
         </div>
 
         <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
