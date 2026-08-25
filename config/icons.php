@@ -12,6 +12,7 @@ return [
 
     'names' => [
         'ac_unit',
+        'add',
         'arrow_back',
         'arrow_forward',
         'auto_awesome',

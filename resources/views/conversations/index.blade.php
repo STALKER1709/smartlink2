@@ -5,10 +5,7 @@
 
     <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if ($conversations->isEmpty())
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                <span class="material-symbols-outlined text-5xl text-outline mb-3">forum</span>
-                <p class="text-on-surface-variant">Aucune conversation pour le moment.</p>
-            </div>
+            <x-empty-state icon="forum" title="Aucune conversation pour le moment." description="Une conversation s'ouvre dès qu'une demande est acceptée." />
         @else
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($conversations as $conversation)

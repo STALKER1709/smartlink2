@@ -15,10 +15,7 @@
 
     <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if ($notifications->isEmpty())
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                <span class="material-symbols-outlined text-5xl text-outline mb-3">notifications</span>
-                <p class="text-on-surface-variant">Aucune notification pour le moment.</p>
-            </div>
+            <x-empty-state icon="notifications" title="Aucune notification pour le moment." />
         @else
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($notifications as $notification)

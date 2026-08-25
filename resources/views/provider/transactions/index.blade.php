@@ -16,10 +16,7 @@
         <p class="text-on-surface-variant mb-6">Vos paiements d'abonnement SmartLink. SmartLink ne traite aucun paiement entre vous et vos clients.</p>
 
         @if ($payments->isEmpty())
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                <span class="material-symbols-outlined text-5xl text-outline mb-3">receipt_long</span>
-                <p class="text-on-surface-variant">Aucune transaction pour le moment.</p>
-            </div>
+            <x-empty-state icon="receipt_long" title="Aucune transaction pour le moment." description="Vos règlements d'abonnement apparaîtront ici." />
         @else
             <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
                 <div class="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-outline-variant text-on-surface-variant text-sm font-semibold bg-surface-container-low">

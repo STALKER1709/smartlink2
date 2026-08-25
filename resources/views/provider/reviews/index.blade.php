@@ -28,10 +28,7 @@
         </div>
 
         @if ($reviews->isEmpty())
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                <span class="material-symbols-outlined text-5xl text-outline mb-3">reviews</span>
-                <p class="text-on-surface-variant">Aucun avis pour le moment.</p>
-            </div>
+            <x-empty-state icon="reviews" title="Aucun avis pour le moment." description="Les clients laissent un avis après une prestation terminée." />
         @else
             <div class="space-y-4">
                 @foreach ($reviews as $review)

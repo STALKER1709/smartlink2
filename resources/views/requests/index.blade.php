@@ -37,10 +37,7 @@
         </div>
 
         @if ($requests->isEmpty())
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                <span class="material-symbols-outlined text-5xl text-outline mb-3">inbox</span>
-                <p class="text-on-surface-variant">Aucune demande pour le moment.</p>
-            </div>
+            <x-empty-state icon="inbox" title="Aucune demande pour le moment." description="Les demandes que vous envoyez — et celles que vous recevez — s'affichent ici." />
         @else
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($requests as $serviceRequest)
