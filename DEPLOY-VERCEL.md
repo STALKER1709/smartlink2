@@ -85,13 +85,20 @@ choisissez :
 
 ```bash
 php artisan tinker
->>> App\Models\User::create([
-...     'name' => 'Votre nom',
-...     'email' => 'vous@votredomaine.cm',
-...     'phone' => '+2376XXXXXXXX',
-...     'password' => 'un-mot-de-passe-solide',
-...     'role' => App\Models\User::ROLE_ADMIN,
-... ]);
+```
+
+Puis, **sur une seule ligne** — Psy Shell affiche les invites `>>>` et `...`,
+elles ne se tapent pas, et un bloc multiligne collé depuis un document les
+ferait lire comme des opérateurs PHP :
+
+```php
+App\Models\User::create(['name' => 'Votre nom', 'email' => 'vous@votredomaine.cm', 'phone' => '+2376XXXXXXXX', 'password' => 'un-mot-de-passe-solide', 'role' => App\Models\User::ROLE_ADMIN]);
+```
+
+Vérifiez, puis sortez avec `exit` :
+
+```php
+App\Models\User::where('role', 'admin')->count();
 ```
 
 Le mot de passe est haché automatiquement par le modèle.
