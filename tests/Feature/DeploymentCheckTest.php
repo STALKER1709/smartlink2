@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Plan;
 use App\Services\DeploymentCheckService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /**
@@ -65,6 +66,22 @@ class DeploymentCheckTest extends TestCase
         Plan::query()->forceDelete();
 
         $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('Formules'));
+    }
+
+    public function test_a_migration_pushed_but_never_applied_is_an_error(): void
+    {
+        // On efface la trace de la dernière migration : elle redevient « en
+        // attente » sans que le schéma bouge, exactement comme après un
+        // déploiement où personne n'a lancé migrate.
+        $derniere = DB::table('migrations')->orderByDesc('id')->first();
+        DB::table('migrations')->where('id', $derniere->id)->delete();
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('Migrations en attente'));
+    }
+
+    public function test_an_up_to_date_schema_passes(): void
+    {
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('Migrations en attente'));
     }
 
     public function test_an_unencrypted_postgres_connection_is_an_error(): void

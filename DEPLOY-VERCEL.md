@@ -369,6 +369,13 @@ un abonnement réglé.
 
 - **Démarrage à froid.** Une requête sur une instance neuve recompile les vues
   Blade dans `/tmp` : comptez une seconde de plus. Les suivantes sont rapides.
+- **Une migration ne s'applique pas toute seule au déploiement.** Vercel
+  déploie le code, pas le schéma. Après tout push contenant une migration,
+  lancez `php artisan migrate --force` depuis votre machine, `.env` pointé sur
+  la base de production. `/cron/health` signale les migrations en attente :
+  c'est le contrôle à relancer après chaque déploiement, parce que le symptôme
+  est trompeur — les pages qui ne touchent pas à la colonne manquante
+  continuent de répondre, et seule celle qui l'écrit tombe en 500.
 - **`php artisan` n'est pas disponible en ligne.** Migrations, seeds et
   commandes ponctuelles se lancent depuis votre machine, `.env` pointé sur la
   base de production. Seul le contrôle d'après-déploiement a son pendant HTTP

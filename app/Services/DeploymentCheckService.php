@@ -111,11 +111,46 @@ class DeploymentCheckService
 
         $checks[] = $this->ok('Migrations', 'Les tables attendues sont présentes.');
 
+        // Une migration poussée mais jamais appliquée ne se voit pas : les
+        // pages qui n'y touchent pas continuent de répondre, et seule celle
+        // qui écrit dans la colonne manquante tombe en 500. C'est ainsi que le
+        // flux d'abonnement a cassé après un déploiement.
+        $checks[] = $this->pendingMigrations();
+
         $checks[] = DB::table('plans')->exists()
             ? $this->ok('Formules', 'Au moins une formule d\'abonnement existe.')
             : $this->error('Formules', 'Aucune formule en base : aucun prestataire ne pourra s\'abonner. Lancer php artisan db:seed --force.');
 
         return $checks;
+    }
+
+    /**
+     * @return array{name: string, status: string, message: string}
+     */
+    private function pendingMigrations(): array
+    {
+        try {
+            $migrator = app('migrator');
+            $chemins = $migrator->paths() ?: [database_path('migrations')];
+            $fichiers = array_keys($migrator->getMigrationFiles($chemins));
+            $passees = $migrator->getRepository()->getRan();
+        } catch (Throwable $e) {
+            return $this->warning('Migrations en attente', 'Impossible de le déterminer : '.$e->getMessage());
+        }
+
+        $enAttente = array_values(array_diff($fichiers, $passees));
+
+        if ($enAttente === []) {
+            return $this->ok('Migrations en attente', 'Aucune : le schéma est à jour.');
+        }
+
+        return $this->error(
+            'Migrations en attente',
+            count($enAttente).' migration(s) poussée(s) mais jamais appliquée(s) — '
+            .implode(', ', array_slice($enAttente, 0, 3))
+            .(count($enAttente) > 3 ? '…' : '')
+            .'. Les écrans qui touchent aux colonnes manquantes répondront 500. Lancer php artisan migrate --force.',
+        );
     }
 
     /**
