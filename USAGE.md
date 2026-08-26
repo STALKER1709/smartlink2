@@ -85,6 +85,35 @@ prestataire.
 La sélection porte sur le domaine des adresses : les vrais comptes y survivent, et
 `tests/Feature/DemoDataTest.php` monte la garde sur ce point.
 
+## Ouvrir un compte administrateur
+
+Le formulaire public n'accepte que les rôles client et prestataire — un formulaire
+capable de fabriquer un administrateur serait une porte ouverte. Le seul chemin est donc
+la console :
+
+```bash
+php artisan admin:create
+```
+
+La commande demande nom, adresse, téléphone, puis le mot de passe **à l'écran**. Il n'est
+jamais accepté en argument : sur la ligne de commande, il resterait dans l'historique du
+terminal et dans les journaux du shell. Les règles sont celles de l'inscription publique
+— rien ne justifie qu'un administrateur ait un mot de passe plus faible qu'un client.
+
+Les trois premières valeurs peuvent être passées en options pour aller plus vite ;
+le mot de passe, jamais :
+
+```bash
+php artisan admin:create --name="Votre nom" --email=vous@exemple.cm --phone=699887766
+```
+
+Si l'adresse appartient déjà à un compte, la commande propose de le **promouvoir** au
+lieu d'échouer — son mot de passe reste inchangé. Un compte supprimé n'est jamais
+ressuscité en silence : le restaurer est une décision à part.
+
+Les deux opérations sont tracées dans le journal d'audit (`admin.created`,
+`admin.promoted`).
+
 ## Parcours Visiteur (non connecté)
 
 - **Accueil** (`/`) : présentation de SmartLink, catégories mises en avant, services récents.
