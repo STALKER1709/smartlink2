@@ -83,7 +83,7 @@
                 @if ($relatedServices->isNotEmpty())
                     <div class="mt-10">
                         <h2 class="font-headline-md text-headline-md text-on-surface">Services similaires</h2>
-                        <div class="mt-4 grid grid-cols-1 gap-4 xs:grid-cols-2 xs:gap-3 sm:gap-5">
+                        <div class="mt-2 border-t border-outline-variant">
                             @foreach ($relatedServices as $related)
                                 <x-service-card :service="$related" />
                             @endforeach

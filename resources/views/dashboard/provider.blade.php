@@ -37,7 +37,7 @@
             };
         @endphp
 
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <div class="grid grid-cols-2 divide-x divide-outline-variant border-y border-outline-variant sm:grid-cols-4">
             <x-stat-tile label="Services publiés" :value="$servicesCount" icon="home_repair_service"
                          :hint="$indiceServices" :href="route('provider.services.index')" />
             <x-stat-tile label="Demandes en attente" :value="$pendingCount" icon="pending_actions" tone="tertiary"

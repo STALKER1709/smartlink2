@@ -143,8 +143,10 @@ connaît pas SmartLink.
   avertissements — abonnement qui approche de l'échéance, plafond atteint, demande en
   attente. Jamais décoratif.
 - **Rouge `error #ba1a1a`** : erreurs et actions destructives seulement.
-- **Surfaces** : le fond de page `#f9faf7` fait ressortir les cartes blanches. C'est cette
-  différence de un ton, et non une ombre, qui crée la hiérarchie.
+- **Surfaces** : le fond de page `#f9faf7` porte les contrôles — recherche, filtres —
+  tandis que les listes de résultats reposent sur du blanc, de bord à bord sur mobile.
+  C'est cette différence de un ton, et non une ombre, qui sépare ce sur quoi on agit de ce
+  qu'on lit.
 
 Le vert et l'ambre ne se disputent jamais le même écran comme accents concurrents : si
 un avertissement est présent, il est le seul point ambre visible.
@@ -182,12 +184,12 @@ après.
 La profondeur vient des **bordures de 1 px** (`outline-variant #bec9c0`), pas des ombres.
 C'est la méthode principale pour délimiter une zone d'interaction.
 
-Seuls les menus contextuels et les modales portent une ombre, légère et diffuse. Une
-carte au survol peut se soulever de 2 px et prendre une ombre douce ; au-delà, l'effet
-prend le pas sur le contenu.
+Seuls les menus contextuels et les modales portent une ombre, légère et diffuse.
 
-**L'état sélectionné se marque par un changement de fond** — blanc vers vert clair — et
-non par une élévation.
+**Rien ne se soulève au survol.** Un élément qui bouge déplace ce que l'œil suivait, et
+répété sur toute une liste il rend la page instable. Le survol et l'état sélectionné se
+marquent par un **changement de fond** — vers `surface-container-low`, ou vers le vert
+clair pour une sélection.
 
 ## Shapes
 
@@ -195,20 +197,26 @@ non par une élévation.
 - **Boutons, pastilles, onglets** : `rounded-full`. Le contraste entre le rectangle
   arrondi des structures et la pilule des actions rend les zones cliquables lisibles sans
   couleur supplémentaire.
-- **Vignettes d'illustration** : `rounded-xl` en vertical, coin gauche seul en
-  disposition horizontale.
+- **Vignettes d'illustration** : `rounded-lg`, carrées dans les rangées de liste.
+- **Rangées de liste** : aucun rayon. Un filet les sépare, rien ne les encadre.
 
 ## Components
 
-- **Carte de service** — verticale à partir de `xs`, **horizontale en dessous** : la
-  carte verticale pleine largeur consacrait 290 px à l'illustration pour deux cartes par
-  écran. Titre en Hanken Grotesk, prix en JetBrains Mono, prestataire et lieu en corps de
-  texte. La catégorie et la mise en avant se posent sur la vignette en vertical, dans le
-  corps en horizontal — 112 px de large ne portent pas une pastille.
-- **Tuile de statistique** — lecture de haut en bas : icône, chiffre dans la couleur du
-  ton, libellé, indication. La ligne d'indication est **toujours réservée**, même vide :
-  les tuiles d'une rangée s'étirent à la hauteur de la plus haute, et sans cette réserve
+- **Rangée de service — une liste, pas une carte.** Un annuaire se parcourt de haut en
+  bas : vignette carrée à gauche, métier en capitales, titre, prestataire et lieu, prix
+  en JetBrains Mono. Les rangées se séparent par un filet et **ne portent aucune boîte**.
+  Deux colonnes seulement à partir de `lg`, et ce sont toujours des rangées.
+
+  Le filet appartient à la rangée, jamais au conteneur : `divide-y` de Tailwind remet
+  `border-bottom` à zéro sur tous les enfants **sauf le premier**, ce qui ne laisse qu'une
+  seule ligne visible dès qu'on passe en deux colonnes.
+- **Colonne de statistique** — chiffre, libellé, indication, séparés par un filet
+  vertical. Ni boîte, ni icône décorative : quatre pictogrammes alignés n'apprennent rien
+  que le libellé ne dise déjà. La ligne d'indication est **toujours réservée**, même vide :
+  les colonnes d'une rangée s'étirent à la hauteur de la plus haute, et sans cette réserve
   les chiffres cessent de s'aligner.
+- **État vide** — aligné à gauche, sans cadre en pointillés ni grande icône grise. C'est
+  une phrase adressée au visiteur, pas un panneau d'absence.
 - **Boutons** — rembourrage horizontal généreux : un libellé français touche les bords
   d'un bouton dimensionné pour l'anglais. Primaire vert plein ; secondaire blanc à
   bordure verte.
@@ -236,6 +244,14 @@ non par une élévation.
 
 **À ne pas faire**
 
+- **Faire d'une boîte le motif de mise en page.** Une carte blanche à coin arrondi,
+  bordée d'un pixel, posée sur du gris et répétée quinze fois ne hiérarchise rien : chaque
+  élément pèse exactement autant que le suivant. C'est la signature d'une interface
+  produite sans intention. Une liste séparée par des filets dit la même chose, en plus
+  dense et en plus rapide.
+- **Emboîter une carte dans une carte.** Jamais.
+- **Soulever un élément au survol.** Le changement de fond suffit, et il ne déplace pas
+  ce que l'œil suivait.
 - Ajouter une ombre là où une bordure suffit.
 - Employer une couleur pour décorer.
 - Placer une action principale dans la barre de titre d'une section à laquelle elle

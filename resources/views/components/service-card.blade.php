@@ -4,94 +4,87 @@
     $profile = $service->provider?->providerProfile;
 @endphp
 
+{{--
+    Rangée de liste, pas carte.
+
+    Ce composant était une carte blanche à coin arrondi, bordée d'un pixel,
+    posée sur un fond gris, qui se soulevait au survol. Répété quinze fois
+    dans une grille, ce motif ne hiérarchise rien : chaque service pèse
+    exactement autant que le suivant, et l'ensemble a l'air d'une maquette.
+
+    Un annuaire de services est une liste. Elle se parcourt de haut en bas,
+    séparée par un filet, sans boîte autour de chaque ligne. C'est plus dense,
+    plus rapide à lire, et plus rapide à charger — ce qui compte sur une 3G.
+--}}
 <a
     href="{{ route('services.show', $service) }}"
-    {{-- Horizontale en dessous de 480 px, verticale au-delà. Sur un
-         téléphone, la carte verticale pleine largeur consacre près de trois
-         cents pixels à l'illustration : deux cartes par écran, là où la forme
-         horizontale en montre cinq sans rien couper. --}}
-    class="group flex flex-row xs:flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest transition duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    class="group relative flex items-start gap-4 border-b border-outline-variant py-4 transition-colors duration-150 hover:bg-surface-container-low/70 sm:gap-5 sm:py-5"
 >
-    <div class="relative aspect-square w-32 shrink-0 self-stretch overflow-hidden bg-secondary-container/40 xs:aspect-[4/3] xs:w-auto">
-        @if ($service->images->isNotEmpty())
-            <img
-                src="{{ media_url($service->images->first()->path) }}"
-                alt="{{ $service->title }}"
-                loading="lazy"
-                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            >
-        @else
-            {{-- La plupart des prestataires ne déposent pas de photo : l'icône de
-                 la catégorie vaut mieux qu'un rectangle gris annonçant un manque. --}}
-            <div class="flex h-full w-full items-center justify-center">
-                <x-category-icon :icon="$service->category?->icon" class="text-5xl text-primary/35" />
-            </div>
-        @endif
-
-        @if ($service->category)
-            <span class="absolute left-3 top-3 hidden rounded-full bg-surface-container-lowest/95 px-2.5 py-1 text-xs font-semibold text-primary shadow-sm backdrop-blur xs:inline-block">
-                {{ $service->category->name }}
-            </span>
-        @endif
-
-        @if (! $service->is_available)
-            <span class="absolute right-3 top-3">
-                <x-status-badge status="inactive" />
-            </span>
-        @endif
-
-        @if ($profile?->is_promoted)
-            <span class="absolute bottom-3 left-3 hidden xs:inline-block">
-                <x-promoted-badge :profile="$profile" class="bg-surface-container-lowest/95 shadow-sm backdrop-blur" />
-            </span>
-        @endif
-    </div>
-
-    <div class="flex min-w-0 flex-1 flex-col gap-1.5 p-3 sm:gap-2 sm:p-4">
-        {{-- En format horizontal, la catégorie et la mise en avant n'ont pas
-             la place de tenir sur la vignette : elles passent ici. --}}
-        <div class="flex flex-wrap items-center gap-1.5 xs:hidden">
-            @if ($service->category)
-                <span class="rounded-full bg-secondary-container/40 px-2 py-0.5 text-xs font-semibold text-primary">{{ $service->category->name }}</span>
-            @endif
-            @if ($profile?->is_promoted)
-                <x-promoted-badge :profile="$profile" />
+    <div class="relative w-20 shrink-0 overflow-hidden rounded-lg bg-secondary-container/40 sm:w-28">
+        <div class="aspect-square">
+            @if ($service->images->isNotEmpty())
+                <img
+                    src="{{ media_url($service->images->first()->path) }}"
+                    alt=""
+                    loading="lazy"
+                    class="h-full w-full object-cover"
+                >
+            @else
+                {{-- La plupart des prestataires ne déposent pas de photo :
+                     l'icône du métier vaut mieux qu'un rectangle gris. --}}
+                <div class="flex h-full w-full items-center justify-center">
+                    <x-category-icon :icon="$service->category?->icon" class="text-3xl text-primary/30" />
+                </div>
             @endif
         </div>
 
-        <h3 class="font-headline-md text-sm font-semibold leading-snug text-on-surface line-clamp-2 group-hover:text-primary sm:text-base">
+        @unless ($service->is_available)
+            <span class="absolute inset-x-0 bottom-0 bg-inverse-surface/85 px-1 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wide text-inverse-on-surface">
+                Indisponible
+            </span>
+        @endunless
+    </div>
+
+    <div class="min-w-0 flex-1">
+        {{-- Le métier avant le titre : c'est par lui qu'on cherche, et il
+             situe l'annonce en un mot. La mise en avant est ce que paie un
+             prestataire Pro : elle garde son badge entier, pas une abréviation.
+             `PromotedBadgeTest` monte la garde. --}}
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <p class="text-xs font-semibold uppercase tracking-wide text-primary">{{ $service->category?->name }}</p>
+            <x-promoted-badge :profile="$profile" />
+        </div>
+
+        <h3 class="mt-1 font-headline-md text-base font-semibold leading-snug text-on-surface group-hover:text-primary sm:text-lg">
             {{ $service->title }}
         </h3>
 
-        <p class="flex items-center gap-1 text-xs text-on-surface-variant sm:text-sm">
-            <span class="line-clamp-1 xs:line-clamp-2">{{ $profile?->business_name ?? $service->provider?->name }}</span>
+        <p class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-on-surface-variant">
+            <span class="line-clamp-1">{{ $profile?->business_name ?? $service->provider?->name }}</span>
             @if ($profile?->is_verified)
-                <span class="material-symbols-outlined shrink-0 text-base text-primary" style="font-variation-settings: 'FILL' 1;" title="Prestataire vérifié">verified</span>
+                <span class="material-symbols-outlined shrink-0 text-base text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="Prestataire vérifié">verified</span>
+            @endif
+            @if ($service->city)
+                <span class="whitespace-nowrap"><span aria-hidden="true" class="text-outline">·</span>
+                    {{ $service->city }}@if ($service->quarter), {{ $service->quarter }}@endif</span>
             @endif
         </p>
 
-        @if ($profile?->rating_count)
-            <x-star-rating :rating="$profile->rating_avg" :count="$profile->rating_count" compact />
-        @endif
-
-        @if ($service->city)
-            <p class="flex items-center gap-1 text-xs text-on-surface-variant sm:text-sm">
-                <span class="material-symbols-outlined text-base">location_on</span>
-                {{ $service->city }}@if ($service->quarter), {{ $service->quarter }}@endif
-            </p>
-        @endif
-
-        <div class="mt-auto border-outline-variant pt-1.5 xs:border-t xs:pt-2.5 sm:pt-3">
-            <div class="font-label-numeric text-sm text-on-surface sm:text-label-numeric">
+        <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-label-numeric text-base text-on-surface">
                 @if ($service->price_amount)
                     {{ number_format((float) $service->price_amount, 0, ',', ' ') }} FCFA
                     @if ($service->price_unit)
-                        <span class="font-body-md text-on-surface-variant">/ {{ $service->price_unit }}</span>
+                        <span class="font-body-md text-sm text-on-surface-variant">/ {{ $service->price_unit }}</span>
                     @endif
                 @else
-                    <span class="font-body-md text-on-surface-variant">Prix à convenir</span>
+                    <span class="font-body-md text-sm text-on-surface-variant">Prix à convenir</span>
                 @endif
-            </div>
+            </span>
+
+            @if ($profile?->rating_count)
+                <x-star-rating :rating="$profile->rating_avg" :count="$profile->rating_count" compact />
+            @endif
         </div>
     </div>
 </a>

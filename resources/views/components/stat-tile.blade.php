@@ -17,27 +17,31 @@
     ];
 @endphp
 
-{{-- Un chiffre seul ne dit pas où cliquer. Quand la tuile mène quelque part,
-     elle le montre : survol, flèche, et le curseur qui change. --}}
+{{--
+    Un chiffre, son libellé, et de quoi le situer.
+
+    C'était une carte bordée avec une icône, répétée quatre fois — le gabarit
+    « grand nombre, petit libellé, accent coloré » que produit n'importe quel
+    générateur de tableau de bord. Les boîtes ont disparu : les chiffres se
+    séparent par un filet, comme les colonnes d'un relevé. Ce qui compte est le
+    chiffre, pas le cadre autour.
+
+    L'icône aussi a disparu. Quatre pictogrammes décoratifs alignés
+    n'apprenaient rien que le libellé ne disait déjà.
+--}}
 <{{ $tag }}
     @if ($href) href="{{ $href }}" @endif
-    {{ $attributes->merge(['class' => 'group flex flex-col justify-between gap-4 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 transition duration-200 ease-out'.($href ? ' hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md' : '')]) }}
+    {{ $attributes->merge(['class' => 'group block py-4 pl-4 first:pl-0'.($href ? ' transition-colors hover:bg-surface-container-low/60' : '')]) }}
 >
-    {{-- Lecture de haut en bas : l'icône situe, le chiffre frappe, le libellé
-         explique. Le libellé était auparavant aligné à droite en face de
-         l'icône, ce qui obligeait l'œil à faire deux allers-retours pour lire
-         une seule information. --}}
-    @if ($icon)
-        <span class="material-symbols-outlined {{ $tons[$tone] ?? $tons['secondary'] }}">{{ $icon }}</span>
-    @endif
+    <span class="block font-headline-xl text-3xl leading-none tracking-tight {{ $tons[$tone] ?? $tons['secondary'] }} sm:text-headline-xl">{{ $value }}</span>
 
-    <div>
-        <span class="font-headline-xl text-headline-xl leading-none {{ $tons[$tone] ?? $tons['secondary'] }}">{{ $value }}</span>
-        <p class="mt-1.5 text-sm font-medium leading-tight text-on-surface">{{ $label }}</p>
-        {{-- La ligne d'indication est toujours réservée, même vide : les tuiles
-             d'une même rangée s'étirent à la hauteur de la plus haute, et sans
-             cette réserve les chiffres ne s'alignent plus dès qu'une seule
-             tuile porte une indication. --}}
-        <p class="mt-0.5 min-h-[1rem] text-xs text-on-surface-variant">{{ $hint }}</p>
-    </div>
+    <span @class([
+        'mt-2 block text-sm font-medium leading-tight text-on-surface',
+        'group-hover:text-primary' => $href,
+    ])>{{ $label }}</span>
+
+    {{-- La ligne d'indication est toujours réservée, même vide : les colonnes
+         d'une rangée s'étirent à la hauteur de la plus haute, et sans cette
+         réserve les chiffres cessent de s'aligner. --}}
+    <span class="mt-0.5 block min-h-[1rem] text-xs text-on-surface-variant">{{ $hint }}</span>
 </{{ $tag }}>

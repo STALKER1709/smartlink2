@@ -15,7 +15,7 @@
         {{-- Chaque compteur mène là où l'on agit dessus. « Comptes suspendus »
              et « Demandes » n'ont pas d'écran filtré dédié : ils restent
              muets plutôt que de promettre un lien qui n'existe pas. --}}
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+        <div class="grid grid-cols-2 divide-x divide-outline-variant border-y border-outline-variant sm:grid-cols-3 lg:grid-cols-6">
             <x-stat-tile label="Clients" :value="$stats['clients']" icon="person"
                          :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_CLIENT])" />
             <x-stat-tile label="Prestataires" :value="$stats['providers']" icon="handyman"

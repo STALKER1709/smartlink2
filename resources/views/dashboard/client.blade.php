@@ -16,7 +16,7 @@
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         {{-- Chaque tuile mène à la liste filtrée : un compteur qui ne mène nulle
              part oblige à refaire le tri à la main. --}}
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <div class="grid grid-cols-2 divide-x divide-outline-variant border-y border-outline-variant sm:grid-cols-4">
             @foreach ($tuiles as [$statut, $libelle, $icone, $ton])
                 <x-stat-tile
                     :label="$libelle"
