@@ -3,45 +3,12 @@
     $locale = app()->getLocale();
 
     /*
-     * Une seule liste, rendue deux fois — barre large et menu déroulant mobile.
-     * Elle était auparavant recopiée intégralement : toute entrée ajoutée d'un
-     * côté manquait de l'autre.
-     *
-     * Le contenu dépend du rôle, parce que la boucle quotidienne diffère. Le
-     * client cherche puis demande ; le prestataire répond puis gère ses
-     * services ; l'administrateur modère. Empiler les sept entrées pour tout le
-     * monde donnait une barre qui débordait dès 1280 px.
+     * La table des destinations vit dans `App\Support\NavigationLinks` : la
+     * barre d'onglets du bas, incluse séparément, n'a pas accès aux variables
+     * définies ici. La recopier aurait ramené le défaut que cette liste unique
+     * corrigeait — une entrée ajoutée d'un côté et manquante de l'autre.
      */
-    $liens = collect();
-
-    if (! $utilisateur) {
-        $liens = collect([
-            ['route' => 'services.index', 'motif' => 'services.*', 'libelle' => __('Services')],
-            ['route' => 'providers.index', 'motif' => 'providers.*', 'libelle' => __('Prestataires')],
-            ['route' => 'help.index', 'motif' => 'help.*', 'libelle' => 'Aide'],
-        ]);
-    } elseif ($utilisateur->isClient()) {
-        $liens = collect([
-            ['route' => 'services.index', 'motif' => 'services.*', 'libelle' => __('Services')],
-            ['route' => 'providers.index', 'motif' => 'providers.*', 'libelle' => __('Prestataires')],
-            ['route' => 'requests.index', 'motif' => 'requests.*', 'libelle' => __('Demandes')],
-            ['route' => 'conversations.index', 'motif' => 'conversations.*', 'libelle' => __('Messages')],
-        ]);
-    } elseif ($utilisateur->isProvider()) {
-        $liens = collect([
-            ['route' => 'dashboard', 'motif' => 'dashboard', 'libelle' => __('Tableau de bord')],
-            ['route' => 'requests.index', 'motif' => 'requests.*', 'libelle' => __('Demandes')],
-            ['route' => 'conversations.index', 'motif' => 'conversations.*', 'libelle' => __('Messages')],
-            ['route' => 'provider.services.index', 'motif' => 'provider.services.*', 'libelle' => __('Mes services')],
-        ]);
-    } else {
-        $liens = collect([
-            ['route' => 'admin.dashboard', 'motif' => 'admin.*', 'libelle' => __('Administration')],
-            ['route' => 'services.index', 'motif' => 'services.*', 'libelle' => __('Services')],
-            ['route' => 'providers.index', 'motif' => 'providers.*', 'libelle' => __('Prestataires')],
-            ['route' => 'conversations.index', 'motif' => 'conversations.*', 'libelle' => __('Messages')],
-        ]);
-    }
+    $liens = \App\Support\NavigationLinks::principaux($utilisateur);
 
     /*
      * Le menu du compte reçoit ce qui ne se consulte pas tous les jours : le

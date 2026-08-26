@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Tableau de bord" />
+        <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
+                       subtitle="Vos demandes et vos échanges en cours." />
     </x-slot>
 
     @php

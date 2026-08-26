@@ -34,10 +34,13 @@
             @include('partials.flash-messages')
 
             <!-- Page Content -->
-            <main>
+            {{-- La marge basse dégage la barre d'onglets, qui est fixée : sans
+                 elle, le dernier bloc de chaque page passe dessous. --}}
+            <main class="pb-[4.75rem] md:pb-0">
                 {{ $slot }}
             </main>
 
+            @include('layouts.bottom-nav')
             @include('partials.chatbot-widget')
         </div>
     </body>

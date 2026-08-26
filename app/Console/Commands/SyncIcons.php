@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Support\NavigationLinks;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -68,6 +69,12 @@ class SyncIcons extends Command
     public static function scan(): array
     {
         $noms = [];
+
+        // La barre d'onglets rend ses icônes par une expression : aucune de
+        // ses ligatures n'apparaît littéralement dans le balisage. La table les
+        // énumère elle-même, ce qui vaut mieux qu'une expression régulière
+        // taillée sur sa forme du jour.
+        $noms = NavigationLinks::icones();
 
         foreach (File::allFiles(resource_path('views')) as $fichier) {
             $contenu = $fichier->getContents();

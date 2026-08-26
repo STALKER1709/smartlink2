@@ -4,7 +4,8 @@
              Descendue dans la barre de « Demandes récentes », elle passait sous
              ce titre sur mobile et semblait agir dessus, ce qu'elle ne fait
              pas. --}}
-        <x-page-header title="Tableau de bord">
+        <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
+                       subtitle="Voici le résumé de votre activité.">
             <x-slot name="action">
                 <a href="{{ route('provider.services.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
                     <span class="material-symbols-outlined text-base">add</span>

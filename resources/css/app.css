@@ -15,7 +15,20 @@
  * mobile. Sans cette règle, la bulle de l'assistant se superpose au bouton
  * « Faire une demande » — exactement là où le doigt se pose.
  */
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
+    /* La barre d'onglets occupe le bas de l'écran sur mobile : la bulle de
+       l'assistant se pose au-dessus, et plus haut encore quand une barre
+       d'action de page s'y ajoute. */
+    .chat-fab {
+        bottom: 5.25rem;
+    }
+
+    body:has(.action-bar) .chat-fab {
+        bottom: 9.5rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
     body:has(.action-bar) .chat-fab {
         bottom: 5.5rem;
     }
