@@ -3,8 +3,8 @@
         <x-page-header title="Demandes" :subtitle="$requests->total().' '.Str::plural('demande', $requests->total())">
             @if (Auth::user()->isClient())
                 <x-slot name="action">
-                    <a href="{{ route('requests.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                        <span class="material-symbols-outlined text-base">add</span>
+                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                        <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
                         Nouvelle demande
                     </a>
                 </x-slot>
@@ -14,53 +14,71 @@
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @php
-            $statuses = [
-                'draft' => 'Brouillon', 'sent' => 'Envoyée', 'viewed' => 'Vue',
-                'accepted' => 'Acceptée', 'refused' => 'Refusée', 'in_progress' => 'En cours',
-                'completed' => 'Terminée', 'cancelled' => 'Annulée',
-            ];
+            $statuts = collect(\App\Support\RequestStatus::labels())
+                ->filter(fn ($label, $valeur) => ($comptes[$valeur] ?? 0) > 0);
         @endphp
 
-        <div class="flex flex-wrap gap-2 mb-6">
-            <a
-                href="{{ route('requests.index') }}"
-                class="rounded-full px-3 py-1 text-xs font-semibold {{ request('status') ? 'bg-surface-container-high text-on-surface-variant' : 'bg-primary text-on-primary' }}"
-            >
-                Toutes
-            </a>
-            @foreach ($statuses as $value => $label)
-                <a
-                    href="{{ route('requests.index', ['status' => $value]) }}"
-                    class="rounded-full px-3 py-1 text-xs font-semibold {{ request('status') === $value ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant' }}"
-                >
-                    {{ $label }}
+        {{-- Les neuf pastilles se proposaient toutes, sur deux rangées, quel
+             que soit le contenu — plusieurs ne renvoyaient rien. Ne restent
+             que les statuts présents, avec leur nombre. --}}
+        @if ($statuts->count() > 1)
+            <div class="mb-6 flex flex-wrap gap-2">
+                <a href="{{ route('requests.index') }}"
+                   @class([
+                       'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-button-text text-xs font-semibold transition-colors',
+                       'bg-primary text-on-primary' => ! request('status'),
+                       'bg-surface-container-high text-on-surface-variant hover:bg-surface-container' => request('status'),
+                   ])>
+                    Toutes
+                    <span class="font-label-numeric">{{ array_sum($comptes) }}</span>
                 </a>
-            @endforeach
-        </div>
-
-        @if ($requests->isEmpty())
-            <x-empty-state title="Aucune demande pour le moment." description="Les demandes que vous envoyez — et celles que vous recevez — s'affichent ici." />
-        @else
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
-                @foreach ($requests as $serviceRequest)
-                    <a href="{{ route('requests.show', $serviceRequest) }}" class="flex items-center justify-between gap-4 p-4 hover:bg-surface-container-low transition-colors">
-                        <div class="min-w-0">
-                            <p class="font-medium text-on-surface truncate">
-                                {{ $serviceRequest->service?->title ?? 'Demande directe' }}
-                            </p>
-                            <p class="text-sm text-on-surface-variant truncate">
-                                @if (Auth::user()->isProvider())
-                                    {{ $serviceRequest->client?->clientProfile?->fullName() ?? $serviceRequest->client?->name }}
-                                @else
-                                    {{ $serviceRequest->provider?->providerProfile?->business_name ?? $serviceRequest->provider?->name }}
-                                @endif
-                                · {{ $serviceRequest->created_at->format('d/m/Y') }}
-                            </p>
-                        </div>
-                        <x-status-badge :status="$serviceRequest->status" class="shrink-0" />
+                @foreach ($statuts as $valeur => $label)
+                    <a href="{{ route('requests.index', ['status' => $valeur]) }}"
+                       @class([
+                           'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-button-text text-xs font-semibold transition-colors',
+                           'bg-primary text-on-primary' => request('status') === $valeur,
+                           'bg-surface-container-high text-on-surface-variant hover:bg-surface-container' => request('status') !== $valeur,
+                       ])>
+                        {{ $label }}
+                        <span class="font-label-numeric">{{ $comptes[$valeur] }}</span>
                     </a>
                 @endforeach
             </div>
+        @endif
+
+        @if ($requests->isEmpty())
+            <x-empty-state title="Aucune demande pour le moment."
+                           description="Les demandes que vous envoyez — et celles que vous recevez — s'affichent ici."
+                           :action-label="Auth::user()->isClient() ? 'Parcourir les services' : null"
+                           :action-href="Auth::user()->isClient() ? route('services.index') : null" />
+        @else
+            <x-list-panel>
+                @foreach ($requests as $serviceRequest)
+                    <x-list-row>
+                        <a href="{{ route('requests.show', $serviceRequest) }}" class="group flex items-start gap-4">
+                            <div class="min-w-0 flex-1">
+                                {{-- Le titre ne se tronque plus : c'est par lui
+                                     qu'on reconnaît sa propre demande. --}}
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                    <p class="font-medium text-on-surface group-hover:text-primary">
+                                        {{ $serviceRequest->service?->title ?? 'Demande directe' }}
+                                    </p>
+                                    <x-status-badge :status="$serviceRequest->status" />
+                                </div>
+                                <p class="mt-0.5 text-sm text-on-surface-variant">
+                                    @if (Auth::user()->isProvider())
+                                        {{ $serviceRequest->client?->clientProfile?->fullName() ?? $serviceRequest->client?->name }}
+                                    @else
+                                        {{ $serviceRequest->provider?->providerProfile?->business_name ?? $serviceRequest->provider?->name }}
+                                    @endif
+                                    · <span class="font-label-numeric">{{ $serviceRequest->created_at->format('d/m/Y') }}</span>
+                                </p>
+                            </div>
+                            <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-0.5" aria-hidden="true">chevron_right</span>
+                        </a>
+                    </x-list-row>
+                @endforeach
+            </x-list-panel>
 
             <div class="mt-6">
                 {{ $requests->links() }}

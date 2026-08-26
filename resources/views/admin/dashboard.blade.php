@@ -1,9 +1,5 @@
 @php
-    $statusLabels = [
-        'draft' => 'Brouillon', 'sent' => 'Envoyée', 'viewed' => 'Vue',
-        'accepted' => 'Acceptée', 'refused' => 'Refusée', 'in_progress' => 'En cours',
-        'completed' => 'Terminée', 'cancelled' => 'Annulée',
-    ];
+    $statusLabels = \App\Support\RequestStatus::labels();
 @endphp
 
 <x-app-layout>

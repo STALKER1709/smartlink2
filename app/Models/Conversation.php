@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['client_id', 'provider_id', 'request_id', 'last_message_at'])]
@@ -41,6 +42,17 @@ class Conversation extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
+    }
+
+    /**
+     * Le dernier message, pour l'aperçu de la liste.
+     *
+     * Une liste de conversations sans aperçu ne se lit pas : on y voit avec
+     * qui l'on parle, jamais de quoi, ni s'il y a du neuf.
+     */
+    public function latestMessage(): HasOne
+    {
+        return $this->hasOne(Message::class)->latestOfMany();
     }
 
     public function otherParticipant(User $user): User

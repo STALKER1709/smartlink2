@@ -232,6 +232,23 @@ clair pour une sélection.
   disparaît pas — un prestataire qui ne trouve plus « Publier » croit à une
   panne — il change de libellé, passe à l'ambre, dit ce qui bloque et mène là
   où cela se débloque.
+- **Fil de discussion** — la zone de saisie **colle** au bas de l'écran
+  (`sticky bottom-[4.75rem]`), au-dessus de la barre d'onglets ; elle ne se
+  calcule pas en `dvh`. Une hauteur calculée doit deviner celle de l'en-tête,
+  qui change avec le bouton d'action : un `calc(100dvh - 16rem)` posait la
+  saisie **sous** la barre d'onglets, mesure à l'appui. Sur un écran de
+  conversation, ni pied de page ni bulle d'assistant — celle-ci est ronde et
+  verte comme le bouton d'envoi, et se pose à côté de lui.
+- **Liste de messagerie** — chaque rangée porte l'**aperçu du dernier message**
+  et le nombre de non-lus. Sans eux, il faut ouvrir chaque fil pour savoir
+  lequel attend une réponse.
+- **Choix d'une note** — des étoiles, jamais une liste déroulante. C'est le
+  seul moment où un client s'exprime sur la plateforme. Des boutons radio
+  masqués (`peer` + `flex-row-reverse`) : cliquable et accessible sans
+  JavaScript, et les étoiles précédentes se teintent avec la sélection.
+- **Filtre** — ne proposer que les valeurs présentes, avec leur nombre. Un
+  filtre qui rend zéro n'est pas un filtre, c'est un piège ; neuf pastilles
+  sur deux rangées avant le premier résultat en sont neuf.
 - **Champ de fichier** — jamais nu. `<input type="file">` laissé tel quel
   affiche « Choose File · No file chosen », en anglais et au gabarit du
   système, au milieu d'un formulaire français dessiné : c'est l'élément qui
@@ -302,7 +319,18 @@ clair pour une sélection.
   « 4,0 (2 avis) » : les étoiles ne portent que le décompte.
 - **Montrer une donnée technique nue.** Un identifiant interne, une paire de
   coordonnées : si elle doit paraître, elle est nommée et subordonnée à ce que
-  l'utilisateur vient lire.
+  l'utilisateur vient lire. « Demande n° 28 » en titre de page : le client
+  reconnaît sa demande à la prestation, pas à son numéro.
+- **Laisser une valeur de colonne atteindre l'écran.** « Le statut de votre
+  demande est passé à "in_progress" » : les libellés viennent de
+  `App\Support\RequestStatus`, jamais de la base. Une phrase composée à
+  l'écriture se fige — la vue doit pouvoir la recomposer depuis les données,
+  sans quoi l'historique garde l'ancienne formulation.
+- **Offrir un formulaire qui ne peut pas aboutir.** Sans destinataire, la
+  demande est refusée par la validation : le client recevait « Le champ
+  service est obligatoire lorsque provider id n'est pas présent » — deux
+  colonnes nommées à propos de deux champs qu'il n'a jamais vus. On demande
+  d'abord ce qui manque, on n'accuse pas après coup.
 - **Recadrer un document qu'on demande de vérifier.** `object-cover` sur une
   pièce d'identité en montre la bande centrale, où l'on ne voit ni le type de
   document ni la photo.

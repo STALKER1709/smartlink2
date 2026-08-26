@@ -16,7 +16,10 @@ class ConversationController extends Controller
         $conversations = Conversation::query()
             ->where('client_id', $user->id)
             ->orWhere('provider_id', $user->id)
-            ->with(['client.clientProfile', 'provider.providerProfile', 'request.service'])
+            ->with(['client.clientProfile', 'provider.providerProfile', 'request.service', 'latestMessage.sender'])
+            ->withCount(['messages as unread_count' => fn ($q) => $q
+                ->where('sender_id', '!=', $user->id)
+                ->whereNull('read_at')])
             ->orderByDesc(DB::raw('coalesce(last_message_at, created_at)'))
             ->paginate(10)
             ->withQueryString();

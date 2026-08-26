@@ -1,16 +1,15 @@
 @php
-    $statusLabels = [
-        'draft' => 'Brouillon', 'sent' => 'Envoyée', 'viewed' => 'Vue',
-        'accepted' => 'Acceptée', 'refused' => 'Refusée', 'in_progress' => 'En cours',
-        'completed' => 'Terminée', 'cancelled' => 'Annulée',
-    ];
+    $statusLabels = \App\Support\RequestStatus::labels();
 @endphp
 
 <x-app-layout>
     <x-slot name="header">
+        {{-- « Demande n° 28 » : le client ne connaît pas ce numéro et ne
+             s'en sert jamais. Il reconnaît sa demande à la prestation
+             qu'il a demandée. Le numéro reste, en second, pour le support. --}}
         <x-page-header
-            :title="'Demande n° '.$serviceRequest->id"
-            :subtitle="$serviceRequest->created_at->translatedFormat('j F Y')"
+            :title="$serviceRequest->service?->title ?? 'Demande directe'"
+            :subtitle="$serviceRequest->created_at->translatedFormat('j F Y').' · demande n° '.$serviceRequest->id"
             :back="route('requests.index')"
             back-label="Mes demandes"
         >
@@ -151,16 +150,27 @@
                         <h3 class="font-headline-md text-headline-md text-on-surface mb-3">Laisser un avis</h3>
                         <form action="{{ route('requests.review', $serviceRequest) }}" method="POST" class="space-y-3">
                             @csrf
-                            <div>
-                                <x-input-label for="rating" value="Votre note" />
-                                <select id="rating" name="rating" required class="mt-1 block rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                                    <option value="">Choisir une note</option>
+                            {{-- La note se choisissait dans une liste
+                                 déroulante « Choisir une note ». C'est le seul
+                                 moment où un client s'exprime sur la
+                                 plateforme : il mérite des étoiles, pas un
+                                 menu. Des boutons radio, donc — l'étoile reste
+                                 cliquable sans JavaScript. --}}
+                            <fieldset>
+                                <legend class="block font-medium text-sm text-on-surface-variant">Votre note</legend>
+                                <div class="mt-1 flex flex-row-reverse justify-end gap-1">
                                     @for ($i = 5; $i >= 1; $i--)
-                                        <option value="{{ $i }}">{{ $i }} étoile{{ $i > 1 ? 's' : '' }}</option>
+                                        <input type="radio" id="rating-{{ $i }}" name="rating" value="{{ $i }}" required class="peer sr-only">
+                                        <label for="rating-{{ $i }}"
+                                               class="cursor-pointer rounded-full p-1 text-outline-variant transition-colors hover:text-tertiary-container peer-checked:text-tertiary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary"
+                                               title="{{ $i }} étoile{{ $i > 1 ? 's' : '' }}">
+                                            <span class="sr-only">{{ $i }} étoile{{ $i > 1 ? 's' : '' }}</span>
+                                            <span class="material-symbols-outlined block text-[30px]" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
+                                        </label>
                                     @endfor
-                                </select>
+                                </div>
                                 <x-input-error :messages="$errors->get('rating')" class="mt-2" />
-                            </div>
+                            </fieldset>
                             <div>
                                 <x-input-label for="comment" value="Commentaire (facultatif)" />
                                 <textarea id="comment" name="comment" rows="3" maxlength="1000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary"></textarea>

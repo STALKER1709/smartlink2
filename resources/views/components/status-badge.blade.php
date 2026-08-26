@@ -1,15 +1,10 @@
 @props(['status'])
 
 @php
-    $labels = [
-        'draft' => 'Brouillon',
-        'sent' => 'Envoyée',
-        'viewed' => 'Vue',
-        'accepted' => 'Acceptée',
-        'refused' => 'Refusée',
-        'in_progress' => 'En cours',
-        'completed' => 'Terminée',
-        'cancelled' => 'Annulée',
+    // Les libellés des statuts de demande viennent de `RequestStatus` : la
+    // table était recopiée ici, dans le filtre de la liste des demandes et
+    // dans le tableau de bord d'administration.
+    $labels = \App\Support\RequestStatus::labels() + [
         'active' => 'Actif',
         'inactive' => 'Inactif',
         'suspended' => 'Suspendu',

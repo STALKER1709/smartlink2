@@ -1,7 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
         <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
-                       subtitle="Vos demandes et vos échanges en cours." />
+                       subtitle="Voici où en sont vos demandes.">
+            {{-- Le prestataire a « Publier un service » sur son tableau de
+                 bord ; le client n'avait rien. Chercher une prestation est
+                 pourtant la seule chose qu'il vient faire. --}}
+            <x-slot name="action">
+                <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <span class="material-symbols-outlined text-base" aria-hidden="true">search</span>
+                    Trouver un prestataire
+                </a>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     @php
@@ -44,23 +54,28 @@
                 :action-href="route('services.index')"
             />
         @else
-            <div class="mt-4 divide-y divide-outline-variant overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+            <x-list-panel class="mt-4">
                 @foreach ($requests as $serviceRequest)
-                    <a href="{{ route('requests.show', $serviceRequest) }}" class="group flex items-center gap-4 p-4 transition-colors hover:bg-surface-container-low">
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate font-medium text-on-surface group-hover:text-primary">
-                                {{ $serviceRequest->service?->title ?? 'Demande directe' }}
-                            </p>
-                            <p class="truncate text-sm text-on-surface-variant">
-                                {{ $serviceRequest->provider?->providerProfile?->business_name ?? $serviceRequest->provider?->name }}
-                                · <span class="font-label-numeric">{{ $serviceRequest->created_at->format('d/m/Y') }}</span>
-                            </p>
-                        </div>
-                        <x-status-badge :status="$serviceRequest->status" class="shrink-0" />
-                        <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-0.5">chevron_right</span>
-                    </a>
+                    <x-list-row>
+                        <a href="{{ route('requests.show', $serviceRequest) }}" class="group flex items-start gap-4">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                    <p class="font-medium text-on-surface group-hover:text-primary">
+                                        {{ $serviceRequest->service?->title ?? 'Demande directe' }}
+                                    </p>
+                                    <x-status-badge :status="$serviceRequest->status" />
+                                </div>
+                                <p class="mt-0.5 text-sm text-on-surface-variant">
+                                    {{ $serviceRequest->provider?->providerProfile?->business_name ?? $serviceRequest->provider?->name }}
+                                    · <span class="font-label-numeric">{{ $serviceRequest->created_at->format('d/m/Y') }}</span>
+                                </p>
+                            </div>
+                            <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-0.5" aria-hidden="true">chevron_right</span>
+                        </a>
+                    </x-list-row>
                 @endforeach
-            </div>
+            </x-list-panel>
+
         @endif
     </div>
 </x-app-layout>

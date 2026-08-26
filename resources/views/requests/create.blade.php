@@ -31,12 +31,31 @@
                         <p class="text-sm text-on-surface-variant">{{ $provider->providerProfile?->category?->name }}</p>
                     </div>
                 </div>
-            @else
-                <p class="mb-6 text-sm text-on-surface-variant">
-                    Décrivez votre besoin ci-dessous. Vous pouvez aussi démarrer une demande directement depuis la page d'un service ou d'un prestataire.
-                </p>
             @endif
 
+            @if (! $service && ! $provider)
+                {{-- Sans service ni prestataire, la demande ne peut aboutir :
+                     la validation exige l'un des deux. Le formulaire était
+                     tout de même offert, et le client qui l'envoyait recevait
+                     « Le champ service est obligatoire lorsque provider id
+                     n'est pas présent » — deux champs qu'il n'a jamais vus,
+                     nommés comme des colonnes. On demande le destinataire
+                     avant le message, pas l'inverse. --}}
+                <p class="font-headline-md text-headline-md text-on-surface">À qui adressez-vous cette demande ?</p>
+                <p class="prose-measure mt-2 text-body-md text-on-surface-variant">
+                    Une demande part toujours vers un prestataire précis. Choisissez d'abord le
+                    service qui vous intéresse, ou le prestataire à qui vous voulez écrire —
+                    le formulaire s'ouvrira avec son nom déjà rempli.
+                </p>
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                        Parcourir les services
+                    </a>
+                    <a href="{{ route('providers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-5 py-2.5 font-button-text text-sm font-semibold text-primary transition-colors hover:bg-primary-container/10">
+                        Parcourir les prestataires
+                    </a>
+                </div>
+            @else
             <form action="{{ route('requests.store') }}" method="POST" class="space-y-4">
                 @csrf
 
@@ -73,15 +92,19 @@
                     <x-input-error :messages="$errors->get('preferred_date')" class="mt-2" />
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-2">
-                    <x-secondary-button type="submit" name="action" value="draft">
+                {{-- Côte à côte à 390 px, les deux libellés français passaient
+                     chacun sur deux lignes dans des boutons dimensionnés pour
+                     l'anglais. Empilés, l'action principale en premier. --}}
+                <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
+                    <x-secondary-button type="submit" name="action" value="draft" class="w-full sm:w-auto">
                         Enregistrer comme brouillon
                     </x-secondary-button>
-                    <x-primary-button type="submit" name="action" value="send">
+                    <x-primary-button type="submit" name="action" value="send" class="w-full sm:w-auto">
                         Envoyer la demande
                     </x-primary-button>
                 </div>
             </form>
+            @endif
         </div>
     </div>
 </x-app-layout>

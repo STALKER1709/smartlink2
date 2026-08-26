@@ -2,7 +2,7 @@
     $other = $conversation->otherParticipant(Auth::user());
 @endphp
 
-<x-app-layout>
+<x-app-layout :assistant="false" :pied-de-page="false">
     <x-slot name="header">
         <x-page-header
             :title="$other->providerProfile?->business_name ?? $other->name"
@@ -20,7 +20,7 @@
         </x-page-header>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
-        <x-message-thread :conversation="$conversation" />
+    <div class="mx-auto max-w-3xl px-margin-mobile py-6 md:px-margin-desktop md:py-8">
+        <x-message-thread :conversation="$conversation" plein />
     </div>
 </x-app-layout>

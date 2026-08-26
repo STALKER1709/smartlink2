@@ -40,7 +40,9 @@
                 {{ $slot }}
             </main>
 
-            @include('layouts.footer')
+            @if ($piedDePage)
+                @include('layouts.footer')
+            @endif
 
             @include('layouts.bottom-nav')
 
@@ -48,9 +50,9 @@
                  écrans d'administration il ne sert personne, et sa bulle
                  flottante recouvrait les chiffres du tableau de bord — au
                  point de me faire croire à des valeurs manquantes. --}}
-            @unless (auth()->user()?->isAdmin())
+            @if ($assistant && ! auth()->user()?->isAdmin())
                 @include('partials.chatbot-widget')
-            @endunless
+            @endif
         </div>
     </body>
 </html>

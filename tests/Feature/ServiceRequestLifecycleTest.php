@@ -65,6 +65,11 @@ class ServiceRequestLifecycleTest extends TestCase
         $this->assertSame(ServiceRequest::STATUS_DRAFT, ServiceRequest::first()->status);
     }
 
+    /**
+     * L'exigence « un service ou un prestataire » ne produit qu'une erreur, et
+     * elle est écrite pour un client : le message par défaut nommait deux
+     * colonnes à propos de deux champs que le formulaire ne montre pas.
+     */
     public function test_request_requires_a_service_or_a_provider(): void
     {
         $response = $this->actingAs($this->client)->post(route('requests.store'), [
@@ -72,7 +77,13 @@ class ServiceRequestLifecycleTest extends TestCase
             'action' => 'send',
         ]);
 
-        $response->assertSessionHasErrors(['service_id', 'provider_id']);
+        $response->assertSessionHasErrors('service_id');
+        $response->assertSessionDoesntHaveErrors('provider_id');
+
+        $this->assertStringContainsString(
+            'destinataire',
+            session('errors')->get('service_id')[0],
+        );
     }
 
     public function test_request_for_inactive_service_fails_validation(): void

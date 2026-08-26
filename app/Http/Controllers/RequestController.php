@@ -33,8 +33,29 @@ class RequestController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        // Neuf pastilles de filtre s'affichaient toujours, y compris celles
+        // qui n'auraient rien renvoyé. Seuls les statuts réellement présents
+        // sont proposés, avec leur nombre : un filtre qui rend zéro n'est pas
+        // un filtre, c'est un piège.
+        //
+        // Le décompte repart d'une relation neuve, et `reorder()` retire tout
+        // tri : `paginate()` avait posé « order by created_at » et « limit »
+        // sur le constructeur partagé, que le regroupement traînait ensuite.
+        // SQLite l'accepte, PostgreSQL refuse — « column requests.created_at
+        // must appear in the GROUP BY clause » — et la page tombait en erreur
+        // sur le moteur de la production seulement.
+        $comptes = ($user->isProvider() ? $user->receivedRequests() : $user->sentRequests())
+            ->reorder()
+            ->getQuery()
+            ->select('status')
+            ->selectRaw('count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->all();
+
         return view('requests.index', [
             'requests' => $serviceRequests,
+            'comptes' => $comptes,
         ]);
     }
 
