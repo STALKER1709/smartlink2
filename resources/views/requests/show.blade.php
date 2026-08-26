@@ -9,12 +9,21 @@
              qu'il a demandée. Le numéro reste, en second, pour le support. --}}
         <x-page-header
             :title="$serviceRequest->service?->title ?? 'Demande directe'"
-            :subtitle="$serviceRequest->created_at->translatedFormat('j F Y').' · demande n° '.$serviceRequest->id"
             :back="route('requests.index')"
             back-label="Mes demandes"
         >
+            <x-slot name="subtitle">
+                {{-- La date porte son pictogramme, comme dans la maquette : sur
+                     une fiche, c'est le repère qu'on cherche en premier. --}}
+                <span class="flex items-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_today</span>
+                    <span class="font-label-numeric">{{ $serviceRequest->created_at->translatedFormat('j F Y \à H\hi') }}</span>
+                    <span aria-hidden="true" class="text-outline">·</span>
+                    <span class="font-label-numeric">n° {{ $serviceRequest->id }}</span>
+                </span>
+            </x-slot>
             <x-slot name="action">
-                <x-status-badge :status="$serviceRequest->status" />
+                <x-status-chip :status="$serviceRequest->status" />
             </x-slot>
         </x-page-header>
     </x-slot>
@@ -22,125 +31,81 @@
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-6">
-                <!-- Details -->
-                <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
-                    @if ($serviceRequest->service)
-                        <p class="text-sm text-on-surface-variant">Service concerné</p>
-                        <a href="{{ route('services.show', $serviceRequest->service) }}" class="font-medium text-primary hover:text-primary-container">
-                            {{ $serviceRequest->service->title }}
-                        </a>
-                    @else
-                        <p class="text-sm text-on-surface-variant">Demande directe (sans service précis)</p>
-                    @endif
+                {{-- La carte d'interlocuteur : qui est en face, son métier,
+                     sa note, et de quoi ouvrir son profil. Les deux colonnes
+                     « Client » / « Prestataire » disaient à chacun son propre
+                     nom, ce qu'il connaît déjà. --}}
+                @php
+                    $moiClient = Auth::id() === $serviceRequest->client_id;
+                    $autre = $moiClient ? $serviceRequest->provider : $serviceRequest->client;
+                    $profil = $moiClient ? $autre?->providerProfile : null;
+                    $nomAutre = $profil?->business_name
+                        ?? $autre?->clientProfile?->fullName()
+                        ?? $autre?->name;
+                @endphp
 
-                    <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="text-on-surface-variant">Client</p>
-                            <p class="font-medium text-on-surface">
-                                {{ $serviceRequest->client?->clientProfile?->fullName() ?? $serviceRequest->client?->name }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-on-surface-variant">Prestataire</p>
-                            <p class="font-medium text-on-surface">
-                                {{ $serviceRequest->provider?->providerProfile?->business_name ?? $serviceRequest->provider?->name }}
-                            </p>
-                        </div>
-                        @if ($serviceRequest->preferred_date)
-                            <div>
-                                <p class="text-on-surface-variant">Date souhaitée</p>
-                                <p class="font-medium text-on-surface">{{ $serviceRequest->preferred_date->format('d/m/Y') }}</p>
+                @if ($autre)
+                    {{-- Le bouton passe sous la ligne quand la place manque :
+                         côte à côte à 390 px, il réduisait « Soudure &
+                         ferronnerie • 4,0 ★ » à trois lignes. --}}
+                    <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
+                        <div class="flex min-w-0 flex-1 items-center gap-4">
+                            <div class="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-outline-variant bg-surface-container-high">
+                                @if ($profil?->logo_path)
+                                    <img src="{{ media_url($profil->logo_path) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
+                                @else
+                                    <div class="flex h-full w-full items-center justify-center font-semibold text-on-surface-variant">
+                                        {{ Str::upper(Str::substr($nomAutre ?? '?', 0, 2)) }}
+                                    </div>
+                                @endif
                             </div>
+                            <div class="min-w-0">
+                                <h3 class="font-headline-md text-[18px] text-on-surface">{{ $nomAutre }}</h3>
+                                <p class="font-label-numeric text-label-numeric text-on-surface-variant">
+                                    {{ $profil?->category?->name ?? ($moiClient ? 'Prestataire' : 'Client') }}
+                                    @if ($profil?->rating_count)
+                                        <span aria-hidden="true">•</span>
+                                        {{ number_format((float) $profil->rating_avg, 1, ',', ' ') }} ★
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+
+                        @if ($profil)
+                            <a href="{{ route('providers.show', $profil) }}"
+                               class="shrink-0 rounded-lg border border-primary px-4 py-2 font-button-text text-button-text text-primary transition-colors hover:bg-surface-container-low">
+                                Voir profil
+                            </a>
                         @endif
-                        <div>
-                            <p class="text-on-surface-variant">Envoyée le</p>
-                            <p class="font-medium text-on-surface">{{ $serviceRequest->created_at->format('d/m/Y H:i') }}</p>
-                        </div>
                     </div>
+                @endif
 
-                    <div class="mt-4">
-                        <p class="text-on-surface-variant text-sm">Message</p>
-                        <p class="mt-1 text-on-surface whitespace-pre-line">{{ $serviceRequest->message }}</p>
+                @if ($serviceRequest->message)
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-low p-4 md:p-6">
+                        <h3 class="mb-2 flex items-center gap-2 font-button-text text-button-text text-on-surface">
+                            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
+                            Message initial
+                        </h3>
+                        <p class="italic text-on-surface-variant">« {{ $serviceRequest->message }} »</p>
                     </div>
-                </div>
+                @endif
 
-                <!-- Actions -->
-                @php $canRespond = Auth::user()->can('respond', $serviceRequest); @endphp
-                @if ($canRespond || Auth::user()->can('cancel', $serviceRequest))
-                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
-                        <h3 class="font-headline-md text-headline-md text-on-surface">Actions</h3>
-
-                        {{-- L'action attendue d'abord, seule et en pleine largeur.
-                             Refus et annulation sont des gestes qu'on ne fait pas
-                             par mégarde : ils demandent d'ouvrir le repli, ce qui
-                             laisse aussi la place d'écrire un motif. --}}
-                        <div class="mt-4 space-y-3">
-                            @if ($canRespond && in_array($serviceRequest->status, ['sent', 'viewed'], true))
-                                <form action="{{ route('requests.accept', $serviceRequest) }}" method="POST">
-                                    @csrf
-                                    <x-primary-button type="submit" class="w-full sm:w-auto">
-                                        <span class="material-symbols-outlined text-base">check</span>
-                                        Accepter la demande
-                                    </x-primary-button>
-                                </form>
-                            @endif
-
-                            @if ($canRespond && $serviceRequest->status === 'accepted')
-                                <form action="{{ route('requests.start', $serviceRequest) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-tertiary px-6 py-2.5 font-button-text text-button-text text-on-tertiary transition-all duration-150 hover:opacity-90 active:scale-95 sm:w-auto">
-                                        <span class="material-symbols-outlined text-base">play_arrow</span>
-                                        Démarrer la prestation
-                                    </button>
-                                </form>
-                            @endif
-
-                            @if ($canRespond && $serviceRequest->status === 'in_progress')
-                                <form action="{{ route('requests.complete', $serviceRequest) }}" method="POST">
-                                    @csrf
-                                    <x-primary-button type="submit" class="w-full sm:w-auto">
-                                        <span class="material-symbols-outlined text-base">done_all</span>
-                                        Marquer comme terminée
-                                    </x-primary-button>
-                                </form>
-                            @endif
-                        </div>
-
-                        @php
-                            $peutRefuser = $canRespond && in_array($serviceRequest->status, ['sent', 'viewed'], true);
-                            $peutAnnuler = Auth::user()->can('cancel', $serviceRequest);
-                        @endphp
-
-                        @if ($peutRefuser || $peutAnnuler)
-                            <details class="group mt-4 border-t border-outline-variant pt-4">
-                                <summary class="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-on-surface-variant hover:text-on-surface">
-                                    <span class="material-symbols-outlined text-base transition-transform group-open:rotate-180">expand_more</span>
-                                    {{ $peutRefuser ? 'Refuser ou annuler' : 'Annuler la demande' }}
-                                </summary>
-
-                                <div class="mt-3 space-y-4">
-                                    @if ($peutRefuser)
-                                        <form action="{{ route('requests.refuse', $serviceRequest) }}" method="POST" class="space-y-2">
-                                            @csrf
-                                            <label for="refuse-reason" class="block text-sm text-on-surface-variant">Motif du refus (facultatif)</label>
-                                            <input id="refuse-reason" type="text" name="reason" maxlength="500" placeholder="Je ne suis pas disponible à cette date…"
-                                                   class="block w-full rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                                            <x-danger-button type="submit">Refuser la demande</x-danger-button>
-                                        </form>
-                                    @endif
-
-                                    @if ($peutAnnuler)
-                                        <form action="{{ route('requests.cancel', $serviceRequest) }}" method="POST" class="space-y-2">
-                                            @csrf
-                                            <label for="cancel-reason" class="block text-sm text-on-surface-variant">Motif de l'annulation (facultatif)</label>
-                                            <input id="cancel-reason" type="text" name="reason" maxlength="500" placeholder="Je n'ai plus besoin de cette prestation…"
-                                                   class="block w-full rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                                            <x-secondary-button type="submit">Annuler la demande</x-secondary-button>
-                                        </form>
-                                    @endif
+                @if ($serviceRequest->preferred_date || $serviceRequest->service)
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-4 md:p-6">
+                        <dl class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+                            @if ($serviceRequest->service)
+                                <div>
+                                    <dt class="text-on-surface-variant">Service concerné</dt>
+                                    <dd><a href="{{ route('services.show', $serviceRequest->service) }}" class="font-medium text-primary hover:text-primary-container">{{ $serviceRequest->service->title }}</a></dd>
                                 </div>
-                            </details>
-                        @endif
+                            @endif
+                            @if ($serviceRequest->preferred_date)
+                                <div>
+                                    <dt class="text-on-surface-variant">Date souhaitée</dt>
+                                    <dd class="font-label-numeric font-medium text-on-surface">{{ $serviceRequest->preferred_date->translatedFormat('j F Y') }}</dd>
+                                </div>
+                            @endif
+                        </dl>
                     </div>
                 @endif
 

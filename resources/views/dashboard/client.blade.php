@@ -1,81 +1,118 @@
+@php
+    $prenom = Str::of(auth()->user()->name)->trim()->explode(' ')->first();
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
-                       subtitle="Voici où en sont vos demandes.">
-            {{-- Le prestataire a « Publier un service » sur son tableau de
-                 bord ; le client n'avait rien. Chercher une prestation est
-                 pourtant la seule chose qu'il vient faire. --}}
-            <x-slot name="action">
-                <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                    <span class="material-symbols-outlined text-base" aria-hidden="true">search</span>
-                    Trouver un prestataire
-                </a>
-            </x-slot>
-        </x-page-header>
+        <x-page-header :title="__('Bonjour, :prenom', ['prenom' => $prenom]).' 👋'"
+                       subtitle="Aperçu de vos activités." />
     </x-slot>
 
-    @php
-        $tuiles = [
-            ['sent', 'Envoyées', 'secondary'],
-            ['accepted', 'Acceptées', 'secondary'],
-            ['in_progress', 'En cours', 'tertiary'],
-            ['completed', 'Terminées', 'primary'],
-        ];
-    @endphp
-
-    <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
-        {{-- Chaque tuile mène à la liste filtrée : un compteur qui ne mène nulle
-             part oblige à refaire le tri à la main. --}}
+    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 md:px-margin-desktop">
+        {{-- Quatre chiffres, quatre pictogrammes : ce qui est en cours, ce qui
+             est clos, ce qui attend une lecture, et ce que vous avez laissé
+             derrière vous. --}}
         <x-stat-grid>
-            @foreach ($tuiles as [$statut, $libelle, $ton])
-                <x-stat-tile
-                    :label="$libelle"
-                    :value="$counts[$statut] ?? 0"
-                    :tone="$ton"
-                    :href="route('requests.index', ['status' => $statut])"
-                />
-            @endforeach
+            <x-stat-tile label="En cours" icon="pending_actions" tone="secondary"
+                         :value="($counts['accepted'] ?? 0) + ($counts['in_progress'] ?? 0)"
+                         :href="route('requests.index', ['status' => 'in_progress'])" />
+            <x-stat-tile label="Terminées" icon="check_circle" tone="primary"
+                         :value="$counts['completed'] ?? 0"
+                         :href="route('requests.index', ['status' => 'completed'])" />
+            <x-stat-tile label="Messages" icon="mail" tone="error"
+                         :value="$unreadMessages"
+                         :href="route('conversations.index')" />
+            <x-stat-tile label="Avis laissés" icon="star" tone="tertiary"
+                         :value="$reviewsLeft" />
         </x-stat-grid>
 
-        <div class="mt-8 flex items-center justify-between gap-3">
-            <h3 class="font-headline-md text-headline-md text-on-surface">Demandes récentes</h3>
-            <a href="{{ route('requests.index') }}" class="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
-                Voir tout
-                <span class="material-symbols-outlined text-base">arrow_forward</span>
-            </a>
-        </div>
+        {{-- « Reprendre une recherche » : le client vient chercher quelqu'un.
+             La barre de recherche appartient à son écran d'accueil, pas
+             seulement à la page publique. --}}
+        <section class="flex flex-col items-center gap-6 rounded-xl border border-outline-variant bg-surface-container-low p-6 md:flex-row">
+            <form action="{{ route('services.index') }}" method="GET" class="w-full flex-1">
+                <h2 class="font-headline-md text-headline-md text-on-surface">Reprendre une recherche</h2>
+                <div class="relative mt-4 w-full">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" aria-hidden="true">search</span>
+                    <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
+                    <input
+                        type="text"
+                        id="q"
+                        name="q"
+                        maxlength="300"
+                        placeholder="Plombier, Électricien, Ménage…"
+                        class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest py-3 pl-12 pr-4 font-body-md text-body-md text-on-surface outline-none transition-colors placeholder:text-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary"
+                    >
+                </div>
+            </form>
 
-        @if ($requests->isEmpty())
-            <x-empty-state
-                class="mt-4"
-                title="Vous n'avez pas encore envoyé de demande."
-                description="Trouvez un prestataire près de chez vous et décrivez-lui votre besoin."
-                action-label="Explorer les services"
-                :action-href="route('services.index')"
-            />
-        @else
-            <x-list-panel class="mt-4">
-                @foreach ($requests as $serviceRequest)
-                    <x-list-row>
-                        <a href="{{ route('requests.show', $serviceRequest) }}" class="group flex items-start gap-4">
-                            <div class="min-w-0 flex-1">
-                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                    <p class="font-medium text-on-surface group-hover:text-primary">
-                                        {{ $serviceRequest->service?->title ?? 'Demande directe' }}
-                                    </p>
+            <div class="hidden h-20 w-px bg-outline-variant md:block"></div>
+
+            <div class="flex w-full flex-col items-start md:w-auto md:items-center">
+                <p class="mb-3 hidden font-body-md text-body-md text-on-surface-variant md:block">Besoin d'un nouveau service ?</p>
+                <a href="{{ route('services.index') }}"
+                   class="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container md:w-auto">
+                    <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                    Trouver un prestataire
+                </a>
+            </div>
+        </section>
+
+        <section>
+            {{-- Côte à côte comme sur la maquette dès que la place le permet ;
+                 en dessous sur un écran de 390 px, où « Vos demandes
+                 récentes » à 28 px prend déjà toute la largeur. --}}
+            <x-section-header title="Vos demandes récentes" :href="route('requests.index')" class="mb-6" />
+
+            @if ($requests->isEmpty())
+                <x-empty-state
+                    title="Vous n'avez pas encore envoyé de demande."
+                    description="Trouvez un prestataire près de chez vous et décrivez-lui votre besoin."
+                    action-label="Explorer les services"
+                    :action-href="route('services.index')"
+                />
+            @else
+                <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+                    {{-- Les intitulés de colonnes n'apparaissent qu'à partir de
+                         `md` : sur un téléphone, chaque champ porte déjà son
+                         sens par sa place et sa forme. --}}
+                    <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low p-4 font-label-numeric text-label-numeric uppercase text-on-surface-variant md:grid">
+                        <div class="col-span-3">Prestataire</div>
+                        <div class="col-span-4">Service</div>
+                        <div class="col-span-2">Date</div>
+                        <div class="col-span-3 text-right">Statut</div>
+                    </div>
+
+                    <div class="divide-y divide-outline-variant">
+                        @foreach ($requests as $serviceRequest)
+                            @php
+                                $nom = $serviceRequest->provider?->providerProfile?->business_name
+                                    ?? $serviceRequest->provider?->name;
+                            @endphp
+                            <a href="{{ route('requests.show', $serviceRequest) }}"
+                               class="group block p-4 transition-colors hover:bg-surface-container-low md:grid md:grid-cols-12 md:items-center md:gap-4">
+                                <div class="mb-2 flex items-center gap-3 md:col-span-3 md:mb-0">
+                                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high font-bold text-primary">
+                                        {{ $nom ? Str::upper(Str::substr($nom, 0, 2)) : '—' }}
+                                    </span>
+                                    <span class="min-w-0 font-body-md text-body-md font-semibold text-on-surface group-hover:text-primary">
+                                        {{ $nom ?? 'Non assigné' }}
+                                    </span>
+                                </div>
+                                <div class="mb-2 md:col-span-4 md:mb-0">
+                                    <span class="font-body-md text-body-md text-on-surface">{{ $serviceRequest->service?->title ?? 'Demande directe' }}</span>
+                                </div>
+                                <div class="mb-3 md:col-span-2 md:mb-0">
+                                    <span class="font-label-numeric text-label-numeric text-on-surface-variant">{{ $serviceRequest->created_at->translatedFormat('d M Y') }}</span>
+                                </div>
+                                <div class="md:col-span-3 md:text-right">
                                     <x-status-badge :status="$serviceRequest->status" />
                                 </div>
-                                <p class="mt-0.5 text-sm text-on-surface-variant">
-                                    {{ $serviceRequest->provider?->providerProfile?->business_name ?? $serviceRequest->provider?->name }}
-                                    · <span class="font-label-numeric">{{ $serviceRequest->created_at->format('d/m/Y') }}</span>
-                                </p>
-                            </div>
-                            <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-0.5" aria-hidden="true">chevron_right</span>
-                        </a>
-                    </x-list-row>
-                @endforeach
-            </x-list-panel>
-
-        @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </section>
     </div>
 </x-app-layout>

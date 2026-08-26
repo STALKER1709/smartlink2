@@ -202,6 +202,13 @@ clair pour une sélection.
 
 ## Components
 
+> **Les maquettes Stitch (`design/stitch-imports`) font foi pour la mise en
+> page des écrans.** Elles portent la même palette et la même typographie que
+> ce document. Là où une maquette n'a pas été éprouvée à 390 px — un titre et
+> son lien côte à côte, un bouton qui comprime un libellé —, la règle de
+> repli reste celle énoncée ici : l'élément secondaire passe sous le
+> principal.
+
 - **Rangée de prestataire** — même régime que la rangée de service : métier en
   capitales, nom, ville et nombre de services, note. C'était une carte bordée
   répétée cinq fois sur l'accueil et vingt fois dans l'annuaire, à cinq cents

@@ -28,6 +28,12 @@ class RequestController extends Controller
 
         $serviceRequests = $query
             ->with(['service', 'client.clientProfile', 'provider.providerProfile'])
+            // Le point rouge des maquettes : une demande dont la conversation
+            // porte un message qu'on n'a pas lu.
+            ->withCount(['conversation as unread_count' => fn ($q) => $q
+                ->join('messages', 'messages.conversation_id', '=', 'conversations.id')
+                ->where('messages.sender_id', '!=', $user->id)
+                ->whereNull('messages.read_at')])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->latest()
             ->paginate(10)

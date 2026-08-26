@@ -14,8 +14,11 @@
 
         <h2 class="font-headline-md text-headline-md text-on-surface">{{ $title }}</h2>
 
+        {{-- Le sous-titre accepte une chaîne ou un fragment : certaines fiches
+             y placent la date avec son pictogramme, d'autres une simple
+             phrase. --}}
         @if ($subtitle)
-            <p class="mt-0.5 text-sm text-on-surface-variant">{{ $subtitle }}</p>
+            <div class="mt-0.5 text-sm text-on-surface-variant">{{ $subtitle }}</div>
         @endif
     </div>
 

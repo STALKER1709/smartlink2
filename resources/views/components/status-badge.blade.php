@@ -1,4 +1,4 @@
-@props(['status'])
+@props(['status', 'variant' => 'pill'])
 
 @php
     // Les libellés des statuts de demande viennent de `RequestStatus` : la
@@ -40,6 +40,15 @@
     ];
 @endphp
 
-<span {{ $attributes->merge(['class' => 'inline-flex items-center rounded-full px-3 py-1 font-button-text text-xs font-semibold '.($colors[$status] ?? 'bg-surface-container-high text-on-surface-variant')]) }}>
+{{-- Deux formes, toutes deux issues des maquettes : la pastille arrondie des
+     tableaux de bord, et l'étiquette carrée en capitales des listes de
+     demandes. --}}
+@php
+    $forme = $variant === 'caps'
+        ? 'rounded-sm px-2 py-1 font-label-numeric text-[12px] uppercase tracking-wider'
+        : 'rounded-full px-3 py-1 font-button-text text-xs font-semibold';
+@endphp
+
+<span {{ $attributes->merge(['class' => 'inline-flex items-center '.$forme.' '.($colors[$status] ?? 'bg-surface-container-high text-on-surface-variant')]) }}>
     {{ $labels[$status] ?? $status }}
 </span>

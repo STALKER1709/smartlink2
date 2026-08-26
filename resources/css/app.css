@@ -143,3 +143,18 @@
         transform: none !important;
     }
 }
+
+/*
+ * Rangée de filtres qui défile horizontalement, sans barre visible — le motif
+ * des maquettes Stitch pour les onglets de statut. Sur un téléphone, six
+ * pastilles ne tiennent pas sur une ligne et passer à deux rangées coûte
+ * cent pixels avant le premier résultat.
+ */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}

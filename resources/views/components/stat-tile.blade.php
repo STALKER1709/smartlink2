@@ -1,11 +1,12 @@
 @props([
     'label',
     'value',
-    'href' => null,
+    'icon' => null,
     'tone' => 'secondary',
+    'href' => null,
     'hint' => null,
     'hintTone' => null,
-    'texte' => false,
+    'variant' => 'inline',
 ])
 
 @php
@@ -16,54 +17,49 @@
         'tertiary' => 'text-tertiary',
         'error' => 'text-error',
     ];
+    $teinte = $tons[$tone] ?? $tons['secondary'];
 @endphp
 
 {{--
-    Un chiffre, son libellé, et de quoi le situer.
+    La tuile de statistique des maquettes Stitch : une carte bordée, le
+    pictogramme du métier en haut à gauche, le libellé en face, le chiffre en
+    grand dessous.
 
-    C'était une carte bordée avec une icône, répétée quatre fois — le gabarit
-    « grand nombre, petit libellé, accent coloré » que produit n'importe quel
-    générateur de tableau de bord. Les boîtes ont disparu : les chiffres se
-    séparent par un filet, comme les colonnes d'un relevé. Ce qui compte est le
-    chiffre, pas le cadre autour.
-
-    `texte` pour une valeur qui n'est pas un nombre. « Essentiel » composé
-    au corps d'un grand chiffre écrasait les « 3 », « 1 » et « 2 » de la même
-    rangée : la colonne la moins chiffrée devenait la plus voyante.
-
-    L'icône aussi a disparu, et avec elle sa propriété : quatre
-    pictogrammes décoratifs alignés n'apprenaient rien que le libellé ne
-    disait déjà.
-
-    Le rembourrage latéral appartient à la grille (`x-stat-grid`), qui seule
-    sait où tombe le bord de l'écran.
+    Deux dispositions, toutes deux issues des maquettes : `inline` (icône et
+    libellé sur la même ligne, chiffre en dessous — tableaux de bord client et
+    administration) et `stacked` (icône, puis chiffre, puis libellé et son
+    indication — tableau de bord prestataire, où les libellés sont longs et
+    portent une précision).
 --}}
 <{{ $tag }}
     @if ($href) href="{{ $href }}" @endif
-    {{ $attributes->merge(['class' => 'group block py-4'.($href ? ' transition-colors hover:bg-surface-container-low/60' : '')]) }}
+    {{ $attributes->merge(['class' => 'flex flex-col justify-between rounded-xl border border-outline-variant bg-surface-container-lowest p-4'.($href ? ' transition-colors hover:border-primary/50 hover:bg-surface-container-low' : '')]) }}
 >
-    <span @class([
-        'block font-headline-xl leading-none tracking-tight',
-        'text-3xl sm:text-headline-xl' => ! $texte,
-        'text-headline-md' => $texte,
-        $tons[$tone] ?? $tons['secondary'],
-    ])>{{ $value }}</span>
-
-    <span @class([
-        'mt-2 block text-sm font-medium leading-tight text-on-surface',
-        'group-hover:text-primary' => $href,
-    ])>{{ $label }}</span>
-
-    {{-- La ligne d'indication est toujours réservée, même vide : les colonnes
-         d'une rangée s'étirent à la hauteur de la plus haute, et sans cette
-         réserve les chiffres cessent de s'aligner.
-
-         Elle peut porter un ton — l'ambre d'un plafond atteint, par exemple.
-         C'est l'indication qui l'énonce, pas le chiffre : teinter le « 3 »
-         de « 3 sur 3 » laisserait croire que trois est en soi un problème. --}}
-    <span @class([
-        'mt-0.5 block min-h-[1rem] text-xs',
-        $tons[$hintTone] ?? 'text-on-surface-variant',
-        'font-medium' => $hintTone !== null,
-    ])>{{ $hint }}</span>
+    @if ($variant === 'stacked')
+        @if ($icon)
+            <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icon }}</span>
+        @endif
+        <span class="mt-2 block font-headline-xl text-3xl font-bold leading-none text-on-surface sm:text-headline-xl">{{ $value }}</span>
+        <span class="mt-2 block text-sm font-medium leading-tight text-on-surface-variant">{{ $label }}</span>
+        <span @class([
+            'mt-0.5 block min-h-[1rem] text-xs',
+            $tons[$hintTone] ?? 'text-on-surface-variant',
+            'font-medium' => $hintTone !== null,
+        ])>{{ $hint }}</span>
+    @else
+        <div class="mb-2 flex items-start justify-between gap-2">
+            @if ($icon)
+                <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icon }}</span>
+            @endif
+            <span class="min-w-0 text-right font-label-numeric text-label-numeric text-on-surface-variant">{{ $label }}</span>
+        </div>
+        <span class="block font-headline-xl text-3xl font-bold leading-none text-on-surface sm:text-headline-xl">{{ $value }}</span>
+        @if ($hint)
+            <span @class([
+                'mt-1 block text-xs',
+                $tons[$hintTone] ?? 'text-on-surface-variant',
+                'font-medium' => $hintTone !== null,
+            ])>{{ $hint }}</span>
+        @endif
+    @endif
 </{{ $tag }}>

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversation;
+use App\Models\Message;
+use App\Models\Review;
 use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Services\QuotaService;
@@ -37,9 +40,22 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('aggregate', 'status');
 
+        // Les quatre chiffres de la maquette : ce qui est en cours, ce qui
+        // est clos, ce qui attend une lecture, et ce que le client a laissé
+        // derrière lui.
+        $unreadMessages = Message::query()
+            ->whereNull('read_at')
+            ->where('sender_id', '!=', $user->id)
+            ->whereIn('conversation_id', Conversation::query()
+                ->where('client_id', $user->id)
+                ->select('id'))
+            ->count();
+
         return view('dashboard.client', [
             'requests' => $requests,
             'counts' => $counts,
+            'unreadMessages' => $unreadMessages,
+            'reviewsLeft' => Review::query()->where('client_id', $user->id)->count(),
         ]);
     }
 
