@@ -39,7 +39,7 @@
         </div>
 
         @if ($requests->isEmpty())
-            <x-empty-state icon="inbox" title="Aucune demande pour le moment." description="Les demandes que vous envoyez — et celles que vous recevez — s'affichent ici." />
+            <x-empty-state title="Aucune demande pour le moment." description="Les demandes que vous envoyez — et celles que vous recevez — s'affichent ici." />
         @else
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($requests as $serviceRequest)

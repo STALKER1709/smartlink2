@@ -28,7 +28,7 @@
         </div>
 
         @if ($reviews->isEmpty())
-            <x-empty-state icon="reviews" title="Aucun avis pour le moment." description="Les clients laissent un avis après une prestation terminée." />
+            <x-empty-state title="Aucun avis pour le moment." description="Les clients laissent un avis après une prestation terminée." />
         @else
             <div class="space-y-4">
                 @foreach ($reviews as $review)

@@ -81,7 +81,7 @@ return [
     ],
     'moderation' => [
         'title' => 'Modération',
-        'empty' => 'Aucun contenu signalé en attente.',
+        'empty' => 'Rien à modérer.',
         'intro' => "L'examen automatique signale, il ne supprime jamais. À vous de décider.",
         'service' => 'Service',
         'review' => 'Avis',

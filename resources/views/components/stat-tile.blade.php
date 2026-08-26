@@ -1,7 +1,6 @@
 @props([
     'label',
     'value',
-    'icon' => null,
     'href' => null,
     'tone' => 'secondary',
     'hint' => null,
@@ -26,12 +25,16 @@
     séparent par un filet, comme les colonnes d'un relevé. Ce qui compte est le
     chiffre, pas le cadre autour.
 
-    L'icône aussi a disparu. Quatre pictogrammes décoratifs alignés
-    n'apprenaient rien que le libellé ne disait déjà.
+    L'icône aussi a disparu, et avec elle sa propriété : quatre
+    pictogrammes décoratifs alignés n'apprenaient rien que le libellé ne
+    disait déjà.
+
+    Le rembourrage latéral appartient à la grille (`x-stat-grid`), qui seule
+    sait où tombe le bord de l'écran.
 --}}
 <{{ $tag }}
     @if ($href) href="{{ $href }}" @endif
-    {{ $attributes->merge(['class' => 'group block py-4 pl-4 first:pl-0'.($href ? ' transition-colors hover:bg-surface-container-low/60' : '')]) }}
+    {{ $attributes->merge(['class' => 'group block py-4'.($href ? ' transition-colors hover:bg-surface-container-low/60' : '')]) }}
 >
     <span class="block font-headline-xl text-3xl leading-none tracking-tight {{ $tons[$tone] ?? $tons['secondary'] }} sm:text-headline-xl">{{ $value }}</span>
 

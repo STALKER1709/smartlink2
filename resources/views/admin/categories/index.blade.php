@@ -10,7 +10,7 @@
         </x-page-header>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if (session('status'))
             <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-sm text-on-secondary-container">
                 {{ session('status') }}
@@ -18,25 +18,42 @@
         @endif
 
         @if ($categories->isEmpty())
-            <x-empty-state icon="grid_view" title="Aucune catégorie pour le moment." description="Les catégories structurent la recherche : sans elles, rien n'est classable." />
+            <x-empty-state title="Aucune catégorie pour le moment." description="Les catégories structurent la recherche : sans elles, rien n'est classable." />
         @else
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
+            <x-admin-list>
                 @foreach ($categories as $category)
-                    <div class="flex items-center gap-4 p-4">
-                        <div class="flex-1 min-w-0">
-                            <p class="font-medium text-on-surface">{{ $category->name }}</p>
+                    <x-admin-row class="flex items-start gap-4">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <p class="font-medium text-on-surface">{{ $category->name }}</p>
+                                {{-- Seule l'exception se signale : toutes les
+                                     catégories sont actives sauf accident. --}}
+                                @unless ($category->is_active)
+                                    <x-status-badge status="inactive" />
+                                @endunless
+                            </div>
                             @if ($category->description)
-                                <p class="text-sm text-on-surface-variant truncate">{{ $category->description }}</p>
+                                {{-- La description était tronquée d'autorité à
+                                     une ligne, sur un écran où le nom, la
+                                     pastille et deux actions se partageaient
+                                     déjà la largeur : il n'en restait que
+                                     trois mots. Deux lignes complètes, et rien
+                                     d'autre sur la ligne. --}}
+                                <p class="mt-0.5 line-clamp-2 text-sm text-on-surface-variant">{{ $category->description }}</p>
                             @endif
                         </div>
 
-                        <x-status-badge :status="$category->is_active ? 'active' : 'inactive'" />
-
-                        <div class="flex items-center gap-3 shrink-0">
+                        {{-- « Modifier » et « Supprimer » forment une paire :
+                             `ml-auto` les envoyait aux deux bords opposés de
+                             l'écran, à trois cents pixels l'une de l'autre. --}}
+                        <div class="flex shrink-0 items-center gap-4 pt-0.5">
                             <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-primary hover:text-primary-container">
                                 Modifier
                             </a>
-                            <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('Supprimer cette catégorie ?');">
+                            {{-- La confirmation nomme la catégorie : « cette
+                                 catégorie » ne dit pas laquelle quand on en a
+                                 quinze sous les yeux. --}}
+                            <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Supprimer « {{ $category->name }} » ? Les services qui s\'y rattachent perdront leur catégorie.');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-sm font-medium text-error hover:opacity-80">
@@ -44,9 +61,9 @@
                                 </button>
                             </form>
                         </div>
-                    </div>
+                    </x-admin-row>
                 @endforeach
-            </div>
+            </x-admin-list>
 
             <div class="mt-6">
                 {{ $categories->links() }}

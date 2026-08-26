@@ -31,15 +31,15 @@
         </form>
 
         @if ($services->isEmpty())
-            <x-empty-state icon="home_repair_service" title="Aucun service trouvé." description="Aucun service ne correspond à ces critères." />
+            <x-empty-state title="Aucun service trouvé." description="Aucun service ne correspond à ces critères." />
         @else
             {{-- Le titre d'abord, sur toute la largeur. Il était tronqué à
                  « Recherc… » parce que trois actions se partageaient la ligne :
                  un administrateur ne pouvait pas identifier ce qu'il
                  modérait. Les actions descendent sur leur propre ligne. --}}
-            <div class="-mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:rounded-xl md:border md:border-b-0 md:px-6">
+            <x-admin-list>
                 @foreach ($services as $service)
-                    <div class="flex flex-col gap-3 border-b border-outline-variant py-4 sm:flex-row sm:items-center sm:gap-4">
+                    <x-admin-row class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                                 <p class="font-medium text-on-surface">{{ $service->title }}</p>
@@ -73,9 +73,9 @@
                                 </button>
                             </form>
                         </div>
-                    </div>
+                    </x-admin-row>
                 @endforeach
-            </div>
+            </x-admin-list>
 
             <div class="mt-6">
                 {{ $services->links() }}

@@ -210,6 +210,15 @@ clair pour une sélection.
   Le filet appartient à la rangée, jamais au conteneur : `divide-y` de Tailwind remet
   `border-bottom` à zéro sur tous les enfants **sauf le premier**, ce qui ne laisse qu'une
   seule ligne visible dès qu'on passe en deux colonnes.
+- **Rangée de chiffres** — les colonnes se séparent par un **écart d'un pixel** sur
+  le fond du conteneur, jamais par `divide-x` : dans une grille, celui-ci pose une
+  bordure à gauche de tout enfant sauf le premier, ce qui met un trait contre le bord
+  gauche dès la deuxième rangée et n'en met aucun *entre* les rangées. L'écart ne
+  connaît ni index ni palier. La grille déborde latéralement (`-mx`) pour que le
+  rembourrage de la première colonne retombe sur la marge de la page et que le premier
+  chiffre s'aligne avec le titre. Corollaire : une rangée incomplète laisse voir le
+  fond en aplat — le nombre de tuiles doit être un multiple du nombre de colonnes à
+  chaque palier.
 - **Colonne de statistique** — chiffre, libellé, indication, séparés par un filet
   vertical. Ni boîte, ni icône décorative : quatre pictogrammes alignés n'apprennent rien
   que le libellé ne dise déjà. La ligne d'indication est **toujours réservée**, même vide :
@@ -223,6 +232,14 @@ clair pour une sélection.
 - **Champs de saisie** — étiquette toujours visible au-dessus du champ, jamais en
   substitut à l'intérieur. Bordure grise qui passe au vert au focus.
 - **Pastilles de statut** — fond coloré à faible opacité, texte en couleur pleine.
+  Dans une liste où l'état normal est l'immense majorité, **seule l'exception porte
+  une pastille** : « Actif » répété sur cinquante lignes n'apprend rien et noie le
+  compte suspendu.
+- **Rangée d'administration** — une boîte autour de la liste entière, jamais une par
+  ligne, et **les actions à droite de la rangée**, jamais empilées sous le contenu :
+  en dessous, un mot rouge s'intercale entre deux noms à chaque ligne. Deux actions
+  qui forment une paire restent voisines — `ml-auto` les envoie aux deux bords
+  opposés de l'écran, à trois cents pixels l'une de l'autre.
 - **Barre d'onglets basse** — icône dans une pastille verte quand l'onglet est actif,
   libellé court dessous. Les libellés diffèrent de ceux de la barre large : « Accueil »
   et non « Tableau de bord ».
@@ -259,5 +276,16 @@ clair pour une sélection.
 - Répéter la même information dans deux tuiles voisines.
 - Laisser un libellé se tronquer : le raccourcir à la source plutôt que de le couper à
   l'affichage.
+- **Répéter la même phrase dans le titre et la description d'un état vide.** La
+  description dit ce qui se passera, pas ce qui manque — le titre l'a déjà dit.
+- **Composer un mot en JetBrains Mono.** La chasse fixe est pour les chiffres. Le
+  deux-points qui les précède reste dans la police du texte, sans quoi il ouvre un
+  blanc de deux caractères avant chaque valeur.
+- **Afficher une clé de traduction manquante telle quelle.** Une catégorie inconnue
+  du fichier de langue doit retomber sur sa valeur brute, jamais sur
+  « ui.moderation.categories.xxx » en toutes lettres.
+- **Mettre un tableau à défilement horizontal sur un téléphone.** Six colonnes dans
+  390 px coupent la dernière et cassent les noms en deux. Une rangée empilée dit les
+  mêmes six choses sans rien couper.
 - Introduire une icône rendue par une expression sans l'énumérer là où `icons:sync` la
   trouve — une ligature absente du sous-ensemble s'affiche en toutes lettres.

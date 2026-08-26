@@ -13,7 +13,6 @@
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         @if ($services->isEmpty())
             <x-empty-state
-                icon="home_repair_service"
                 title="Vous n'avez pas encore publié de service."
                 description="Un service bien décrit, avec une photo et un prix indicatif, est ce qui décide un client à vous écrire."
                 action-label="Publier mon premier service"

@@ -105,7 +105,7 @@
                     </div>
 
                     @if ($reviews->isEmpty())
-                        <x-empty-state class="mt-4" icon="reviews" title="Aucun avis pour le moment."
+                        <x-empty-state class="mt-4" title="Aucun avis pour le moment."
                                        description="Les avis sont laissés par les clients après une prestation terminée." />
                     @else
                         <div class="mt-4 space-y-3">

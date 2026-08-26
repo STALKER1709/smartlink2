@@ -6,27 +6,26 @@
 
     @php
         $tuiles = [
-            ['sent', 'Envoyées', 'send', 'secondary'],
-            ['accepted', 'Acceptées', 'task_alt', 'secondary'],
-            ['in_progress', 'En cours', 'pending_actions', 'tertiary'],
-            ['completed', 'Terminées', 'check_circle', 'primary'],
+            ['sent', 'Envoyées', 'secondary'],
+            ['accepted', 'Acceptées', 'secondary'],
+            ['in_progress', 'En cours', 'tertiary'],
+            ['completed', 'Terminées', 'primary'],
         ];
     @endphp
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         {{-- Chaque tuile mène à la liste filtrée : un compteur qui ne mène nulle
              part oblige à refaire le tri à la main. --}}
-        <div class="grid grid-cols-2 divide-x divide-outline-variant border-y border-outline-variant sm:grid-cols-4">
-            @foreach ($tuiles as [$statut, $libelle, $icone, $ton])
+        <x-stat-grid>
+            @foreach ($tuiles as [$statut, $libelle, $ton])
                 <x-stat-tile
                     :label="$libelle"
                     :value="$counts[$statut] ?? 0"
-                    :icon="$icone"
                     :tone="$ton"
                     :href="route('requests.index', ['status' => $statut])"
                 />
             @endforeach
-        </div>
+        </x-stat-grid>
 
         <div class="mt-8 flex items-center justify-between gap-3">
             <h3 class="font-headline-md text-headline-md text-on-surface">Demandes récentes</h3>
@@ -39,7 +38,6 @@
         @if ($requests->isEmpty())
             <x-empty-state
                 class="mt-4"
-                icon="inbox"
                 title="Vous n'avez pas encore envoyé de demande."
                 description="Trouvez un prestataire près de chez vous et décrivez-lui votre besoin."
                 action-label="Explorer les services"

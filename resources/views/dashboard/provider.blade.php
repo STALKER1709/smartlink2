@@ -37,20 +37,20 @@
             };
         @endphp
 
-        <div class="grid grid-cols-2 divide-x divide-outline-variant border-y border-outline-variant sm:grid-cols-4">
-            <x-stat-tile label="Services publiés" :value="$servicesCount" icon="home_repair_service"
+        <x-stat-grid>
+            <x-stat-tile label="Services publiés" :value="$servicesCount"
                          :hint="$indiceServices" :href="route('provider.services.index')" />
-            <x-stat-tile label="Demandes en attente" :value="$pendingCount" icon="pending_actions" tone="tertiary"
+            <x-stat-tile label="Demandes en attente" :value="$pendingCount" tone="tertiary"
                          :hint="$remainingRequests === null ? 'Lecture sans limite' : $remainingRequests.' lisibles ce mois'"
                          :href="route('requests.index', ['status' => 'sent'])" />
-            <x-stat-tile label="Prestations terminées" :value="$counts['completed'] ?? 0" icon="done_all" tone="primary"
+            <x-stat-tile label="Prestations terminées" :value="$counts['completed'] ?? 0" tone="primary"
                          :href="route('requests.index', ['status' => 'completed'])" />
             {{-- L'abonnement paie la plateforme : il a sa place parmi les
                  chiffres du prestataire, pas seulement dans un bandeau
                  d'alerte qui ne paraît qu'à sept jours de l'échéance. --}}
-            <x-stat-tile label="Abonnement" :value="$abonnement[0]" icon="shield" :tone="$abonnement[2]"
+            <x-stat-tile label="Abonnement" :value="$abonnement[0]" :tone="$abonnement[2]"
                          :hint="$abonnement[1]" :href="route('provider.subscription.show')" />
-        </div>
+        </x-stat-grid>
 
         <div class="mt-8 flex flex-wrap items-center justify-between gap-3">
             <h3 class="font-headline-md text-headline-md text-on-surface">Demandes récentes</h3>
@@ -63,7 +63,6 @@
         @if ($requests->isEmpty())
             <x-empty-state
                 class="mt-4"
-                icon="inbox"
                 title="Vous n'avez pas encore reçu de demande."
                 description="Publiez vos services et soignez votre profil : les clients vous trouveront par la recherche."
                 action-label="Publier un service"

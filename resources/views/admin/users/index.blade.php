@@ -1,6 +1,17 @@
+@php
+    // Les rôles sont stockés en anglais ; ils ne doivent jamais paraître tels
+    // quels. Le libellé est défini une fois et sert au filtre comme à la ligne.
+    $roles = [
+        \App\Models\User::ROLE_CLIENT => 'Client',
+        \App\Models\User::ROLE_PROVIDER => 'Prestataire',
+        \App\Models\User::ROLE_ADMIN => 'Administrateur',
+    ];
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Gérer les utilisateurs" />
+        <x-page-header title="Gérer les utilisateurs"
+                       :subtitle="$users->total().' '.Str::plural('compte', $users->total())" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -19,9 +30,9 @@
                 <x-input-label for="role" value="Rôle" />
                 <select id="role" name="role" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
                     <option value="">Tous</option>
-                    <option value="{{ \App\Models\User::ROLE_CLIENT }}" @selected(request('role') === \App\Models\User::ROLE_CLIENT)>Client</option>
-                    <option value="{{ \App\Models\User::ROLE_PROVIDER }}" @selected(request('role') === \App\Models\User::ROLE_PROVIDER)>Prestataire</option>
-                    <option value="{{ \App\Models\User::ROLE_ADMIN }}" @selected(request('role') === \App\Models\User::ROLE_ADMIN)>Administrateur</option>
+                    @foreach ($roles as $valeur => $libelle)
+                        <option value="{{ $valeur }}" @selected(request('role') === $valeur)>{{ $libelle }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="flex items-end">
@@ -32,53 +43,55 @@
         </form>
 
         @if ($users->isEmpty())
-            <x-empty-state icon="person_search" title="Aucun utilisateur trouvé." description="Aucun compte ne correspond à ces critères." />
+            <x-empty-state title="Aucun utilisateur trouvé." description="Aucun compte ne correspond à ces critères." />
         @else
-            <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
-                <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-outline-variant text-sm">
-                    <thead class="bg-surface-container-low">
-                        <tr>
-                            <th class="px-4 py-3 text-left font-medium text-on-surface-variant">Nom</th>
-                            <th class="px-4 py-3 text-left font-medium text-on-surface-variant">Email</th>
-                            <th class="px-4 py-3 text-left font-medium text-on-surface-variant">Rôle</th>
-                            <th class="px-4 py-3 text-left font-medium text-on-surface-variant">Statut</th>
-                            <th class="px-4 py-3 text-left font-medium text-on-surface-variant">Inscrit le</th>
-                            <th class="px-4 py-3 text-right font-medium text-on-surface-variant">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-outline-variant">
-                        @foreach ($users as $user)
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-on-surface">{{ $user->name }}</td>
-                                <td class="px-4 py-3 text-on-surface-variant">{{ $user->email }}</td>
-                                <td class="px-4 py-3 text-on-surface-variant capitalize">{{ $user->role }}</td>
-                                <td class="px-4 py-3">
+            {{-- C'était un tableau à six colonnes qui débordait de l'écran :
+                 « Rôle » se lisait « Pr… », les noms se coupaient en deux et
+                 le statut n'était atteignable qu'en faisant défiler
+                 latéralement. Une ligne empilée dit les mêmes six choses sans
+                 rien couper. --}}
+            <x-admin-list>
+                @foreach ($users as $user)
+                    {{-- L'action reste sur la ligne, jamais en dessous :
+                         empilée, elle mettait un mot rouge entre deux noms,
+                         cinquante fois de suite. --}}
+                    <x-admin-row class="flex items-start gap-4">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <p class="font-medium text-on-surface">{{ $user->name }}</p>
+                                {{-- La pastille ne paraît que pour l'exception :
+                                     « Actif » répété sur chaque ligne n'apprend
+                                     rien et noie le compte suspendu. --}}
+                                @if ($user->status !== \App\Models\User::STATUS_ACTIVE)
                                     <x-status-badge :status="$user->status" />
-                                </td>
-                                <td class="px-4 py-3 text-on-surface-variant">{{ $user->created_at->format('d/m/Y') }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    @can('suspend', $user)
-                                        <form action="{{ route('admin.users.suspend', $user) }}" method="POST" class="inline" onsubmit="return confirm('Suspendre ce compte ?');">
-                                            @csrf
-                                            <button type="submit" class="text-sm font-medium text-error hover:opacity-80">Suspendre</button>
-                                        </form>
-                                    @endcan
-                                    @can('reactivate', $user)
-                                        @if ($user->status === \App\Models\User::STATUS_SUSPENDED)
-                                            <form action="{{ route('admin.users.reactivate', $user) }}" method="POST" class="inline">
-                                                @csrf
-                                                <button type="submit" class="text-sm font-medium text-secondary hover:opacity-80">Réactiver</button>
-                                            </form>
-                                        @endif
-                                    @endcan
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                </div>
-            </div>
+                                @endif
+                            </div>
+                            <p class="mt-0.5 break-all text-sm text-on-surface-variant">{{ $user->email }}</p>
+                            <p class="mt-0.5 text-sm text-on-surface-variant">
+                                {{ $roles[$user->role] ?? $user->role }} ·
+                                inscrit le <span class="font-label-numeric">{{ $user->created_at->format('d/m/Y') }}</span>
+                            </p>
+                        </div>
+
+                        <div class="flex shrink-0 items-center gap-4 pt-0.5">
+                            @can('suspend', $user)
+                                <form action="{{ route('admin.users.suspend', $user) }}" method="POST" onsubmit="return confirm('Suspendre le compte de {{ $user->name }} ?');">
+                                    @csrf
+                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">Suspendre</button>
+                                </form>
+                            @endcan
+                            @can('reactivate', $user)
+                                @if ($user->status === \App\Models\User::STATUS_SUSPENDED)
+                                    <form action="{{ route('admin.users.reactivate', $user) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="text-sm font-medium text-secondary hover:opacity-80">Réactiver</button>
+                                    </form>
+                                @endif
+                            @endcan
+                        </div>
+                    </x-admin-row>
+                @endforeach
+            </x-admin-list>
 
             <div class="mt-6">
                 {{ $users->links() }}

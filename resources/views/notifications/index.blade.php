@@ -17,7 +17,7 @@
 
     <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if ($notifications->isEmpty())
-            <x-empty-state icon="notifications" title="Aucune notification pour le moment." />
+            <x-empty-state title="Aucune notification pour le moment." />
         @else
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
                 @foreach ($notifications as $notification)

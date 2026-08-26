@@ -1,79 +1,89 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Vérifications prestataires" />
+        <x-page-header title="Vérifications prestataires"
+                       :subtitle="$pending->total().' '.Str::plural('pièce', $pending->total()).' en attente'" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if ($pending->isEmpty())
-            <x-empty-state icon="shield" title="Aucune vérification en attente."
+            <x-empty-state title="Aucune vérification en attente."
                            description="Les pièces d'identité déposées par les prestataires arrivent ici." />
         @else
-            <div class="space-y-4">
+            <x-admin-list>
                 @foreach ($pending as $profile)
-                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 flex flex-col sm:flex-row gap-5">
-                        {{-- Provider info --}}
-                        <div class="flex-1 space-y-1">
-                            <div class="flex items-center gap-2">
+                    <x-admin-row class="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
+                        {{-- Qui demande --}}
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-3">
                                 @if ($profile->logo_path)
-                                    <img src="{{ media_url($profile->logo_path) }}" class="h-10 w-10 rounded-full object-cover">
+                                    <img src="{{ media_url($profile->logo_path) }}" alt="" class="h-10 w-10 shrink-0 rounded-full object-cover">
                                 @else
-                                    <div class="h-10 w-10 rounded-full bg-secondary-container/40 flex items-center justify-center text-on-secondary-container font-bold text-sm">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-container/40 text-sm font-bold text-on-secondary-container">
                                         {{ Str::substr($profile->business_name, 0, 1) }}
                                     </div>
                                 @endif
-                                <div>
-                                    <p class="font-semibold text-on-surface">{{ $profile->business_name }}</p>
-                                    <p class="text-sm text-on-surface-variant">{{ $profile->user->email }}</p>
+                                <div class="min-w-0">
+                                    <p class="font-medium text-on-surface">{{ $profile->business_name }}</p>
+                                    <p class="break-all text-sm text-on-surface-variant">{{ $profile->user->email }}</p>
                                 </div>
                             </div>
-                            @if ($profile->user->phone)
-                                <p class="text-sm text-on-surface-variant">Tél : {{ $profile->user->phone }}</p>
-                            @endif
-                            <p class="text-sm text-on-surface-variant">
-                                Ville : {{ $profile->city }}
-                                @if ($profile->quarter) · {{ $profile->quarter }} @endif
+
+                            <p class="mt-2 text-sm text-on-surface-variant">
+                                {{ $profile->city }}@if ($profile->quarter) · {{ $profile->quarter }} @endif
+                                @if ($profile->user->phone)
+                                    · <span class="font-label-numeric">{{ $profile->user->phone }}</span>
+                                @endif
                             </p>
-                            <p class="text-xs text-on-surface-variant">Soumis le {{ $profile->updated_at->format('d/m/Y H:i') }}</p>
+                            <p class="mt-0.5 text-sm text-on-surface-variant">
+                                Soumis le <span class="font-label-numeric">{{ $profile->updated_at->format('d/m/Y H:i') }}</span>
+                            </p>
                         </div>
 
-                        {{-- ID Card preview --}}
-                        <div class="sm:w-48">
-                            <p class="text-xs font-medium text-on-surface-variant mb-1">Pièce d'identité</p>
-                            @php $ext = pathinfo($profile->id_card_path, PATHINFO_EXTENSION); @endphp
-                            @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <a href="{{ media_url($profile->id_card_path) }}" target="_blank">
-                                    <img src="{{ media_url($profile->id_card_path) }}" class="w-full h-28 object-cover rounded-md border border-outline-variant hover:opacity-80 transition">
+                        {{-- La pièce déposée --}}
+                        <div class="sm:w-44 sm:shrink-0">
+                            @php $ext = strtolower(pathinfo($profile->id_card_path, PATHINFO_EXTENSION)); @endphp
+                            @if (in_array($ext, ['jpg', 'jpeg', 'png']))
+                                {{-- `object-cover` recadrait la pièce sur sa
+                                     bande centrale : on ne voyait ni le type de
+                                     document ni sa photo. Elle est montrée
+                                     entière, quitte à laisser du fond autour. --}}
+                                <a href="{{ media_url($profile->id_card_path) }}" target="_blank" rel="noopener"
+                                   class="block rounded-lg border border-outline-variant bg-surface-container p-1 transition-colors hover:border-primary">
+                                    <img src="{{ media_url($profile->id_card_path) }}" alt="Pièce d'identité déposée"
+                                         class="h-28 w-full object-contain">
                                 </a>
                             @else
-                                <a href="{{ media_url($profile->id_card_path) }}" target="_blank"
-                                   class="flex items-center gap-2 text-primary hover:text-primary-container text-sm mt-1">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                    </svg>
-                                    Voir le PDF
+                                <a href="{{ media_url($profile->id_card_path) }}" target="_blank" rel="noopener"
+                                   class="flex h-28 items-center justify-center gap-2 rounded-lg border border-outline-variant bg-surface-container text-sm font-medium text-primary transition-colors hover:border-primary">
+                                    <span class="material-symbols-outlined text-base" aria-hidden="true">description</span>
+                                    Ouvrir le PDF
                                 </a>
                             @endif
                         </div>
 
-                        {{-- Actions --}}
-                        <div class="flex sm:flex-col gap-3 sm:justify-center sm:w-36">
-                            <form action="{{ route('admin.verifications.approve', $profile) }}" method="POST" class="flex-1 sm:flex-none">
+                        {{-- La décision --}}
+                        <div class="flex gap-3 sm:w-40 sm:shrink-0 sm:flex-col">
+                            <form action="{{ route('admin.verifications.approve', $profile) }}" method="POST" class="flex-1">
                                 @csrf
-                                <x-primary-button type="submit" class="w-full justify-center">
+                                <x-primary-button type="submit" class="w-full">
                                     Approuver
                                 </x-primary-button>
                             </form>
-                            <form action="{{ route('admin.verifications.reject', $profile) }}" method="POST" class="flex-1 sm:flex-none"
-                                  onsubmit="return confirm('Rejeter ce document ? Le prestataire devra en soumettre un nouveau.')">
+                            {{-- Le refus est une action pleine, pas un lien : il
+                                 renvoie le prestataire au dépôt d'une nouvelle
+                                 pièce. Bordé plutôt que plein, pour que
+                                 l'approbation reste l'issue attendue. --}}
+                            <form action="{{ route('admin.verifications.reject', $profile) }}" method="POST" class="flex-1"
+                                  onsubmit="return confirm('Rejeter la pièce de {{ $profile->business_name }} ? Le prestataire devra en soumettre une nouvelle.')">
                                 @csrf
-                                <x-danger-button type="submit" class="w-full justify-center !bg-transparent !text-error border border-error hover:!bg-error-container">
+                                <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-full border border-error px-6 py-2.5 font-button-text text-button-text text-error transition-colors hover:bg-error-container focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2">
                                     Rejeter
-                                </x-danger-button>
+                                </button>
                             </form>
                         </div>
-                    </div>
+                    </x-admin-row>
                 @endforeach
-            </div>
+            </x-admin-list>
 
             <div class="mt-6">
                 {{ $pending->links() }}

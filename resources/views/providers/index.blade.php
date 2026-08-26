@@ -77,7 +77,6 @@
 
         @if ($providers->isEmpty())
             <x-empty-state
-                icon="person_search"
                 :title="request('term')
                     ? 'Aucun prestataire ne correspond à « '.request('term').' ».'
                     : 'Aucun prestataire ne correspond à cette recherche.'"

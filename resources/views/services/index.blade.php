@@ -143,7 +143,6 @@
 
         @if ($services->isEmpty())
             <x-empty-state
-                icon="search"
                 {{-- `q` est la recherche en langage naturel : elle est
                      interprétée puis redirigée vers `term`. À l'affichage de la
                      liste, c'est donc `term` qui porte ce qu'a tapé le

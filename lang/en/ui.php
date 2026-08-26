@@ -81,7 +81,7 @@ return [
     ],
     'moderation' => [
         'title' => 'Moderation',
-        'empty' => 'No flagged content waiting.',
+        'empty' => 'Nothing to moderate.',
         'intro' => 'The automatic review flags, it never deletes. The decision is yours.',
         'service' => 'Service',
         'review' => 'Review',
