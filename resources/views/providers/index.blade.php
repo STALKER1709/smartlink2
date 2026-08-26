@@ -78,8 +78,10 @@
         @if ($providers->isEmpty())
             <x-empty-state
                 icon="person_search"
-                title="Aucun prestataire ne correspond à votre recherche."
-                description="Essayez une autre ville, ou élargissez la catégorie."
+                :title="request('term')
+                    ? 'Aucun prestataire ne correspond à « '.request('term').' ».'
+                    : 'Aucun prestataire ne correspond à cette recherche.'"
+                description="Essayez une autre ville, élargissez la catégorie, ou décochez « vérifiés uniquement »."
                 action-label="Voir tout l'annuaire"
                 :action-href="route('providers.index')"
             />

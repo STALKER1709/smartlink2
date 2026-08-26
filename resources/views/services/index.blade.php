@@ -60,7 +60,13 @@
 
         {{-- Filtres classiques, repliés par défaut : sur mobile, un mur de champs
              repoussait les résultats sous la ligne de flottaison. --}}
-        <details class="group rounded-xl border border-outline-variant bg-surface-container-lowest" @if ($actifs->isNotEmpty()) open @endif>
+        {{-- Le panneau s'ouvre quand des filtres sont actifs, SAUF si la
+             recherche ne rend rien : sur un téléphone il occupe alors tout
+             l'écran et le « aucun résultat » passe dessous. Le visiteur voit un
+             formulaire au lieu d'une réponse, et ne sait pas si sa recherche a
+             abouti. --}}
+        <details class="group rounded-xl border border-outline-variant bg-surface-container-lowest"
+                 @if ($actifs->isNotEmpty() && $services->isNotEmpty()) open @endif>
             <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-on-surface">
                 <span class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-on-surface-variant">tune</span>
@@ -105,9 +111,12 @@
                     Disponibles uniquement
                 </label>
 
-                <div class="flex justify-end gap-2 sm:col-span-2 lg:col-span-3">
-                    <a href="{{ route('services.index') }}" class="px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface">Réinitialiser</a>
-                    <button type="submit" class="rounded-full bg-primary px-5 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                {{-- La bulle de l'assistant flotte au-dessus du contenu et se
+                     posait sur ce bouton. Pleine largeur sur mobile, il reste
+                     atteignable au pouce et son libellé se lit à gauche d'elle. --}}
+                <div class="flex flex-col-reverse items-stretch gap-2 sm:col-span-2 sm:flex-row sm:justify-end lg:col-span-3">
+                    <a href="{{ route('services.index') }}" class="px-3 py-2 text-center text-sm text-on-surface-variant hover:text-on-surface">Réinitialiser</a>
+                    <button type="submit" class="rounded-full bg-primary px-5 py-3 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container sm:py-2">
                         Filtrer
                     </button>
                 </div>
@@ -134,8 +143,15 @@
 
         @if ($services->isEmpty())
             <x-empty-state
-                title="Aucun service ne correspond à votre recherche."
-                description="Essayez avec moins de filtres, ou une autre ville."
+                icon="search"
+                {{-- `q` est la recherche en langage naturel : elle est
+                     interprétée puis redirigée vers `term`. À l'affichage de la
+                     liste, c'est donc `term` qui porte ce qu'a tapé le
+                     visiteur. --}}
+                :title="request('term')
+                    ? 'Aucun service ne correspond à « '.request('term').' ».'
+                    : 'Aucun service ne correspond à ces filtres.'"
+                description="Essayez avec moins de filtres, une autre ville, ou des mots plus simples — « plombier » plutôt que « réparation de canalisation »."
                 action-label="Voir tous les services"
                 :action-href="route('services.index')"
             />
