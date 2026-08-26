@@ -21,11 +21,27 @@ Pour ne pas ouvrir la plateforme sur des pages vides, `DemoSeeder` installe un c
 descriptions réelles, huit clients, treize demandes couvrant tout le cycle de vie, les
 conversations correspondantes et cinq avis.
 
+Sous Linux ou macOS :
+
 ```bash
 php artisan db:seed --class=ServiceCategorySeeder   # si ce n'est pas déjà fait
 php artisan db:seed --class=PlanSeeder              # idem
-DEMO_PASSWORD=... php artisan db:seed --class=DemoSeeder
+DEMO_PASSWORD='...' php artisan db:seed --class=DemoSeeder
 ```
+
+Sous Windows, en PowerShell — `VAR=valeur commande` n'y existe pas, la variable se pose
+avant l'appel et se retire après :
+
+```powershell
+php artisan db:seed --class=ServiceCategorySeeder
+php artisan db:seed --class=PlanSeeder
+$env:DEMO_PASSWORD = '...'
+php artisan db:seed --class=DemoSeeder
+Remove-Item Env:\DEMO_PASSWORD
+```
+
+Le mot de passe se met entre apostrophes : sans elles, PowerShell interprète `@`, `$` et
+`;` avant que PHP ne les voie.
 
 Chaque service reçoit une **illustration de couverture** de son métier, téléversée sur
 le disque de médias (`MEDIA_DISK`) comme le serait une vraie photo — donc sur S3 en
