@@ -1,6 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Tableau de bord" />
+        {{-- L'action principale du prestataire appartient à l'en-tête de page.
+             Descendue dans la barre de « Demandes récentes », elle passait sous
+             ce titre sur mobile et semblait agir dessus, ce qu'elle ne fait
+             pas. --}}
+        <x-page-header title="Tableau de bord">
+            <x-slot name="action">
+                <a href="{{ route('provider.services.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <span class="material-symbols-outlined text-base">add</span>
+                    Publier un service
+                </a>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
@@ -17,16 +28,10 @@
 
         <div class="mt-8 flex flex-wrap items-center justify-between gap-3">
             <h3 class="font-headline-md text-headline-md text-on-surface">Demandes récentes</h3>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('provider.services.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                    <span class="material-symbols-outlined text-base">add</span>
-                    Publier un service
-                </a>
-                <a href="{{ route('requests.index') }}" class="flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
-                    Voir tout
-                    <span class="material-symbols-outlined text-base">arrow_forward</span>
-                </a>
-            </div>
+            <a href="{{ route('requests.index') }}" class="flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
+                Voir tout
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
+            </a>
         </div>
 
         @if ($requests->isEmpty())

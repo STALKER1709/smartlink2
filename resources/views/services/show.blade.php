@@ -60,8 +60,12 @@
                     @if ($service->city)
                         <p class="mt-2 flex items-center gap-1 text-sm text-on-surface-variant">
                             <span class="material-symbols-outlined text-base">location_on</span>
+                            {{-- « location » est une adresse libre : quand le
+                                 prestataire y a simplement retapé son quartier,
+                                 l'afficher donnait « Douala, Bonamoussadi ·
+                                 Bonamoussadi ». --}}
                             {{ $service->city }}@if ($service->quarter), {{ $service->quarter }}@endif
-                            @if ($service->location) · {{ $service->location }} @endif
+                            @if ($service->location && $service->location !== $service->quarter) · {{ $service->location }} @endif
                         </p>
                     @endif
 

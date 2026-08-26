@@ -50,6 +50,13 @@ class ServiceController extends Controller
             ->fromListedProvider()
             ->where('category_id', $service->category_id)
             ->whereKeyNot($service->id)
+            // Les concurrents d'abord. « Services similaires » n'a d'intérêt
+            // que s'il permet de comparer : rempli par les autres annonces du
+            // même prestataire, il ne propose aucun choix et ne mérite pas son
+            // titre. Ses annonces restent en repli quand personne d'autre
+            // n'exerce le métier dans la base.
+            ->orderByRaw('case when provider_id = ? then 1 else 0 end', [$service->provider_id])
+            ->orderByDesc('views_count')
             ->with(['provider.providerProfile', 'images'])
             ->take(4)
             ->get();
