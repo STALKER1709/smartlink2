@@ -2,7 +2,7 @@
 
 <a
     href="{{ route('providers.show', $providerProfile) }}"
-    class="group flex flex-col gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    class="group flex flex-col gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 transition duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
     <div class="flex items-start gap-4">
         <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-secondary-container/40">
@@ -14,10 +14,13 @@
         </div>
 
         <div class="min-w-0 flex-1">
-            <h3 class="flex items-center gap-1.5 font-headline-md text-base font-semibold text-on-surface group-hover:text-primary">
-                <span class="truncate">{{ $providerProfile->business_name }}</span>
+            {{-- Le nom passe à la ligne plutôt que de se couper : « Tchoumi
+                 Électricité Bâtim… » ne désigne personne, et deux lignes
+                 coûtent moins qu'un nom illisible. --}}
+            <h3 class="flex items-start gap-1.5 font-headline-md text-base font-semibold leading-snug text-on-surface group-hover:text-primary">
+                <span class="line-clamp-2">{{ $providerProfile->business_name }}</span>
                 @if ($providerProfile->is_verified)
-                    <span class="material-symbols-outlined shrink-0 text-lg text-primary" style="font-variation-settings: 'FILL' 1;" title="Prestataire vérifié">verified</span>
+                    <span class="material-symbols-outlined mt-0.5 shrink-0 text-lg text-primary" style="font-variation-settings: 'FILL' 1;" title="Prestataire vérifié" aria-label="Prestataire vérifié" role="img">verified</span>
                 @endif
             </h3>
 

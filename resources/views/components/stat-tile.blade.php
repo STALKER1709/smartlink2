@@ -21,7 +21,7 @@
      elle le montre : survol, flèche, et le curseur qui change. --}}
 <{{ $tag }}
     @if ($href) href="{{ $href }}" @endif
-    {{ $attributes->merge(['class' => 'group flex flex-col justify-between gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 transition-all'.($href ? ' hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md' : '')]) }}
+    {{ $attributes->merge(['class' => 'group flex flex-col justify-between gap-4 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 transition duration-200 ease-out'.($href ? ' hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md' : '')]) }}
 >
     {{-- Lecture de haut en bas : l'icône situe, le chiffre frappe, le libellé
          explique. Le libellé était auparavant aligné à droite en face de

@@ -2,18 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * ── Les surfaces que le navigateur dessine à notre place ──────────────────
+ *
+ * Sélection, curseur de saisie, barres de défilement, anneau de focus,
+ * soulignement des liens, chiffres des tableaux : autant d'éléments livrés
+ * avec les valeurs par défaut du navigateur, qui n'appartiennent à aucun
+ * système de design. Les habiller depuis la palette est ce qui distingue une
+ * page construite d'une page assemblée, et c'est la partie qu'on oublie le
+ * plus sûrement parce qu'on ne la dessine pas soi-même.
+ */
+@layer base {
+    ::selection {
+        background-color: #aff1cf; /* secondary-container */
+        color: #00432c;
+    }
+
+    :root {
+        /* Le curseur de saisie prend le vert de la marque, et les barres de
+           défilement se fondent dans la page au lieu d'y poser deux traits
+           gris système. */
+        caret-color: #005538;
+        scrollbar-color: #bec9c0 transparent;
+        scrollbar-width: thin;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #bec9c0; /* outline-variant */
+        border: 3px solid transparent;
+        border-radius: 9999px;
+        background-clip: content-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #6f7a72; /* outline */
+    }
+
+    /*
+     * Un anneau de focus unique pour tout le site, visible seulement au
+     * clavier. Sans lui, chaque composant héritait de l'anneau bleu du
+     * navigateur — la seule couleur de la page à n'être ni verte, ni ambre,
+     * ni rouge.
+     */
+    :focus-visible {
+        outline: 2px solid #005538;
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    /* Les liens de texte : le soulignement colle aux jambages par défaut, ce
+       qui hache les accents français — et le français en est plein. */
+    a:not([class*='no-underline']) {
+        text-underline-offset: 0.2em;
+        text-decoration-thickness: from-font;
+    }
+
+    /*
+     * Les chiffres à chasse fixe s'alignent en colonne dans une liste de prix
+     * ou de dates. JetBrains Mono le fait par construction ; cette règle
+     * couvre les compteurs et les notes rendus dans la police de texte.
+     */
+    .font-label-numeric,
+    [class*='text-label-numeric'] {
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum';
+    }
+}
+
 [x-cloak] {
     display: none !important;
 }
 
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    /* Une ligature d'icône ne se sélectionne pas : sans cela, un glisser sur
+       une carte surligne « location_on » au milieu du texte. */
+    user-select: none;
+}
+
+/*
+ * La longueur de ligne du corps de texte. Au-delà d'environ 70 caractères,
+ * l'œil perd la ligne suivante en revenant à la marge — et les descriptions de
+ * service occupaient toute la largeur d'un écran de 1 280 px.
+ */
+.prose-measure {
+    max-width: 68ch;
 }
 
 /*
  * Les fiches service et prestataire posent une barre d'action fixée en bas sur
- * mobile. Sans cette règle, la bulle de l'assistant se superpose au bouton
- * « Faire une demande » — exactement là où le doigt se pose.
+ * mobile.
  */
 @media (max-width: 767px) {
     /* La barre d'onglets occupe le bas de l'écran sur mobile : la bulle de
@@ -31,5 +118,28 @@
 @media (min-width: 768px) and (max-width: 1023px) {
     body:has(.action-bar) .chat-fab {
         bottom: 5.5rem;
+    }
+}
+
+/*
+ * Un utilisateur qui a demandé moins d'animation à son système l'a fait pour
+ * une raison — vertiges, troubles vestibulaires, ou simplement un appareil
+ * lent. Les transitions ne sont pas supprimées mais ramenées à l'instantané :
+ * un changement d'état reste perceptible, il n'est plus animé.
+ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .group:hover .group-hover\:scale-105,
+    a:hover,
+    button:hover {
+        transform: none !important;
     }
 }

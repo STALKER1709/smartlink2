@@ -77,7 +77,7 @@
                     @endif
 
                     <h2 class="mt-8 font-headline-md text-headline-md text-on-surface">Description</h2>
-                    <p class="mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $service->description }}</p>
+                    <p class="prose-measure mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $service->description }}</p>
                 </div>
 
                 @if ($relatedServices->isNotEmpty())

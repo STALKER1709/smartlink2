@@ -76,7 +76,7 @@
                 @if ($providerProfile->description)
                     <section class="rounded-2xl border border-outline-variant bg-surface-container-lowest p-6">
                         <h2 class="font-headline-md text-headline-md text-on-surface">À propos</h2>
-                        <p class="mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $providerProfile->description }}</p>
+                        <p class="prose-measure mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $providerProfile->description }}</p>
                     </section>
                 @endif
 

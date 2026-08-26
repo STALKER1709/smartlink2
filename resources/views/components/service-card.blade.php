@@ -10,7 +10,7 @@
          téléphone, la carte verticale pleine largeur consacre près de trois
          cents pixels à l'illustration : deux cartes par écran, là où la forme
          horizontale en montre cinq sans rien couper. --}}
-    class="group flex flex-row xs:flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    class="group flex flex-row xs:flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest transition duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
     <div class="relative aspect-square w-32 shrink-0 self-stretch overflow-hidden bg-secondary-container/40 xs:aspect-[4/3] xs:w-auto">
         @if ($service->images->isNotEmpty())
@@ -64,7 +64,7 @@
         </h3>
 
         <p class="flex items-center gap-1 text-xs text-on-surface-variant sm:text-sm">
-            <span class="truncate">{{ $profile?->business_name ?? $service->provider?->name }}</span>
+            <span class="line-clamp-1 xs:line-clamp-2">{{ $profile?->business_name ?? $service->provider?->name }}</span>
             @if ($profile?->is_verified)
                 <span class="material-symbols-outlined shrink-0 text-base text-primary" style="font-variation-settings: 'FILL' 1;" title="Prestataire vérifié">verified</span>
             @endif
