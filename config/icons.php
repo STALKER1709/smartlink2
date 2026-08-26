@@ -39,6 +39,7 @@ return [
         'foundation',
         'grid_view',
         'handyman',
+        'home',
         'home_repair_service',
         'inbox',
         'local_fire_department',
