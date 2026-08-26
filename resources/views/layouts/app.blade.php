@@ -40,6 +40,8 @@
                 {{ $slot }}
             </main>
 
+            @include('layouts.footer')
+
             @include('layouts.bottom-nav')
             @include('partials.chatbot-widget')
         </div>

@@ -79,6 +79,16 @@
         <x-primary-button class="w-full">
             {{ __('Register') }}
         </x-primary-button>
+
+        {{-- On ne s'engage pas à des conditions qu'on n'a pas pu lire : les
+             deux documents sont accessibles depuis l'endroit exact où
+             l'engagement se prend. --}}
+        <p class="text-center text-xs leading-relaxed text-on-surface-variant">
+            En créant un compte, vous acceptez les
+            <a href="{{ route('legal.terms') }}" class="font-semibold text-primary hover:underline">conditions générales</a>
+            et la
+            <a href="{{ route('legal.privacy') }}" class="font-semibold text-primary hover:underline">politique de confidentialité</a>.
+        </p>
     </form>
 
     <p class="mt-6 border-t border-outline-variant pt-5 text-center text-sm text-on-surface-variant">

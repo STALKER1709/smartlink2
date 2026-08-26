@@ -14,6 +14,7 @@ use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
@@ -76,6 +77,14 @@ Route::get('/cron/health', [CronController::class, 'health'])
 | Routes pour tout utilisateur authentifié et actif
 |--------------------------------------------------------------------------
 */
+
+/*
+ * Pages légales — publiques et sans état, comme le veut leur usage : on doit
+ * pouvoir les lire avant de créer un compte, et les citer par leur adresse.
+ */
+Route::get('/conditions-generales', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/mentions-legales', [LegalController::class, 'notice'])->name('legal.notice');
+Route::get('/confidentialite', [LegalController::class, 'privacy'])->name('legal.privacy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
