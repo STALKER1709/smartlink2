@@ -40,12 +40,16 @@
                         @if ($providerProfile->city) · {{ $providerProfile->city }} @endif
                     </p>
 
-                    <div class="mt-2 flex flex-wrap items-center gap-4">
+                    {{-- Un point médian entre les deux : séparés par un simple
+                         écart, « Pas encore d'avis » et « 2 services » se
+                         lisaient comme une phrase à double espace. --}}
+                    <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
                         @if ($providerProfile->rating_count)
                             <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" />
                         @else
                             <span class="text-sm text-on-surface-variant">Pas encore d'avis</span>
                         @endif
+                        <span aria-hidden="true" class="text-outline">·</span>
                         <span class="font-label-numeric text-label-numeric text-on-surface-variant">
                             {{ $services->total() }} {{ Str::plural('service', $services->total()) }}
                         </span>
@@ -160,10 +164,15 @@
                             <div>
                                 <h3 class="text-sm font-semibold text-on-surface">Horaires</h3>
                                 <ul class="mt-2 space-y-1 text-sm text-on-surface-variant">
+                                    {{-- La clé est celle de la base et pouvait
+                                         atteindre l'écran telle quelle :
+                                         « Lundi_vendredi ». Elle est écrite
+                                         pour être lue, quelle que soit sa
+                                         forme — un jour ou une plage. --}}
                                     @foreach ($providerProfile->opening_hours as $day => $hours)
                                         @if ($hours)
                                             <li class="flex justify-between gap-3">
-                                                <span class="capitalize">{{ $day }}</span>
+                                                <span>{{ Str::of($day)->replace('_', ' – ')->ucfirst() }}</span>
                                                 <span class="font-label-numeric text-on-surface">{{ $hours }}</span>
                                             </li>
                                         @endif
@@ -176,8 +185,29 @@
                             <div>
                                 <h3 class="text-sm font-semibold text-on-surface">Contact</h3>
                                 <ul class="mt-2 space-y-1 text-sm text-on-surface-variant">
-                                    @foreach ($providerProfile->contact_methods as $contact)
-                                        <li>{{ $contact }}</li>
+                                    {{-- Deux formes coexistent en base : une
+                                         liste de valeurs, écrite par le
+                                         formulaire de profil, et un tableau
+                                         associatif « moyen => valeur ». La
+                                         seconde perdait son étiquette.
+
+                                         Et un numéro se compose : sur un
+                                         téléphone, c'est l'action principale
+                                         d'une fiche prestataire, elle était
+                                         posée en texte mort. --}}
+                                    @foreach ($providerProfile->contact_methods as $moyen => $contact)
+                                        @php
+                                            $etiquette = is_string($moyen) ? Str::of($moyen)->replace('_', ' ')->ucfirst().' : ' : '';
+                                            $chiffres = preg_replace('/\D+/', '', (string) $contact);
+                                        @endphp
+                                        <li>
+                                            {{ $etiquette }}
+                                            @if (strlen($chiffres) >= 8)
+                                                <a href="tel:{{ $chiffres }}" class="font-label-numeric font-medium text-primary hover:text-primary-container">{{ $contact }}</a>
+                                            @else
+                                                {{ $contact }}
+                                            @endif
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>

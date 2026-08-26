@@ -80,16 +80,6 @@
                     <p class="prose-measure mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $service->description }}</p>
                 </div>
 
-                @if ($relatedServices->isNotEmpty())
-                    <div class="mt-10">
-                        <h2 class="font-headline-md text-headline-md text-on-surface">Services similaires</h2>
-                        <div class="mt-2 border-t border-outline-variant">
-                            @foreach ($relatedServices as $related)
-                                <x-service-card :service="$related" />
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
             </div>
 
             {{-- Colonne d'action, collante au défilement sur grand écran. --}}
@@ -115,7 +105,10 @@
                     </div>
                 </div>
 
-                <div class="mt-0 lg:mt-4">
+                {{-- Une rangée seule a besoin d'un cadre : son filet du bas
+                     n'a rien à séparer, et le `[&>a]:border-0` le retire. --}}
+                <div class="mt-4 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 pb-2 [&>a]:border-0">
+                    <p class="pt-4 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">Le prestataire</p>
                     <x-provider-card :provider-profile="$profile" />
                 </div>
 
@@ -125,6 +118,23 @@
                 </p>
             </aside>
         </div>
+
+        {{-- « Services similaires » était dans la colonne principale, donc
+             au-dessus de la colonne d'action sur mobile : le visiteur lisait
+             la description, puis quatre annonces concurrentes, et ne
+             rencontrait le prestataire de *ce* service qu'après. Le bloc
+             descend sous la grille — pleine largeur sur grand écran par la
+             même occasion. --}}
+        @if ($relatedServices->isNotEmpty())
+            <div class="mt-12">
+                <h2 class="font-headline-md text-headline-md text-on-surface">Services similaires</h2>
+                <div class="mt-2 -mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:px-0 lg:grid lg:grid-cols-2 lg:gap-x-10">
+                    @foreach ($relatedServices as $related)
+                        <x-service-card :service="$related" />
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 
     {{-- Sur mobile, l'action reste sous la main : sans cette barre, elle se

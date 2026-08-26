@@ -17,27 +17,7 @@
                     nous trouvons le prestataire. <strong class="font-semibold text-white">Gratuit pour les clients.</strong>
                 </p>
 
-                <form action="{{ route('services.index') }}" method="GET" class="mx-auto mt-8 max-w-2xl">
-                    <div class="flex flex-col gap-2 rounded-2xl bg-surface-container-lowest p-2 shadow-xl sm:flex-row sm:items-center">
-                        <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
-                        <div class="flex flex-1 items-center gap-2 px-3">
-                            <span class="material-symbols-outlined text-on-surface-variant">search</span>
-                            <input
-                                type="text"
-                                id="q"
-                                name="q"
-                                maxlength="300"
-                                placeholder="{{ __('ui.search.natural_placeholder') }}"
-                                class="w-full border-0 bg-transparent py-2.5 text-on-surface placeholder:text-on-surface-variant/70 focus:ring-0"
-                            >
-                        </div>
-
-                        <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
-                            {{ __('ui.search.natural_submit') }}
-                        </button>
-                    </div>
-                    <p class="mt-3 text-sm text-white/75">{{ __('ui.search.natural_hint') }}</p>
-                </form>
+                <x-natural-search hero class="mx-auto mt-8 max-w-2xl" />
 
                 @if ($categories->isNotEmpty())
                     <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
@@ -66,18 +46,18 @@
     @if ($featuredProviders->isNotEmpty())
         <section class="bg-surface-container-low">
             <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-                <div class="flex items-end justify-between gap-4">
-                    <div>
-                        <h2 class="font-headline-lg text-headline-lg text-on-surface">Prestataires vérifiés</h2>
-                        <p class="mt-1 text-sm text-on-surface-variant">Pièce d'identité contrôlée par notre équipe.</p>
-                    </div>
-                    <a href="{{ route('providers.index', ['verified_only' => 1]) }}" class="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
-                        Voir l'annuaire
-                        <span class="material-symbols-outlined text-base">arrow_forward</span>
-                    </a>
-                </div>
+                <x-section-header title="Prestataires vérifiés"
+                                  subtitle="Pièce d'identité contrôlée par notre équipe."
+                                  :href="route('providers.index', ['verified_only' => 1])"
+                                  link-label="Voir l'annuaire" />
 
-                <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {{-- Même régime que les services juste dessous : deux motifs
+                     pour le même travail sur un seul écran, c'était un de
+                     trop. Le filet appartient à la rangée, jamais au
+                     conteneur — `divide-y` le remet à zéro sur tous les
+                     enfants sauf le premier dès qu'on passe en deux
+                     colonnes. --}}
+                <div class="mt-4 -mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:rounded-xl md:border md:border-b-0 md:px-6 lg:grid lg:grid-cols-2 lg:gap-x-10">
                     @foreach ($featuredProviders as $providerProfile)
                         <x-provider-card :provider-profile="$providerProfile" />
                     @endforeach
@@ -88,13 +68,7 @@
 
     {{-- ══ Services récents ══ --}}
     <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-        <div class="flex items-end justify-between gap-4">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface">Derniers services publiés</h2>
-            <a href="{{ route('services.index') }}" class="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
-                Voir tout
-                <span class="material-symbols-outlined text-base">arrow_forward</span>
-            </a>
-        </div>
+        <x-section-header title="Derniers services publiés" :href="route('services.index')" />
 
         @if ($recentServices->isEmpty())
             <x-empty-state class="mt-6" title="Aucun service disponible pour le moment." />
@@ -110,13 +84,7 @@
     {{-- ══ Catégories ══ --}}
     @if ($categories->isNotEmpty())
         <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-            <div class="flex items-end justify-between gap-4">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface">Explorer par métier</h2>
-                <a href="{{ route('services.index') }}" class="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
-                    Tous les services
-                    <span class="material-symbols-outlined text-base">arrow_forward</span>
-                </a>
-            </div>
+            <x-section-header title="Explorer par métier" :href="route('services.index')" link-label="Tous les services" />
 
             <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
                 {{-- Six métiers suffisent sur un téléphone : les six suivants
@@ -127,7 +95,7 @@
                     <a
                         href="{{ route('services.index', ['category_id' => $category->id]) }}"
                         @class([
-                            'group flex-col items-center gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md',
+                            'group flex-col items-center gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 text-center transition-colors hover:border-primary/50 hover:bg-surface-container-low',
                             'flex' => $loop->index < 6,
                             'hidden sm:flex' => $loop->index >= 6,
                         ])

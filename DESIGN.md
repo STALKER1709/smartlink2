@@ -202,6 +202,14 @@ clair pour une sélection.
 
 ## Components
 
+- **Rangée de prestataire** — même régime que la rangée de service : métier en
+  capitales, nom, ville et nombre de services, note. C'était une carte bordée
+  répétée cinq fois sur l'accueil et vingt fois dans l'annuaire, à cinq cents
+  pixels l'une — deux motifs pour le même travail sur un seul écran, celui du
+  bas étant déjà une liste.
+- **Titre de section** (`x-section-header`) — sur mobile, le lien « Voir tout »
+  passe **sous** le titre. Posé à côté, il tenait la ligne de base de la
+  deuxième ligne d'un titre qui passe presque toujours à la ligne à 390 px.
 - **Rangée de service — une liste, pas une carte.** Un annuaire se parcourt de haut en
   bas : vignette carrée à gauche, métier en capitales, titre, prestataire et lieu, prix
   en JetBrains Mono. Les rangées se séparent par un filet et **ne portent aucune boîte**.
@@ -322,10 +330,16 @@ clair pour une sélection.
   l'utilisateur vient lire. « Demande n° 28 » en titre de page : le client
   reconnaît sa demande à la prestation, pas à son numéro.
 - **Laisser une valeur de colonne atteindre l'écran.** « Le statut de votre
-  demande est passé à "in_progress" » : les libellés viennent de
-  `App\Support\RequestStatus`, jamais de la base. Une phrase composée à
-  l'écriture se fige — la vue doit pouvoir la recomposer depuis les données,
-  sans quoi l'historique garde l'ancienne formulation.
+  demande est passé à "in_progress" » dans une notification, « Lundi_vendredi »
+  dans les horaires d'un prestataire : les libellés viennent de
+  `App\Support\RequestStatus` ou sont mis en forme par la vue, jamais repris
+  bruts de la base. Une phrase composée à l'écriture se fige — la vue doit
+  pouvoir la recomposer depuis les données, sans quoi l'historique garde
+  l'ancienne formulation.
+- **Laisser deux copies d'un même contrôle vivre côte à côte.** Le champ de
+  recherche existait à l'accueil et sur la liste des services ; celui de
+  l'accueil avait déjà pris l'alignement centré de son bloc parent, pas celui
+  de la liste. Un contrôle, un composant.
 - **Offrir un formulaire qui ne peut pas aboutir.** Sans destinataire, la
   demande est refusée par la validation : le client recevait « Le champ
   service est obligatoire lorsque provider id n'est pas présent » — deux
@@ -337,6 +351,16 @@ clair pour une sélection.
 - **Donner à une variable interne d'un composant le nom d'une de ses
   propriétés.** L'affectation écrase silencieusement la valeur reçue, et la
   propriété n'a plus aucun effet.
+- **Poser un sommaire au-dessus de ce qu'il annonce.** Quatre pavés menant aux
+  quatre sections immédiatement en dessous, dont ils répètent les titres : neuf
+  questions ne se naviguent pas, elles se lisent.
+- **Reléguer ce qu'on est venu voir derrière ce qui lui ressemble.** Sur la
+  fiche d'un service, « Services similaires » vivait dans la colonne
+  principale, donc au-dessus de la colonne d'action sur mobile : on lisait la
+  description, puis quatre annonces concurrentes, et le prestataire de *ce*
+  service venait après.
+- **Laisser un numéro en texte mort.** Sur un téléphone, appeler est l'action
+  principale d'une fiche prestataire : un numéro se compose (`tel:`).
 - **Répéter la même phrase dans le titre et la description d'un état vide.** La
   description dit ce qui se passera, pas ce qui manque — le titre l'a déjà dit.
 - **Composer un mot en JetBrains Mono.** La chasse fixe est pour les chiffres. Le

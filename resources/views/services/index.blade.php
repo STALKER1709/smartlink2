@@ -24,26 +24,7 @@
     <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-desktop">
 
         {{-- Recherche en langage naturel : l'entrée principale --}}
-        <form action="{{ route('services.index') }}" method="GET">
-            <div class="flex flex-col gap-2 rounded-2xl border border-outline-variant bg-surface-container-lowest p-2 shadow-sm sm:flex-row sm:items-center">
-                <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
-                <div class="flex flex-1 items-center gap-2 px-3">
-                    <span class="material-symbols-outlined text-on-surface-variant">search</span>
-                    <input
-                        type="text"
-                        id="q"
-                        name="q"
-                        maxlength="300"
-                        placeholder="{{ __('ui.search.natural_placeholder') }}"
-                        class="w-full border-0 bg-transparent py-2.5 text-on-surface placeholder:text-on-surface-variant/70 focus:ring-0"
-                    >
-                </div>
-                <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
-                    {{ __('ui.search.natural_submit') }}
-                </button>
-            </div>
-            <p class="mt-2 px-1 text-xs text-on-surface-variant">{{ __('ui.search.natural_hint') }}</p>
-        </form>
+        <x-natural-search :value="request('q')" />
 
         {{-- Ce qui a été compris de la phrase, corrigeable par les filtres ci-dessous --}}
         @if (session('searchIntent'))

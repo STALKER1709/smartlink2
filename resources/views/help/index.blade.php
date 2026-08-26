@@ -49,15 +49,9 @@
             </p>
         </div>
 
-        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            @foreach ($faqs as $key => $section)
-                <a href="#faq-{{ $key }}" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:bg-surface-container-low hover:border-primary/40 transition-colors flex flex-col gap-3">
-                    <span class="material-symbols-outlined text-primary text-2xl">{{ $section['icon'] }}</span>
-                    <h3 class="font-headline-md text-base font-semibold text-on-surface">{{ $section['label'] }}</h3>
-                    <p class="text-sm text-on-surface-variant">{{ count($section['items']) }} question{{ count($section['items']) > 1 ? 's' : '' }}</p>
-                </a>
-            @endforeach
-        </div>
+        {{-- Un sommaire de quatre pavés menait aux quatre sections
+             immédiatement en dessous, et répétait leurs titres. Neuf
+             questions ne se naviguent pas : elles se lisent. --}}
 
         <div class="mt-10 space-y-8">
             @foreach ($faqs as $key => $section)

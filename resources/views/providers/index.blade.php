@@ -85,7 +85,7 @@
                 :action-href="route('providers.index')"
             />
         @else
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="-mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:rounded-xl md:border md:border-b-0 md:px-6 lg:grid lg:grid-cols-2 lg:gap-x-10">
                 @foreach ($providers as $providerProfile)
                     <x-provider-card :provider-profile="$providerProfile" />
                 @endforeach
