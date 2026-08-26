@@ -33,7 +33,7 @@ class NavigationLinks
         if ($utilisateur === null) {
             return collect([
                 self::lien('services.index', 'services.*', __('Services'), __('Services'), 'search'),
-                self::lien('providers.index', 'providers.*', __('Prestataires'), __('Artisans'), 'person_search'),
+                self::lien('providers.index', 'providers.*', __('Prestataires'), __('Prestataires'), 'person_search'),
                 self::lien('help.index', 'help.*', 'Aide', 'Aide', 'chat'),
             ]);
         }
@@ -41,7 +41,7 @@ class NavigationLinks
         if ($utilisateur->isClient()) {
             return collect([
                 self::lien('services.index', 'services.*', __('Services'), __('Services'), 'search'),
-                self::lien('providers.index', 'providers.*', __('Prestataires'), __('Artisans'), 'person_search'),
+                self::lien('providers.index', 'providers.*', __('Prestataires'), __('Prestataires'), 'person_search'),
                 self::lien('requests.index', 'requests.*', __('Demandes'), __('Demandes'), 'inbox'),
                 self::lien('conversations.index', 'conversations.*', __('Messages'), __('Messages'), 'forum'),
             ]);
@@ -59,7 +59,7 @@ class NavigationLinks
         return collect([
             self::lien('admin.dashboard', 'admin.*', __('Administration'), __('Admin'), 'shield'),
             self::lien('services.index', 'services.*', __('Services'), __('Services'), 'search'),
-            self::lien('providers.index', 'providers.*', __('Prestataires'), __('Artisans'), 'person_search'),
+            self::lien('providers.index', 'providers.*', __('Prestataires'), __('Prestataires'), 'person_search'),
             self::lien('conversations.index', 'conversations.*', __('Messages'), __('Messages'), 'forum'),
         ]);
     }

@@ -73,9 +73,32 @@ qu'il la dirait, et la catégorie, la ville et le quartier en sont déduits.
   réseau.
 - Montants toujours écrits avec l'espace insécable des milliers : « 5 000 FCFA ».
 
+### Terminologie
+
+**« Prestataire »**, partout et sans exception — interface, code, documentation. Ni
+« artisan » (qui décrit mal un répétiteur, une coiffeuse ou un traiteur, tous déjà sur la
+plateforme), ni « professionnel » (trop long pour un onglet de 78 px). Deux mots pour une
+même personne se ressentent comme une hésitation.
+
+**« Client »** pour celui qui cherche. **« Demande »** pour la mise en relation, jamais
+« commande » ni « réservation » : rien ne se commande, rien ne se réserve.
+
+### Pages légales
+
+**Décision ouverte, travail engagé.** L'application n'a aujourd'hui ni conditions
+générales, ni mentions légales, ni politique de confidentialité — alors qu'elle encaisse
+en Mobile Money et héberge des données personnelles. Une première version est rédigée à
+partir du fonctionnement réel de la plateforme et **marquée comme non validée
+juridiquement** : elle doit être relue par un juriste avant l'ouverture au public.
+
 ## Brand Commitments
 
 - Le nom **SmartLink** et le logo sont intangibles.
+- **Voix : directe et concrète.** Vouvoiement, phrases courtes, les mots du métier. On
+  énonce ce qui se passe et ce que ça coûte, sans enrobage : « Votre abonnement couvre
+  30 jours à compter du paiement. » Un message d'erreur nomme le problème **et** la
+  sortie. Ni tutoiement, ni registre soutenu : le premier sonne faux quand il est
+  question d'argent, le second met à distance.
 - **Décision ouverte :** les fichiers image du logo seront fournis plus tard. Le logo
   actuel est un composant Blade vectoriel (`x-application-logo`, deux nœuds reliés, en
   `currentColor`). Toute mise en page doit rester compatible avec le remplacement futur
