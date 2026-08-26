@@ -43,7 +43,14 @@
             @include('layouts.footer')
 
             @include('layouts.bottom-nav')
-            @include('partials.chatbot-widget')
+
+            {{-- L'assistant aide les clients et les prestataires. Sur les
+                 écrans d'administration il ne sert personne, et sa bulle
+                 flottante recouvrait les chiffres du tableau de bord — au
+                 point de me faire croire à des valeurs manquantes. --}}
+            @unless (auth()->user()?->isAdmin())
+                @include('partials.chatbot-widget')
+            @endunless
         </div>
     </body>
 </html>

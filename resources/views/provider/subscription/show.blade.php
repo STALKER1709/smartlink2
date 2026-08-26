@@ -6,7 +6,7 @@
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-8">
 
         {{-- État courant --}}
-        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+        <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
             @if ($subscription)
                 <div class="flex flex-wrap items-start justify-between gap-4">
                     <div>

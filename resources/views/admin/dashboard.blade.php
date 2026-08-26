@@ -29,8 +29,8 @@
         </div>
 
         <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
-                <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Demandes par statut</h3>
+            <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface mb-3 border-b border-outline-variant pb-2">Demandes par statut</h3>
                 <ul class="space-y-2">
                     @foreach ($statusLabels as $value => $label)
                         <li class="flex items-center justify-between text-sm">
@@ -41,8 +41,8 @@
                 </ul>
             </div>
 
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
-                <div class="flex items-center justify-between mb-4">
+            <div>
+                <div class="mb-3 flex items-center justify-between border-b border-outline-variant pb-2">
                     <h3 class="font-headline-md text-headline-md text-on-surface">Derniers utilisateurs inscrits</h3>
                     <a href="{{ route('admin.users.index') }}" class="text-sm font-medium text-primary hover:text-primary-container">Voir tout →</a>
                 </div>

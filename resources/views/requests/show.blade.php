@@ -24,7 +24,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-6">
                 <!-- Details -->
-                <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+                <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
                     @if ($serviceRequest->service)
                         <p class="text-sm text-on-surface-variant">Service concerné</p>
                         <a href="{{ route('services.show', $serviceRequest->service) }}" class="font-medium text-primary hover:text-primary-container">
@@ -147,7 +147,7 @@
 
                 <!-- Review -->
                 @can('create', [\App\Models\Review::class, $serviceRequest])
-                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+                    <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
                         <h3 class="font-headline-md text-headline-md text-on-surface mb-3">Laisser un avis</h3>
                         <form action="{{ route('requests.review', $serviceRequest) }}" method="POST" class="space-y-3">
                             @csrf
@@ -172,7 +172,7 @@
                 @endcan
 
                 @if ($serviceRequest->review)
-                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+                    <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
                         <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Votre avis</h3>
                         <x-star-rating :rating="$serviceRequest->review->rating" />
                         @if ($serviceRequest->review->comment)
@@ -182,7 +182,7 @@
                 @endif
 
                 <!-- Status history -->
-                <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+                <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
                     <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Historique</h3>
                     <ol class="space-y-4">
                         @foreach ($serviceRequest->statusHistory as $history)
@@ -217,7 +217,7 @@
                 @if ($serviceRequest->conversation)
                     <x-message-thread :conversation="$serviceRequest->conversation" />
                 @else
-                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 text-sm text-on-surface-variant">
+                    <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6 text-sm text-on-surface-variant">
                         La conversation s'ouvrira automatiquement une fois la demande acceptée par le prestataire.
                     </div>
                 @endif

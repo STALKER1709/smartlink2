@@ -33,31 +33,39 @@
         @if ($services->isEmpty())
             <x-empty-state icon="home_repair_service" title="Aucun service trouvé." description="Aucun service ne correspond à ces critères." />
         @else
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
+            {{-- Le titre d'abord, sur toute la largeur. Il était tronqué à
+                 « Recherc… » parce que trois actions se partageaient la ligne :
+                 un administrateur ne pouvait pas identifier ce qu'il
+                 modérait. Les actions descendent sur leur propre ligne. --}}
+            <div class="-mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:rounded-xl md:border md:border-b-0 md:px-6">
                 @foreach ($services as $service)
-                    <div class="flex items-center gap-4 p-4">
-                        <div class="flex-1 min-w-0">
-                            <p class="font-medium text-on-surface truncate">{{ $service->title }}</p>
-                            <p class="text-sm text-on-surface-variant truncate">
+                    <div class="flex flex-col gap-3 border-b border-outline-variant py-4 sm:flex-row sm:items-center sm:gap-4">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <p class="font-medium text-on-surface">{{ $service->title }}</p>
+                                <x-status-badge :status="$service->status" />
+                            </div>
+                            <p class="mt-0.5 text-sm text-on-surface-variant">
                                 {{ $service->provider?->name }} · {{ $service->category?->name }}
                                 @if ($service->city) · {{ $service->city }} @endif
                             </p>
                         </div>
 
-                        <x-status-badge :status="$service->status" />
-
-                        <div class="flex items-center gap-3 shrink-0">
+                        {{-- « Supprimer » est irréversible et se trouvait collé à
+                             « Désactiver », deux cibles voisines au pouce. Il
+                             est mis à part, à l'autre bout de la rangée. --}}
+                        <div class="flex shrink-0 items-center gap-4">
                             <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-primary hover:text-primary-container">
                                 Voir
                             </a>
-                            <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="text-sm font-medium text-tertiary hover:opacity-80">
                                     {{ $service->status === \App\Models\Service::STATUS_ACTIVE ? 'Désactiver' : 'Activer' }}
                                 </button>
                             </form>
-                            <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="inline" onsubmit="return confirm('Supprimer ce service ?');">
+                            <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="ml-auto sm:ml-4" onsubmit="return confirm('Supprimer définitivement « {{ $service->title }} » ? Cette action est irréversible.');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-sm font-medium text-error hover:opacity-80">
