@@ -194,6 +194,9 @@ return [
         'free_activated' => 'Formule :plan activée. Vos services restent visibles dans la limite de la formule.',
         'free_blocked' => 'Votre abonnement en cours couvre encore :days jours. La formule gratuite sera disponible à son échéance — y basculer maintenant vous ferait perdre ce qui est déjà réglé.',
         'free_refused' => 'Cette formule ne peut pas être activée.',
+        'free_later' => 'Disponible à votre échéance',
+        'free_later_hint' => 'Votre abonnement couvre encore :days jours. Y basculer maintenant vous ferait perdre ce qui est déjà réglé.',
+        'cap_reached' => 'Plafond atteint',
         'extend_note' => 'Ce paiement prolonge votre abonnement de :days jours au-delà de l\'échéance actuelle.',
     ],
     'assistant' => [

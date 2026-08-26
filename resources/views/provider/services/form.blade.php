@@ -174,7 +174,8 @@
 
 <div class="mt-4">
     <x-input-label for="images" value="Ajouter des images (max 5, facultatif)" />
-    <input id="images" name="images[]" type="file" multiple accept="image/*" class="mt-1 block w-full text-sm text-on-surface-variant">
+    <x-file-input id="images" name="images" accept="image/*" multiple label="Ajouter des images"
+                  hint="Jusqu'à cinq images." class="mt-1" />
     <x-input-error :messages="$errors->get('images')" class="mt-2" />
     <x-input-error :messages="$errors->get('images.0')" class="mt-1" />
 </div>

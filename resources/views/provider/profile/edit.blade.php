@@ -96,7 +96,12 @@
                     <div id="provider-map" class="w-full h-56 rounded-md border border-outline-variant z-0"></div>
                     <input type="hidden" name="latitude" :value="lat">
                     <input type="hidden" name="longitude" :value="lng">
-                    <p class="mt-1 text-xs text-on-surface-variant" x-text="`${lat}, ${lng}`"></p>
+                    {{-- « 3.848, 11.502 » nu ne dit rien à personne. La ligne
+                         confirme d'abord que le repère est posé ; les
+                         coordonnées suivent, à qui elles servent. --}}
+                    <p class="mt-1 text-xs text-on-surface-variant">
+                        Repère placé · <span class="font-label-numeric" x-text="`${lat}, ${lng}`"></span>
+                    </p>
                 </div>
 
                 {{-- ID Card upload --}}
@@ -120,8 +125,14 @@
                         </div>
                     @endif
 
-                    <input type="file" name="id_card" accept="image/*,.pdf" class="text-sm text-on-surface-variant">
+                    <x-file-input name="id_card" accept="image/*,.pdf" label="Déposer ma pièce"
+                                  hint="Photo de la CNI ou du passeport, ou PDF." class="mt-2" />
                     <x-input-error :messages="$errors->get('id_card')" class="mt-2" />
+                </div>
+
+                <div class="mt-6 border-t border-outline-variant pt-5">
+                    <h3 class="font-medium text-on-surface">Où et comment vous joindre</h3>
+                    <p class="mt-1 text-xs text-on-surface-variant">Ces informations paraissent sur votre fiche publique.</p>
                 </div>
 
                 <!-- Service areas -->
@@ -175,19 +186,19 @@
                 </div>
 
                 <!-- Logo -->
-                <div class="mt-4">
+                <div class="mt-6 border-t border-outline-variant pt-5">
                     <x-input-label value="Logo (facultatif)" />
                     <div class="mt-1 flex items-center gap-4">
                         @if ($providerProfile->logo_path)
                             <img src="{{ media_url($providerProfile->logo_path) }}" class="h-16 w-16 rounded-full object-cover">
                         @endif
-                        <input type="file" name="logo" accept="image/*" class="text-sm text-on-surface-variant">
+                        <x-file-input name="logo" accept="image/*" label="Choisir un logo" />
                     </div>
                     <x-input-error :messages="$errors->get('logo')" class="mt-2" />
                 </div>
 
-                <div class="mt-6 flex justify-end">
-                    <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+                <div class="mt-8 flex justify-end border-t border-outline-variant pt-5">
+                    <button type="submit" class="rounded-full bg-primary px-5 py-2.5 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
                         {{ __('ui.save') }}
                     </button>
                 </div>

@@ -1,10 +1,13 @@
-@props(['rating' => 0, 'count' => null, 'compact' => false])
+@props(['rating' => 0, 'count' => null, 'compact' => false, 'afficherNote' => true])
 
 @php
     $pleines = (int) round((float) $rating);
 
     // Virgule décimale : l'application est en français, « 4.8 » y est un
     // anglicisme que l'œil accroche.
+    // Attention : ne pas nommer cette variable comme une propriété du
+    // composant — l'affectation ici écraserait silencieusement la valeur
+    // reçue, et la propriété n'aurait plus aucun effet.
     $note = number_format((float) $rating, 1, ',', ' ');
 
     /*
@@ -37,8 +40,10 @@
                 <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' {{ $i <= $pleines ? 1 : 0 }};">star</span>
             @endfor
         </span>
+        {{-- `note` à faux quand la note est déjà écrite à côté : l'écran des
+             avis affichait « 4,0 » en gros puis « 4,0 (2 avis) » juste après. --}}
         <span class="font-label-numeric text-label-numeric text-on-surface-variant">
-            {{ $note }}
+            @if ($afficherNote){{ $note }}@endif
             @if (! is_null($count))
                 ({{ $count }} avis)
             @endif

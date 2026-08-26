@@ -22,20 +22,7 @@
 >
     <div class="relative w-20 shrink-0 overflow-hidden rounded-lg bg-secondary-container/40 sm:w-28">
         <div class="aspect-square">
-            @if ($service->images->isNotEmpty())
-                <img
-                    src="{{ media_url($service->images->first()->path) }}"
-                    alt=""
-                    loading="lazy"
-                    class="h-full w-full object-cover"
-                >
-            @else
-                {{-- La plupart des prestataires ne déposent pas de photo :
-                     l'icône du métier vaut mieux qu'un rectangle gris. --}}
-                <div class="flex h-full w-full items-center justify-center">
-                    <x-category-icon :icon="$service->category?->icon" class="text-3xl text-primary/30" />
-                </div>
-            @endif
+            <x-service-thumb :service="$service" />
         </div>
 
         @unless ($service->is_available)

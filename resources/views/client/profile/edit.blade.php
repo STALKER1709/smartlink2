@@ -41,7 +41,7 @@
                         @if ($clientProfile->photo_path)
                             <img src="{{ media_url($clientProfile->photo_path) }}" class="h-16 w-16 rounded-full object-cover">
                         @endif
-                        <input type="file" name="photo" accept="image/*" class="text-sm text-on-surface-variant">
+                        <x-file-input name="photo" accept="image/*" label="Choisir une photo" />
                     </div>
                     <x-input-error :messages="$errors->get('photo')" class="mt-2" />
                 </div>

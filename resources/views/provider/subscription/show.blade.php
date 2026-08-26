@@ -27,6 +27,10 @@
                 </div>
 
                 <dl class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-outline-variant pt-6">
+                    @php
+                        $auPlafond = ! $subscription->plan->allowsUnlimitedServices()
+                            && $servicesUsed >= $subscription->plan->max_services;
+                    @endphp
                     <div>
                         <dt class="text-sm text-on-surface-variant">{{ __('ui.subscription.services_used') }}</dt>
                         <dd class="font-label-numeric text-lg text-on-surface">
@@ -35,6 +39,12 @@
                                 <span class="text-on-surface-variant">/ {{ $subscription->plan->max_services }}</span>
                             @endif
                         </dd>
+                        {{-- « 3 / 3 » en gris ne dit pas qu'on ne peut plus
+                             rien publier. C'est pourtant sur cet écran que la
+                             réponse se trouve. --}}
+                        @if ($auPlafond)
+                            <p class="mt-0.5 text-xs font-medium text-tertiary">{{ __('ui.subscription.cap_reached') }}</p>
+                        @endif
                     </div>
                     <div>
                         <dt class="text-sm text-on-surface-variant">{{ __('ui.subscription.requests_used') }}</dt>
@@ -94,18 +104,35 @@
                         @endif
                     </ul>
 
-                    <a href="{{ route('provider.subscription.checkout', $plan) }}"
-                       class="mt-6 block rounded-full bg-primary px-4 py-2.5 text-center text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                        {{-- « Renouveler » n'a pas de sens pour un palier gratuit :
-                             il se reconduit seul et rien n'est à régler. --}}
-                        @if ($plan->isFree())
-                            {{ $isCurrent ? __('ui.subscription.current_plan') : __('ui.subscription.free_confirm') }}
-                        @elseif ($isCurrent && $subscription && ! $subscription->isTrial())
-                            {{ __('ui.subscription.renew') }}
-                        @else
-                            {{ __('ui.subscription.choose_plan') }}
-                        @endif
-                    </a>
+                    @php
+                        // Un abonnement en cours bloque la bascule vers le
+                        // gratuit : `SubscriptionService` la refuse avec
+                        // « still_running ». Le bouton le disait après le
+                        // clic ; il le dit maintenant avant.
+                        $gratuitDiffere = $plan->isFree() && ! $isCurrent && $subscription !== null;
+                    @endphp
+
+                    @if ($gratuitDiffere)
+                        <p class="mt-6 rounded-full border border-outline-variant px-4 py-2.5 text-center text-sm font-button-text font-semibold text-on-surface-variant">
+                            {{ __('ui.subscription.free_later') }}
+                        </p>
+                        <p class="mt-2 text-xs text-on-surface-variant">
+                            {{ __('ui.subscription.free_later_hint', ['days' => $subscription->daysRemaining()]) }}
+                        </p>
+                    @else
+                        <a href="{{ route('provider.subscription.checkout', $plan) }}"
+                           class="mt-6 block rounded-full bg-primary px-4 py-2.5 text-center text-sm font-button-text font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                            {{-- « Renouveler » n'a pas de sens pour un palier gratuit :
+                                 il se reconduit seul et rien n'est à régler. --}}
+                            @if ($plan->isFree())
+                                {{ $isCurrent ? __('ui.subscription.current_plan') : __('ui.subscription.free_confirm') }}
+                            @elseif ($isCurrent && $subscription && ! $subscription->isTrial())
+                                {{ __('ui.subscription.renew') }}
+                            @else
+                                {{ __('ui.subscription.choose_plan') }}
+                            @endif
+                        </a>
+                    @endif
                 </div>
             @endforeach
         </div>

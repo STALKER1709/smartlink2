@@ -195,6 +195,9 @@ return [
         'free_activated' => ':plan plan activated. Your services stay visible within the limits of the plan.',
         'free_blocked' => 'Your current subscription still covers :days days. The free plan will be available on its due date — switching now would lose what you have already paid for.',
         'free_refused' => 'This plan cannot be activated.',
+        'free_later' => 'Available when your plan expires',
+        'free_later_hint' => 'Your subscription still covers :days days. Switching now would forfeit what you have already paid for.',
+        'cap_reached' => 'Cap reached',
     ],
     'assistant' => [
         'title' => 'SmartLink Assistant',

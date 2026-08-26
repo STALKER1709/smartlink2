@@ -6,9 +6,9 @@
     <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
         <p class="prose-measure mb-6 text-body-md text-on-surface-variant">{{ __('ui.admin_plans.intro') }}</p>
 
-        <x-admin-list>
+        <x-list-panel>
             @foreach ($plans as $plan)
-                <x-admin-row class="flex items-start gap-4 sm:gap-6">
+                <x-list-row class="flex items-start gap-4 sm:gap-6">
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                             <h3 class="font-headline-md text-headline-md text-on-surface">{{ $plan->name() }}</h3>
@@ -48,8 +48,8 @@
                     <a href="{{ route('admin.plans.edit', $plan) }}" class="shrink-0 self-start pt-0.5 text-sm font-medium text-primary hover:text-primary-container">
                         {{ __('ui.admin_plans.edit') }}
                     </a>
-                </x-admin-row>
+                </x-list-row>
             @endforeach
-        </x-admin-list>
+        </x-list-panel>
     </div>
 </x-app-layout>

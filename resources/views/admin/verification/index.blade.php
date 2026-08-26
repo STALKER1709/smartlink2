@@ -9,9 +9,9 @@
             <x-empty-state title="Aucune vérification en attente."
                            description="Les pièces d'identité déposées par les prestataires arrivent ici." />
         @else
-            <x-admin-list>
+            <x-list-panel>
                 @foreach ($pending as $profile)
-                    <x-admin-row class="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
+                    <x-list-row class="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
                         {{-- Qui demande --}}
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-3">
@@ -81,9 +81,9 @@
                                 </button>
                             </form>
                         </div>
-                    </x-admin-row>
+                    </x-list-row>
                 @endforeach
-            </x-admin-list>
+            </x-list-panel>
 
             <div class="mt-6">
                 {{ $pending->links() }}

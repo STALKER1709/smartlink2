@@ -50,12 +50,12 @@
                  le statut n'était atteignable qu'en faisant défiler
                  latéralement. Une ligne empilée dit les mêmes six choses sans
                  rien couper. --}}
-            <x-admin-list>
+            <x-list-panel>
                 @foreach ($users as $user)
                     {{-- L'action reste sur la ligne, jamais en dessous :
                          empilée, elle mettait un mot rouge entre deux noms,
                          cinquante fois de suite. --}}
-                    <x-admin-row class="flex items-start gap-4">
+                    <x-list-row class="flex items-start gap-4">
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                                 <p class="font-medium text-on-surface">{{ $user->name }}</p>
@@ -89,9 +89,9 @@
                                 @endif
                             @endcan
                         </div>
-                    </x-admin-row>
+                    </x-list-row>
                 @endforeach
-            </x-admin-list>
+            </x-list-panel>
 
             <div class="mt-6">
                 {{ $users->links() }}

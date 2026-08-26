@@ -16,13 +16,13 @@
                  quinze fois de suite : aucun n'attirait l'œil plus que le
                  suivant. En rangées, le contenu signalé passe devant et le
                  motif du signalement le suit. --}}
-            <x-admin-list>
+            <x-list-panel>
                 @foreach ($reports as $report)
                     @php
                         $content = $report->moderatable;
                         $isService = $content instanceof \App\Models\Service;
                     @endphp
-                    <x-admin-row class="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
+                    <x-list-row class="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
                         <div class="min-w-0 flex-1">
                             <p class="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
                                 {{ $isService ? __('ui.moderation.service') : __('ui.moderation.review') }}
@@ -81,9 +81,9 @@
                                 </button>
                             </form>
                         </div>
-                    </x-admin-row>
+                    </x-list-row>
                 @endforeach
-            </x-admin-list>
+            </x-list-panel>
 
             <div class="mt-6">{{ $reports->links() }}</div>
         @endif

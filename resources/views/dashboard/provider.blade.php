@@ -7,10 +7,7 @@
         <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
                        subtitle="Voici le résumé de votre activité.">
             <x-slot name="action">
-                <a href="{{ route('provider.services.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                    <span class="material-symbols-outlined text-base">add</span>
-                    Publier un service
-                </a>
+                <x-publish-cta compact />
             </x-slot>
         </x-page-header>
     </x-slot>
@@ -21,6 +18,9 @@
             // pour dire la même chose : ils ne diffèrent que lorsqu'un service
             // est masqué, et c'est ce seul cas qui mérite d'être écrit.
             $masques = max($servicesCount - $activeServicesCount, 0);
+            $auPlafond = $plan !== null
+                && ! $plan->allowsUnlimitedServices()
+                && $servicesCount >= $plan->max_services;
             $indiceServices = match (true) {
                 $masques > 0 => trans_choice('{1} :count masqué|[2,*] :count masqués', $masques, ['count' => $masques]),
                 $plan === null => null,
@@ -39,7 +39,8 @@
 
         <x-stat-grid>
             <x-stat-tile label="Services publiés" :value="$servicesCount"
-                         :hint="$indiceServices" :href="route('provider.services.index')" />
+                         :hint="$indiceServices" :hint-tone="$auPlafond ? 'tertiary' : null"
+                         :href="route('provider.services.index')" />
             <x-stat-tile label="Demandes en attente" :value="$pendingCount" tone="tertiary"
                          :hint="$remainingRequests === null ? 'Lecture sans limite' : $remainingRequests.' lisibles ce mois'"
                          :href="route('requests.index', ['status' => 'sent'])" />
@@ -48,7 +49,7 @@
             {{-- L'abonnement paie la plateforme : il a sa place parmi les
                  chiffres du prestataire, pas seulement dans un bandeau
                  d'alerte qui ne paraît qu'à sept jours de l'échéance. --}}
-            <x-stat-tile label="Abonnement" :value="$abonnement[0]" :tone="$abonnement[2]"
+            <x-stat-tile label="Abonnement" :value="$abonnement[0]" :tone="$abonnement[2]" texte
                          :hint="$abonnement[1]" :href="route('provider.subscription.show')" />
         </x-stat-grid>
 
@@ -69,23 +70,31 @@
                 :action-href="route('provider.services.create')"
             />
         @else
-            <div class="mt-4 divide-y divide-outline-variant overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+            {{-- Le titre de la demande ne se tronque plus : c'est par lui
+                 que le prestataire reconnaît ce qu'on lui demande. La pastille
+                 le suit sur la même ligne quand la place le permet, passe
+                 dessous sinon. --}}
+            <x-list-panel class="mt-4">
                 @foreach ($requests as $serviceRequest)
-                    <a href="{{ route('requests.show', $serviceRequest) }}" class="group flex items-center gap-4 p-4 transition-colors hover:bg-surface-container-low">
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate font-medium text-on-surface group-hover:text-primary">
-                                {{ $serviceRequest->service?->title ?? 'Demande directe' }}
-                            </p>
-                            <p class="truncate text-sm text-on-surface-variant">
-                                {{ $serviceRequest->client?->clientProfile?->fullName() ?? $serviceRequest->client?->name }}
-                                · <span class="font-label-numeric">{{ $serviceRequest->created_at->format('d/m/Y') }}</span>
-                            </p>
-                        </div>
-                        <x-status-badge :status="$serviceRequest->status" class="shrink-0" />
-                        <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-0.5">chevron_right</span>
-                    </a>
+                    <x-list-row>
+                        <a href="{{ route('requests.show', $serviceRequest) }}" class="group flex items-start gap-4">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                    <p class="font-medium text-on-surface group-hover:text-primary">
+                                        {{ $serviceRequest->service?->title ?? 'Demande directe' }}
+                                    </p>
+                                    <x-status-badge :status="$serviceRequest->status" />
+                                </div>
+                                <p class="mt-0.5 text-sm text-on-surface-variant">
+                                    {{ $serviceRequest->client?->clientProfile?->fullName() ?? $serviceRequest->client?->name }}
+                                    · <span class="font-label-numeric">{{ $serviceRequest->created_at->format('d/m/Y') }}</span>
+                                </p>
+                            </div>
+                            <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-0.5" aria-hidden="true">chevron_right</span>
+                        </a>
+                    </x-list-row>
                 @endforeach
-            </div>
+            </x-list-panel>
         @endif
     </div>
 </x-app-layout>

@@ -37,9 +37,9 @@
                  « Recherc… » parce que trois actions se partageaient la ligne :
                  un administrateur ne pouvait pas identifier ce qu'il
                  modérait. Les actions descendent sur leur propre ligne. --}}
-            <x-admin-list>
+            <x-list-panel>
                 @foreach ($services as $service)
-                    <x-admin-row class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                    <x-list-row class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                                 <p class="font-medium text-on-surface">{{ $service->title }}</p>
@@ -73,9 +73,9 @@
                                 </button>
                             </form>
                         </div>
-                    </x-admin-row>
+                    </x-list-row>
                 @endforeach
-            </x-admin-list>
+            </x-list-panel>
 
             <div class="mt-6">
                 {{ $services->links() }}

@@ -226,6 +226,21 @@ clair pour une sélection.
   les chiffres cessent de s'aligner.
 - **État vide** — aligné à gauche, sans cadre en pointillés ni grande icône grise. C'est
   une phrase adressée au visiteur, pas un panneau d'absence.
+- **Bouton d'une action soumise à autorisation** — il interroge la Policy, pas
+  une seconde vérité : un bouton offert au-delà du plafond mène à une page 403
+  nue, au moment précis où l'utilisateur en a le plus besoin. Au plafond il ne
+  disparaît pas — un prestataire qui ne trouve plus « Publier » croit à une
+  panne — il change de libellé, passe à l'ambre, dit ce qui bloque et mène là
+  où cela se débloque.
+- **Champ de fichier** — jamais nu. `<input type="file">` laissé tel quel
+  affiche « Choose File · No file chosen », en anglais et au gabarit du
+  système, au milieu d'un formulaire français dessiné : c'est l'élément qui
+  trahit le plus l'inachevé. `x-file-input` l'habille et affiche le nom du
+  fichier choisi.
+- **Vignette** — le repli se pose **sous** l'image, jamais dans un `@else` :
+  une branche « pas d'image en base » ne se déclenche pas quand la ligne existe
+  mais que le fichier a disparu, et le navigateur affiche alors sa propre icône
+  d'image cassée. `onerror` retire l'image et découvre le repli.
 - **Boutons** — rembourrage horizontal généreux : un libellé français touche les bords
   d'un bouton dimensionné pour l'anglais. Primaire vert plein ; secondaire blanc à
   bordure verte.
@@ -276,6 +291,24 @@ clair pour une sélection.
 - Répéter la même information dans deux tuiles voisines.
 - Laisser un libellé se tronquer : le raccourcir à la source plutôt que de le couper à
   l'affichage.
+- **Réduire une action à son pictogramme sur mobile.** « Modifier » et
+  « Supprimer » ramenés à deux icônes ne se distinguaient que par la couleur,
+  avec un `title=` qu'aucun doigt n'ouvre. Si la place manque, l'action descend
+  sur sa propre ligne — elle ne perd pas son nom.
+- **Composer un mot au corps d'un grand chiffre.** « Essentiel » dans une tuile
+  de statistique écrasait les « 3 », « 1 » et « 2 » de la même rangée : la
+  colonne la moins chiffrée devenait la plus voyante.
+- **Écrire deux fois la même donnée côte à côte.** « 4,0 » en grand suivi de
+  « 4,0 (2 avis) » : les étoiles ne portent que le décompte.
+- **Montrer une donnée technique nue.** Un identifiant interne, une paire de
+  coordonnées : si elle doit paraître, elle est nommée et subordonnée à ce que
+  l'utilisateur vient lire.
+- **Recadrer un document qu'on demande de vérifier.** `object-cover` sur une
+  pièce d'identité en montre la bande centrale, où l'on ne voit ni le type de
+  document ni la photo.
+- **Donner à une variable interne d'un composant le nom d'une de ses
+  propriétés.** L'affectation écrase silencieusement la valeur reçue, et la
+  propriété n'a plus aucun effet.
 - **Répéter la même phrase dans le titre et la description d'un état vide.** La
   description dit ce qui se passera, pas ce qui manque — le titre l'a déjà dit.
 - **Composer un mot en JetBrains Mono.** La chasse fixe est pour les chiffres. Le
