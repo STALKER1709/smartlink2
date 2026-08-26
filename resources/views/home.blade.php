@@ -62,63 +62,6 @@
         </div>
     </section>
 
-    {{-- ══ Comment ça marche ══ Le modèle du produit n'est évident pour personne :
-         le client ne paie rien ici, et le règlement se convient de gré à gré. --}}
-    <section class="border-b border-outline-variant bg-surface-container-low">
-        <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-            <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">Comment ça marche</h2>
-
-            <ol class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-                @foreach ([
-                    ['search', 'Décrivez votre besoin', 'Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.'],
-                    ['forum', 'Comparez et contactez', 'Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.'],
-                    ['handshake', 'Convenez entre vous', "Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission."],
-                ] as $index => [$icon, $titre, $texte])
-                    <li class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
-                        <div class="flex items-center gap-3">
-                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container/20 text-primary">
-                                <span class="material-symbols-outlined">{{ $icon }}</span>
-                            </span>
-                            <span class="font-label-numeric text-label-numeric text-on-surface-variant">0{{ $index + 1 }}</span>
-                        </div>
-                        <h3 class="mt-4 font-headline-md text-base font-semibold text-on-surface">{{ $titre }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">{{ $texte }}</p>
-                    </li>
-                @endforeach
-            </ol>
-        </div>
-    </section>
-
-    {{-- ══ Catégories ══ --}}
-    @if ($categories->isNotEmpty())
-        <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-            <div class="flex items-end justify-between gap-4">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface">Explorer par métier</h2>
-                <a href="{{ route('services.index') }}" class="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
-                    Tous les services
-                    <span class="material-symbols-outlined text-base">arrow_forward</span>
-                </a>
-            </div>
-
-            <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-                @foreach ($categories->take(12) as $category)
-                    <a
-                        href="{{ route('services.index', ['category_id' => $category->id]) }}"
-                        class="group flex flex-col items-center gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md"
-                    >
-                        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-container/40 text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary">
-                            <x-category-icon :icon="$category->icon" class="text-2xl" />
-                        </span>
-                        <span class="text-sm font-semibold leading-tight text-on-surface">{{ $category->name }}</span>
-                        <span class="font-label-numeric text-xs text-on-surface-variant">
-                            {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
-                        </span>
-                    </a>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
     {{-- ══ Prestataires vérifiés ══ --}}
     @if ($featuredProviders->isNotEmpty())
         <section class="bg-surface-container-low">
@@ -156,12 +99,77 @@
         @if ($recentServices->isEmpty())
             <x-empty-state class="mt-6" title="Aucun service disponible pour le moment." />
         @else
-            <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+            <div class="mt-6 grid grid-cols-1 gap-4 xs:grid-cols-2 xs:gap-3 sm:gap-5 lg:grid-cols-4">
                 @foreach ($recentServices as $service)
                     <x-service-card :service="$service" />
                 @endforeach
             </div>
         @endif
+    </section>
+
+    {{-- ══ Catégories ══ --}}
+    @if ($categories->isNotEmpty())
+        <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
+            <div class="flex items-end justify-between gap-4">
+                <h2 class="font-headline-lg text-headline-lg text-on-surface">Explorer par métier</h2>
+                <a href="{{ route('services.index') }}" class="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
+                    Tous les services
+                    <span class="material-symbols-outlined text-base">arrow_forward</span>
+                </a>
+            </div>
+
+            <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                {{-- Six métiers suffisent sur un téléphone : les six suivants
+                     ajoutaient trois rangées à une page déjà longue, et
+                     « Tous les services » mène de toute façon à la liste
+                     complète. --}}
+                @foreach ($categories->take(12) as $category)
+                    <a
+                        href="{{ route('services.index', ['category_id' => $category->id]) }}"
+                        @class([
+                            'group flex-col items-center gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md',
+                            'flex' => $loop->index < 6,
+                            'hidden sm:flex' => $loop->index >= 6,
+                        ])
+                    >
+                        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-container/40 text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                            <x-category-icon :icon="$category->icon" class="text-2xl" />
+                        </span>
+                        <span class="text-sm font-semibold leading-tight text-on-surface">{{ $category->name }}</span>
+                        <span class="font-label-numeric text-xs text-on-surface-variant">
+                            {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
+                        </span>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- ══ Comment ça marche ══ Le modèle du produit n'est évident pour personne :
+         le client ne paie rien ici, et le règlement se convient de gré à gré. --}}
+    <section class="border-b border-outline-variant bg-surface-container-low">
+        <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
+            <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">Comment ça marche</h2>
+
+            <ol class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                @foreach ([
+                    ['search', 'Décrivez votre besoin', 'Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.'],
+                    ['forum', 'Comparez et contactez', 'Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.'],
+                    ['handshake', 'Convenez entre vous', "Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission."],
+                ] as $index => [$icon, $titre, $texte])
+                    <li class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container/20 text-primary">
+                                <span class="material-symbols-outlined">{{ $icon }}</span>
+                            </span>
+                            <span class="font-label-numeric text-label-numeric text-on-surface-variant">0{{ $index + 1 }}</span>
+                        </div>
+                        <h3 class="mt-4 font-headline-md text-base font-semibold text-on-surface">{{ $titre }}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">{{ $texte }}</p>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
     </section>
 
     {{-- ══ Appel aux prestataires ══ --}}

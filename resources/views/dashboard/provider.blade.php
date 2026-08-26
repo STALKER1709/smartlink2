@@ -15,15 +15,40 @@
     </x-slot>
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
+        @php
+            // « Services publiés » et « Services actifs » occupaient deux tuiles
+            // pour dire la même chose : ils ne diffèrent que lorsqu'un service
+            // est masqué, et c'est ce seul cas qui mérite d'être écrit.
+            $masques = max($servicesCount - $activeServicesCount, 0);
+            $indiceServices = match (true) {
+                $masques > 0 => trans_choice('{1} :count masqué|[2,*] :count masqués', $masques, ['count' => $masques]),
+                $plan === null => null,
+                $plan->allowsUnlimitedServices() => 'Sans limite',
+                default => 'sur '.$plan->max_services.' autorisés',
+            };
+
+            $joursRestants = $subscription?->daysRemaining() ?? 0;
+            $abonnement = match (true) {
+                $subscription === null => ['Expiré', 'Vos services ne sont plus visibles', 'error'],
+                $plan?->isFree() => [$plan->name(), 'Reconduit automatiquement', 'secondary'],
+                $subscription->isTrial() => [$plan?->name() ?? '—', 'Essai · '.$joursRestants.' j restants', $joursRestants <= 7 ? 'tertiary' : 'primary'],
+                default => [$plan?->name() ?? '—', $joursRestants.' jours restants', $joursRestants <= 7 ? 'tertiary' : 'primary'],
+            };
+        @endphp
+
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             <x-stat-tile label="Services publiés" :value="$servicesCount" icon="home_repair_service"
-                         :href="route('provider.services.index')" />
-            <x-stat-tile label="Services actifs" :value="$activeServicesCount" icon="check_circle" tone="primary"
-                         :href="route('provider.services.index')" />
+                         :hint="$indiceServices" :href="route('provider.services.index')" />
             <x-stat-tile label="Demandes en attente" :value="$pendingCount" icon="pending_actions" tone="tertiary"
+                         :hint="$remainingRequests === null ? 'Lecture sans limite' : $remainingRequests.' lisibles ce mois'"
                          :href="route('requests.index', ['status' => 'sent'])" />
             <x-stat-tile label="Prestations terminées" :value="$counts['completed'] ?? 0" icon="done_all" tone="primary"
                          :href="route('requests.index', ['status' => 'completed'])" />
+            {{-- L'abonnement paie la plateforme : il a sa place parmi les
+                 chiffres du prestataire, pas seulement dans un bandeau
+                 d'alerte qui ne paraît qu'à sept jours de l'échéance. --}}
+            <x-stat-tile label="Abonnement" :value="$abonnement[0]" icon="shield" :tone="$abonnement[2]"
+                         :hint="$abonnement[1]" :href="route('provider.subscription.show')" />
         </div>
 
         <div class="mt-8 flex flex-wrap items-center justify-between gap-3">

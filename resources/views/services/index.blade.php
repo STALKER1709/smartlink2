@@ -140,7 +140,7 @@
                 :action-href="route('services.index')"
             />
         @else
-            <div class="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+            <div class="grid grid-cols-1 gap-4 xs:grid-cols-2 xs:gap-3 sm:gap-5 lg:grid-cols-3">
                 @foreach ($services as $service)
                     <x-service-card :service="$service" />
                 @endforeach

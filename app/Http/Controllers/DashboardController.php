@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\ServiceRequest;
 use App\Models\User;
+use App\Services\QuotaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    public function __construct(private readonly QuotaService $quotas) {}
+
     public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
@@ -55,12 +58,20 @@ class DashboardController extends Controller
             ServiceRequest::STATUS_SENT, ServiceRequest::STATUS_VIEWED,
         ])->count();
 
+        // L'abonnement est toute la relation du prestataire avec SmartLink, et
+        // le bandeau d'alerte ne paraît qu'à sept jours de l'échéance : d'ici
+        // là, rien à l'écran ne dit quel palier il paie ni ce qu'il lui reste.
+        $subscription = $user->activeSubscription();
+
         return view('dashboard.provider', [
             'requests' => $requests,
             'counts' => $counts,
             'servicesCount' => $servicesCount,
             'activeServicesCount' => $activeServicesCount,
             'pendingCount' => $pendingCount,
+            'subscription' => $subscription,
+            'plan' => $subscription?->plan,
+            'remainingRequests' => $subscription ? $this->quotas->remainingRequests($user) : 0,
         ]);
     }
 }

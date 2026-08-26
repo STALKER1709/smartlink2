@@ -17,6 +17,16 @@ export default {
 
     theme: {
         extend: {
+            /*
+             * Palier « xs » : en dessous, une grille à deux colonnes coupe les
+             * titres des services et renvoie le prix à la ligne. Le premier
+             * palier de Tailwind est à 640 px, ce qui laisse tous les
+             * téléphones du mauvais côté — et c'est là que se passe l'essentiel
+             * du trafic au Cameroun.
+             */
+            screens: {
+                xs: '480px',
+            },
             colors: {
                 surface: '#f9faf7',
                 'surface-dim': '#d9dad7',

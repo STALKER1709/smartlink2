@@ -86,7 +86,7 @@
                     @if ($services->isEmpty())
                         <x-empty-state class="mt-4" title="Ce prestataire n'a pas encore publié de service." />
                     @else
-                        <div class="mt-4 grid grid-cols-2 gap-3 sm:gap-5">
+                        <div class="mt-4 grid grid-cols-1 gap-4 xs:grid-cols-2 xs:gap-3 sm:gap-5">
                             @foreach ($services as $service)
                                 <x-service-card :service="$service" />
                             @endforeach

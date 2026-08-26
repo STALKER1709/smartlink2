@@ -32,8 +32,10 @@
 
     <div>
         <span class="font-headline-xl text-headline-xl leading-none text-on-surface">{{ $value }}</span>
-        @if ($hint)
-            <p class="mt-1 text-xs text-on-surface-variant">{{ $hint }}</p>
-        @endif
+        {{-- La ligne d'indication est toujours réservée, même vide : les tuiles
+             d'une même rangée s'étirent à la hauteur de la plus haute, et sans
+             cette réserve les chiffres ne s'alignent plus dès qu'une seule
+             tuile porte une indication. --}}
+        <p class="mt-1 min-h-[1rem] text-xs text-on-surface-variant">{{ $hint }}</p>
     </div>
 </{{ $tag }}>

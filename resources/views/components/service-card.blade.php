@@ -6,9 +6,13 @@
 
 <a
     href="{{ route('services.show', $service) }}"
-    class="group flex flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    {{-- Horizontale en dessous de 480 px, verticale au-delà. Sur un
+         téléphone, la carte verticale pleine largeur consacre près de trois
+         cents pixels à l'illustration : deux cartes par écran, là où la forme
+         horizontale en montre cinq sans rien couper. --}}
+    class="group flex flex-row xs:flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
-    <div class="relative aspect-[4/3] overflow-hidden bg-secondary-container/40">
+    <div class="relative aspect-square w-32 shrink-0 self-stretch overflow-hidden bg-secondary-container/40 xs:aspect-[4/3] xs:w-auto">
         @if ($service->images->isNotEmpty())
             <img
                 src="{{ media_url($service->images->first()->path) }}"
@@ -25,7 +29,7 @@
         @endif
 
         @if ($service->category)
-            <span class="absolute left-3 top-3 rounded-full bg-surface-container-lowest/95 px-2.5 py-1 text-xs font-semibold text-primary shadow-sm backdrop-blur">
+            <span class="absolute left-3 top-3 hidden rounded-full bg-surface-container-lowest/95 px-2.5 py-1 text-xs font-semibold text-primary shadow-sm backdrop-blur xs:inline-block">
                 {{ $service->category->name }}
             </span>
         @endif
@@ -37,13 +41,24 @@
         @endif
 
         @if ($profile?->is_promoted)
-            <span class="absolute bottom-3 left-3">
+            <span class="absolute bottom-3 left-3 hidden xs:inline-block">
                 <x-promoted-badge :profile="$profile" class="bg-surface-container-lowest/95 shadow-sm backdrop-blur" />
             </span>
         @endif
     </div>
 
-    <div class="flex flex-1 flex-col gap-1.5 p-3 sm:gap-2 sm:p-4">
+    <div class="flex min-w-0 flex-1 flex-col gap-1.5 p-3 sm:gap-2 sm:p-4">
+        {{-- En format horizontal, la catégorie et la mise en avant n'ont pas
+             la place de tenir sur la vignette : elles passent ici. --}}
+        <div class="flex flex-wrap items-center gap-1.5 xs:hidden">
+            @if ($service->category)
+                <span class="rounded-full bg-secondary-container/40 px-2 py-0.5 text-xs font-semibold text-primary">{{ $service->category->name }}</span>
+            @endif
+            @if ($profile?->is_promoted)
+                <x-promoted-badge :profile="$profile" />
+            @endif
+        </div>
+
         <h3 class="font-headline-md text-sm font-semibold leading-snug text-on-surface line-clamp-2 group-hover:text-primary sm:text-base">
             {{ $service->title }}
         </h3>
@@ -66,7 +81,7 @@
             </p>
         @endif
 
-        <div class="mt-auto border-t border-outline-variant pt-2.5 sm:pt-3">
+        <div class="mt-auto border-outline-variant pt-1.5 xs:border-t xs:pt-2.5 sm:pt-3">
             <div class="font-label-numeric text-sm text-on-surface sm:text-label-numeric">
                 @if ($service->price_amount)
                     {{ number_format((float) $service->price_amount, 0, ',', ' ') }} FCFA
