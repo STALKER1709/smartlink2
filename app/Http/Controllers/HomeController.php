@@ -37,10 +37,14 @@ class HomeController extends Controller
             ->verified()
             ->with('category')
             ->withCount(['services' => fn ($query) => $query->active()->available()])
+            // Le « à partir de » de la carte : le service le moins cher que ce
+            // prestataire propose. Sans lui la carte annonçait un prix qu'il
+            // aurait fallu inventer.
+            ->withMin(['services as min_price' => fn ($query) => $query->active()->available()->whereNotNull('price_amount')], 'price_amount')
             ->orderByDesc('is_promoted')
             ->orderByDesc('rating_avg')
             ->orderByDesc('rating_count')
-            ->take(4)
+            ->take(6)
             ->get();
 
         return view('home', [

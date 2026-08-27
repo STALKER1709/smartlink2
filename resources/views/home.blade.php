@@ -1,48 +1,79 @@
 <x-app-layout>
-    {{-- ══ Hero ══ La recherche en langage naturel est notre différence, et elle
-         est ouverte aux visiteurs : c'est elle qui prend la place centrale. --}}
-    <section class="relative overflow-hidden bg-primary">
-        <div class="pointer-events-none absolute inset-0 opacity-[0.07]" aria-hidden="true">
-            <div class="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white"></div>
-            <div class="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-white"></div>
-        </div>
+    {{-- ══ Hero ══
+         La maquette pose le titre et la recherche sur le fond de page, sans
+         le bandeau vert qui les portait. Deux gains : la recherche — notre
+         différence, et le seul contrôle de l'écran — cesse d'être un objet
+         blanc posé sur une couleur pour redevenir un champ, et les pastilles
+         de métiers du bandeau disparaissent au profit de la grille juste
+         dessous, qui disait déjà la même chose vingt lignes plus bas. --}}
+    <section class="border-b border-outline-variant bg-surface-container-low">
+        <div class="mx-auto max-w-container px-margin-mobile py-12 text-center md:px-margin-desktop md:py-16">
+            <h1 class="font-headline-xl text-headline-xl text-on-background">
+                Un artisan de confiance,<br class="hidden sm:inline"> près de chez vous
+            </h1>
+            <p class="mx-auto mt-4 max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
+                Plombiers, électriciens, coiffeuses, répétiteurs — décrivez votre besoin,
+                nous trouvons le prestataire. <strong class="font-semibold text-primary">Gratuit pour les clients.</strong>
+            </p>
 
-        <div class="relative mx-auto max-w-container px-margin-mobile py-14 md:px-margin-desktop md:py-20">
-            <div class="mx-auto max-w-3xl text-center">
-                <h1 class="font-headline-xl text-headline-xl text-white">
-                    Un artisan de confiance, près de chez vous
-                </h1>
-                <p class="mx-auto mt-4 max-w-2xl font-body-lg text-body-lg text-white/85">
-                    Plombiers, électriciens, coiffeuses, répétiteurs — décrivez votre besoin,
-                    nous trouvons le prestataire. <strong class="font-semibold text-white">Gratuit pour les clients.</strong>
+            <x-natural-search class="mx-auto mt-8 max-w-2xl" />
+
+            @if ($providerCount > 0)
+                <p class="mt-6 font-label-numeric text-label-numeric text-on-surface-variant">
+                    {{ $providerCount }} {{ Str::plural('prestataire', $providerCount) }}
+                    · {{ $serviceCount }} {{ Str::plural('service', $serviceCount) }} en ligne
                 </p>
-
-                <x-natural-search hero class="mx-auto mt-8 max-w-2xl" />
-
-                @if ($categories->isNotEmpty())
-                    <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
-                        @foreach ($categories->take(6) as $category)
-                            <a
-                                href="{{ route('services.index', ['category_id' => $category->id]) }}"
-                                class="rounded-full border border-white/30 px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-white/15"
-                            >
-                                {{ $category->name }}
-                            </a>
-                        @endforeach
-                    </div>
-                @endif
-
-                @if ($providerCount > 0)
-                    <p class="mt-8 font-label-numeric text-label-numeric text-white/80">
-                        {{ $providerCount }} {{ Str::plural('prestataire', $providerCount) }}
-                        · {{ $serviceCount }} {{ Str::plural('service', $serviceCount) }} en ligne
-                    </p>
-                @endif
-            </div>
+            @endif
         </div>
     </section>
 
-    {{-- ══ Prestataires vérifiés ══ --}}
+    {{-- ══ Catégories populaires ══
+         Remontées juste sous la recherche, comme la maquette : c'est le second
+         chemin d'entrée, et il valait mieux que le bas de page où il était.
+
+         Huit métiers sur grand écran — deux rangées pleines à quatre colonnes.
+         Quatre seulement sur téléphone : à huit, la grille posait quatre
+         rangées et repoussait les prestataires d'un demi-écran, sur une page
+         qui en fait déjà plus de cinq mille pixels. --}}
+    @if ($categories->isNotEmpty())
+        <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
+            <x-section-header title="Catégories populaires" :href="route('services.index')" link-label="Tous les services" />
+
+            <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+                @foreach ($categories->take(8) as $category)
+                    <a href="{{ route('services.index', ['category_id' => $category->id]) }}"
+                       @class([
+                           'group flex-col items-center justify-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-6 text-center transition-colors hover:border-primary/50 hover:bg-surface-container-low',
+                           'flex' => $loop->index < 4,
+                           'hidden sm:flex' => $loop->index >= 4,
+                       ])>
+                        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                            <x-category-icon :icon="$category->icon" class="text-2xl" />
+                        </span>
+                        <span class="font-medium leading-tight text-on-background">{{ $category->name }}</span>
+                        <span class="font-label-numeric text-xs text-on-surface-variant">
+                            {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
+                        </span>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- ══ Prestataires vérifiés ══
+         La maquette veut des cartes ici, pas les rangées de liste employées
+         partout ailleurs — et sur cet écran-là elle a raison : l'accueil doit
+         convaincre un visiteur qui ne connaît pas SmartLink, et une rangée de
+         liste ne montre ni visage ni prix d'entrée.
+
+         Six prestataires, dont trois seulement sur téléphone : à six, la page
+         posait mille trois cents pixels de cartes avant le premier service.
+         À quatre et six colonnes les rangées sont pleines dans les deux cas.
+
+         La note reste la puce ambre discrète du reste du site. La maquette la
+         voulait en pastille orange pleine ; l'ambre est réservé aux
+         avertissements — abonnement qui expire, plafond atteint — et une note
+         de 4,8 n'en est pas un. --}}
     @if ($featuredProviders->isNotEmpty())
         <section class="bg-surface-container-low">
             <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
@@ -51,15 +82,83 @@
                                   :href="route('providers.index', ['verified_only' => 1])"
                                   link-label="Voir l'annuaire" />
 
-                {{-- Même régime que les services juste dessous : deux motifs
-                     pour le même travail sur un seul écran, c'était un de
-                     trop. Le filet appartient à la rangée, jamais au
-                     conteneur — `divide-y` le remet à zéro sur tous les
-                     enfants sauf le premier dès qu'on passe en deux
-                     colonnes. --}}
-                <div class="mt-4 -mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:rounded-xl md:border md:border-b-0 md:px-6 lg:grid lg:grid-cols-2 lg:gap-x-10">
+                <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-gutter lg:grid-cols-3">
                     @foreach ($featuredProviders as $providerProfile)
-                        <x-provider-card :provider-profile="$providerProfile" />
+                        <article @class([
+                            'flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest',
+                            'flex' => $loop->index < 3,
+                            'hidden md:flex' => $loop->index >= 3,
+                        ])>
+                            <a href="{{ route('providers.show', $providerProfile) }}"
+                               class="group flex flex-1 items-start gap-4 border-b border-outline-variant p-4 transition-colors hover:bg-surface-container-low/70">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-secondary-container/40">
+                                    @if ($providerProfile->logo_path)
+                                        <img src="{{ media_url($providerProfile->logo_path) }}" alt="" loading="lazy"
+                                             class="h-full w-full object-cover" onerror="this.remove()">
+                                    @else
+                                        <span class="font-headline-md text-lg font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
+                                    @endif
+                                </div>
+
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="font-headline-md text-headline-md leading-tight text-on-background group-hover:text-primary">
+                                        {{ $providerProfile->business_name }}
+                                    </h3>
+
+                                    @if ($providerProfile->category)
+                                        <p class="mt-0.5 text-on-surface-variant">{{ $providerProfile->category->name }}</p>
+                                    @endif
+
+                                    @if ($providerProfile->city)
+                                        <p class="mt-1 flex items-center gap-1 text-sm text-on-surface-variant">
+                                            <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
+                                            {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
+                                        </p>
+                                    @endif
+                                </div>
+                            </a>
+
+                            <div class="flex flex-col gap-3 bg-surface-container-low p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    @if ($providerProfile->rating_count)
+                                        <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
+                                    @else
+                                        <span class="text-sm text-on-surface-variant">Pas encore d'avis</span>
+                                    @endif
+
+                                    <span class="font-label-numeric text-label-numeric text-primary">
+                                        @if ($providerProfile->min_price)
+                                            À partir de {{ number_format((float) $providerProfile->min_price, 0, ',', ' ') }} FCFA
+                                        @else
+                                            Prix à convenir
+                                        @endif
+                                    </span>
+                                </div>
+
+                                {{-- Le visiteur non connecté voit « Contacter »
+                                     comme la maquette le veut : le middleware
+                                     `auth` retient l'intention et
+                                     `redirect()->intended()` le ramène à la
+                                     demande après connexion. Seuls un
+                                     prestataire ou un administrateur de
+                                     passage, qui ne peuvent pas demander,
+                                     voient la fiche à la place — sans quoi la
+                                     page leur répétait six fois la même
+                                     phrase grise. --}}
+                                @if (auth()->guest() || auth()->user()->can('create', \App\Models\ServiceRequest::class))
+                                    <a href="{{ route('requests.create', ['provider_id' => $providerProfile->user_id]) }}"
+                                       class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                                        <span class="material-symbols-outlined text-[20px]" aria-hidden="true">mail</span>
+                                        Contacter
+                                    </a>
+                                @else
+                                    <a href="{{ route('providers.show', $providerProfile) }}"
+                                       class="inline-flex w-full items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest px-6 py-3 font-button-text font-semibold text-on-surface transition-colors hover:border-primary/50">
+                                        Voir la fiche
+                                    </a>
+                                @endif
+                            </div>
+                        </article>
                     @endforeach
                 </div>
             </div>
@@ -80,38 +179,6 @@
             </div>
         @endif
     </section>
-
-    {{-- ══ Catégories ══ --}}
-    @if ($categories->isNotEmpty())
-        <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-            <x-section-header title="Explorer par métier" :href="route('services.index')" link-label="Tous les services" />
-
-            <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-                {{-- Six métiers suffisent sur un téléphone : les six suivants
-                     ajoutaient trois rangées à une page déjà longue, et
-                     « Tous les services » mène de toute façon à la liste
-                     complète. --}}
-                @foreach ($categories->take(12) as $category)
-                    <a
-                        href="{{ route('services.index', ['category_id' => $category->id]) }}"
-                        @class([
-                            'group flex-col items-center gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 text-center transition-colors hover:border-primary/50 hover:bg-surface-container-low',
-                            'flex' => $loop->index < 6,
-                            'hidden sm:flex' => $loop->index >= 6,
-                        ])
-                    >
-                        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-container/40 text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary">
-                            <x-category-icon :icon="$category->icon" class="text-2xl" />
-                        </span>
-                        <span class="text-sm font-semibold leading-tight text-on-surface">{{ $category->name }}</span>
-                        <span class="font-label-numeric text-xs text-on-surface-variant">
-                            {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
-                        </span>
-                    </a>
-                @endforeach
-            </div>
-        </section>
-    @endif
 
     {{-- ══ Comment ça marche ══ Le modèle du produit n'est évident pour personne :
          le client ne paie rien ici, et le règlement se convient de gré à gré. --}}
