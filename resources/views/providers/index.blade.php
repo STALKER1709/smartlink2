@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Prestataires" />
+        <x-page-header title="Annuaire des prestataires"
+                       subtitle="Trouvez les meilleurs professionnels au Cameroun." />
     </x-slot>
 
     @php

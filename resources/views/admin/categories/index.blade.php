@@ -1,73 +1,98 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Gérer les catégories" :subtitle="$categories->total().' '.Str::plural('catégorie', $categories->total())">
+        <x-page-header title="Catégories de services"
+                       subtitle="Gérez la taxonomie des services proposés sur la plateforme.">
             <x-slot name="action">
-                <a href="{{ route('admin.categories.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                    <span class="material-symbols-outlined text-base">add</span>
-                    Nouvelle catégorie
+                <a href="{{ route('admin.categories.create') }}"
+                   class="flex items-center gap-2 rounded-lg bg-primary px-[24px] py-3 font-button-text text-button-text text-on-primary shadow-sm transition-colors hover:bg-primary-container">
+                    <span class="material-symbols-outlined" aria-hidden="true">add</span>
+                    Ajouter une catégorie
                 </a>
             </x-slot>
         </x-page-header>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-sm text-on-secondary-container">
+            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-sm text-on-secondary-container">
                 {{ session('status') }}
             </div>
         @endif
 
+        <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+            @foreach ([
+                ['Total catégories', number_format($totalCategories, 0, ',', ' '), false],
+                ['Prestataires actifs', number_format($prestatairesActifs, 0, ',', ' '), false],
+                ['Prix moyen indicatif', number_format($prixMoyen, 0, ',', ' ').' FCFA', true],
+            ] as [$libelle, $valeur, $chiffre])
+                <div class="flex flex-col rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
+                    <span class="mb-2 font-body-md text-sm font-semibold uppercase tracking-wider text-on-surface-variant">{{ $libelle }}</span>
+                    <span @class([
+                        'font-bold text-primary',
+                        'font-label-numeric text-2xl' => $chiffre,
+                        'font-headline-xl text-headline-xl' => ! $chiffre,
+                    ])>{{ $valeur }}</span>
+                </div>
+            @endforeach
+        </div>
+
         @if ($categories->isEmpty())
             <x-empty-state title="Aucune catégorie pour le moment." description="Les catégories structurent la recherche : sans elles, rien n'est classable." />
         @else
-            <x-list-panel>
-                @foreach ($categories as $category)
-                    <x-list-row class="flex items-start gap-4">
-                        <div class="min-w-0 flex-1">
-                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                <p class="font-medium text-on-surface">{{ $category->name }}</p>
-                                {{-- Seule l'exception se signale : toutes les
-                                     catégories sont actives sauf accident. --}}
-                                @unless ($category->is_active)
-                                    <x-status-badge status="inactive" />
-                                @endunless
+            {{-- Le tableau de la maquette à partir de `md`. En dessous il
+                 déborderait de l'écran : à 390 px, une rangée empilée dit les
+                 mêmes choses sans rien couper. --}}
+            <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+                <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low px-6 py-4 font-body-md text-body-md font-semibold text-on-surface md:grid">
+                    <div class="col-span-5">Catégorie</div>
+                    <div class="col-span-2 text-right">Services</div>
+                    <div class="col-span-2 text-right">Actifs</div>
+                    <div class="col-span-3 text-right">Actions</div>
+                </div>
+
+                <div class="divide-y divide-outline-variant">
+                    @foreach ($categories as $category)
+                        <div class="flex flex-col gap-3 px-4 py-4 transition-colors hover:bg-surface-container-low md:grid md:grid-cols-12 md:items-center md:gap-4 md:px-6">
+                            <div class="min-w-0 md:col-span-5">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="shrink-0 rounded-md bg-secondary-container p-1.5 text-on-secondary-container">
+                                        <x-category-icon :icon="$category->icon" class="text-base" />
+                                    </span>
+                                    <p class="font-medium text-on-surface">{{ $category->name }}</p>
+                                    @unless ($category->is_active)
+                                        <x-status-badge status="inactive" />
+                                    @endunless
+                                </div>
+                                @if ($category->description)
+                                    <p class="mt-1 line-clamp-2 text-sm text-on-surface-variant">{{ $category->description }}</p>
+                                @endif
                             </div>
-                            @if ($category->description)
-                                {{-- La description était tronquée d'autorité à
-                                     une ligne, sur un écran où le nom, la
-                                     pastille et deux actions se partageaient
-                                     déjà la largeur : il n'en restait que
-                                     trois mots. Deux lignes complètes, et rien
-                                     d'autre sur la ligne. --}}
-                                <p class="mt-0.5 line-clamp-2 text-sm text-on-surface-variant">{{ $category->description }}</p>
-                            @endif
-                        </div>
 
-                        {{-- « Modifier » et « Supprimer » forment une paire :
-                             `ml-auto` les envoyait aux deux bords opposés de
-                             l'écran, à trois cents pixels l'une de l'autre. --}}
-                        <div class="flex shrink-0 items-center gap-4 pt-0.5">
-                            <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-primary hover:text-primary-container">
-                                Modifier
-                            </a>
-                            {{-- La confirmation nomme la catégorie : « cette
-                                 catégorie » ne dit pas laquelle quand on en a
-                                 quinze sous les yeux. --}}
-                            <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Supprimer « {{ $category->name }} » ? Les services qui s\'y rattachent perdront leur catégorie.');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-sm font-medium text-error hover:opacity-80">
-                                    Supprimer
-                                </button>
-                            </form>
-                        </div>
-                    </x-list-row>
-                @endforeach
-            </x-list-panel>
+                            <div class="md:col-span-2 md:text-right">
+                                <span class="font-label-numeric text-on-surface">{{ $category->services_count }}</span>
+                                <span class="text-sm text-on-surface-variant md:hidden">{{ Str::plural('service', $category->services_count) }}</span>
+                            </div>
 
-            <div class="mt-6">
-                {{ $categories->links() }}
+                            <div class="md:col-span-2 md:text-right">
+                                <span class="font-label-numeric text-on-surface-variant">{{ $category->active_services_count }}</span>
+                                <span class="text-sm text-on-surface-variant md:hidden">actifs</span>
+                            </div>
+
+                            <div class="flex items-center justify-end gap-4 md:col-span-3">
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-primary hover:text-primary-container">Modifier</a>
+                                <form action="{{ route('admin.categories.destroy', $category) }}" method="POST"
+                                      onsubmit="return confirm('Supprimer « {{ $category->name }} » ? Les services qui s\'y rattachent perdront leur catégorie.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
+
+            <div class="mt-6">{{ $categories->links() }}</div>
         @endif
     </div>
 </x-app-layout>

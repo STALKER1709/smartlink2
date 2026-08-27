@@ -8,30 +8,33 @@
         {{-- Le choix du rôle en premier : il change la suite du formulaire, et
              c'est la question à laquelle le visiteur répond le plus vite. --}}
         <div>
-            <x-input-label :value="__('Je suis un(e)...')" />
-            <div class="mt-2 grid grid-cols-2 gap-3">
+            {{-- La maquette centre la question et met le geste devant le rôle :
+                 « Je cherche un prestataire » se choisit plus vite que
+                 « Client », qui demande de se ranger dans une catégorie. --}}
+            <span class="mb-3 block text-center text-sm font-medium text-on-surface-variant">Je souhaite utiliser SmartLink pour :</span>
+            <div class="grid grid-cols-2 gap-4">
                 <label
-                    class="flex cursor-pointer flex-col gap-1 rounded-xl border p-3 transition-colors"
+                    class="flex cursor-pointer flex-col items-center rounded-xl border p-4 text-center transition-colors"
                     :class="role === 'client' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40'"
                 >
                     <input type="radio" name="role" value="client" x-model="role" class="sr-only">
-                    <span class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">person</span>
-                        <span class="font-semibold text-on-surface">{{ __('Client') }}</span>
-                    </span>
-                    <span class="text-xs text-on-surface-variant">Je cherche un prestataire</span>
+                    <span class="material-symbols-outlined mb-2 text-3xl"
+                          :class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'"
+                          style="font-variation-settings: 'FILL' 1;" aria-hidden="true">person_search</span>
+                    <span class="font-body-md text-sm font-semibold md:text-base"
+                          :class="role === 'client' ? 'text-primary' : 'text-on-surface'">Je cherche un prestataire</span>
                 </label>
 
                 <label
-                    class="flex cursor-pointer flex-col gap-1 rounded-xl border p-3 transition-colors"
+                    class="flex cursor-pointer flex-col items-center rounded-xl border p-4 text-center transition-colors"
                     :class="role === 'provider' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40'"
                 >
                     <input type="radio" name="role" value="provider" x-model="role" class="sr-only">
-                    <span class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">handyman</span>
-                        <span class="font-semibold text-on-surface">{{ __('Prestataire') }}</span>
-                    </span>
-                    <span class="text-xs text-on-surface-variant">Je propose mes services</span>
+                    <span class="material-symbols-outlined mb-2 text-3xl"
+                          :class="role === 'provider' ? 'text-primary' : 'text-on-surface-variant'"
+                          aria-hidden="true">handyman</span>
+                    <span class="font-body-md text-sm font-semibold md:text-base"
+                          :class="role === 'provider' ? 'text-primary' : 'text-on-surface'">Je propose mes services</span>
                 </label>
             </div>
             <x-input-error :messages="$errors->get('role')" class="mt-2" />

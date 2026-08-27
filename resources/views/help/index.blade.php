@@ -43,10 +43,30 @@
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         <div class="max-w-2xl">
-            <h1 class="font-headline-xl text-headline-xl text-primary mb-3">Comment pouvons-nous vous aider ?</h1>
-            <p class="font-body-lg text-body-lg text-on-surface-variant">
-                Trouvez des réponses rapides à vos questions, ou utilisez l'assistant en bas de l'écran pour une aide immédiate.
+            <h1 class="mb-4 font-headline-xl text-[32px] font-extrabold leading-[40px] tracking-tight text-primary md:text-[40px] md:leading-[48px]">
+                Comment pouvons-nous vous aider ?
+            </h1>
+            <p class="mb-8 font-body-lg text-body-lg text-on-surface-variant">
+                Trouvez des réponses rapides à vos questions, ou demandez à l'assistant SmartLink.
             </p>
+
+            {{-- La recherche filtre les questions sur place, sans recharger :
+                 neuf réponses ne valent pas un aller-retour au serveur. --}}
+            <div class="relative w-full max-w-xl" x-data="{ q: '' }" x-init="$watch('q', v => {
+                const terme = v.trim().toLowerCase();
+                document.querySelectorAll('[data-faq]').forEach(el => {
+                    el.hidden = terme !== '' && ! el.dataset.faq.includes(terme);
+                });
+                document.querySelectorAll('[data-faq-section]').forEach(sec => {
+                    sec.hidden = ! sec.querySelector('[data-faq]:not([hidden])');
+                });
+            })">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" aria-hidden="true">search</span>
+                <label for="faq-search" class="sr-only">Rechercher de l'aide</label>
+                <input id="faq-search" type="search" x-model="q"
+                       placeholder="Rechercher de l'aide (ex : paiements, compte…)"
+                       class="w-full rounded-xl border border-outline-variant bg-surface py-4 pl-12 pr-4 font-body-md text-body-md text-on-surface shadow-sm transition-all placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary-container/20">
+            </div>
         </div>
 
         {{-- Un sommaire de quatre pavés menait aux quatre sections
@@ -55,11 +75,11 @@
 
         <div class="mt-10 space-y-8">
             @foreach ($faqs as $key => $section)
-                <div id="faq-{{ $key }}">
+                <div id="faq-{{ $key }}" data-faq-section>
                     <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">{{ $section['label'] }}</h2>
                     <div class="bg-surface-container-lowest border border-outline-variant rounded-xl divide-y divide-outline-variant overflow-hidden">
                         @foreach ($section['items'] as $item)
-                            <details class="group p-5">
+                            <details class="group p-5" data-faq="{{ Str::lower($item['q'].' '.$item['a']) }}">
                                 <summary class="flex items-center justify-between gap-3 cursor-pointer font-medium text-on-surface list-none">
                                     {{ $item['q'] }}
                                     <span class="material-symbols-outlined text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
