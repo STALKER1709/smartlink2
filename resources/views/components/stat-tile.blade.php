@@ -39,8 +39,10 @@
         @if ($icon)
             <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icon }}</span>
         @endif
-        <span class="mt-2 block font-headline-xl text-3xl font-bold leading-none text-on-surface sm:text-headline-xl">{{ $value }}</span>
-        <span class="mt-2 block text-sm font-medium leading-tight text-on-surface-variant">{{ $label }}</span>
+        {{-- Le chiffre en vert et en chasse fixe, le libellé en dessous :
+             c'est la disposition du tableau de bord prestataire. --}}
+        <span class="mt-2 block font-headline-xl font-label-numeric text-3xl leading-none text-primary sm:text-headline-xl">{{ $value }}</span>
+        <span class="mt-1 block font-body-md text-body-md leading-tight text-on-surface-variant">{{ $label }}</span>
         <span @class([
             'mt-0.5 block min-h-[1rem] text-xs',
             $tons[$hintTone] ?? 'text-on-surface-variant',

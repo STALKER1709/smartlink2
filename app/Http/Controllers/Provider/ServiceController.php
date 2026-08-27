@@ -20,6 +20,8 @@ class ServiceController extends Controller
     {
         $services = $request->user()->services()
             ->with(['category', 'images'])
+            // Le seul chiffre qui dise si une annonce travaille.
+            ->withCount('requests')
             ->latest()
             ->paginate(10);
 

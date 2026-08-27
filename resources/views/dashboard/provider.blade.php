@@ -1,9 +1,17 @@
+@php
+    $plan = $subscription?->plan;
+    $joursRestants = $subscription?->daysRemaining() ?? 0;
+
+    // « Services publiés » et « Services actifs » occupaient deux tuiles pour
+    // dire la même chose : ils ne diffèrent que lorsqu'un service est masqué.
+    $masques = max($servicesCount - $activeServicesCount, 0);
+    $auPlafond = $plan !== null
+        && ! $plan->allowsUnlimitedServices()
+        && $servicesCount >= $plan->max_services;
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
-        {{-- L'action principale du prestataire appartient à l'en-tête de page.
-             Descendue dans la barre de « Demandes récentes », elle passait sous
-             ce titre sur mobile et semblait agir dessus, ce qu'elle ne fait
-             pas. --}}
         <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
                        subtitle="Voici le résumé de votre activité.">
             <x-slot name="action">
@@ -12,89 +20,142 @@
         </x-page-header>
     </x-slot>
 
-    <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
-        @php
-            // « Services publiés » et « Services actifs » occupaient deux tuiles
-            // pour dire la même chose : ils ne diffèrent que lorsqu'un service
-            // est masqué, et c'est ce seul cas qui mérite d'être écrit.
-            $masques = max($servicesCount - $activeServicesCount, 0);
-            $auPlafond = $plan !== null
-                && ! $plan->allowsUnlimitedServices()
-                && $servicesCount >= $plan->max_services;
-            $indiceServices = match (true) {
-                $masques > 0 => trans_choice('{1} :count masqué|[2,*] :count masqués', $masques, ['count' => $masques]),
-                $plan === null => null,
-                $plan->allowsUnlimitedServices() => 'Sans limite',
-                default => 'sur '.$plan->max_services.' autorisés',
-            };
-
-            $joursRestants = $subscription?->daysRemaining() ?? 0;
-            $abonnement = match (true) {
-                $subscription === null => ['Expiré', 'Vos services ne sont plus visibles', 'error'],
-                $plan?->isFree() => [$plan->name(), 'Reconduit automatiquement', 'secondary'],
-                $subscription->isTrial() => [$plan?->name() ?? '—', 'Essai · '.$joursRestants.' j restants', $joursRestants <= 7 ? 'tertiary' : 'primary'],
-                default => [$plan?->name() ?? '—', $joursRestants.' jours restants', $joursRestants <= 7 ? 'tertiary' : 'primary'],
-            };
-        @endphp
+    <div class="mx-auto flex max-w-container flex-col gap-8 px-margin-mobile py-gutter md:px-margin-desktop">
+        {{-- Le bandeau d'essai est permanent dans les maquettes, et non réservé
+             aux sept derniers jours : c'est pendant l'essai qu'un prestataire
+             décide s'il paiera. --}}
+        @if ($subscription?->isTrial())
+            <div class="flex w-full flex-col items-start justify-between gap-4 rounded-lg border border-tertiary-fixed-dim bg-tertiary-fixed p-4 text-on-tertiary-fixed md:flex-row md:items-center">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined" aria-hidden="true">info</span>
+                    <span class="font-body-md text-body-md font-semibold">
+                        Essai gratuit — <span class="font-label-numeric">{{ $joursRestants }}</span> {{ Str::plural('jour', $joursRestants) }} {{ Str::plural('restant', $joursRestants) }}
+                    </span>
+                </div>
+                <a href="{{ route('provider.subscription.show') }}"
+                   class="self-end rounded-full bg-tertiary px-6 py-2 font-button-text text-button-text text-on-tertiary transition-all hover:opacity-90 active:scale-95 md:self-auto">
+                    Souscrire
+                </a>
+            </div>
+        @endif
 
         <x-stat-grid>
-            <x-stat-tile label="Services publiés" :value="$servicesCount"
-                         :hint="$indiceServices" :hint-tone="$auPlafond ? 'tertiary' : null"
-                         :href="route('provider.services.index')" />
-            <x-stat-tile label="Demandes en attente" :value="$pendingCount" tone="tertiary"
+            <x-stat-tile variant="stacked" icon="mail" tone="secondary"
+                         :value="$requestsThisMonth"
+                         label="Demandes reçues"
+                         hint="ce mois-ci"
+                         :href="route('requests.index')" />
+            <x-stat-tile variant="stacked" icon="pending_actions" tone="tertiary"
+                         :value="$pendingCount" label="Demandes en attente"
                          :hint="$remainingRequests === null ? 'Lecture sans limite' : $remainingRequests.' lisibles ce mois'"
                          :href="route('requests.index', ['status' => 'sent'])" />
-            <x-stat-tile label="Prestations terminées" :value="$counts['completed'] ?? 0" tone="primary"
-                         :href="route('requests.index', ['status' => 'completed'])" />
-            {{-- L'abonnement paie la plateforme : il a sa place parmi les
-                 chiffres du prestataire, pas seulement dans un bandeau
-                 d'alerte qui ne paraît qu'à sept jours de l'échéance. --}}
-            <x-stat-tile label="Abonnement" :value="$abonnement[0]" :tone="$abonnement[2]" texte
-                         :hint="$abonnement[1]" :href="route('provider.subscription.show')" />
+            <x-stat-tile variant="stacked" icon="handyman" tone="secondary"
+                         :value="$counts['in_progress'] ?? 0" label="Prestations en cours"
+                         :href="route('requests.index', ['status' => 'in_progress'])" />
+            <x-stat-tile variant="stacked" icon="star" tone="tertiary"
+                         :value="$profile?->rating_count ? number_format((float) $profile->rating_avg, 1, ',', ' ') : '—'"
+                         label="Note moyenne"
+                         :hint="$profile?->rating_count ? $profile->rating_count.' '.Str::plural('avis', $profile->rating_count) : 'Pas encore d\'avis'"
+                         :href="route('provider.reviews.index')" />
         </x-stat-grid>
 
-        <div class="mt-8 flex flex-wrap items-center justify-between gap-3">
-            <h3 class="font-headline-md text-headline-md text-on-surface">Demandes récentes</h3>
-            <a href="{{ route('requests.index') }}" class="flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container">
-                Voir tout
-                <span class="material-symbols-outlined text-base">arrow_forward</span>
-            </a>
-        </div>
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-12">
+            {{-- Arbitrer sans ouvrir la demande : c'est le geste que le
+                 prestataire répète le plus, et il demandait deux navigations. --}}
+            <section class="flex flex-col gap-4 md:col-span-8">
+                <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+                    <h3 class="font-headline-md text-headline-md text-on-background">Demandes à traiter</h3>
+                    @if ($pendingRequests->isNotEmpty())
+                        <span class="rounded-full bg-error-container px-2 py-1 font-label-numeric text-label-numeric text-on-error-container">{{ $pendingCount }}</span>
+                    @endif
+                </div>
 
-        @if ($requests->isEmpty())
-            <x-empty-state
-                class="mt-4"
-                title="Vous n'avez pas encore reçu de demande."
-                description="Publiez vos services et soignez votre profil : les clients vous trouveront par la recherche."
-                action-label="Publier un service"
-                :action-href="route('provider.services.create')"
-            />
-        @else
-            {{-- Le titre de la demande ne se tronque plus : c'est par lui
-                 que le prestataire reconnaît ce qu'on lui demande. La pastille
-                 le suit sur la même ligne quand la place le permet, passe
-                 dessous sinon. --}}
-            <x-list-panel class="mt-4">
-                @foreach ($requests as $serviceRequest)
-                    <x-list-row>
-                        <a href="{{ route('requests.show', $serviceRequest) }}" class="group flex items-start gap-4">
-                            <div class="min-w-0 flex-1">
-                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                    <p class="font-medium text-on-surface group-hover:text-primary">
-                                        {{ $serviceRequest->service?->title ?? 'Demande directe' }}
-                                    </p>
-                                    <x-status-badge :status="$serviceRequest->status" />
-                                </div>
-                                <p class="mt-0.5 text-sm text-on-surface-variant">
-                                    {{ $serviceRequest->client?->clientProfile?->fullName() ?? $serviceRequest->client?->name }}
-                                    · <span class="font-label-numeric">{{ $serviceRequest->created_at->format('d/m/Y') }}</span>
+                @forelse ($pendingRequests as $demande)
+                    @php $client = $demande->client; @endphp
+                    <article class="flex flex-col items-start justify-between gap-4 rounded-xl border border-outline-variant bg-surface p-4 md:flex-row md:items-center">
+                        <a href="{{ route('requests.show', $demande) }}" class="group flex min-w-0 items-start gap-4">
+                            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-container font-semibold text-on-surface-variant">
+                                {{ Str::upper(Str::substr($client?->clientProfile?->fullName() ?? $client?->name ?? '?', 0, 2)) }}
+                            </span>
+                            <div class="min-w-0">
+                                <h4 class="font-headline-md text-lg text-on-background group-hover:text-primary">
+                                    {{ $client?->clientProfile?->fullName() ?? $client?->name }}
+                                </h4>
+                                <p class="font-body-md text-body-md text-on-surface-variant">
+                                    {{ $demande->service?->category?->name }}@if ($demande->service) — {{ $demande->service->title }}@endif
                                 </p>
+                                <div class="mt-1 flex flex-wrap items-center gap-1 text-sm text-on-surface-variant">
+                                    @if ($demande->preferred_date)
+                                        <span class="material-symbols-outlined text-[16px]" aria-hidden="true">schedule</span>
+                                        <span class="font-label-numeric">{{ $demande->preferred_date->translatedFormat('j F') }}</span>
+                                        <span class="mx-1 text-outline-variant" aria-hidden="true">•</span>
+                                    @endif
+                                    <span class="font-label-numeric">{{ $demande->created_at->diffForHumans() }}</span>
+                                </div>
                             </div>
-                            <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-0.5" aria-hidden="true">chevron_right</span>
                         </a>
-                    </x-list-row>
-                @endforeach
-            </x-list-panel>
-        @endif
+
+                        <div class="mt-2 flex w-full gap-2 md:mt-0 md:w-auto">
+                            <form action="{{ route('requests.refuse', $demande) }}" method="POST" class="flex-1 md:flex-none"
+                                  onsubmit="return confirm('Refuser cette demande ?');">
+                                @csrf
+                                <button type="submit" class="w-full rounded-full border border-outline px-4 py-2 font-button-text text-button-text text-on-surface-variant transition-colors hover:bg-surface-container-low">
+                                    Refuser
+                                </button>
+                            </form>
+                            <form action="{{ route('requests.accept', $demande) }}" method="POST" class="flex-1 md:flex-none">
+                                @csrf
+                                <button type="submit" class="w-full rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
+                                    Accepter
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <x-empty-state title="Aucune demande en attente."
+                                   description="Les demandes qui vous parviennent s'affichent ici, avec de quoi les accepter ou les refuser." />
+                @endforelse
+            </section>
+
+            <section class="flex flex-col gap-4 md:col-span-4">
+                <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+                    <h3 class="font-headline-md text-headline-md text-on-background">Vos services</h3>
+                    @if ($masques > 0)
+                        <span class="font-label-numeric text-label-numeric text-tertiary">{{ $masques }} masqué{{ $masques > 1 ? 's' : '' }}</span>
+                    @elseif ($auPlafond)
+                        <span class="font-label-numeric text-label-numeric text-tertiary">Plafond atteint</span>
+                    @endif
+                </div>
+
+                @forelse ($services as $service)
+                    <a href="{{ route('provider.services.edit', $service) }}"
+                       class="group flex items-center justify-between rounded-lg border border-outline-variant bg-surface p-3 transition-colors hover:bg-surface-container-low">
+                        <div class="flex min-w-0 items-center gap-3">
+                            <span class="shrink-0 rounded-md bg-secondary-container p-2 text-on-secondary-container">
+                                <x-category-icon :icon="$service->category?->icon" />
+                            </span>
+                            <div class="min-w-0">
+                                <h4 class="truncate font-body-md text-body-md font-semibold text-on-background">{{ $service->title }}</h4>
+                                <span class="font-label-numeric text-label-numeric text-primary">
+                                    @if ($service->price_amount)
+                                        À partir de {{ number_format((float) $service->price_amount, 0, ',', ' ') }} FCFA
+                                    @else
+                                        Prix à convenir
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined shrink-0 text-outline transition-colors group-hover:text-primary" aria-hidden="true">chevron_right</span>
+                    </a>
+                @empty
+                    <p class="text-sm text-on-surface-variant">Vous n'avez pas encore publié de service.</p>
+                @endforelse
+
+                <a href="{{ route('provider.services.index') }}" class="mt-2 flex items-center gap-1 font-button-text text-button-text text-primary hover:underline">
+                    Gérer mes services
+                    <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
+                </a>
+            </section>
+        </div>
     </div>
 </x-app-layout>

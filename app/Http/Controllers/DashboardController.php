@@ -79,8 +79,24 @@ class DashboardController extends Controller
         // là, rien à l'écran ne dit quel palier il paie ni ce qu'il lui reste.
         $subscription = $user->activeSubscription();
 
+        // Les maquettes posent l'arbitrage sur le tableau de bord : accepter
+        // ou refuser sans ouvrir la demande. Et la liste des services, que le
+        // prestataire consulte plus souvent qu'il ne la modifie.
+        $pendingRequests = $user->receivedRequests()
+            ->whereIn('status', [ServiceRequest::STATUS_SENT, ServiceRequest::STATUS_VIEWED])
+            ->with(['client.clientProfile', 'service.category'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('dashboard.provider', [
             'requests' => $requests,
+            'pendingRequests' => $pendingRequests,
+            'requestsThisMonth' => $user->receivedRequests()
+                ->where('created_at', '>=', now()->startOfMonth())
+                ->count(),
+            'services' => $user->services()->with('category')->latest()->take(4)->get(),
+            'profile' => $user->providerProfile,
             'counts' => $counts,
             'servicesCount' => $servicesCount,
             'activeServicesCount' => $activeServicesCount,

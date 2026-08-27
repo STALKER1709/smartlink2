@@ -9,12 +9,45 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Historique des transactions" />
+        <x-page-header title="Historique des transactions" subtitle="Vos règlements d'abonnement SmartLink.">
+            @if ($payments->isNotEmpty())
+                <x-slot name="action">
+                    <a href="{{ route('provider.transactions.export') }}"
+                       class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container md:w-auto">
+                        <span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+                        Exporter (CSV)
+                    </a>
+                </x-slot>
+            @endif
+        </x-page-header>
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+        {{-- Les maquettes posent « Gains ce mois » et « En attente » en tête :
+             deux chiffres d'une place de marché qui encaisse pour le
+             prestataire. SmartLink ne voit jamais un franc de la prestation.
+             Les trois chiffres portent donc sur ce qui existe — les
+             abonnements réglés. --}}
+        <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+            @foreach ([
+                ['Réglé cette année', $regleCetteAnnee, 'trending_up', 'text-primary'],
+                ['En attente', $enAttente, 'pending', 'text-tertiary'],
+                ['Total versé à SmartLink', $totalVerse, 'receipt_long', 'text-on-surface-variant'],
+            ] as [$libelle, $montant, $icone, $teinte])
+                <div class="flex h-[120px] flex-col justify-between rounded-xl border border-outline-variant bg-surface p-4">
+                    <div class="flex items-center justify-between gap-2 text-on-surface-variant">
+                        <span class="text-sm">{{ $libelle }}</span>
+                        <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icone }}</span>
+                    </div>
+                    <div class="font-label-numeric text-[28px] font-bold text-on-background">
+                        {{ number_format($montant, 0, ',', ' ') }} FCFA
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
         <p class="prose-measure mb-6 text-body-md text-on-surface-variant">
-            Vos paiements d'abonnement SmartLink. SmartLink ne traite aucun paiement entre vous et vos clients.
+            SmartLink ne traite aucun paiement entre vous et vos clients : seul votre abonnement transite ici.
         </p>
 
         @if ($payments->isEmpty())
