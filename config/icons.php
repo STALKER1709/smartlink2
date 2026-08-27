@@ -33,6 +33,7 @@ return [
         'directions_car',
         'diversity_3',
         'download',
+        'edit_note',
         'electric_bolt',
         'expand_more',
         'format_paint',

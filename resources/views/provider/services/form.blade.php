@@ -39,10 +39,20 @@
                     .finally(() => { this.working = false; });
             },
         }"
-        class="mb-6 rounded-lg border border-outline-variant bg-secondary-container/20 p-4"
+        class="mb-8 rounded-xl border border-outline-variant/30 bg-secondary-container p-gutter"
     >
-        <label for="ai-notes" class="block text-sm font-medium text-on-secondary-container">{{ __('ui.draft.label') }}</label>
-        <p class="mt-1 text-xs text-on-secondary-container">{{ __('ui.draft.hint') }}</p>
+        {{-- Le bandeau de rédaction assistée des maquettes : plein plutôt
+             qu'en teinte légère, avec son pictogramme et son titre. C'est ce
+             que paie un prestataire Pro ; il ne doit pas se lire comme une
+             note de bas de page. --}}
+        <div class="mb-2 flex items-start gap-3">
+            <span class="material-symbols-outlined mt-1 text-on-secondary-container" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">edit_note</span>
+            <div>
+                <h2 class="font-headline-md text-headline-md text-on-secondary-container">{{ __('ui.draft.label') }}</h2>
+                <p class="mt-1 text-sm text-on-secondary-container/80">{{ __('ui.draft.hint') }}</p>
+            </div>
+        </div>
+        <label for="ai-notes" class="sr-only">{{ __('ui.draft.label') }}</label>
 
         <textarea
             id="ai-notes"
@@ -50,21 +60,25 @@
             rows="2"
             maxlength="600"
             placeholder="{{ __('ui.draft.placeholder') }}"
-            class="mt-3 block w-full rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary"
+            class="mt-4 block w-full resize-none rounded-lg border border-outline-variant bg-surface p-3 font-body-md text-body-md text-on-surface outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
         ></textarea>
 
-        <div class="mt-3 flex flex-wrap items-center gap-3">
+        <div class="mt-4 flex flex-wrap items-center justify-end gap-3">
             <button
                 type="button"
                 @click="propose"
                 :disabled="working || ! notes.trim()"
-                class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex items-center gap-2 rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary shadow-sm transition-all hover:bg-primary-container active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">auto_awesome</span>
                 <span x-show="! working">{{ __('ui.draft.submit') }}</span>
                 <span x-show="working" x-cloak>{{ __('ui.draft.working') }}</span>
             </button>
 
-            <p x-show="applied" x-cloak class="text-sm text-secondary">{{ __('ui.draft.applied') }}</p>
+        </div>
+
+        <div class="mt-2 flex flex-wrap justify-end gap-3">
+            <p x-show="applied" x-cloak class="text-sm text-on-secondary-container">{{ __('ui.draft.applied') }}</p>
             <p x-show="error" x-cloak x-text="error" class="text-sm text-error"></p>
         </div>
     </div>

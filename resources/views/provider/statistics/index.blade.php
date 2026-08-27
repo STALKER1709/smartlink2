@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header :title="__('ui.stats.title')" />
+        <x-page-header :title="__('ui.stats.title')"
+                       :subtitle="__('Aperçu de vos performances sur les :days derniers jours.', ['days' => $stats['period_days']])" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-6">
@@ -8,18 +9,37 @@
         @if ($stats['requests_total'] === 0)
             <p class="text-on-surface-variant">{{ __('ui.stats.no_data') }}</p>
         @else
-            {{-- Les quatre chiffres qui comptent --}}
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {{-- Les quatre chiffres qui comptent, à la forme des maquettes :
+                 pictogramme dans une pastille, libellé, valeur, et une puce de
+                 tendance quand la période précédente permet de comparer. --}}
+            <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 @foreach ([
-                    ['label' => __('ui.stats.requests_total'), 'value' => $stats['requests_total'], 'hint' => __('ui.stats.requests_recent', ['days' => $stats['period_days']]).' : '.$stats['requests_recent']],
-                    ['label' => __('ui.stats.acceptance_rate'), 'value' => $stats['acceptance_rate'] === null ? __('ui.stats.not_enough') : $stats['acceptance_rate'].' %', 'hint' => __('ui.stats.acceptance_hint')],
-                    ['label' => __('ui.stats.completion_rate'), 'value' => $stats['completion_rate'] === null ? __('ui.stats.not_enough') : $stats['completion_rate'].' %', 'hint' => __('ui.stats.completion_hint')],
-                    ['label' => __('ui.stats.response_time'), 'value' => $stats['median_response_hours'] === null ? __('ui.stats.not_enough') : $stats['median_response_hours'].' '.__('ui.stats.hours'), 'hint' => __('ui.stats.response_hint')],
-                ] as $tile)
-                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
-                        <p class="text-xs uppercase tracking-wide text-on-surface-variant">{{ $tile['label'] }}</p>
-                        <p class="mt-1 font-label-numeric text-2xl text-on-surface">{{ $tile['value'] }}</p>
-                        <p class="mt-1 text-xs text-on-surface-variant">{{ $tile['hint'] }}</p>
+                    ['mail', __('ui.stats.requests_total'), $stats['requests_total'], __('ui.stats.requests_recent', ['days' => $stats['period_days']]).' : '.$stats['requests_recent'], $stats['trends']['requests_recent'] ?? null],
+                    ['check_circle', __('ui.stats.acceptance_rate'), $stats['acceptance_rate'] === null ? __('ui.stats.not_enough') : $stats['acceptance_rate'].' %', __('ui.stats.acceptance_hint'), null],
+                    ['done_all', __('ui.stats.completion_rate'), $stats['completion_rate'] === null ? __('ui.stats.not_enough') : $stats['completion_rate'].' %', __('ui.stats.completion_hint'), null],
+                    ['schedule', __('ui.stats.response_time'), $stats['median_response_hours'] === null ? __('ui.stats.not_enough') : $stats['median_response_hours'].' '.__('ui.stats.hours'), __('ui.stats.response_hint'), null],
+                ] as [$icone, $libelle, $valeur, $indice, $tendance])
+                    <div class="flex flex-col items-start justify-between gap-4 rounded-xl border border-outline-variant bg-surface p-4 transition-colors hover:border-primary md:p-6">
+                        <span class="rounded-full bg-surface-container-high p-2">
+                            <span class="material-symbols-outlined text-on-surface-variant" aria-hidden="true">{{ $icone }}</span>
+                        </span>
+
+                        <div>
+                            <p class="mb-1 font-body-md text-body-md text-on-surface-variant">{{ $libelle }}</p>
+                            <p class="font-headline-xl font-label-numeric text-headline-xl text-on-background">{{ $valeur }}</p>
+                            <p class="mt-1 text-xs text-on-surface-variant">{{ $indice }}</p>
+                        </div>
+
+                        @if ($tendance !== null)
+                            <span @class([
+                                'flex items-center gap-1 rounded px-2 py-1',
+                                'bg-secondary-container/30 text-primary' => $tendance >= 0,
+                                'bg-error-container/30 text-error' => $tendance < 0,
+                            ])>
+                                <span class="material-symbols-outlined text-[14px]" aria-hidden="true">{{ $tendance >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                                <span class="font-label-numeric text-[12px]">{{ $tendance > 0 ? '+' : '' }}{{ $tendance }} %</span>
+                            </span>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -59,7 +79,9 @@
                             <div class="flex items-center gap-3">
                                 <span class="w-12 shrink-0 font-label-numeric text-sm text-on-surface-variant">{{ $rating }} ★</span>
                                 <div class="flex-1 h-2 rounded-full bg-surface-container overflow-hidden">
-                                    <div class="h-full rounded-full bg-[#fbbc04]" style="width: {{ $count > 0 ? max($share, 2) : 0 }}%"></div>
+                                    {{-- L'or de Google (#fbbc04) traînait ici : dans un monde vert et
+                                         crème, une couleur qui n'appartient à aucun jeton se voit. --}}
+                                    <div class="h-full rounded-full bg-primary" style="width: {{ $count > 0 ? max($share, 2) : 0 }}%"></div>
                                 </div>
                                 <span class="w-10 text-right font-label-numeric text-sm text-on-surface-variant">{{ $count }}</span>
                             </div>

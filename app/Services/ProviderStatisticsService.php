@@ -62,6 +62,39 @@ class ProviderStatisticsService
 
             'top_services' => $this->topServices($provider),
             'services_active' => $provider->services()->active()->count(),
+
+            // Les maquettes affichent une tendance à côté de chaque chiffre :
+            // un pourcentage seul ne dit pas si l'on progresse. La comparaison
+            // porte sur la période précédente de même durée.
+            'trends' => $this->trends($provider, $days),
+        ];
+    }
+
+    /**
+     * Variation par rapport à la période précédente de même durée, en points
+     * de pourcentage arrondis. `null` quand la période précédente est vide :
+     * passer de zéro à trois n'est pas « +300 % », c'est un début.
+     *
+     * @return array<string, int|null>
+     */
+    private function trends(User $provider, int $days): array
+    {
+        $finPrecedente = now()->subDays($days)->startOfDay();
+        $debutPrecedente = now()->subDays($days * 2)->startOfDay();
+
+        $recu = fn ($depuis, $jusqua = null) => ServiceRequest::query()
+            ->where('provider_id', $provider->id)
+            ->where('created_at', '>=', $depuis)
+            ->when($jusqua !== null, fn ($q) => $q->where('created_at', '<', $jusqua))
+            ->count();
+
+        $courant = $recu($finPrecedente);
+        $precedent = $recu($debutPrecedente, $finPrecedente);
+
+        return [
+            'requests_recent' => $precedent > 0
+                ? (int) round(($courant - $precedent) / $precedent * 100)
+                : null,
         ];
     }
 

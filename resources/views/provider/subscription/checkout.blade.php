@@ -3,18 +3,30 @@
         <x-page-header :title="__('ui.subscription.checkout_title', ['plan' => $plan->name()])" :back="route('provider.subscription.show')" back-label="Mon abonnement" />
     </x-slot>
 
-    <div class="max-w-xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
-        <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
-
-            <div class="flex items-baseline justify-between border-b border-outline-variant pb-4">
-                <div>
-                    <p class="font-semibold text-on-surface">{{ $plan->name() }}</p>
-                    <p class="text-sm text-on-surface-variant">{{ $plan->tagline() }}</p>
+    <div class="mx-auto flex w-full max-w-md flex-col gap-8 px-margin-mobile py-8 md:px-margin-desktop">
+        {{-- La carte de récapitulatif des maquettes : ce qu'on achète, pour
+             combien de temps, et le total détaché par un filet. --}}
+        <section class="flex flex-col gap-4 rounded-xl border border-outline-variant bg-surface p-6">
+            <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0">
+                    <h2 class="mb-1 font-headline-lg text-headline-lg text-on-surface">Abonnement {{ $plan->name() }}</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        {{ __('Accès complet pour :days jours', ['days' => config('subscription.cycle_days')]) }}
+                    </p>
                 </div>
-                <p class="font-label-numeric text-2xl text-on-surface">{{ $plan->formattedPrice() }}</p>
+                <span class="shrink-0 rounded-full bg-secondary-container p-2 text-on-secondary-container">
+                    <span class="material-symbols-outlined" aria-hidden="true">verified</span>
+                </span>
             </div>
 
-            <p class="mt-4 text-sm text-on-surface-variant">
+            <div class="mt-2 flex items-center justify-between border-t border-outline-variant pt-4">
+                <span class="font-body-lg text-body-lg text-on-surface">Total à payer</span>
+                <span class="font-label-numeric text-xl text-primary">{{ $plan->formattedPrice() }}</span>
+            </div>
+        </section>
+
+        <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
+            <p class="text-sm text-on-surface-variant">
                 @if ($subscription && $subscription->ends_at->isFuture())
                     {{ __('ui.subscription.extend_note', ['days' => config('subscription.cycle_days')]) }}
                 @else
