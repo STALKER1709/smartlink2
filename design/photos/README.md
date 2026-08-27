@@ -63,6 +63,28 @@ générée qu'elle remplace.
   chaque fichier dans `SOURCES.md` à côté : le jour où quelqu'un la demande,
   personne ne s'en souviendra.
 
+## Sept propositions Wikimedia Commons, à relire
+
+`config/imagery.php` porte sept entrées pointant vers des fichiers de Wikimedia
+Commons — plomberie, électricité, coiffure, couture, maçonnerie, mécanique,
+vente de vivres. Ce sont des **propositions, pas un choix** : leurs titres
+viennent de l'index de Commons, donc les fichiers existent, mais personne ne
+les a regardés et leurs mentions d'auteur sont vides.
+
+```bash
+php artisan images:credits    # relève auteur et licence sur l'API de Commons
+# coller le bloc rendu dans config/imagery.php
+php artisan images:check      # vérifie que tout répond et que rien ne manque
+```
+
+Tant qu'une entrée n'a pas d'auteur **et** de licence, elle ne s'affiche pas —
+même avec `REMOTE_IMAGES=true`. Ouvrez les sept pages source, regardez les
+photos, gardez celles qui vous conviennent.
+
+Sept métiers sur trente et un : une grille où sept vignettes sont
+photographiques et vingt-quatre dessinées se lit comme un défaut. Complétez la
+table, ou laissez le commutateur à faux.
+
 ## La photo de métier
 
 `config/imagery.php` porte une photographie par métier — celle qui paraît sur

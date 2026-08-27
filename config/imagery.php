@@ -66,15 +66,34 @@ return [
     /*
     | Une entrée par métier, indexée par le nom de la catégorie tel qu'il est
     | en base.
+    |
+    | ⚠️ Les sept entrées remplies sont des propositions, pas un choix.
+    | Leurs fichiers existent — leur titre vient de l'index de Wikimedia
+    | Commons — mais personne ne les a regardés, et leur auteur comme leur
+    | licence restent à null. `php artisan images:credits` va les chercher sur
+    | l'API de Commons et rend le bloc complété ; `php artisan images:check`
+    | refuse de laisser passer une entrée sans mention. C'est pour cela que
+    | REMOTE_IMAGES reste à faux : ouvrez les sept pages source, regardez les
+    | photos, complétez les mentions, puis décidez.
     */
     'categories' => [
         'Aide à domicile' => null,
         'Animation & DJ' => null,
         'Carrelage' => null,
         'Climatisation & réfrigération' => null,
-        'Coiffure' => null,
+        'Coiffure' => [
+            'url' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Hairdresser_in_Cameroon.jpg?width=1200',
+            'auteur' => null,
+            'licence' => null,
+            'source' => 'https://commons.wikimedia.org/wiki/File:Hairdresser_in_Cameroon.jpg',
+        ],
         'Cours particuliers' => null,
-        'Couture & stylisme' => null,
+        'Couture & stylisme' => [
+            'url' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Seemstress_Sewing_In_Ghana_Africa.jpg?width=1200',
+            'auteur' => null,
+            'licence' => null,
+            'source' => 'https://commons.wikimedia.org/wiki/File:Seemstress_Sewing_In_Ghana_Africa.jpg',
+        ],
         'Déménagement' => null,
         'Garde d\'enfants' => null,
         'Gardiennage' => null,
@@ -86,19 +105,44 @@ return [
         'Location de véhicules' => null,
         'Maquillage & ongles' => null,
         'Massage & soins' => null,
-        'Maçonnerie' => null,
+        'Maçonnerie' => [
+            'url' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Mason_on_the_scaffold_in_Accra.jpg?width=1200',
+            'auteur' => null,
+            'licence' => null,
+            'source' => 'https://commons.wikimedia.org/wiki/File:Mason_on_the_scaffold_in_Accra.jpg',
+        ],
         'Menuiserie' => null,
         'Moto-taxi' => null,
-        'Mécanique auto & moto' => null,
+        'Mécanique auto & moto' => [
+            'url' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Ghana_Mechanic_Working.jpg?width=1200',
+            'auteur' => null,
+            'licence' => null,
+            'source' => 'https://commons.wikimedia.org/wiki/File:Ghana_Mechanic_Working.jpg',
+        ],
         'Ménage' => null,
         'Peinture' => null,
         'Photographie & vidéo' => null,
-        'Plomberie' => null,
+        'Plomberie' => [
+            'url' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Plumber_at_work.jpg?width=1200',
+            'auteur' => null,
+            'licence' => null,
+            'source' => 'https://commons.wikimedia.org/wiki/File:Plumber_at_work.jpg',
+        ],
         'Réparation téléphone' => null,
         'Soudure & ferronnerie' => null,
         'Traiteur & cuisine' => null,
-        'Vente de vivres' => null,
-        'Électricité' => null,
+        'Vente de vivres' => [
+            'url' => 'https://commons.wikimedia.org/wiki/Special:FilePath/March%C3%A9_de_Bonamoussadi_%C3%A0_Douala.jpg?width=1200',
+            'auteur' => null,
+            'licence' => null,
+            'source' => 'https://commons.wikimedia.org/wiki/File:March%C3%A9_de_Bonamoussadi_%C3%A0_Douala.jpg',
+        ],
+        'Électricité' => [
+            'url' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Electrician_Working.jpg?width=1200',
+            'auteur' => null,
+            'licence' => null,
+            'source' => 'https://commons.wikimedia.org/wiki/File:Electrician_Working.jpg',
+        ],
     ],
 
 ];

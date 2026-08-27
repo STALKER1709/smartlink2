@@ -158,7 +158,7 @@ if (! function_exists('image_photo')) {
      * Renvoie toujours null quand `REMOTE_IMAGES` est à faux : les vues gardent
      * alors leur illustration dessinée sans avoir à connaître le réglage.
      *
-     * @return array{url: string, credit: ?string, source: ?string}|null
+     * @return array{url: string, credit: string, source: ?string}|null
      */
     function image_photo(?array $entree): ?array
     {
@@ -184,9 +184,18 @@ if (! function_exists('image_photo')) {
         $auteur = $entree['auteur'] ?? null;
         $licence = $entree['licence'] ?? null;
 
+        // Pas de mention, pas d'affichage. La règle est tenue ici et non par un
+        // seul test : une entrée incomplète peut être déclarée — c'est le cas
+        // des propositions à relire — et le commutateur, lui, s'actionne d'un
+        // mot. Sans ce garde-fou, une photo d'un auteur qu'on ne nomme pas
+        // partirait en ligne sur un simple `REMOTE_IMAGES=true`.
+        if (! is_string($auteur) || $auteur === '' || ! is_string($licence) || $licence === '') {
+            return null;
+        }
+
         return [
             'url' => $url,
-            'credit' => $auteur === null ? null : trim($auteur.($licence === null ? '' : ' — '.$licence)),
+            'credit' => trim($auteur.' — '.$licence),
             'source' => $entree['source'] ?? null,
         ];
     }
@@ -199,7 +208,7 @@ if (! function_exists('image_categorie')) {
      * La table est indexée par le nom de la catégorie tel qu'il est en base.
      * Une catégorie absente n'est pas une erreur : elle garde son illustration.
      *
-     * @return array{url: string, credit: ?string, source: ?string}|null
+     * @return array{url: string, credit: string, source: ?string}|null
      */
     function image_categorie(?string $nomCategorie): ?array
     {

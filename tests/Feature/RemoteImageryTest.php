@@ -82,19 +82,23 @@ class RemoteImageryTest extends TestCase
         $this->assertNull(image_categorie(null));
     }
 
-    public function test_every_declared_photo_carries_its_author_and_licence(): void
+    public function test_a_photo_without_a_credit_is_never_displayed(): void
     {
-        $entrees = collect(config('imagery.categories', []))
-            ->put('cta', config('imagery.cta'))
-            ->filter(fn ($entree) => is_array($entree) && ! empty($entree['url']));
+        // La règle est tenue par le code, pas seulement par ce test : une
+        // entrée incomplète peut exister — les propositions à relire en sont —
+        // et le commutateur s'actionne d'un mot. Sans ce garde-fou, une photo
+        // dont l'auteur n'est pas nommé partirait en ligne sur un simple
+        // REMOTE_IMAGES=true.
+        config()->set('imagery.enabled', true);
 
-        $incompletes = $entrees
-            ->filter(fn ($entree) => empty($entree['auteur']) || empty($entree['licence']))
-            ->keys()
-            ->all();
+        config()->set('imagery.categories.Plomberie', ['url' => 'https://exemple.test/x.jpg']);
+        $this->assertNull(image_categorie('Plomberie'));
 
-        $this->assertSame([], $incompletes,
-            'Photographies sans mention d\'auteur ou de licence : '.implode(', ', $incompletes));
+        config()->set('imagery.categories.Plomberie', ['url' => 'https://exemple.test/x.jpg', 'auteur' => 'Nom']);
+        $this->assertNull(image_categorie('Plomberie'), 'Une licence manquante suffit à retenir la photo.');
+
+        config()->set('imagery.categories.Plomberie', $this->photo);
+        $this->assertNotNull(image_categorie('Plomberie'));
     }
 
     public function test_the_check_command_refuses_a_photo_without_a_credit(): void
