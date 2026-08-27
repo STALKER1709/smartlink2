@@ -63,13 +63,20 @@ générée qu'elle remplace.
   chaque fichier dans `SOURCES.md` à côté : le jour où quelqu'un la demande,
   personne ne s'en souviendra.
 
-## Sept propositions Wikimedia Commons, à relire
+## Vingt-trois propositions Wikimedia Commons, à relire
 
-`config/imagery.php` porte sept entrées pointant vers des fichiers de Wikimedia
-Commons — plomberie, électricité, coiffure, couture, maçonnerie, mécanique,
-vente de vivres. Ce sont des **propositions, pas un choix** : leurs titres
-viennent de l'index de Commons, donc les fichiers existent, mais personne ne
-les a regardés et leurs mentions d'auteur sont vides.
+`config/imagery.php` porte vingt-trois entrées de métier et le bandeau d'appel
+aux prestataires, tous pointant vers des fichiers de Wikimedia Commons. Ce sont
+des **propositions, pas un choix** : leurs titres viennent de l'index de
+Commons, donc les fichiers existent, mais personne ne les a regardés et leurs
+mentions d'auteur sont vides.
+
+Une bonne part vient de *Wiki Loves Africa* : le marché de Bonamoussadi et la
+rue du marché Mboppi à Douala, une coiffeuse au Cameroun, un maçon sur un
+échafaudage à Accra, une couturière au Ghana, un mécanicien ghanéen, un
+moto-taxi à Accra, un poseur de panneaux solaires au Nigeria. C'était la
+difficulté : les fonds libres sont massivement européens, et un plombier de
+cuisine berlinoise dessert une place de marché camerounaise.
 
 ```bash
 php artisan images:credits    # relève auteur et licence sur l'API de Commons
@@ -81,9 +88,12 @@ Tant qu'une entrée n'a pas d'auteur **et** de licence, elle ne s'affiche pas �
 même avec `REMOTE_IMAGES=true`. Ouvrez les sept pages source, regardez les
 photos, gardez celles qui vous conviennent.
 
-Sept métiers sur trente et un : une grille où sept vignettes sont
-photographiques et vingt-quatre dessinées se lit comme un défaut. Complétez la
-table, ou laissez le commutateur à faux.
+Vingt-trois métiers sur trente et un. Les huit derniers — aide à domicile,
+animation & DJ, carrelage, déménagement, gardiennage, installation TV &
+antenne, location de véhicules, réparation téléphone — n'ont rendu que des
+pages de catégorie et des logos de marque ; ils gardent leur illustration
+dessinée. Le mélange se voit : à vous de juger s'il passe, de compléter les
+huit, ou de laisser le commutateur à faux.
 
 ## La photo de métier
 
