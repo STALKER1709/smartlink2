@@ -21,6 +21,7 @@
             $menuCompte->push(['route' => 'dashboard', 'libelle' => __('Tableau de bord')]);
             $menuCompte->push(['route' => 'client.profile.edit', 'libelle' => __('Mon profil client')]);
             $menuCompte->push(['route' => 'favorites.index', 'libelle' => 'Mes favoris']);
+            $menuCompte->push(['route' => 'disputes.index', 'libelle' => 'Mes signalements']);
         } elseif ($utilisateur->isProvider()) {
             $menuCompte->push(['route' => 'provider.profile.edit', 'libelle' => __('Mon profil prestataire')]);
 
@@ -31,6 +32,7 @@
             $menuCompte->push(['route' => 'provider.subscription.show', 'libelle' => __('ui.nav.subscription')]);
             $menuCompte->push(['route' => 'provider.reviews.index', 'libelle' => 'Mes avis']);
             $menuCompte->push(['route' => 'provider.transactions.index', 'libelle' => 'Mes transactions']);
+            $menuCompte->push(['route' => 'disputes.index', 'libelle' => 'Mes signalements']);
         } else {
             $menuCompte->push(['route' => 'requests.index', 'libelle' => __('Demandes')]);
         }

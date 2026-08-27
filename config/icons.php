@@ -38,6 +38,7 @@ return [
         'electric_bolt',
         'expand_more',
         'favorite',
+        'flag',
         'format_paint',
         'forum',
         'foundation',

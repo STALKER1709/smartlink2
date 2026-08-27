@@ -184,6 +184,16 @@
                         @endforeach
                     </ol>
                 </div>
+
+                {{-- Signaler ne s'offre que si le litige peut être reçu :
+                     la demande engagée, et pas déjà un signalement ouvert. --}}
+                @can('create', [\App\Models\Dispute::class, $serviceRequest])
+                    <a href="{{ route('disputes.create', $serviceRequest) }}"
+                       class="inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-error">
+                        <span class="material-symbols-outlined text-base" aria-hidden="true">flag</span>
+                        Signaler un problème sur cette demande
+                    </a>
+                @endcan
             </div>
 
             <!-- Conversation -->

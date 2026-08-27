@@ -84,6 +84,13 @@
                     <span class="ml-1 inline-flex items-center justify-center rounded-full bg-tertiary px-2 py-0.5 font-label-numeric text-xs font-bold text-white">{{ $stats['moderation_pending'] }}</span>
                 @endif
             </a>
+            <a href="{{ route('admin.disputes.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                Litiges
+                @php $litiges = \App\Models\Dispute::query()->open()->count(); @endphp
+                @if ($litiges > 0)
+                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-error px-2 py-0.5 font-label-numeric text-xs font-bold text-on-error">{{ $litiges }}</span>
+                @endif
+            </a>
             <a href="{{ route('admin.verifications.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 @php $pendingCount = \App\Models\ProviderProfile::whereNotNull('id_card_path')->where('id_card_verified', false)->count(); @endphp
                 Vérifications

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DisputeController as AdminDisputeController;
 use App\Http\Controllers\Admin\ModerationController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\ProviderVerificationController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DisputeController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
@@ -109,6 +111,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])->name('conversations.messages.store');
 
+    Route::get('/litiges', [DisputeController::class, 'index'])->name('disputes.index');
+    Route::get('/demandes/{serviceRequest}/litige', [DisputeController::class, 'create'])->name('disputes.create');
+    Route::post('/demandes/{serviceRequest}/litige', [DisputeController::class, 'store'])->name('disputes.store');
+
     Route::get('/favoris', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/favoris/{providerProfile}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
@@ -191,6 +197,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
 
     Route::get('/moderation', [ModerationController::class, 'index'])->name('moderation.index');
+    Route::get('/litiges', [AdminDisputeController::class, 'index'])->name('disputes.index');
+    Route::post('/litiges/{dispute}/trancher', [AdminDisputeController::class, 'resolve'])->name('disputes.resolve');
     Route::post('/moderation/{report}/dismiss', [ModerationController::class, 'dismiss'])->name('moderation.dismiss');
 
     Route::get('/verifications', [ProviderVerificationController::class, 'index'])->name('verifications.index');
