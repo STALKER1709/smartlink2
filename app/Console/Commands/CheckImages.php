@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Support\HttpDiagnostic;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -24,6 +25,9 @@ class CheckImages extends Command
         {--mentions-seules : Vérifie les mentions d\'auteur, sans toucher au réseau}';
 
     protected $description = 'Vérifie les photographies déclarées dans config/imagery.php';
+
+    /** Le message brut du dernier échec réseau, pour en déduire un conseil. */
+    private ?string $dernierEchec = null;
 
     public function handle(): int
     {
@@ -72,6 +76,14 @@ class CheckImages extends Command
             $this->line('  <fg=red>KO</>   '.$intitule.' — '.implode(', ', $problemes));
         }
 
+        $conseil = $this->dernierEchec === null ? null : HttpDiagnostic::conseil($this->dernierEchec);
+
+        if ($conseil !== null) {
+            $this->newLine();
+            $this->warn('Pourquoi les échecs réseau :');
+            $this->line($conseil);
+        }
+
         $this->newLine();
 
         if ($defauts > 0) {
@@ -99,7 +111,9 @@ class CheckImages extends Command
         try {
             $reponse = Http::timeout(15)->withHeaders(['User-Agent' => 'SmartLink/1.0'])->get($url);
         } catch (\Throwable $e) {
-            return 'injoignable ('.class_basename($e).')';
+            $this->dernierEchec = $e->getMessage();
+
+            return HttpDiagnostic::resume($e, 100);
         }
 
         if (! $reponse->successful()) {

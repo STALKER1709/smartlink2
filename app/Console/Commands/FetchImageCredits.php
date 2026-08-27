@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Support\HttpDiagnostic;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -23,6 +24,9 @@ class FetchImageCredits extends Command
     protected $signature = 'images:credits';
 
     protected $description = 'Complète les mentions d\'auteur des photos Wikimedia Commons de config/imagery.php';
+
+    /** Le message brut du dernier échec réseau, pour en déduire un conseil. */
+    private ?string $dernierEchec = null;
 
     public function handle(): int
     {
@@ -66,6 +70,8 @@ class FetchImageCredits extends Command
             $lignes[$categorie] = $this->bloc($categorie, array_merge($entree, $mentions));
         }
 
+        $this->conseil();
+
         ksort($lignes);
 
         $this->newLine();
@@ -76,6 +82,22 @@ class FetchImageCredits extends Command
         $this->line('Puis : php artisan images:check, et REMOTE_IMAGES=true quand les photos vous conviennent.');
 
         return $echecs > 0 ? self::FAILURE : self::SUCCESS;
+    }
+
+    /**
+     * Le remède, quand l'échec réseau en a un connu.
+     */
+    private function conseil(): void
+    {
+        $conseil = $this->dernierEchec === null ? null : HttpDiagnostic::conseil($this->dernierEchec);
+
+        if ($conseil === null) {
+            return;
+        }
+
+        $this->newLine();
+        $this->warn('Pourquoi ces échecs :');
+        $this->line($conseil);
     }
 
     /**
@@ -108,7 +130,9 @@ class FetchImageCredits extends Command
                     'iiprop' => 'extmetadata',
                 ]);
         } catch (\Throwable $e) {
-            return [null, 'Commons injoignable ('.class_basename($e).')'];
+            $this->dernierEchec = $e->getMessage();
+
+            return [null, HttpDiagnostic::resume($e)];
         }
 
         if (! $reponse->successful()) {
