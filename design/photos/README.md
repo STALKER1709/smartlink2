@@ -27,6 +27,26 @@ Les clés reconnues sont celles de `database/seeders/data/images/categories.json
 `php artisan photos:import --list` les affiche, avec le nombre de photos déjà
 déposées pour chacune.
 
+## Aller les chercher
+
+Le script `fetch.mjs` interroge les banques d'images libres, nomme les fichiers
+comme il faut et inscrit leur provenance dans `SOURCES.md` :
+
+```bash
+node design/photos/fetch.mjs --liste            # les clés et les requêtes employées
+node design/photos/fetch.mjs --simuler          # ce qu'il prendrait, sans rien écrire
+node design/photos/fetch.mjs --par 2            # 2 photos par catégorie, via Openverse
+PEXELS_API_KEY=xxx node design/photos/fetch.mjs --source pexels --par 3
+node design/photos/fetch.mjs --cle coiffure --par 4   # une seule catégorie
+```
+
+Il ne retélécharge jamais ce qui est déjà là : relancé, il complète. Les
+banques retenues et leurs licences sont dans `SOURCES.md`.
+
+**Relisez les images une par une avant d'importer.** Une requête rend toujours
+quelques hors-sujet, et une photo hors sujet vaut moins que l'illustration
+générée qu'elle remplace.
+
 ## Ce qu'il faut viser
 
 - **Format paysage**, 1200 × 900 px au minimum. Les vignettes sont carrées et
