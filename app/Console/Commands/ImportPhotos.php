@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Service;
 use App\Models\ServiceImage;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -21,7 +22,8 @@ class ImportPhotos extends Command
 {
     protected $signature = 'photos:import
         {--list : Affiche les catégories reconnues et ce qui a déjà été déposé}
-        {--dry-run : Montre ce qui serait fait, sans rien écrire}';
+        {--dry-run : Montre ce qui serait fait, sans rien écrire}
+        {--config : Écrit le bloc à coller dans config/imagery.php, mentions comprises}';
 
     protected $description = 'Importe les photographies de design/photos vers les services';
 
@@ -118,7 +120,77 @@ class ImportPhotos extends Command
             ? $poses.' photographie(s) seraient posées. Relancez sans --dry-run.'
             : $poses.' photographie(s) posées sur le disque « '.media_disk().' ».');
 
+        if ($this->option('config')) {
+            $this->bloqueDeConfiguration($fichiers, $table);
+        }
+
         return self::SUCCESS;
+    }
+
+    /**
+     * Le bloc prêt à coller dans `config/imagery.php`.
+     *
+     * Trente-et-une entrées à saisir à la main, c'est trente-et-une occasions
+     * d'oublier une mention d'auteur — et `images:check` refuse une URL qui
+     * n'en porte pas. La provenance vient de `design/photos/sources.json`,
+     * écrit par `fetch.mjs` au moment du téléchargement.
+     *
+     * Le fichier n'est pas réécrit : il est versionné, et une commande qui
+     * remplace un fichier versionné sans qu'on l'ait relu est un mauvais
+     * service.
+     *
+     * @param  Collection<int, string>  $fichiers
+     * @param  array<string, string>  $table
+     */
+    private function bloqueDeConfiguration($fichiers, array $table): void
+    {
+        $provenances = [];
+        $chemin = base_path('design/photos/sources.json');
+
+        if (is_file($chemin)) {
+            $provenances = json_decode((string) File::get($chemin), true) ?: [];
+        }
+
+        $lignes = [];
+
+        foreach ($fichiers as $fichier) {
+            $nom = basename($fichier);
+            $cle = Str::of($nom)->beforeLast('.')->beforeLast('-')->toString();
+            $provenance = $provenances[$nom] ?? [];
+
+            foreach (array_keys($table, $cle, true) as $categorie) {
+                $lignes[$categorie] = sprintf(
+                    "        '%s' => [\n            'url' => 'services/photos/%s',\n            'auteur' => %s,\n            'licence' => %s,\n            'source' => %s,\n        ],",
+                    str_replace("'", "\\'", $categorie),
+                    $nom,
+                    $this->php($provenance['auteur'] ?? null),
+                    $this->php($provenance['licence'] ?? null),
+                    $this->php($provenance['source'] ?? null),
+                );
+            }
+        }
+
+        if ($lignes === []) {
+            return;
+        }
+
+        ksort($lignes);
+
+        $this->newLine();
+        $this->line('À coller dans la table « categories » de config/imagery.php :');
+        $this->newLine();
+        $this->line(implode("\n", $lignes));
+        $this->newLine();
+        $this->line('Puis : REMOTE_IMAGES=true et php artisan images:check.');
+
+        if ($provenances === []) {
+            $this->warn('design/photos/sources.json est absent : les mentions d\'auteur sont à remplir à la main.');
+        }
+    }
+
+    private function php(?string $valeur): string
+    {
+        return $valeur === null || $valeur === '' ? 'null' : "'".str_replace("'", "\\'", $valeur)."'";
     }
 
     private function lister(string $dossier, array $table): int

@@ -1,7 +1,7 @@
 @props(['service', 'size' => 'text-3xl'])
 
 @php
-    $photoDistante = image_categorie($service->category?->name);
+    $photoMetier = image_categorie($service->category?->name);
 @endphp
 
 {{--
@@ -15,21 +15,22 @@
     découvre la couche du dessous.
 
     Trois couches, de la moins bonne à la meilleure : le pictogramme du
-    métier, puis la photographie distante du métier quand `REMOTE_IMAGES`
-    l'autorise, puis la photo déposée par le prestataire. Chacune s'efface si
+    métier, puis la photographie du métier quand `config/imagery.php` en
+    déclare une, puis la photo déposée par le prestataire. Chacune s'efface si
     elle échoue, ce qui laisse toujours quelque chose à voir — et jamais le
     rectangle gris cassé du navigateur.
 
-    `referrerpolicy` : l'hôte extérieur n'a pas à savoir de quelle page de
-    SmartLink vient la requête.
+    `referrerpolicy` : quand la photo vient d'un hôte extérieur, il n'a pas à
+    savoir de quelle page de SmartLink part la requête.
 --}}
 <div {{ $attributes->merge(['class' => 'relative h-full w-full']) }}>
     <div class="absolute inset-0 flex items-center justify-center">
         <x-category-icon :icon="$service->category?->icon" class="{{ $size }} text-primary/30" />
     </div>
 
-    @if ($photoDistante)
-        <img src="{{ $photoDistante }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+    @if ($photoMetier)
+        <img src="{{ $photoMetier['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+             @if ($photoMetier['credit']) title="Photo : {{ $photoMetier['credit'] }}" @endif
              class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()">
     @endif
 

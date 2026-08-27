@@ -2,96 +2,103 @@
 
 /*
 |--------------------------------------------------------------------------
-| Photographies distantes
+| Photographies
 |--------------------------------------------------------------------------
 |
-| Les illustrations de couverture sont dessinées (database/seeders/data/images)
-| et les photographies déposées passent par design/photos. Ce fichier ouvre une
-| troisième voie : des images servies par un hôte extérieur, sans rien stocker.
+| Une photographie par métier, employée sur la vignette de chaque service et
+| sur les cartes de métier de l'accueil. Elle passe devant l'illustration
+| dessinée (database/seeders/data/images), qui reste le repli.
 |
-| ⚠️ Ce sont des images de calage, pas des images de production.
+| ── La forme d'une entrée ───────────────────────────────────────────────────
 |
-| LoremFlickr sert des photos Flickr sous licence Creative Commons, choisies
-| sur mots-clés. C\'est ce qui permet à la vignette d\'un service de plomberie
-| de montrer de la plomberie plutôt qu\'un paysage au hasard. En contrepartie :
-| la licence CC de la photo servie exige presque toujours une attribution que
-| la page ne porte pas, l\'hôte peut changer la photo d\'un jour à l\'autre, et
-| chaque affichage envoie l\'adresse IP du visiteur à un tiers.
+|     'Plomberie' => [
+|         'url' => 'services/photos/plomberie-1.jpg',   // sur le disque de médias
+|         'auteur' => 'Équipe SmartLink',
+|         'licence' => 'Propriété SmartLink',
+|         'source' => null,
+|     ],
 |
-| Avant une mise en production réelle, remplacez chaque URL par une image dont
-| vous détenez les droits — ou posez REMOTE_IMAGES=false et laissez les
-| illustrations dessinées reprendre la main. Elles sont toujours là : chaque
-| balise `img` distante s\'efface d\'elle-même si l\'hôte ne répond pas et
-| découvre ce qui existait avant. Voir design/photos/SOURCES.md pour les
-| banques exploitables en production.
+|     'Coiffure' => [
+|         'url' => 'https://exemple.test/coiffure.jpg', // ou une URL complète
+|         'auteur' => 'Prénom Nom',
+|         'licence' => 'CC BY 4.0',
+|         'source' => 'https://exemple.test/page-de-la-photo',
+|     ],
 |
-| La table est indexée par le **nom** de la catégorie, tel qu\'il est en base.
-| Volontairement séparée de celle des illustrations dessinées
-| (database/seeders/data/images/categories.json) : celle-là ne couvre que les
-| quatorze métiers pour lesquels un motif a été dessiné, et s\'y adosser
-| laissait onze catégories sans photo au milieu d\'une grille qui en avait.
-| Une catégorie absente d\'ici garde son pictogramme, ce n\'est pas une erreur.
+| `url` accepte les deux formes : commençant par http, elle est employée telle
+| quelle ; sinon elle est résolue sur le disque de médias, comme le reste des
+| fichiers déposés. Une entrée à `null` n'est pas une erreur — le métier garde
+| son illustration dessinée.
+|
+| ── Les trois autres champs ne sont pas décoratifs ──────────────────────────
+|
+| Presque toutes les licences libres exigent que le nom de l'auteur et la
+| licence soient portés par la page qui affiche la photo. Ils sont donc rendus
+| dans les mentions légales, et `php artisan images:check` refuse une entrée
+| qui porte une URL sans eux. Une photo dont vous détenez les droits se déclare
+| de la même façon, avec votre propre nom.
+|
+| ── Comment remplir cette table ─────────────────────────────────────────────
+|
+|     node design/photos/fetch.mjs --par 1     # rapatrie et note la provenance
+|     php artisan photos:import                # dépose sur le disque de médias
+|     php artisan images:check                 # vérifie URL et mentions
+|
+| Voir design/photos/README.md et design/photos/SOURCES.md.
 |
 */
-
-$photo = fn (string $motsCles, int $verrou, int $largeur = 800, int $hauteur = 600) => sprintf(
-    'https://loremflickr.com/%d/%d/%s/all?lock=%d',
-    $largeur,
-    $hauteur,
-    $motsCles,
-    $verrou
-);
 
 return [
 
     /*
-    | Le commutateur général. À faux, aucune requête ne part vers un tiers et
-    | l'application retrouve exactement le rendu qu'elle avait sans ce fichier.
+    | Le commutateur général. À faux, aucune photographie distante n'est
+    | demandée et l'application affiche ses illustrations dessinées. Il reste
+    | à faux tant que la table n'est pas remplie : une page à moitié
+    | photographique et à moitié dessinée se lit comme un défaut.
     */
-    'enabled' => filter_var(env_or('REMOTE_IMAGES', true), FILTER_VALIDATE_BOOLEAN),
+    'enabled' => filter_var(env_or('REMOTE_IMAGES', false), FILTER_VALIDATE_BOOLEAN),
 
     /*
-    | Le bandeau d'appel aux prestataires. Le verrou (`lock`) fige la photo :
-    | sans lui, l'hôte en sert une différente à chaque chargement et la page
-    | change de visage entre deux visites.
+    | Le fond du bandeau d'appel aux prestataires, sur l'accueil.
     */
-    'cta' => env_or('REMOTE_IMAGE_CTA', $photo('artisan,workshop,africa', 4101, 1600, 900)),
+    'cta' => null,
 
     /*
-    | Une photo par métier.
+    | Une entrée par métier, indexée par le nom de la catégorie tel qu'il est
+    | en base.
     */
     'categories' => [
-        'Aide à domicile' => $photo('home,care,elderly', 2229),
-        'Animation & DJ' => $photo('dj,party,music', 2230),
-        'Carrelage' => $photo('tiles,tiling,floor', 2231),
-        'Climatisation & réfrigération' => $photo('air,conditioner,technician', 2201),
-        'Coiffure' => $photo('hair,salon,braids', 2202),
-        'Cours particuliers' => $photo('tutoring,student,books', 2203),
-        'Couture & stylisme' => $photo('tailor,sewing,fabric', 2204),
-        'Déménagement' => $photo('moving,boxes,truck', 2205),
-        'Garde d\'enfants' => $photo('children,playing,care', 2206),
-        'Gardiennage' => $photo('security,guard,gate', 2207),
-        'Générateur & énergie solaire' => $photo('solar,panels,generator', 2208),
-        'Informatique & réparation' => $photo('computer,repair', 2209),
-        'Installation TV & antenne' => $photo('satellite,dish,antenna', 2210),
-        'Jardinage' => $photo('gardening,plants,tools', 2211),
-        'Livraison d\'eau' => $photo('water,delivery,jerrycan', 2212),
-        'Location de véhicules' => $photo('car,rental,keys', 2213),
-        'Maquillage & ongles' => $photo('makeup,manicure,nails', 2214),
-        'Massage & soins' => $photo('massage,spa,wellness', 2215),
-        'Maçonnerie' => $photo('mason,bricks,construction', 2216),
-        'Menuiserie' => $photo('carpenter,woodworking', 2217),
-        'Moto-taxi' => $photo('motorcycle,taxi,street', 2218),
-        'Mécanique auto & moto' => $photo('mechanic,garage,engine', 2219),
-        'Ménage' => $photo('cleaning,housework', 2220),
-        'Peinture' => $photo('house,painter,paint', 2221),
-        'Photographie & vidéo' => $photo('photographer,camera', 2222),
-        'Plomberie' => $photo('plumber,pipes', 2223),
-        'Réparation téléphone' => $photo('phone,repair,smartphone', 2224),
-        'Soudure & ferronnerie' => $photo('welding,metalwork', 2225),
-        'Traiteur & cuisine' => $photo('african,food,cooking', 2226),
-        'Vente de vivres' => $photo('market,vegetables,africa', 2227),
-        'Électricité' => $photo('electrician,wiring', 2228),
+        'Aide à domicile' => null,
+        'Animation & DJ' => null,
+        'Carrelage' => null,
+        'Climatisation & réfrigération' => null,
+        'Coiffure' => null,
+        'Cours particuliers' => null,
+        'Couture & stylisme' => null,
+        'Déménagement' => null,
+        'Garde d\'enfants' => null,
+        'Gardiennage' => null,
+        'Générateur & énergie solaire' => null,
+        'Informatique & réparation' => null,
+        'Installation TV & antenne' => null,
+        'Jardinage' => null,
+        'Livraison d\'eau' => null,
+        'Location de véhicules' => null,
+        'Maquillage & ongles' => null,
+        'Massage & soins' => null,
+        'Maçonnerie' => null,
+        'Menuiserie' => null,
+        'Moto-taxi' => null,
+        'Mécanique auto & moto' => null,
+        'Ménage' => null,
+        'Peinture' => null,
+        'Photographie & vidéo' => null,
+        'Plomberie' => null,
+        'Réparation téléphone' => null,
+        'Soudure & ferronnerie' => null,
+        'Traiteur & cuisine' => null,
+        'Vente de vivres' => null,
+        'Électricité' => null,
     ],
 
 ];

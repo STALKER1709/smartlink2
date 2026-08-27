@@ -165,6 +165,22 @@ async function telecharger(url) {
 async function inscrireProvenance(lignes) {
     if (lignes.length === 0) return;
 
+    // La même provenance, deux fois : SOURCES.md pour qu'un humain la lise, et
+    // sources.json pour que `php artisan photos:import --config` en fasse les
+    // mentions d'auteur que réclament les licences. Écrire l'une sans l'autre,
+    // c'est perdre le crédit au moment où il devient obligatoire.
+    const cheminJson = join(ICI, 'sources.json');
+    let connues = {};
+    try {
+        connues = JSON.parse(await readFile(cheminJson, 'utf8'));
+    } catch { /* premier passage */ }
+
+    for (const l of lignes) {
+        connues[l.fichier] = { auteur: l.auteur, licence: l.licence, source: l.page, banque: l.source };
+    }
+
+    await writeFile(cheminJson, JSON.stringify(connues, null, 4) + '\n', 'utf8');
+
     const chemin = join(ICI, 'SOURCES.md');
     const actuel = await readFile(chemin, 'utf8');
     const mois = new Date().toISOString().slice(0, 7);

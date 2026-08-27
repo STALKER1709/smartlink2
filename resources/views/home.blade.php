@@ -56,8 +56,9 @@
 
                         <div @class(['relative w-full', 'h-24 bg-secondary-container/30' => (bool) $photo])>
                             @if ($photo)
-                                <img src="{{ $photo }}" alt="" loading="lazy" referrerpolicy="no-referrer"
-                                     class="h-full w-full object-cover transition-transform" onerror="this.remove()">
+                                <img src="{{ $photo['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+                                     @if ($photo['credit']) title="Photo : {{ $photo['credit'] }}" @endif
+                                     class="h-full w-full object-cover" onerror="this.remove()">
                             @endif
 
                             <span @class([
@@ -230,7 +231,7 @@
 
     {{-- ══ Appel aux prestataires ══ --}}
     @guest
-        @php($photoCta = image_distante('cta'))
+        @php($photoCta = image_photo(config('imagery.cta')))
 
         {{-- La photo passe *derrière* le fond sombre, jamais à sa place : si
              l'hôte ne répond pas, le bandeau reste exactement ce qu'il était.
@@ -242,7 +243,8 @@
                      voile à 60 % ne laissait plus rien voir du tout — le
                      bandeau était noir et la requête vers l'hôte, payée pour
                      rien. --}}
-                <img src="{{ $photoCta }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+                <img src="{{ $photoCta['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+                     @if ($photoCta['credit']) title="Photo : {{ $photoCta['credit'] }}" @endif
                      class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()">
                 <div class="absolute inset-0 bg-inverse-surface/75" aria-hidden="true"></div>
             @endif

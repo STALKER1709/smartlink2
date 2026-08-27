@@ -29,14 +29,13 @@ d'images — une vignette trouvée dans Google n'est accompagnée d'aucun droit.
 Termes relevés le 2026-08-27 à partir de la documentation publique de ces
 plateformes. Ils changent ; la page de licence fait foi, pas ce tableau.
 
-## Les images distantes ne sont pas dans ce tableau
+## Deux fichiers, une seule provenance
 
-`config/imagery.php` sert des photos depuis LoremFlickr, qui puise dans les
-fonds Creative Commons de Flickr. Elles n'ont volontairement pas de ligne ici :
-leur provenance change avec l'humeur de l'hôte, et aucune ne porte
-l'attribution que sa licence réclame. C'est acceptable pour caler une maquette,
-pas pour une mise en ligne. Le jour de la production, `REMOTE_IMAGES=false` et
-les fichiers de ce dossier prennent le relais — chacun avec sa ligne.
+`fetch.mjs` écrit la ligne du tableau ci-dessus **et** `sources.json`, sa forme
+lisible par machine. `php artisan photos:import --config` s'en sert pour
+composer les mentions d'auteur de `config/imagery.php`, que les mentions
+légales affichent et que `php artisan images:check` refuse de laisser vides.
+Une photo déposée à la main se note aux deux endroits, ou sa mention manquera.
 
 ## La réserve qui compte plus que la licence
 

@@ -113,4 +113,16 @@
             décision de retrait est prise par une personne.
         </p>
     </section>
+
+    <section id="credits">
+        <h2 class="font-headline-lg text-headline-lg text-on-surface">7. Crédits photographiques</h2>
+
+        <p class="mt-4">
+            Les images qui illustrent les métiers et les pages publiques sont listées ci-dessous avec
+            leur auteur et leur licence. Les photographies déposées par les prestataires sur leurs
+            propres annonces restent leur responsabilité.
+        </p>
+
+        @include('partials.credits-photos')
+    </section>
 </x-legal-page>

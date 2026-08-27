@@ -63,22 +63,34 @@ générée qu'elle remplace.
   chaque fichier dans `SOURCES.md` à côté : le jour où quelqu'un la demande,
   personne ne s'en souviendra.
 
-## La troisième voie : les images distantes
+## La photo de métier
 
-`config/imagery.php` sert des photographies depuis un hôte extérieur, sans
-rien déposer ici. C'est du **calage**, pas de la production : la licence
-Creative Commons des photos servies exige une attribution que les pages ne
-portent pas, l'hôte peut changer l'image d'un jour à l'autre, et chaque
-affichage envoie l'adresse IP du visiteur à un tiers.
+`config/imagery.php` porte une photographie par métier — celle qui paraît sur
+la vignette de chaque service et sur les cartes de l'accueil. Le chemin
+complet, du téléchargement à l'affichage :
 
 ```bash
-REMOTE_IMAGES=false   # coupe tout : les illustrations dessinées reprennent la main
+node design/photos/fetch.mjs --par 1     # rapatrie, et note la provenance
+php artisan photos:import --config       # dépose, puis écrit le bloc à coller
+# coller le bloc dans config/imagery.php, poser REMOTE_IMAGES=true
+php artisan images:check                 # vérifie les URL et les mentions
 ```
 
+Chaque entrée porte l'auteur et la licence en plus de l'URL, et ce n'est pas
+décoratif : les mentions sont rendues dans les mentions légales, et
+`images:check` refuse une URL qui n'en a pas. Presque toutes les licences
+libres l'exigent ; une photo dont vous détenez les droits se déclare de la
+même façon, à votre nom.
+
+`REMOTE_IMAGES=false` coupe tout : les illustrations dessinées reprennent la
+main. C'est la valeur par défaut, tant que la table est vide — une page à
+moitié photographique et à moitié dessinée se lit comme un défaut.
+
 Les trois couches se recouvrent dans cet ordre, de la moins bonne à la
-meilleure : pictogramme du métier, photographie distante, photographie
-déposée ici. Chacune s'efface d'elle-même si elle échoue, ce qui laisse
-toujours quelque chose à voir.
+meilleure : illustration dessinée du métier, photographie de métier,
+photographie déposée par le prestataire sur son propre service. Chacune
+s'efface d'elle-même si elle échoue, ce qui laisse toujours quelque chose à
+voir.
 
 ## Ce que la commande ne fait pas
 

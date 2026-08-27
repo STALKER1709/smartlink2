@@ -147,40 +147,66 @@ if (! function_exists('env_or')) {
     }
 }
 
-if (! function_exists('image_distante')) {
+if (! function_exists('image_photo')) {
     /**
-     * URL d'un bandeau servi par un hôte extérieur, ou null.
+     * Une entrée de `config/imagery.php`, normalisée, ou null.
+     *
+     * L'entrée est passée telle quelle plutôt que désignée par une clé
+     * pointée : un nom de métier peut contenir un point, et `data_get` l'aurait
+     * alors coupé en deux niveaux inexistants.
      *
      * Renvoie toujours null quand `REMOTE_IMAGES` est à faux : les vues gardent
-     * alors leur repli sans avoir à connaître le réglage.
+     * alors leur illustration dessinée sans avoir à connaître le réglage.
+     *
+     * @return array{url: string, credit: ?string, source: ?string}|null
      */
-    function image_distante(string $cle): ?string
+    function image_photo(?array $entree): ?array
     {
         if (! config('imagery.enabled')) {
             return null;
         }
 
-        $url = config('imagery.'.$cle);
+        if (! is_array($entree) || ! is_string($entree['url'] ?? null) || $entree['url'] === '') {
+            return null;
+        }
 
-        return is_string($url) && $url !== '' ? $url : null;
+        // Les deux formes d'URL : complète, ou chemin sur le disque de médias.
+        // Sans cela, une photo rapatriée par `photos:import` aurait demandé une
+        // seconde table, et les deux auraient divergé.
+        $url = str_starts_with($entree['url'], 'http')
+            ? $entree['url']
+            : media_url($entree['url']);
+
+        if ($url === null) {
+            return null;
+        }
+
+        $auteur = $entree['auteur'] ?? null;
+        $licence = $entree['licence'] ?? null;
+
+        return [
+            'url' => $url,
+            'credit' => $auteur === null ? null : trim($auteur.($licence === null ? '' : ' — '.$licence)),
+            'source' => $entree['source'] ?? null,
+        ];
     }
 }
 
 if (! function_exists('image_categorie')) {
     /**
-     * URL de la photographie distante d'un métier, ou null.
+     * La photographie d'un métier, ou null.
      *
      * La table est indexée par le nom de la catégorie tel qu'il est en base.
-     * Une catégorie absente n'est pas une erreur : elle garde son pictogramme.
+     * Une catégorie absente n'est pas une erreur : elle garde son illustration.
+     *
+     * @return array{url: string, credit: ?string, source: ?string}|null
      */
-    function image_categorie(?string $nomCategorie): ?string
+    function image_categorie(?string $nomCategorie): ?array
     {
-        if ($nomCategorie === null || ! config('imagery.enabled')) {
+        if ($nomCategorie === null) {
             return null;
         }
 
-        $url = config('imagery.categories')[$nomCategorie] ?? null;
-
-        return is_string($url) && $url !== '' ? $url : null;
+        return image_photo(config('imagery.categories')[$nomCategorie] ?? null);
     }
 }
