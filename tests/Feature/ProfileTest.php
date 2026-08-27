@@ -29,6 +29,7 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'Test User',
+                'phone' => $user->phone,
                 'email' => 'test@example.com',
             ]);
 
@@ -51,6 +52,7 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'Test User',
+                'phone' => $user->phone,
                 'email' => $user->email,
             ]);
 
@@ -95,5 +97,76 @@ class ProfileTest extends TestCase
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_phone_number_can_be_updated(): void
+    {
+        $user = User::factory()->create(['phone' => '+237600000001']);
+
+        $this->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'phone' => '+237600000002',
+                'email' => $user->email,
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $this->assertSame('+237600000002', $user->refresh()->phone);
+    }
+
+    public function test_changing_the_phone_number_drops_its_verification(): void
+    {
+        // La coche de confiance porte sur un numéro précis. Sans cette remise
+        // à zéro elle survivait au changement, et désignait un téléphone que
+        // personne n'a jamais confirmé.
+        $user = User::factory()->create([
+            'phone' => '+237600000001',
+            'phone_verified_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'phone' => '+237600000002',
+                'email' => $user->email,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertNull($user->refresh()->phone_verified_at);
+    }
+
+    public function test_the_phone_number_of_another_account_is_refused(): void
+    {
+        // La colonne est unique en base : sans la règle de validation, le
+        // formulaire sortait en erreur de base de données plutôt qu'en message
+        // sous le champ.
+        $autre = User::factory()->create(['phone' => '+237600000009']);
+        $user = User::factory()->create(['phone' => '+237600000001']);
+
+        $this->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'phone' => $autre->phone,
+                'email' => $user->email,
+            ])
+            ->assertSessionHasErrors('phone');
+
+        $this->assertSame('+237600000001', $user->refresh()->phone);
+    }
+
+    public function test_keeping_its_own_phone_number_is_allowed(): void
+    {
+        $user = User::factory()->create(['phone' => '+237600000001']);
+
+        $this->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'Nom modifié',
+                'phone' => $user->phone,
+                'email' => $user->email,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('Nom modifié', $user->refresh()->name);
     }
 }

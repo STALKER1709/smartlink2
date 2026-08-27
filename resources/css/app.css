@@ -103,9 +103,18 @@
  * mobile.
  */
 @media (max-width: 767px) {
-    /* La barre d'onglets occupe le bas de l'écran sur mobile : la bulle de
-       l'assistant se pose au-dessus, et plus haut encore quand une barre
-       d'action de page s'y ajoute. */
+    /* La barre d'onglets occupe déjà le bas de l'écran : posée à `bottom-0`
+       comme elle, et sous elle dans l'ordre d'empilement, la barre d'action
+       disparaissait derrière — sur la fiche prestataire comme sur la fiche
+       service, « Envoyer une demande » n'existait plus dès qu'on avait
+       défilé de deux écrans. Elle se pose donc juste au-dessus, à la hauteur
+       que `main` réserve déjà (`pb-[4.75rem]`). */
+    .action-bar {
+        bottom: 4.75rem;
+    }
+
+    /* La bulle de l'assistant se pose au-dessus de la barre d'onglets, et plus
+       haut encore quand une barre d'action de page s'y ajoute. */
     .chat-fab {
         bottom: 5.25rem;
     }

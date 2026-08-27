@@ -1,173 +1,153 @@
 <x-app-layout>
     @php
+        $adresse = implode(', ', array_filter([$providerProfile->address, $providerProfile->quarter, $providerProfile->city]));
+        $aUneCarte = $providerProfile->latitude && $providerProfile->longitude;
+
         $aDesInfos = ! empty($providerProfile->service_areas)
             || ! empty($providerProfile->contact_methods)
-            || ! empty($providerProfile->opening_hours);
-        $adresse = implode(', ', array_filter([$providerProfile->address, $providerProfile->quarter, $providerProfile->city]));
+            || ! empty($providerProfile->opening_hours)
+            || $adresse !== '';
     @endphp
 
-    @if ($providerProfile->latitude && $providerProfile->longitude)
+    @if ($aUneCarte)
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     @endif
 
-    {{-- Bandeau d'identité : nom, confiance et action, immédiatement visibles.
-         Ils étaient auparavant noyés, l'action reléguée dans une colonne. --}}
-    <section class="border-b border-outline-variant bg-surface-container-low">
-        <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
-            <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
-                <div class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-surface-container-lowest">
+    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 pb-28 md:px-margin-desktop lg:pb-8">
+        {{--
+            L'identité au centre, comme la maquette : portrait, nom, métier,
+            note, gages de confiance, puis les deux actions. La fiche était
+            auparavant un bandeau à trois colonnes où l'action se rangeait à
+            droite — sur un téléphone elle tombait sous le pli, et c'est
+            pourtant la seule chose que le visiteur est venu faire.
+        --}}
+        <section class="relative flex flex-col items-center gap-4 text-center">
+            <x-favorite-button :provider-profile="$providerProfile" contour class="absolute right-0 top-0" />
+
+            <div class="relative">
+                <div class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-surface-container-lowest bg-surface-container shadow-sm sm:h-32 sm:w-32">
                     @if ($providerProfile->logo_path)
-                        <img src="{{ media_url($providerProfile->logo_path) }}" alt="{{ $providerProfile->business_name }}" class="h-full w-full object-cover">
+                        <img src="{{ media_url($providerProfile->logo_path) }}" alt="{{ $providerProfile->business_name }}"
+                             class="h-full w-full object-cover" onerror="this.remove()">
                     @else
-                        <span class="font-headline-lg text-2xl font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
+                        <span class="font-headline-lg text-4xl font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
                     @endif
                 </div>
 
-                <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <h1 class="font-headline-lg text-headline-lg text-on-surface">{{ $providerProfile->business_name }}</h1>
-                        @if ($providerProfile->is_verified)
-                            <span class="inline-flex items-center gap-1 rounded-full bg-primary-container/20 px-2.5 py-1 text-xs font-semibold text-primary" title="Pièce d'identité contrôlée par notre équipe">
-                                <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">verified</span>
-                                Vérifié
-                            </span>
-                        @endif
-                        <x-promoted-badge :profile="$providerProfile" />
-                    </div>
+                @if ($providerProfile->is_verified)
+                    <span class="absolute -bottom-1 -right-1 flex items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest p-1"
+                          title="Pièce d'identité contrôlée par notre équipe">
+                        <span class="material-symbols-outlined text-2xl text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="Prestataire vérifié">verified</span>
+                    </span>
+                @endif
+            </div>
 
-                    <p class="mt-1 text-sm text-on-surface-variant">
-                        {{ $providerProfile->category?->name }}
-                        @if ($providerProfile->city) · {{ $providerProfile->city }} @endif
-                    </p>
+            <div class="space-y-2">
+                <h1 class="font-headline-xl text-headline-xl text-on-surface">{{ $providerProfile->business_name }}</h1>
 
-                    {{-- Un point médian entre les deux : séparés par un simple
-                         écart, « Pas encore d'avis » et « 2 services » se
-                         lisaient comme une phrase à double espace. --}}
-                    <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                        @if ($providerProfile->rating_count)
-                            <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" />
-                        @else
-                            <span class="text-sm text-on-surface-variant">Pas encore d'avis</span>
-                        @endif
-                        <span aria-hidden="true" class="text-outline">·</span>
-                        <span class="font-label-numeric text-label-numeric text-on-surface-variant">
-                            {{ $services->total() }} {{ Str::plural('service', $services->total()) }}
+                <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-on-surface-variant">
+                    @if ($providerProfile->category)
+                        <span class="inline-flex items-center gap-1.5">
+                            <x-category-icon :icon="$providerProfile->category->icon" class="text-lg" aria-hidden="true" />
+                            {{ $providerProfile->category->name }}
                         </span>
-                    </div>
+                    @endif
+
+                    @if ($providerProfile->category && $providerProfile->city)
+                        <span aria-hidden="true" class="text-outline">•</span>
+                    @endif
+
+                    @if ($providerProfile->city)
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-lg" aria-hidden="true">location_on</span>
+                            {{ $providerProfile->city }}
+                        </span>
+                    @endif
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+                    @if ($providerProfile->rating_count)
+                        <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
+                    @else
+                        <span class="text-sm text-on-surface-variant">Pas encore d'avis</span>
+                    @endif
+                    <span aria-hidden="true" class="text-outline">·</span>
+                    <span class="font-label-numeric text-label-numeric text-on-surface-variant">
+                        {{ $services->total() }} {{ Str::plural('service', $services->total()) }}
+                    </span>
                 </div>
+            </div>
 
-                <div class="flex shrink-0 flex-col gap-2 sm:w-56">
-                    <div class="flex justify-end">
-                        <x-favorite-button :provider-profile="$providerProfile" />
-                    </div>
+            @if ($providerProfile->is_verified || $providerProfile->is_promoted)
+                <div class="flex flex-wrap justify-center gap-2">
+                    @if ($providerProfile->is_verified)
+                        <span class="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+                            <span class="material-symbols-outlined text-sm" aria-hidden="true">workspace_premium</span>
+                            Prestataire vérifié
+                        </span>
+                    @endif
+                    <x-promoted-badge :profile="$providerProfile" taille="md" />
+                </div>
+            @endif
 
+            {{-- Les deux actions à égalité de largeur, l'une pleine, l'autre
+                 bordée : la demande passe par la plateforme et laisse une
+                 trace, WhatsApp est direct. --}}
+            {{-- `items-start` : pour un visiteur non connecté, le bouton de
+                 demande porte deux lignes de mention sous lui. Sans cette
+                 règle, la rangée étirait le bouton WhatsApp à la hauteur de
+                 la colonne voisine — une pastille de 75 px à côté d'une de
+                 48 px. --}}
+            <div class="flex w-full flex-col gap-3 pt-2 sm:flex-row sm:items-start sm:justify-center">
+                <div class="sm:w-72">
                     @include('partials.request-action', [
                         'href' => route('requests.create', ['provider_id' => $providerProfile->user_id]),
-                        'label' => 'Contacter ce prestataire',
+                        'label' => 'Envoyer une demande',
+                        'icon' => 'mail',
                     ])
-
-                    @if ($providerProfile->whatsappUrl())
-                        <a href="{{ $providerProfile->whatsappUrl() }}" target="_blank" rel="noopener"
-                           class="inline-flex w-full items-center justify-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-3 font-button-text font-semibold text-on-surface transition-colors hover:border-primary/50">
-                            <svg class="h-4 w-4 fill-current text-[#25D366]" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                            WhatsApp
-                        </a>
-                    @endif
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <div class="mx-auto max-w-container px-margin-mobile py-8 pb-28 md:px-margin-desktop lg:pb-8">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div class="space-y-8 lg:col-span-2">
-                @if ($providerProfile->description)
-                    <section class="rounded-2xl border border-outline-variant bg-surface-container-lowest p-6">
-                        <h2 class="font-headline-md text-headline-md text-on-surface">À propos</h2>
-                        <p class="prose-measure mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $providerProfile->description }}</p>
-                    </section>
+                @if ($providerProfile->whatsappUrl())
+                    <a href="{{ $providerProfile->whatsappUrl() }}" target="_blank" rel="noopener"
+                       class="inline-flex items-center justify-center gap-2 rounded-full border border-primary bg-surface-container-lowest px-4 py-3 font-button-text font-semibold text-primary transition-colors hover:bg-surface-container-low sm:w-72">
+                        <svg class="h-4 w-4 fill-current text-[#25D366]" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp
+                    </a>
                 @endif
-
-                <section>
-                    <h2 class="font-headline-md text-headline-md text-on-surface">Services proposés</h2>
-
-                    @if ($services->isEmpty())
-                        <x-empty-state class="mt-4" title="Ce prestataire n'a pas encore publié de service." />
-                    @else
-                        <div class="mt-2 border-t border-outline-variant">
-                            @foreach ($services as $service)
-                                <x-service-card :service="$service" />
-                            @endforeach
-                        </div>
-
-                        <div class="mt-6">{{ $services->links() }}</div>
-                    @endif
-                </section>
-
-                <section>
-                    <div class="flex items-baseline justify-between gap-3">
-                        <h2 class="font-headline-md text-headline-md text-on-surface">Avis clients</h2>
-                        @if ($providerProfile->rating_count)
-                            <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" />
-                        @endif
-                    </div>
-
-                    @if ($reviews->isEmpty())
-                        <x-empty-state class="mt-4" title="Aucun avis pour le moment."
-                                       description="Les avis sont laissés par les clients après une prestation terminée." />
-                    @else
-                        <div class="mt-4 space-y-3">
-                            @foreach ($reviews as $review)
-                                <article class="rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
-                                    <div class="flex flex-wrap items-center justify-between gap-2">
-                                        <span class="font-semibold text-on-surface">
-                                            {{ $review->client?->clientProfile?->fullName() ?? $review->client?->name }}
-                                        </span>
-                                        <x-star-rating :rating="$review->rating" />
-                                    </div>
-                                    @if ($review->comment)
-                                        <p class="mt-2 leading-relaxed text-on-surface">{{ $review->comment }}</p>
-                                    @endif
-                                    <p class="mt-2 font-label-numeric text-xs text-on-surface-variant">{{ $review->created_at->format('d/m/Y') }}</p>
-                                </article>
-                            @endforeach
-                        </div>
-                    @endif
-                </section>
             </div>
 
-            <aside class="space-y-4">
-                @if ($adresse || ($providerProfile->latitude && $providerProfile->longitude))
-                    <section class="overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
-                        @if ($providerProfile->latitude && $providerProfile->longitude)
-                            <div id="provider-map-show" class="z-0 h-48 w-full"></div>
-                        @endif
-                        @if ($adresse)
-                            <p class="flex items-start gap-2 p-4 text-sm text-on-surface">
-                                <span class="material-symbols-outlined text-base text-on-surface-variant">location_on</span>
-                                {{ $adresse }}
-                            </p>
-                        @endif
-                    </section>
+            <p class="flex items-start gap-2 text-left text-xs leading-relaxed text-on-surface-variant sm:text-center">
+                <span class="material-symbols-outlined text-base text-primary" aria-hidden="true">shield</span>
+                SmartLink ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.
+            </p>
+        </section>
+
+        {{-- Tout ce qui décrit le prestataire tient dans une seule carte :
+             présentation, horaires, zones, contact, puis la carte
+             géographique. C'était auparavant une colonne latérale, invisible
+             sur téléphone tant qu'on n'avait pas dépassé toute la liste des
+             services. --}}
+        @if ($providerProfile->description || $aDesInfos || $aUneCarte)
+            <section class="space-y-6 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 sm:p-6">
+                @if ($providerProfile->description)
+                    <div>
+                        <h2 class="mb-3 flex items-center gap-2 font-headline-md text-headline-md text-on-surface">
+                            <span class="material-symbols-outlined text-primary" aria-hidden="true">info</span>
+                            À propos
+                        </h2>
+                        <p class="prose-measure whitespace-pre-line leading-relaxed text-on-surface-variant">{{ $providerProfile->description }}</p>
+                    </div>
                 @endif
 
                 @if ($aDesInfos)
-                    <section class="space-y-5 rounded-2xl border border-outline-variant bg-surface-container-lowest p-5">
-                        @if (! empty($providerProfile->service_areas))
-                            <div>
-                                <h3 class="text-sm font-semibold text-on-surface">Zones d'intervention</h3>
-                                <div class="mt-2 flex flex-wrap gap-1.5">
-                                    @foreach ($providerProfile->service_areas as $area)
-                                        <span class="rounded-full bg-surface-container px-2.5 py-1 text-xs text-on-surface-variant">{{ $area }}</span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         @if (! empty($providerProfile->opening_hours))
                             <div>
-                                <h3 class="text-sm font-semibold text-on-surface">Horaires</h3>
-                                <ul class="mt-2 space-y-1 text-sm text-on-surface-variant">
+                                <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
+                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">schedule</span>
+                                    Horaires
+                                </h3>
+                                <ul class="space-y-1 text-on-surface-variant">
                                     {{-- La clé est celle de la base et pouvait
                                          atteindre l'écran telle quelle :
                                          « Lundi_vendredi ». Elle est écrite
@@ -175,7 +155,7 @@
                                          forme — un jour ou une plage. --}}
                                     @foreach ($providerProfile->opening_hours as $day => $hours)
                                         @if ($hours)
-                                            <li class="flex justify-between gap-3">
+                                            <li class="flex justify-between gap-3 border-b border-outline-variant/30 pb-1">
                                                 <span>{{ Str::of($day)->replace('_', ' – ')->ucfirst() }}</span>
                                                 <span class="font-label-numeric text-on-surface">{{ $hours }}</span>
                                             </li>
@@ -185,10 +165,27 @@
                             </div>
                         @endif
 
+                        @if (! empty($providerProfile->service_areas))
+                            <div>
+                                <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
+                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">map</span>
+                                    Zones d'intervention
+                                </h3>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($providerProfile->service_areas as $area)
+                                        <span class="rounded-full bg-surface-container px-3 py-1 text-sm text-on-surface-variant">{{ $area }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
                         @if (! empty($providerProfile->contact_methods))
                             <div>
-                                <h3 class="text-sm font-semibold text-on-surface">Contact</h3>
-                                <ul class="mt-2 space-y-1 text-sm text-on-surface-variant">
+                                <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
+                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">call</span>
+                                    Contact
+                                </h3>
+                                <ul class="space-y-1 text-on-surface-variant">
                                     {{-- Deux formes coexistent en base : une
                                          liste de valeurs, écrite par le
                                          formulaire de profil, et un tableau
@@ -216,29 +213,129 @@
                                 </ul>
                             </div>
                         @endif
-                    </section>
+
+                        @if ($adresse)
+                            <div>
+                                <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
+                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">location_on</span>
+                                    Adresse
+                                </h3>
+                                <p class="text-on-surface-variant">{{ $adresse }}</p>
+                            </div>
+                        @endif
+                    </div>
                 @endif
 
-                <p class="flex items-start gap-2 rounded-xl border border-outline-variant bg-surface-container-low px-4 py-3 text-xs leading-relaxed text-on-surface-variant">
-                    <span class="material-symbols-outlined text-base text-primary">shield</span>
-                    SmartLink ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.
-                </p>
-            </aside>
-        </div>
+                @if ($aUneCarte)
+                    <div id="provider-map-show" class="z-0 h-48 w-full overflow-hidden rounded-xl border border-outline-variant md:h-64"></div>
+                @endif
+            </section>
+        @endif
+
+        <section>
+            <h2 class="mb-4 flex items-center gap-2 font-headline-lg text-headline-lg text-on-surface">
+                <span class="material-symbols-outlined text-primary" aria-hidden="true">home_repair_service</span>
+                Ses services
+            </h2>
+
+            @if ($services->isEmpty())
+                <x-empty-state title="Ce prestataire n'a pas encore publié de service." />
+            @else
+                {{--
+                    Une grille de vignettes, et non la rangée de liste
+                    `x-service-card` employée partout ailleurs. Deux raisons :
+                    la liste répète sous chaque ligne le nom du prestataire et
+                    sa coche de vérification — sur sa propre fiche, c'est la
+                    même information trois fois — et il y a ici quelques
+                    services, pas quinze résultats de recherche à parcourir.
+                --}}
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($services as $service)
+                        <a href="{{ route('services.show', $service) }}"
+                           class="group flex h-full flex-col justify-between rounded-xl border border-outline-variant bg-surface-container-lowest p-5 transition-colors hover:border-primary">
+                            <div>
+                                <div class="flex items-start justify-between gap-3">
+                                    <h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary">{{ $service->title }}</h3>
+                                    @unless ($service->is_available)
+                                        <span class="shrink-0 rounded-full bg-surface-container px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-on-surface-variant">
+                                            Indisponible
+                                        </span>
+                                    @endunless
+                                </div>
+
+                                @if ($service->description)
+                                    <p class="mt-2 line-clamp-2 text-on-surface-variant">{{ $service->description }}</p>
+                                @endif
+                            </div>
+
+                            <div class="mt-4 flex items-center justify-between gap-3 border-t border-outline-variant/50 pt-4">
+                                <span class="font-label-numeric text-label-numeric font-bold text-primary">
+                                    @if ($service->price_amount)
+                                        {{ number_format((float) $service->price_amount, 0, ',', ' ') }} FCFA
+                                        @if ($service->price_unit)
+                                            <span class="font-body-md text-sm font-normal text-on-surface-variant">/ {{ $service->price_unit }}</span>
+                                        @endif
+                                    @else
+                                        <span class="font-body-md text-sm font-normal text-on-surface-variant">Prix à convenir</span>
+                                    @endif
+                                </span>
+                                <span class="material-symbols-outlined text-primary" aria-hidden="true">arrow_forward</span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+
+                <div class="mt-6">{{ $services->links() }}</div>
+            @endif
+        </section>
+
+        <section>
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h2 class="flex items-center gap-2 font-headline-lg text-headline-lg text-on-surface">
+                    <span class="material-symbols-outlined text-primary" aria-hidden="true">reviews</span>
+                    Avis clients
+                </h2>
+                @if ($providerProfile->rating_count)
+                    <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" />
+                @endif
+            </div>
+
+            @if ($reviews->isEmpty())
+                <x-empty-state title="Aucun avis pour le moment."
+                               description="Les avis sont laissés par les clients après une prestation terminée." />
+            @else
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    @foreach ($reviews as $review)
+                        <article class="rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="font-semibold text-on-surface">
+                                    {{ $review->client?->clientProfile?->fullName() ?? $review->client?->name }}
+                                </span>
+                                <x-star-rating :rating="$review->rating" :afficherNote="false" />
+                            </div>
+                            @if ($review->comment)
+                                <p class="mt-2 leading-relaxed text-on-surface">{{ $review->comment }}</p>
+                            @endif
+                            <p class="mt-2 font-label-numeric text-xs text-on-surface-variant">{{ $review->created_at->format('d/m/Y') }}</p>
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+        </section>
     </div>
 
     <div class="action-bar fixed inset-x-0 bottom-0 z-30 border-t border-outline-variant bg-surface-container-lowest/95 px-4 py-3 backdrop-blur lg:hidden">
         <div class="mx-auto max-w-container">
             @include('partials.request-action', [
                 'href' => route('requests.create', ['provider_id' => $providerProfile->user_id]),
-                'label' => 'Contacter ce prestataire',
-                'compactLabel' => 'Contacter',
+                'label' => 'Envoyer une demande',
+                'compactLabel' => 'Envoyer une demande',
                 'compact' => true,
             ])
         </div>
     </div>
 
-    @if ($providerProfile->latitude && $providerProfile->longitude)
+    @if ($aUneCarte)
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {

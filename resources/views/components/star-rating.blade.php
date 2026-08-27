@@ -40,13 +40,18 @@
                 <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' {{ $i <= $pleines ? 1 : 0 }};">star</span>
             @endfor
         </span>
-        {{-- `note` à faux quand la note est déjà écrite à côté : l'écran des
-             avis affichait « 4,0 » en gros puis « 4,0 (2 avis) » juste après. --}}
-        <span class="font-label-numeric text-label-numeric text-on-surface-variant">
-            @if ($afficherNote){{ $note }}@endif
-            @if (! is_null($count))
-                ({{ $count }} avis)
-            @endif
-        </span>
+        {{-- `afficherNote` à faux quand la note est déjà écrite à côté :
+             l'écran des avis affichait « 4,0 » en gros puis « 4,0 (2 avis) »
+             juste après. Les deux à faux — cinq étoiles et rien d'autre —, la
+             balise ne s'écrit pas du tout : vide, elle laissait quand même
+             l'écart de la rangée après la dernière étoile. --}}
+        @if ($afficherNote || ! is_null($count))
+            <span class="font-label-numeric text-label-numeric text-on-surface-variant">
+                @if ($afficherNote){{ $note }}@endif
+                @if (! is_null($count))
+                    ({{ $count }} avis)
+                @endif
+            </span>
+        @endif
     </span>
 @endif
