@@ -21,6 +21,7 @@ use App\Http\Controllers\LegalController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\ProfileController;
@@ -110,6 +111,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/conversations', [ConversationController::class, 'index'])->name('conversations.index');
     Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])->name('conversations.messages.store');
+
+    Route::get('/bienvenue/{etape?}', [OnboardingController::class, 'show'])->whereNumber('etape')->name('onboarding.show');
+    Route::post('/bienvenue/terminer', [OnboardingController::class, 'finish'])->name('onboarding.finish');
 
     Route::get('/litiges', [DisputeController::class, 'index'])->name('disputes.index');
     Route::get('/demandes/{serviceRequest}/litige', [DisputeController::class, 'create'])->name('disputes.create');

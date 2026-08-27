@@ -29,7 +29,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('onboarding.show', absolute: false));
 
         $user = User::where('email', 'test@example.com')->first();
         $this->assertNotNull($user->clientProfile);
@@ -48,7 +48,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('onboarding.show', absolute: false));
 
         $user = User::where('email', 'provider@example.com')->first();
         $this->assertNotNull($user->providerProfile);
