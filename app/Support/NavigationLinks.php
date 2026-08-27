@@ -65,6 +65,57 @@ class NavigationLinks
     }
 
     /**
+     * Ce qui ne se consulte pas tous les jours : le profil du rôle, ses écrans
+     * propres, l'aide et les réglages.
+     *
+     * Cette table était construite dans `layouts/navigation.blade.php`. Le
+     * tiroir latéral de bureau la veut aussi, et les variables d'un `@include`
+     * ne traversent pas vers un autre : recopiée, elle aurait dérivé au premier
+     * écran ajouté d'un seul côté — exactement ce que `principaux()` évite déjà.
+     *
+     * `$toutes` demande la table complète, entrées conditionnelles comprises :
+     * `icones()` doit énumérer toutes les ligatures possibles, et elle
+     * travaille sur un utilisateur fabriqué de toutes pièces, sans abonnement
+     * ni clé en base à interroger.
+     *
+     * @return Collection<int, array<string, string>>
+     */
+    public static function secondaires(?User $utilisateur, bool $toutes = false): Collection
+    {
+        if ($utilisateur === null) {
+            return collect();
+        }
+
+        $entrees = collect();
+
+        if ($utilisateur->isClient()) {
+            $entrees->push(self::entree('dashboard', __('Tableau de bord'), 'dashboard'));
+            $entrees->push(self::entree('client.profile.edit', __('Mon profil client'), 'badge'));
+            $entrees->push(self::entree('favorites.index', 'Mes favoris', 'favorite'));
+            $entrees->push(self::entree('disputes.index', 'Mes signalements', 'flag'));
+        } elseif ($utilisateur->isProvider()) {
+            $entrees->push(self::entree('provider.profile.edit', __('Mon profil prestataire'), 'badge'));
+
+            if ($toutes || $utilisateur->currentPlan()?->has_stats) {
+                $entrees->push(self::entree('provider.statistics.index', __('ui.nav.statistics'), 'insights'));
+            }
+
+            $entrees->push(self::entree('provider.subscription.show', __('ui.nav.subscription'), 'card_membership'));
+            $entrees->push(self::entree('provider.reviews.index', 'Mes avis', 'star'));
+            $entrees->push(self::entree('provider.transactions.index', 'Mes transactions', 'receipt_long'));
+            $entrees->push(self::entree('disputes.index', 'Mes signalements', 'flag'));
+        } else {
+            $entrees->push(self::entree('requests.index', __('Demandes'), 'inbox'));
+            $entrees->push(self::entree('admin.disputes.index', 'Signalements', 'flag'));
+        }
+
+        $entrees->push(self::entree('help.index', 'Aide', 'help'));
+        $entrees->push(self::entree('profile.edit', __('Paramètres du compte'), 'settings'));
+
+        return $entrees;
+    }
+
+    /**
      * L'entrée de compte de la barre du bas : la porte du profil, ou de la
      * connexion pour un visiteur.
      *
@@ -106,7 +157,10 @@ class NavigationLinks
         }
 
         return collect($roles)
-            ->flatMap(fn (?User $u) => self::principaux($u)->pluck('icone')->push(self::compte($u)['icone']))
+            ->flatMap(fn (?User $u) => self::principaux($u)
+                ->pluck('icone')
+                ->concat(self::secondaires($u, toutes: true)->pluck('icone'))
+                ->push(self::compte($u)['icone']))
             ->unique()
             ->values()
             ->all();
@@ -118,5 +172,13 @@ class NavigationLinks
     private static function lien(string $route, string $motif, string $libelle, string $court, string $icone): array
     {
         return compact('route', 'motif', 'libelle', 'court', 'icone');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function entree(string $route, string $libelle, string $icone): array
+    {
+        return compact('route', 'libelle', 'icone');
     }
 }

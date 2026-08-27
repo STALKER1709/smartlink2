@@ -11,35 +11,11 @@
     $liens = \App\Support\NavigationLinks::principaux($utilisateur);
 
     /*
-     * Le menu du compte reçoit ce qui ne se consulte pas tous les jours : le
-     * profil, les écrans propres au rôle, l'aide et les réglages.
+     * Le menu du compte : même table que le tiroir latéral de bureau
+     * (`NavigationLinks::secondaires`), pour la raison qui a déjà sorti les
+     * liens principaux d'ici — deux listes recopiées divergent.
      */
-    $menuCompte = collect();
-
-    if ($utilisateur) {
-        if ($utilisateur->isClient()) {
-            $menuCompte->push(['route' => 'dashboard', 'libelle' => __('Tableau de bord')]);
-            $menuCompte->push(['route' => 'client.profile.edit', 'libelle' => __('Mon profil client')]);
-            $menuCompte->push(['route' => 'favorites.index', 'libelle' => 'Mes favoris']);
-            $menuCompte->push(['route' => 'disputes.index', 'libelle' => 'Mes signalements']);
-        } elseif ($utilisateur->isProvider()) {
-            $menuCompte->push(['route' => 'provider.profile.edit', 'libelle' => __('Mon profil prestataire')]);
-
-            if ($utilisateur->currentPlan()?->has_stats) {
-                $menuCompte->push(['route' => 'provider.statistics.index', 'libelle' => __('ui.nav.statistics')]);
-            }
-
-            $menuCompte->push(['route' => 'provider.subscription.show', 'libelle' => __('ui.nav.subscription')]);
-            $menuCompte->push(['route' => 'provider.reviews.index', 'libelle' => 'Mes avis']);
-            $menuCompte->push(['route' => 'provider.transactions.index', 'libelle' => 'Mes transactions']);
-            $menuCompte->push(['route' => 'disputes.index', 'libelle' => 'Mes signalements']);
-        } else {
-            $menuCompte->push(['route' => 'requests.index', 'libelle' => __('Demandes')]);
-        }
-
-        $menuCompte->push(['route' => 'help.index', 'libelle' => 'Aide']);
-        $menuCompte->push(['route' => 'profile.edit', 'libelle' => __('Paramètres du compte')]);
-    }
+    $menuCompte = \App\Support\NavigationLinks::secondaires($utilisateur);
 
     // Une seule fois : la barre large et le menu mobile s'en partagent le résultat.
     $nonLues = $utilisateur?->unreadNotifications()->count() ?? 0;

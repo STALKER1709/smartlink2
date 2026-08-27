@@ -174,8 +174,20 @@ après.
   colonne et les cartes de service adoptent une disposition horizontale.
 - **Conteneur** centré à 1 200 px au maximum.
 - **Rythme vertical** de 24 à 32 px entre blocs. Grille de base de 4 px.
-- **Barre d'onglets basse sur mobile** (`md:hidden`), cinq entrées au maximum. Le contenu
-  réserve `4.75rem` en bas pour ne pas passer dessous.
+- **Trois formes de navigation, une par plage de largeur.** Barre d'onglets basse
+  sous 768 px (`md:hidden`), cinq entrées au maximum — le contenu réserve `4.75rem`
+  en bas pour ne pas passer dessous. Barre horizontale entre 768 et 1 279 px. Tiroir
+  latéral fixe de 320 px à partir de `xl` (`layouts/side-nav.blade.php`), qui remplace
+  la barre horizontale — jamais les deux ensemble.
+- **Le tiroir ne descend pas sous 1 280 px**, bien que les maquettes le posent à 768.
+  Un tiroir fixé rétrécit le contenu sans que les requêtes de média le sachent :
+  elles mesurent la fenêtre, pas la place qui reste. À 1 024 px, `lg:grid-cols-6`
+  s'appliquait donc à 704 px de large. `SideNavigationTest` garde le fait que les deux
+  navigations ne paraissent jamais en même temps.
+- **Une seule table de destinations** (`App\Support\NavigationLinks`), lue par les
+  trois formes : `principaux()` pour la boucle quotidienne du rôle, `secondaires()`
+  pour le menu du compte, `compte()` pour l'onglet de profil. Recopiée, elle dérive au
+  premier écran ajouté d'un seul côté.
 - **Zones tactiles** : 16 px de rembourrage interne minimum, 56 px de hauteur de ligne
   dans les listes.
 

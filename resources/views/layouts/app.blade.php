@@ -18,41 +18,51 @@
     </head>
     <body class="font-sans text-on-surface antialiased">
         <div class="min-h-screen bg-surface">
-            @include('layouts.navigation')
+            @include('layouts.side-nav')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-surface-container-lowest border-b border-outline-variant">
-                    <div class="max-w-container mx-auto py-6 px-margin-mobile md:px-margin-desktop">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+            {{-- `xl:pl-80` dégage la largeur du tiroir, qui est fixé et ne
+                 pousse donc rien tout seul. La barre horizontale s'efface au
+                 même seuil : deux navigations à l'écran en même temps, c'est
+                 une de trop. --}}
+            <div class="xl:pl-80">
+                <div class="xl:hidden">
+                    @include('layouts.navigation')
+                </div>
 
-            @include('partials.subscription-banner')
+                <!-- Page Heading -->
+                @isset($header)
+                    <header class="bg-surface-container-lowest border-b border-outline-variant">
+                        <div class="max-w-container mx-auto py-6 px-margin-mobile md:px-margin-desktop">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endisset
 
-            @include('partials.flash-messages')
+                @include('partials.subscription-banner')
 
-            <!-- Page Content -->
-            {{-- La marge basse dégage la barre d'onglets, qui est fixée : sans
-                 elle, le dernier bloc de chaque page passe dessous. --}}
-            <main class="pb-[4.75rem] md:pb-0">
-                {{ $slot }}
-            </main>
+                @include('partials.flash-messages')
 
-            @if ($piedDePage)
-                @include('layouts.footer')
-            @endif
+                <!-- Page Content -->
+                {{-- La marge basse dégage la barre d'onglets, qui est fixée : sans
+                     elle, le dernier bloc de chaque page passe dessous. --}}
+                <main class="pb-[4.75rem] md:pb-0">
+                    {{ $slot }}
+                </main>
 
-            @include('layouts.bottom-nav')
+                @if ($piedDePage)
+                    @include('layouts.footer')
+                @endif
 
-            {{-- L'assistant aide les clients et les prestataires. Sur les
-                 écrans d'administration il ne sert personne, et sa bulle
-                 flottante recouvrait les chiffres du tableau de bord — au
-                 point de me faire croire à des valeurs manquantes. --}}
-            @if ($assistant && ! auth()->user()?->isAdmin())
-                @include('partials.chatbot-widget')
-            @endif
+                @include('layouts.bottom-nav')
+
+                {{-- L'assistant aide les clients et les prestataires. Sur les
+                     écrans d'administration il ne sert personne, et sa bulle
+                     flottante recouvrait les chiffres du tableau de bord — au
+                     point de me faire croire à des valeurs manquantes. --}}
+                @if ($assistant && ! auth()->user()?->isAdmin())
+                    @include('partials.chatbot-widget')
+                @endif
+            </div>
         </div>
     </body>
 </html>
