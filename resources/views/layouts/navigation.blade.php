@@ -20,6 +20,7 @@
         if ($utilisateur->isClient()) {
             $menuCompte->push(['route' => 'dashboard', 'libelle' => __('Tableau de bord')]);
             $menuCompte->push(['route' => 'client.profile.edit', 'libelle' => __('Mon profil client')]);
+            $menuCompte->push(['route' => 'favorites.index', 'libelle' => 'Mes favoris']);
         } elseif ($utilisateur->isProvider()) {
             $menuCompte->push(['route' => 'provider.profile.edit', 'libelle' => __('Mon profil prestataire')]);
 

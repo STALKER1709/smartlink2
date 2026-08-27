@@ -57,6 +57,10 @@
                 </div>
 
                 <div class="flex shrink-0 flex-col gap-2 sm:w-56">
+                    <div class="flex justify-end">
+                        <x-favorite-button :provider-profile="$providerProfile" />
+                    </div>
+
                     @include('partials.request-action', [
                         'href' => route('requests.create', ['provider_id' => $providerProfile->user_id]),
                         'label' => 'Contacter ce prestataire',
