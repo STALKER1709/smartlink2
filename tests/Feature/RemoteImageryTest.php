@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Service;
 use App\Models\ServiceCategory;
+use Database\Seeders\ServiceCategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -99,6 +100,23 @@ class RemoteImageryTest extends TestCase
 
         config()->set('imagery.categories.Plomberie', $this->photo);
         $this->assertNotNull(image_categorie('Plomberie'));
+    }
+
+    public function test_every_seeded_category_carries_a_photo(): void
+    {
+        // Une seule catégorie manquante fait une grille bancale : des vignettes
+        // photographiques à côté de vignettes dessinées, sur la même rangée. La
+        // table des photos et celle des catégories couvrent le même ensemble.
+        $this->seed(ServiceCategorySeeder::class);
+        config()->set('imagery.enabled', true);
+
+        $sans = ServiceCategory::query()
+            ->pluck('name')
+            ->reject(fn (string $nom) => image_categorie($nom) !== null)
+            ->values()
+            ->all();
+
+        $this->assertSame([], $sans, 'Catégories sans photographie : '.implode(', ', $sans));
     }
 
     public function test_the_check_command_refuses_a_photo_without_a_credit(): void

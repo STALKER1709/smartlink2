@@ -29,6 +29,16 @@ d'images — une vignette trouvée dans Google n'est accompagnée d'aucun droit.
 Termes relevés le 2026-08-27 à partir de la documentation publique de ces
 plateformes. Ils changent ; la page de licence fait foi, pas ce tableau.
 
+## Les images de calage ne sont pas dans ce tableau
+
+`config/imagery.php` sert aujourd'hui des photos de LoremFlickr, qui puise dans
+les fonds Creative Commons de Flickr. Elles n'ont pas de ligne ici : l'hôte
+choisit la photo au moment de la requête, et son auteur n'est donc pas connu.
+Les mentions légales portent une mention de classe — le fonds et le régime de
+licence — qui dit ce qu'on sait sans prétendre nommer qui on ignore. Le jour de
+la production, `REMOTE_IMAGES=false` et les fichiers de ce dossier prennent le
+relais, chacun avec sa ligne.
+
 ## Deux fichiers, une seule provenance
 
 `fetch.mjs` écrit la ligne du tableau ci-dessus **et** `sources.json`, sa forme

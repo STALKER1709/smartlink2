@@ -63,37 +63,25 @@ générée qu'elle remplace.
   chaque fichier dans `SOURCES.md` à côté : le jour où quelqu'un la demande,
   personne ne s'en souviendra.
 
-## Vingt-trois propositions Wikimedia Commons, à relire
+## Où en est la plateforme aujourd'hui
 
-`config/imagery.php` porte vingt-trois entrées de métier et le bandeau d'appel
-aux prestataires, tous pointant vers des fichiers de Wikimedia Commons. Ce sont
-des **propositions, pas un choix** : leurs titres viennent de l'index de
-Commons, donc les fichiers existent, mais personne ne les a regardés et leurs
-mentions d'auteur sont vides.
+`config/imagery.php` est rempli — trente et un métiers et le bandeau d'appel
+aux prestataires — avec des **images de calage** servies par LoremFlickr, et
+`REMOTE_IMAGES` est à vrai. Les pages ont donc des photographies, choisies sur
+mots-clés, ce qui fait qu'une vignette de plomberie montre de la plomberie.
 
-Une bonne part vient de *Wiki Loves Africa* : le marché de Bonamoussadi et la
-rue du marché Mboppi à Douala, une coiffeuse au Cameroun, un maçon sur un
-échafaudage à Accra, une couturière au Ghana, un mécanicien ghanéen, un
-moto-taxi à Accra, un poseur de panneaux solaires au Nigeria. C'était la
-difficulté : les fonds libres sont massivement européens, et un plombier de
-cuisine berlinoise dessert une place de marché camerounaise.
+Trois réserves, qui ne s'effacent pas parce qu'on les a lues :
 
-```bash
-php artisan images:credits    # relève auteur et licence sur l'API de Commons
-# coller le bloc rendu dans config/imagery.php
-php artisan images:check      # vérifie que tout répond et que rien ne manque
-```
+- la licence Creative Commons de la photo servie réclame le nom de son auteur,
+  que l'hôte ne fait pas connaître à l'avance — la mention portée dans les
+  mentions légales est donc une mention de classe, pas la mention individuelle
+  que la licence demande ;
+- l'hôte peut changer la photo d'un jour à l'autre ;
+- chaque affichage envoie l'adresse IP du visiteur à un tiers.
 
-Tant qu'une entrée n'a pas d'auteur **et** de licence, elle ne s'affiche pas —
-même avec `REMOTE_IMAGES=true`. Ouvrez les sept pages source, regardez les
-photos, gardez celles qui vous conviennent.
-
-Vingt-trois métiers sur trente et un. Les huit derniers — aide à domicile,
-animation & DJ, carrelage, déménagement, gardiennage, installation TV &
-antenne, location de véhicules, réparation téléphone — n'ont rendu que des
-pages de catégorie et des logos de marque ; ils gardent leur illustration
-dessinée. Le mélange se voit : à vous de juger s'il passe, de compléter les
-huit, ou de laisser le commutateur à faux.
+C'est tenable pour montrer une maquette qui tient debout, pas pour une mise en
+ligne. `REMOTE_IMAGES=false` coupe tout et rend la main aux illustrations
+dessinées, qui appartiennent au projet.
 
 ## La photo de métier
 
