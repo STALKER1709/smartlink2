@@ -11,9 +11,10 @@
     $liens = \App\Support\NavigationLinks::principaux($utilisateur);
 
     /*
-     * Le menu du compte : même table que le tiroir latéral de bureau
-     * (`NavigationLinks::secondaires`), pour la raison qui a déjà sorti les
-     * liens principaux d'ici — deux listes recopiées divergent.
+     * Le menu du compte vient de `NavigationLinks::secondaires` : le menu
+     * déroulant et le panneau mobile ci-dessous le rendent tous les deux, pour
+     * la raison qui a déjà sorti les liens principaux d'ici — deux listes
+     * recopiées divergent.
      */
     $menuCompte = \App\Support\NavigationLinks::secondaires($utilisateur);
 
@@ -76,7 +77,10 @@
                             </div>
 
                             @foreach ($menuCompte as $entree)
-                                <x-dropdown-link :href="route($entree['route'])">{{ $entree['libelle'] }}</x-dropdown-link>
+                                <x-dropdown-link :href="route($entree['route'])" class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined shrink-0 text-[18px] text-on-surface-variant" aria-hidden="true">{{ $entree['icone'] }}</span>
+                                    {{ $entree['libelle'] }}
+                                </x-dropdown-link>
                             @endforeach
 
                             <form method="POST" action="{{ route('logout') }}" class="border-t border-outline-variant">
@@ -132,7 +136,12 @@
 
                 <div class="mt-3 space-y-1">
                     @foreach ($menuCompte as $entree)
-                        <x-responsive-nav-link :href="route($entree['route'])">{{ $entree['libelle'] }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route($entree['route'])">
+                            <span class="inline-flex items-center gap-3">
+                                <span class="material-symbols-outlined shrink-0 text-[18px] text-on-surface-variant" aria-hidden="true">{{ $entree['icone'] }}</span>
+                                {{ $entree['libelle'] }}
+                            </span>
+                        </x-responsive-nav-link>
                     @endforeach
 
                     <form method="POST" action="{{ route('logout') }}">

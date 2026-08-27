@@ -29,6 +29,15 @@ d'images — une vignette trouvée dans Google n'est accompagnée d'aucun droit.
 Termes relevés le 2026-08-27 à partir de la documentation publique de ces
 plateformes. Ils changent ; la page de licence fait foi, pas ce tableau.
 
+## Les images distantes ne sont pas dans ce tableau
+
+`config/imagery.php` sert des photos depuis LoremFlickr, qui puise dans les
+fonds Creative Commons de Flickr. Elles n'ont volontairement pas de ligne ici :
+leur provenance change avec l'humeur de l'hôte, et aucune ne porte
+l'attribution que sa licence réclame. C'est acceptable pour caler une maquette,
+pas pour une mise en ligne. Le jour de la production, `REMOTE_IMAGES=false` et
+les fichiers de ce dossier prennent le relais — chacun avec sa ligne.
+
 ## La réserve qui compte plus que la licence
 
 Ces fonds sont massivement européens et nord-américains. Une photo de plombier

@@ -61,7 +61,6 @@ return [
         'local_shipping',
         'location_on',
         'lock',
-        'logout',
         'mail',
         'map',
         'menu',

@@ -68,10 +68,10 @@ class NavigationLinks
      * Ce qui ne se consulte pas tous les jours : le profil du rôle, ses écrans
      * propres, l'aide et les réglages.
      *
-     * Cette table était construite dans `layouts/navigation.blade.php`. Le
-     * tiroir latéral de bureau la veut aussi, et les variables d'un `@include`
-     * ne traversent pas vers un autre : recopiée, elle aurait dérivé au premier
-     * écran ajouté d'un seul côté — exactement ce que `principaux()` évite déjà.
+     * Cette table était construite dans `layouts/navigation.blade.php`. Elle
+     * en est sortie pour la raison qui avait déjà sorti `principaux()` : le
+     * menu déroulant et le panneau mobile sont deux rendus distincts, et une
+     * liste recopiée dérive au premier écran ajouté d'un seul côté.
      *
      * `$toutes` demande la table complète, entrées conditionnelles comprises :
      * `icones()` doit énumérer toutes les ligatures possibles, et elle

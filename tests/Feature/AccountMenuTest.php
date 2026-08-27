@@ -10,16 +10,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Le tiroir latéral de bureau.
+ * Le menu du compte — ce qui ne se consulte pas tous les jours.
  *
- * Deux choses s'y cassent en silence. Les deux navigations peuvent se
- * retrouver à l'écran en même temps — rien ne plante, l'écran porte
- * simplement deux fois les mêmes liens à deux endroits. Et la table du menu
- * du compte, partagée avec la barre horizontale, peut redevenir deux listes
- * recopiées : l'écran ajouté d'un seul côté reste atteignable, il disparaît
- * juste de l'autre chemin.
+ * Sa table vit dans `NavigationLinks::secondaires()` et non dans la vue :
+ * recopiée, elle dérive au premier écran ajouté d'un seul côté, et le défaut
+ * est muet — l'écran reste atteignable, il disparaît juste d'un chemin.
  */
-class SideNavigationTest extends TestCase
+class AccountMenuTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -30,20 +27,7 @@ class SideNavigationTest extends TestCase
         Plan::factory()->create();
     }
 
-    public function test_the_drawer_and_the_top_bar_never_show_together(): void
-    {
-        $html = $this->actingAs(User::factory()->client()->create())
-            ->get(route('dashboard'))
-            ->getContent();
-
-        // Le tiroir paraît à partir de `xl`, la barre horizontale s'efface au
-        // même seuil. Si l'un des deux seuils bouge sans l'autre, l'écran
-        // porte deux navigations ou plus aucune.
-        $this->assertStringContainsString('xl:flex', $html);
-        $this->assertStringContainsString('xl:hidden', $html);
-    }
-
-    public function test_the_drawer_carries_the_paths_of_each_role(): void
+    public function test_the_menu_carries_the_paths_of_each_role(): void
     {
         $cas = [
             [User::factory()->client()->create(), 'dashboard', ['favorites.index', 'disputes.index', 'client.profile.edit']],
@@ -60,17 +44,9 @@ class SideNavigationTest extends TestCase
                 $reponse->assertSee(route($route), false);
             }
 
-            // Et le pied du tiroir : la langue et la sortie.
-            $reponse->assertSee(route('locale.switch', 'fr'), false);
+            // Et la sortie, au pied du menu.
             $reponse->assertSee(route('logout'), false);
         }
-    }
-
-    public function test_the_login_screen_has_no_drawer(): void
-    {
-        // L'écran de connexion emploie un autre gabarit : une navigation
-        // complète y proposerait des chemins qu'on ne peut pas suivre.
-        $this->get(route('login'))->assertDontSee('xl:flex', false);
     }
 
     public function test_the_statistics_entry_follows_the_plan(): void

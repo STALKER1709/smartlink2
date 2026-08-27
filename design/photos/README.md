@@ -63,6 +63,23 @@ générée qu'elle remplace.
   chaque fichier dans `SOURCES.md` à côté : le jour où quelqu'un la demande,
   personne ne s'en souviendra.
 
+## La troisième voie : les images distantes
+
+`config/imagery.php` sert des photographies depuis un hôte extérieur, sans
+rien déposer ici. C'est du **calage**, pas de la production : la licence
+Creative Commons des photos servies exige une attribution que les pages ne
+portent pas, l'hôte peut changer l'image d'un jour à l'autre, et chaque
+affichage envoie l'adresse IP du visiteur à un tiers.
+
+```bash
+REMOTE_IMAGES=false   # coupe tout : les illustrations dessinées reprennent la main
+```
+
+Les trois couches se recouvrent dans cet ordre, de la moins bonne à la
+meilleure : pictogramme du métier, photographie distante, photographie
+déposée ici. Chacune s'efface d'elle-même si elle échoue, ce qui laisse
+toujours quelque chose à voir.
+
 ## Ce que la commande ne fait pas
 
 Elle ne redimensionne ni ne recompresse : ce que vous déposez est ce qui part en

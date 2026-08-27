@@ -43,17 +43,38 @@
                 @foreach ($categories->take(8) as $category)
                     <a href="{{ route('services.index', ['category_id' => $category->id]) }}"
                        @class([
-                           'group flex-col items-center justify-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-6 text-center transition-colors hover:border-primary/50 hover:bg-surface-container-low',
+                           'group flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest text-center transition-colors hover:border-primary/50',
                            'flex' => $loop->index < 4,
                            'hidden sm:flex' => $loop->index >= 4,
                        ])>
-                        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container transition-colors group-hover:bg-primary group-hover:text-on-primary">
-                            <x-category-icon :icon="$category->icon" class="text-2xl" />
-                        </span>
-                        <span class="font-medium leading-tight text-on-background">{{ $category->name }}</span>
-                        <span class="font-label-numeric text-xs text-on-surface-variant">
-                            {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
-                        </span>
+                        {{-- Le bandeau photographique, quand il existe. La
+                             pastille du pictogramme reste et chevauche son bord
+                             bas : elle est le repli si l'hôte ne répond pas, et
+                             elle rattache la vignette au reste du site, où le
+                             métier se lit toujours au même dessin. --}}
+                        @php($photo = image_categorie($category->name))
+
+                        <div @class(['relative w-full', 'h-24 bg-secondary-container/30' => (bool) $photo])>
+                            @if ($photo)
+                                <img src="{{ $photo }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+                                     class="h-full w-full object-cover transition-transform" onerror="this.remove()">
+                            @endif
+
+                            <span @class([
+                                'flex h-12 w-12 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container transition-colors group-hover:bg-primary group-hover:text-on-primary',
+                                'absolute -bottom-6 left-1/2 -translate-x-1/2 border-2 border-surface-container-lowest' => (bool) $photo,
+                                'mx-auto mt-6' => ! $photo,
+                            ])>
+                                <x-category-icon :icon="$category->icon" class="text-2xl" />
+                            </span>
+                        </div>
+
+                        <div @class(['flex flex-1 flex-col justify-center gap-1 px-4 pb-6', 'pt-8' => (bool) $photo, 'pt-3' => ! $photo])>
+                            <span class="font-medium leading-tight text-on-background">{{ $category->name }}</span>
+                            <span class="font-label-numeric text-xs text-on-surface-variant">
+                                {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
+                            </span>
+                        </div>
                     </a>
                 @endforeach
             </div>
@@ -209,8 +230,24 @@
 
     {{-- ══ Appel aux prestataires ══ --}}
     @guest
-        <section class="bg-inverse-surface">
-            <div class="mx-auto max-w-container px-margin-mobile py-14 text-center md:px-margin-desktop">
+        @php($photoCta = image_distante('cta'))
+
+        {{-- La photo passe *derrière* le fond sombre, jamais à sa place : si
+             l'hôte ne répond pas, le bandeau reste exactement ce qu'il était.
+             Le voile n'est pas décoratif — sans lui, le texte blanc tombe sur
+             une photo dont on ne connaît pas la luminosité. --}}
+        <section class="relative overflow-hidden bg-inverse-surface">
+            @if ($photoCta)
+                {{-- Un seul assombrissement, pas deux : l'image à 30 % sous un
+                     voile à 60 % ne laissait plus rien voir du tout — le
+                     bandeau était noir et la requête vers l'hôte, payée pour
+                     rien. --}}
+                <img src="{{ $photoCta }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+                     class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()">
+                <div class="absolute inset-0 bg-inverse-surface/75" aria-hidden="true"></div>
+            @endif
+
+            <div class="relative mx-auto max-w-container px-margin-mobile py-14 text-center md:px-margin-desktop">
                 <h2 class="font-headline-lg text-headline-lg text-inverse-on-surface">Vous êtes prestataire de services ?</h2>
                 <p class="mx-auto mt-3 max-w-xl font-body-md text-body-md text-inverse-on-surface/80">
                     Publiez vos services, recevez des demandes, développez votre clientèle.
