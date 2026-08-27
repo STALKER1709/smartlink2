@@ -4,24 +4,35 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Administration" />
+        <x-page-header title="Vue d'ensemble"
+                       :subtitle="'Supervision de la plateforme au '.now()->translatedFormat('j F Y')" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         {{-- Chaque compteur mène là où l'on agit dessus. « Comptes suspendus »
              et « Demandes » n'ont pas d'écran filtré dédié : ils restent
              muets plutôt que de promettre un lien qui n'existe pas. --}}
+        {{-- Les six compteurs de la maquette : libellé et pictogramme sur la
+             première ligne, le chiffre en dessous, la tendance en pied. Le
+             compteur des suspensions prend le fond de l'erreur — c'est la
+             seule tuile qui sorte du blanc. --}}
         <x-stat-grid :cols="6">
-            <x-stat-tile label="Clients" :value="$stats['clients']"
+            <x-stat-tile label="Clients" icon="person" tone="primary" :value="number_format($stats['clients'], 0, ',', ' ')"
+                         :trend="$tendances['clients']"
                          :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_CLIENT])" />
-            <x-stat-tile label="Prestataires" :value="$stats['providers']"
+            <x-stat-tile label="Prestataires" icon="handyman" tone="secondary" :value="number_format($stats['providers'], 0, ',', ' ')"
+                         :trend="$tendances['providers']"
                          :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_PROVIDER])" />
-            <x-stat-tile label="Comptes suspendus" :value="$stats['suspended_users']" tone="error" />
-            <x-stat-tile label="Services actifs" :value="$stats['services_active']" tone="primary"
+            <x-stat-tile label="Comptes suspendus" icon="block" tone="error" alert
+                         :value="number_format($stats['suspended_users'], 0, ',', ' ')" />
+            <x-stat-tile label="Services actifs" icon="check_circle" tone="primary"
+                         :value="number_format($stats['services_active'], 0, ',', ' ')"
                          :href="route('admin.services.index')" />
-            <x-stat-tile label="Services au total" :value="$stats['services_total']"
+            <x-stat-tile label="Services au total" icon="home_repair_service" tone="secondary"
+                         :value="number_format($stats['services_total'], 0, ',', ' ')"
                          :href="route('admin.services.index')" />
-            <x-stat-tile label="Demandes au total" :value="$stats['requests_total']" />
+            <x-stat-tile label="Demandes au total" icon="inbox" tone="secondary"
+                         :value="number_format($stats['requests_total'], 0, ',', ' ')" />
         </x-stat-grid>
 
         <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">

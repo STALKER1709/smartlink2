@@ -4,7 +4,11 @@
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
-        <p class="prose-measure mb-6 text-body-md text-on-surface-variant">{{ __('ui.moderation.intro') }}</p>
+        {{-- Le filet vert à gauche de l'intention : la modération signale,
+             elle ne supprime pas, et cette phrase porte tout l'écran. --}}
+        <p class="prose-measure mb-10 border-l-4 border-primary pl-4 font-body-lg text-body-lg text-on-surface-variant">
+            {{ __('ui.moderation.intro') }}
+        </p>
 
         @if ($reports->isEmpty())
             {{-- Le titre et la description disaient la même phrase deux fois.
@@ -16,24 +20,48 @@
                  quinze fois de suite : aucun n'attirait l'œil plus que le
                  suivant. En rangées, le contenu signalé passe devant et le
                  motif du signalement le suit. --}}
-            <x-list-panel>
+            <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
                 @foreach ($reports as $report)
                     @php
                         $content = $report->moderatable;
                         $isService = $content instanceof \App\Models\Service;
-                    @endphp
-                    <x-list-row class="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
-                                {{ $isService ? __('ui.moderation.service') : __('ui.moderation.review') }}
-                                · {{ __('ui.moderation.flagged_at') }}
-                                <span class="font-label-numeric">{{ $report->created_at->format('d/m/Y H:i') }}</span>
-                            </p>
 
-                            {{-- Le contenu signalé était tronqué à une ligne :
-                                 sur un commentaire, c'est justement la fin de
-                                 la phrase qui motive le signalement. --}}
-                            <p class="mt-1 font-medium text-on-surface">
+                        // Une ligne dont les catégories ne sont pas un tableau
+                        // — écriture manuelle, migration à moitié faite —
+                        // faisait tomber toute la file de modération. C'est
+                        // l'écran dont un administrateur a le plus besoin
+                        // quand quelque chose cloche.
+                        $categories = is_array($report->categories) ? $report->categories : [];
+                    @endphp
+                    <article class="group relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest transition-colors hover:border-outline">
+                        {{-- Le liseré ambre en tête de carte : il signale sans
+                             crier, là où un fond coloré ferait de chaque
+                             signalement une alerte. --}}
+                        <div class="absolute left-0 top-0 h-1 w-full bg-tertiary-container" aria-hidden="true"></div>
+
+                        <div class="p-6">
+                            <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-numeric text-xs uppercase tracking-wider text-on-surface">
+                                        {{ $isService ? __('ui.moderation.service') : __('ui.moderation.review') }}
+                                    </span>
+                                    <span class="font-label-numeric text-sm text-on-surface-variant">{{ $report->created_at->translatedFormat('d M, H:i') }}</span>
+                                </div>
+
+                                @if ($categories !== [])
+                                    <div class="flex flex-wrap justify-end gap-2">
+                                        @foreach ($categories as $category)
+                                            @php $cle = 'ui.moderation.categories.'.$category; @endphp
+                                            <span class="flex items-center gap-1 rounded-full bg-error-container px-3 py-1 font-label-numeric text-xs text-on-error-container">
+                                                <span class="material-symbols-outlined text-[14px]" aria-hidden="true">warning</span>
+                                                {{ Lang::has($cle) ? __($cle) : $category }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+
+                            <p class="font-headline-md text-body-lg text-on-surface">
                                 @if ($content === null)
                                     <span class="text-on-surface-variant">— supprimé —</span>
                                 @elseif ($isService)
@@ -43,47 +71,31 @@
                                 @endif
                             </p>
 
-                            @if ($report->categories)
-                                <div class="mt-2 flex flex-wrap gap-1.5">
-                                    {{-- Une catégorie inconnue du fichier de
-                                         langue s'affichait telle quelle, clé
-                                         comprise : « ui.moderation.categories.
-                                         harassment » en toutes lettres sur
-                                         l'écran de l'administrateur. --}}
-                                    @foreach ($report->categories as $category)
-                                        @php $cle = 'ui.moderation.categories.'.$category; @endphp
-                                        <span class="rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-xs font-medium text-tertiary">
-                                            {{ Lang::has($cle) ? __($cle) : $category }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            @endif
-
                             @if ($report->reason)
-                                <p class="mt-2 text-sm text-on-surface-variant">
+                                <p class="mt-2 font-body-md text-body-md text-on-surface-variant">
                                     <span class="font-medium">{{ __('ui.moderation.reason') }} :</span>
                                     {{ $report->reason }}
                                 </p>
                             @endif
-                        </div>
 
-                        <div class="flex items-center gap-4 sm:shrink-0 sm:self-start">
-                            @if ($isService && $content !== null)
-                                <a href="{{ route('services.show', $content) }}" class="text-sm font-medium text-primary hover:text-primary-container">
-                                    {{ __('ui.moderation.view_content') }}
-                                </a>
-                            @endif
+                            <div class="mt-6 flex flex-wrap items-center gap-4 border-t border-outline-variant pt-4">
+                                @if ($isService && $content !== null)
+                                    <a href="{{ route('services.show', $content) }}" class="font-button-text text-button-text text-primary hover:text-primary-container">
+                                        {{ __('ui.moderation.view_content') }}
+                                    </a>
+                                @endif
 
-                            <form action="{{ route('admin.moderation.dismiss', $report) }}" method="POST" class="ml-auto sm:ml-0">
-                                @csrf
-                                <button type="submit" class="text-sm font-medium text-on-surface-variant hover:text-on-surface">
-                                    {{ __('ui.moderation.dismiss') }}
-                                </button>
-                            </form>
+                                <form action="{{ route('admin.moderation.dismiss', $report) }}" method="POST" class="ml-auto">
+                                    @csrf
+                                    <button type="submit" class="rounded-full border border-outline px-4 py-2 font-button-text text-button-text text-on-surface-variant transition-colors hover:bg-surface-container-low">
+                                        {{ __('ui.moderation.dismiss') }}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </x-list-row>
+                    </article>
                 @endforeach
-            </x-list-panel>
+            </div>
 
             <div class="mt-6">{{ $reports->links() }}</div>
         @endif

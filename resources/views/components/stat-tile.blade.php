@@ -7,6 +7,8 @@
     'hint' => null,
     'hintTone' => null,
     'variant' => 'inline',
+    'trend' => null,
+    'alert' => false,
 ])
 
 @php
@@ -33,7 +35,15 @@
 --}}
 <{{ $tag }}
     @if ($href) href="{{ $href }}" @endif
-    {{ $attributes->merge(['class' => 'flex flex-col justify-between rounded-xl border border-outline-variant bg-surface-container-lowest p-4'.($href ? ' transition-colors hover:border-primary/50 hover:bg-surface-container-low' : '')]) }}
+    @class([
+        'flex flex-col justify-between rounded-xl border p-4',
+        // Le compteur qui doit alerter prend le fond de l'erreur : c'est la
+        // seule tuile des maquettes qui sorte du blanc.
+        'border-error/20 bg-error-container text-on-error-container' => $alert,
+        'border-outline-variant bg-surface-container-lowest' => ! $alert,
+        'transition-colors hover:border-primary/50' => (bool) $href,
+    ])
+    {{ $attributes->except('class') }}
 >
     @if ($variant === 'stacked')
         @if ($icon)
@@ -55,7 +65,21 @@
             @endif
             <span class="min-w-0 text-right font-label-numeric text-label-numeric text-on-surface-variant">{{ $label }}</span>
         </div>
-        <span class="block font-headline-xl text-3xl font-bold leading-none text-on-surface sm:text-headline-xl">{{ $value }}</span>
+        <span @class([
+            'block font-headline-xl font-label-numeric text-3xl font-bold leading-none sm:text-headline-xl',
+            'text-on-error-container' => $alert,
+            'text-on-surface' => ! $alert,
+        ])>{{ $value }}</span>
+
+        {{-- La tendance : une flèche et un pourcentage, muets quand la période
+             précédente ne permet pas de comparer. --}}
+        @if ($trend !== null)
+            <span @class(['mt-1 flex items-center gap-1', 'text-primary' => $trend >= 0, 'text-error' => $trend < 0])>
+                <span class="material-symbols-outlined text-[16px]" aria-hidden="true">{{ $trend >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                <span class="font-label-numeric text-xs">{{ $trend > 0 ? '+' : '' }}{{ $trend }} %</span>
+            </span>
+        @endif
+
         @if ($hint)
             <span @class([
                 'mt-1 block text-xs',
