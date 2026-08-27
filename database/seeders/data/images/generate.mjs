@@ -8,6 +8,21 @@
  * produites ici, à partir de la palette de la plateforme : aucun tiers, aucune
  * licence, et un rendu qui a l'air voulu plutôt que bouché.
  *
+ * Chaque motif est désormais posé dans une **scène** : un ciel avec sa lumière
+ * basse, une ligne d'horizon, un sol qui reçoit une ombre de contact, des
+ * feuillages au premier plan et une silhouette au travail. Seuls, les motifs
+ * flottaient sur un dégradé et se lisaient comme des pictogrammes de
+ * remplacement — ce qu'ils étaient. La scène ne demande pas de redessiner les
+ * quatorze métiers : elle les entoure.
+ *
+ * Pas d'ombre de contact : les motifs ne posent pas tous au sol — un tuyau
+ * et ses gouttes se lisent en l'air, une tête de coiffure se lit assise — et
+ * une ombre sous un objet qui flotte est pire que pas d'ombre du tout.
+ *
+ * Le jour où de vraies photographies arrivent, elles les remplacent sans
+ * toucher au code : `php artisan photos:import` les prend dans
+ * `design/photos/` et les pose au bon endroit.
+ *
  *   node database/seeders/data/images/generate.mjs
  *
  * Le rendu passe par Chromium plutôt que par une bibliothèque SVG : c'est le
@@ -22,6 +37,10 @@ import { fileURLToPath } from 'node:url';
 const ICI = dirname(fileURLToPath(import.meta.url));
 const L = 800, H = 600;
 
+/* La ligne d'horizon, partagée par la scène et par la pose des motifs : c'est
+   sur elle qu'ils s'assoient. */
+const SOL = 402;
+
 /* Trois déclinaisons de la palette : deux services d'un même métier ne
    partagent pas exactement la même image. */
 const VARIANTES = [
@@ -30,13 +49,18 @@ const VARIANTES = [
     { haut: '#e2f0e9', bas: '#bfe0d1', trait: '#00432c', clair: '#93d4b3', accent: '#c4682a' },
 ];
 
-/* Le cadrage change avec la variante : sans lui, deux services d'un même
-   métier donnaient deux images que rien ne distinguait à l'œil sur la grille,
-   ce qui a l'air d'un bogue d'affichage plutôt que d'un choix. */
+/* La variante change la taille et la position du motif dans la scène : sans
+   cela, deux services d'un même métier donnaient deux images que rien ne
+   distinguait à l'œil sur la grille, ce qui a l'air d'un bogue d'affichage
+   plutôt que d'un choix.
+   
+   Ces valeurs entrent dans la *pose*, calculée après mesure. Appliquées
+   par-dessus comme un cadrage global, elles décollaient le motif du sol qu'on
+   venait de lui donner. */
 const CADRAGES = [
-    'translate(0 0)',
-    'translate(400 292) scale(0.88) rotate(-3) translate(-400 -292)',
-    'translate(400 308) scale(1.08) translate(-400 -308)',
+    { hauteur: 250, decalage: 0 },
+    { hauteur: 218, decalage: -74 },
+    { hauteur: 272, decalage: 58 },
 ];
 
 /* Chaque motif reçoit la variante et rend le corps du dessin, centré autour
@@ -195,20 +219,91 @@ const PAR_CATEGORIE = {
     'Mécanique auto & moto': 'mecanique',
 };
 
-function svg(motif, variante) {
+/* La silhouette d'une personne au travail : ce qui distingue un décor d'un
+   lieu où quelqu'un exerce. Volontairement petite et sans visage — elle situe
+   une échelle, elle ne représente personne. */
+function silhouette(v, x, y, echelle) {
+    return `<g transform="translate(${x} ${y}) scale(${echelle})" fill="${v.trait}" opacity=".5">
+        <circle cx="0" cy="-64" r="15"/>
+        <path d="M-15 -46 q15-10 30 0 l7 52 -12 4 -6-34 -5 46 -8 0 -5-46 -6 34 -12-4z"/>
+    </g>`;
+}
+
+/* Le décor : ciel, lumière basse, horizon, sol. Les proportions ne changent
+   pas d'une variante à l'autre — c'est la lumière et le cadrage qui varient,
+   comme deux photos d'un même lieu à deux heures différentes. */
+function scene(v, variante) {
+    const horizon = SOL;
+    const gauche = variante % 2 === 0;
+    const soleilX = gauche ? 168 : 636;
+
+    return `
+        <rect width="${L}" height="${H}" fill="url(#ciel)"/>
+
+        <circle cx="${soleilX}" cy="${horizon - 96}" r="230" fill="url(#lumiere)"/>
+        <circle cx="${soleilX}" cy="${horizon - 96}" r="52" fill="${v.clair}" opacity=".55"/>
+
+                <path d="M0 ${horizon - 54} q120-46 232-8 t208 4 q120-40 240 6 t120 12 V${H} H0z" fill="${v.trait}" opacity=".10"/>
+        <path d="M0 ${horizon - 18} q160-38 300 2 t260-6 q140-24 240 14 V${H} H0z" fill="${v.trait}" opacity=".16"/>
+
+        <rect y="${horizon}" width="${L}" height="${H - horizon}" fill="url(#sol)"/>
+        <ellipse cx="${soleilX}" cy="${horizon + 24}" rx="300" ry="54" fill="${v.clair}" opacity=".22"/>`;
+}
+
+/* Le premier plan : feuillages aux deux coins bas. Ils ferment le cadre et
+   donnent une échelle au motif, qui sans eux paraissait posé sur rien. */
+function feuillage(v) {
+    const feuille = (x, y, rot, taille, opacite) => `
+        <g transform="translate(${x} ${y}) rotate(${rot}) scale(${taille})" opacity="${opacite}">
+            <path d="M0 0 q46-72 108-84 q-8 74-64 104 q-30 16-44-20z" fill="${v.trait}"/>
+            <path d="M0 0 q52-56 104-80" stroke="${v.bas}" stroke-width="3" fill="none" opacity=".5"/>
+        </g>`;
+
+    // Les deux feuilles de droite poussent vers la gauche : un miroir, et non
+    // une rotation de 180° qui les envoyait hors du cadre.
+    return `
+        ${feuille(-14, H + 16, -24, 1.3, '.6')}
+        ${feuille(104, H + 52, -58, 0.95, '.45')}
+        <g transform="translate(${L} 0) scale(-1 1)">
+            ${feuille(-14, H + 12, -20, 1.35, '.55')}
+            ${feuille(112, H + 50, -56, 0.9, '.4')}
+        </g>`;
+}
+
+function svg(motif, variante, pose) {
     const v = VARIANTES[variante];
     const corps = (MOTIFS[motif] ?? MOTIFS.informatique)(v);
+    const gauche = variante % 2 === 0;
 
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${L}" height="${H}" viewBox="0 0 ${L} ${H}">
         <defs>
-            <linearGradient id="fond" x1="0" y1="0" x2="0.3" y2="1">
-                <stop offset="0" stop-color="${v.haut}"/><stop offset="1" stop-color="${v.bas}"/>
+            <linearGradient id="ciel" x1="0" y1="0" x2="0.25" y2="1">
+                <stop offset="0" stop-color="${v.haut}"/>
+                <stop offset="0.62" stop-color="${v.bas}"/>
+                <stop offset="1" stop-color="${v.clair}" stop-opacity=".8"/>
             </linearGradient>
+            <linearGradient id="sol" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="${v.trait}" stop-opacity=".18"/>
+                <stop offset="1" stop-color="${v.trait}" stop-opacity=".42"/>
+            </linearGradient>
+            <radialGradient id="lumiere">
+                <stop offset="0" stop-color="${v.clair}" stop-opacity=".85"/>
+                <stop offset="1" stop-color="${v.clair}" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="vignette" cx="0.5" cy="0.46" r="0.78">
+                <stop offset="0.55" stop-color="#000" stop-opacity="0"/>
+                <stop offset="1" stop-color="${v.trait}" stop-opacity=".18"/>
+            </radialGradient>
         </defs>
-        <rect width="${L}" height="${H}" fill="url(#fond)"/>
-        <circle cx="${variante % 2 ? 120 : 690}" cy="${variante % 2 ? 500 : 110}" r="190" fill="${v.trait}" opacity=".06"/>
-        <circle cx="${variante % 2 ? 700 : 110}" cy="${variante % 2 ? 90 : 520}" r="120" fill="${v.accent}" opacity=".07"/>
-        <g transform="${CADRAGES[variante]}">${corps}</g>
+
+        ${scene(v, variante)}
+
+        ${silhouette(v, gauche ? 688 : 116, 446, 1.05)}
+
+                <g transform="${pose.transform}">${corps}</g>
+
+        ${feuillage(v)}
+        <rect width="${L}" height="${H}" fill="url(#vignette)"/>
     </svg>`;
 }
 
@@ -220,9 +315,40 @@ const page = await navigateur.newPage({ viewport: { width: L, height: H }, devic
 
 let rendus = 0;
 
+/* Chaque motif a ses propres proportions : les poser tous avec la même
+   translation en laissait flotter la moitié dans le ciel et enterrait l'autre.
+   On mesure donc la boîte englobante réelle dans le navigateur, puis on calcule
+   l'échelle et le décalage qui posent le motif sur l'horizon, centré.
+   Deviner une constante marchait pour deux motifs sur quatorze. */
+async function mesurer(motif, variante) {
+    const v = VARIANTES[variante];
+    const cadrage = CADRAGES[variante];
+    await page.setContent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${L}" height="${H}">` +
+        `<g id="m">${(MOTIFS[motif] ?? MOTIFS.informatique)(v)}</g></svg>`,
+    );
+
+    const boite = await page.evaluate(() => {
+        const b = document.getElementById('m').getBBox();
+        return { x: b.x, y: b.y, w: b.width, h: b.height };
+    });
+
+    const echelle = Math.min(cadrage.hauteur / boite.h, 360 / boite.w);
+    const cx = boite.x + boite.w / 2;
+    const bas = boite.y + boite.h;
+    const centre = 400 + cadrage.decalage;
+
+    return {
+        centre,
+        transform: `translate(${centre - cx * echelle} ${SOL - 6 - bas * echelle}) scale(${echelle})`,
+        rayon: Math.round((boite.w * echelle) / 2 + 24),
+    };
+}
+
 for (const motif of Object.keys(MOTIFS)) {
     for (let variante = 0; variante < VARIANTES.length; variante++) {
-        const markup = svg(motif, variante);
+        const pose = await mesurer(motif, variante);
+        const markup = svg(motif, variante, pose);
         await page.setContent(
             `<style>html,body{margin:0;padding:0;overflow:hidden}svg{display:block}</style>${markup}`,
         );

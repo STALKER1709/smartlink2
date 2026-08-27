@@ -291,8 +291,22 @@ clair pour une sélection.
   libellé court dessous. Les libellés diffèrent de ceux de la barre large : « Accueil »
   et non « Tableau de bord ».
 - **Illustrations de couverture** — quatorze motifs par métier, produits à partir de
-  cette palette. Une catégorie sans motif retombe sur l'icône du métier, jamais sur un
-  rectangle gris.
+  cette palette et posés dans une **scène** : ciel avec sa lumière basse, ligne
+  d'horizon, sol, feuillages au premier plan, silhouette au travail. Seuls, les
+  motifs flottaient sur un dégradé et se lisaient comme des pictogrammes de
+  remplacement — ce qu'ils étaient. Une catégorie sans motif retombe sur l'icône
+  du métier, jamais sur un rectangle gris.
+
+  Pas d'ombre de contact : les motifs ne posent pas tous au sol — un tuyau et
+  ses gouttes se lisent en l'air, une tête de coiffure se lit assise — et une
+  ombre sous un objet qui flotte est pire que pas d'ombre du tout.
+
+  **Ces dessins sont un repli.** Dès qu'une photographie existe pour une
+  catégorie, elle les remplace : `design/photos/` puis `php artisan
+  photos:import`. Une photographie doit être camerounaise et de droits vérifiés
+  — une photo de stock d'un plombier européen dessert une place de marché
+  camerounaise, et une image trouvée en ligne pose une question de droits que
+  personne ne veut découvrir après la mise en ligne.
 
 ## Do's and Don'ts
 
