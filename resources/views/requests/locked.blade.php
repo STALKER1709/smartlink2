@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Demande verrouillée" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.nav.requests')" />
     </x-slot>

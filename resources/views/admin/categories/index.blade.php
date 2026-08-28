@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Catégories" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Catégories de services"
                        subtitle="Gérez la taxonomie des services proposés sur la plateforme.">

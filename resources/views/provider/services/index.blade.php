@@ -3,7 +3,7 @@
     $plafond = $plan && ! $plan->allowsUnlimitedServices() ? $plan->max_services : null;
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Mes services" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Mes services">
             <x-slot name="subtitle">

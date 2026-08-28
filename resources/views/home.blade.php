@@ -1,4 +1,6 @@
-<x-app-layout>
+{{-- La page d'accueil garde le titre par défaut, qui porte déjà la
+     promesse et le pays. --}}
+<x-app-layout :description="__('seo.default_description')">
     {{-- ══ Hero ══
          La maquette pose le titre et la recherche sur le fond de page, sans
          le bandeau vert qui les portait. Deux gains : la recherche — notre

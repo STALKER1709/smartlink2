@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Mes litiges" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Mes signalements" subtitle="Ce que vous avez déclaré, et ce qui en a été décidé." />
     </x-slot>

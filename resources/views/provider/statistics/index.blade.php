@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Mes statistiques" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.stats.title')"
                        :subtitle="__('Aperçu de vos performances sur les :days derniers jours.', ['days' => $stats['period_days']])" />

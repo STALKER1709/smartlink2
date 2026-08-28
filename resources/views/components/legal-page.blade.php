@@ -1,4 +1,4 @@
-@props(['title', 'intro' => null, 'sections' => []])
+@props(['title', 'intro' => null, 'sections' => [], 'description' => null])
 
 @php
     $editeur = config('legal.editeur');
@@ -6,7 +6,9 @@
     $valide = (bool) config('legal.valide_juridiquement');
 @endphp
 
-<x-app-layout>
+{{-- Les pages légales sont publiques : elles gardent leur place dans l'index,
+     et leur titre est déjà celui du document. --}}
+<x-app-layout :titre="$title" :description="$description ?? $intro">
     <x-slot name="header">
         <x-page-header :title="$title" :subtitle="'Dernière révision : '.config('legal.derniere_revision')" />
     </x-slot>

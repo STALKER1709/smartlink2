@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Services" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Gérer les services" />
     </x-slot>

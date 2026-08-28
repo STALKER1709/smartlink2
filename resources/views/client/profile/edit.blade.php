@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Mon profil client" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Mon profil" />
     </x-slot>

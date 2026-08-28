@@ -2,7 +2,7 @@
     $statusLabels = \App\Support\RequestStatus::labels();
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Détail de la demande" :indexable="false">
     <x-slot name="header">
         {{-- « Demande n° 28 » : le client ne connaît pas ce numéro et ne
              s'en sert jamais. Il reconnaît sa demande à la prestation

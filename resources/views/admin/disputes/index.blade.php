@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Litiges" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Litiges" subtitle="Les signalements déposés par les clients et les prestataires." />
     </x-slot>

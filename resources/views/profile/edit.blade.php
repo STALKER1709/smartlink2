@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Paramètres du compte" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Profile')"
                        :subtitle="__('Manage your personal information and account settings.')" />

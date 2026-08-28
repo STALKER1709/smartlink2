@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Nouvelle demande" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Nouvelle demande" :back="route('requests.index')" back-label="Mes demandes" />
     </x-slot>

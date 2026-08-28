@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :titre="__('seo.services_index')" :description="__('seo.services_index_description')">
     <x-slot name="header">
         <x-page-header title="Services" />
     </x-slot>

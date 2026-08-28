@@ -36,7 +36,7 @@
     ];
 @endphp
 
-<x-app-layout>
+<x-app-layout :titre="__('seo.help')" :description="__('seo.help_description')">
     <x-slot name="header">
         <x-page-header title="Centre d'aide" />
     </x-slot>

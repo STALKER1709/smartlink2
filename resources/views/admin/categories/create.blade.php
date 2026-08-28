@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Nouvelle catégorie" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Nouvelle catégorie" :back="route('admin.categories.index')" back-label="Catégories" />
     </x-slot>

@@ -1,4 +1,35 @@
-<x-app-layout>
+@php
+    /*
+     * La fiche de service est la page qu'on colle dans une conversation
+     * WhatsApp : son aperçu doit dire le métier, la ville et le prix, sinon
+     * le lien n'annonce rien.
+     */
+    $villeDuService = $service->city;
+
+    $titreSeo = $villeDuService
+        ? __('seo.service', ['titre' => $service->title, 'ville' => $villeDuService])
+        : __('seo.service_no_city', ['titre' => $service->title]);
+
+    $prestataire = $service->provider->providerProfile?->business_name
+        ?? $service->provider->name;
+
+    $tarif = $service->price_amount
+        ? number_format((float) $service->price_amount, 0, ',', ' ').' FCFA'
+            .($service->price_unit ? ' / '.$service->price_unit : '')
+        : null;
+
+    $descriptionSeo = implode(' · ', array_filter([
+        $prestataire,
+        $tarif,
+        Str::limit($service->description, 100),
+    ]));
+
+    $imageSeo = $service->images->isNotEmpty()
+        ? media_url($service->images->first()->path)
+        : null;
+@endphp
+
+<x-app-layout :titre="$titreSeo" :description="$descriptionSeo" :image-partage="$imageSeo">
     @php
         $profile = $service->provider->providerProfile;
         $prix = $service->price_amount

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Signaler un litige" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Déclarer un litige"
                        :back="route('requests.show', $serviceRequest)"

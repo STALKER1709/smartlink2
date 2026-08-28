@@ -1,2 +1,20 @@
 User-agent: *
-Disallow:
+
+# Les espaces privés n'ont rien à faire dans un index : ils redirigent vers
+# la connexion, ce qui gaspille le budget d'exploration et expose la
+# structure des URL sans rien apporter.
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /provider/
+Disallow: /client/
+Disallow: /requests
+Disallow: /conversations
+Disallow: /notifications
+Disallow: /favoris
+Disallow: /litiges
+Disallow: /profile
+Disallow: /phone/
+Disallow: /cron/
+
+# Ce qui fait venir : les fiches de services et de prestataires, l'accueil,
+# l'aide et les pages légales restent ouvertes.

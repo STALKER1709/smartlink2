@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout :titre="'Nouveau mot de passe'" :indexable="false">
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 

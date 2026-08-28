@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Mes avis" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Mes avis"
                        :subtitle="$ratingCount > 0 ? $ratingCount.' '.Str::plural('avis reçu', $ratingCount) : null" />

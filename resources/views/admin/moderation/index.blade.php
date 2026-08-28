@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Modération" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.moderation.title')" />
     </x-slot>

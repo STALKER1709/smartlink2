@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Modifier le service" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Modifier le service" :back="route('provider.services.index')" back-label="Mes services" />
     </x-slot>

@@ -2,7 +2,7 @@
     $prenom = Str::of(auth()->user()->name)->trim()->explode(' ')->first();
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Tableau de bord" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Bonjour, :prenom', ['prenom' => $prenom]).' 👋'"
                        subtitle="Aperçu de vos activités." />

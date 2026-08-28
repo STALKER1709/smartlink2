@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout :titre="__('seo.register')" :indexable="true" :description="__('seo.register_description')">
     <h1 class="font-headline-lg text-2xl font-bold text-on-surface">Créer votre compte</h1>
     <p class="mt-1 text-sm text-on-surface-variant">Gratuit pour les clients. 30 jours d'essai pour les prestataires.</p>
 

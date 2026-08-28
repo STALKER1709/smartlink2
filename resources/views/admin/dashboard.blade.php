@@ -2,7 +2,7 @@
     $statusLabels = \App\Support\RequestStatus::labels();
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Administration" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Vue d'ensemble"
                        :subtitle="'Supervision de la plateforme au '.now()->translatedFormat('j F Y')" />

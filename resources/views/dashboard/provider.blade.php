@@ -10,7 +10,7 @@
         && $servicesCount >= $plan->max_services;
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Tableau de bord" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
                        subtitle="Voici le résumé de votre activité.">

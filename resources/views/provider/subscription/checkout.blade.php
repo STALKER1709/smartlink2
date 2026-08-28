@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Régler l'abonnement" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.subscription.checkout_title', ['plan' => $plan->name()])" :back="route('provider.subscription.show')" back-label="Mon abonnement" />
     </x-slot>

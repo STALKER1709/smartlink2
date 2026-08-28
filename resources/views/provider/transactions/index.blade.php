@@ -7,7 +7,7 @@
     ];
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Mes transactions" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Historique des transactions" subtitle="Vos règlements d'abonnement SmartLink.">
             @if ($payments->isNotEmpty())

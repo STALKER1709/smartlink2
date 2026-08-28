@@ -12,7 +12,7 @@
     ];
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Notifications" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Notifications" :subtitle="$nonLues > 0 ? $nonLues.' non '.Str::plural('lue', $nonLues) : null">
             @if ($nonLues > 0)

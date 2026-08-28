@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Mes favoris" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Favoris" subtitle="Vos prestataires de confiance sauvegardés." />
     </x-slot>

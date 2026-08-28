@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout :titre="__('seo.login')" :indexable="false">
     <h1 class="font-headline-lg text-2xl font-bold text-on-surface">Content de vous revoir</h1>
     <p class="mt-1 text-sm text-on-surface-variant">Connectez-vous pour retrouver vos demandes et vos messages.</p>
 

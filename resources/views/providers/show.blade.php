@@ -1,4 +1,36 @@
-<x-app-layout>
+@php
+    /*
+     * L'autre page qu'on partage. Le métier et la ville portent la recherche
+     * locale ; la note, la confiance.
+     */
+    $metier = $providerProfile->category?->name ?? __('Prestataire de services');
+
+    $titreSeo = $providerProfile->city
+        ? __('seo.provider', [
+            'nom' => $providerProfile->business_name,
+            'metier' => $metier,
+            'ville' => $providerProfile->city,
+        ])
+        : __('seo.provider_no_city', [
+            'nom' => $providerProfile->business_name,
+            'metier' => $metier,
+        ]);
+
+    $reputation = $providerProfile->rating_count > 0
+        ? number_format((float) $providerProfile->rating_avg, 1, ',', ' ').'/5 sur '
+            .$providerProfile->rating_count.' '.Str::plural('avis', $providerProfile->rating_count)
+        : null;
+
+    $descriptionSeo = implode(' · ', array_filter([
+        $providerProfile->is_verified ? 'Prestataire vérifié' : null,
+        $reputation,
+        Str::limit($providerProfile->description, 110),
+    ])) ?: __('seo.default_description');
+
+    $imageSeo = $providerProfile->logo_path ? media_url($providerProfile->logo_path) : null;
+@endphp
+
+<x-app-layout :titre="$titreSeo" :description="$descriptionSeo" :image-partage="$imageSeo">
     @php
         $adresse = implode(', ', array_filter([$providerProfile->address, $providerProfile->quarter, $providerProfile->city]));
         $aUneCarte = $providerProfile->latitude && $providerProfile->longitude;

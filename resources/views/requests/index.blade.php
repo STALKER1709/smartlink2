@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Mes demandes" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Demandes" :subtitle="$requests->total().' '.Str::plural('demande', $requests->total())">
             @if (Auth::user()->isClient())

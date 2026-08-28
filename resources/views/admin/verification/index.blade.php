@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Vérifications prestataires" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Vérifications prestataires"
                        :subtitle="$pending->total().' '.Str::plural('pièce', $pending->total()).' en attente'" />

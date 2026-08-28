@@ -8,7 +8,7 @@
     ];
 @endphp
 
-<x-app-layout>
+<x-app-layout titre="Utilisateurs" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Gérer les utilisateurs"
                        :subtitle="$users->total().' '.Str::plural('compte', $users->total())" />

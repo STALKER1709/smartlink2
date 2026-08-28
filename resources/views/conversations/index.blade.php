@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout titre="Messages" :indexable="false">
     <x-slot name="header">
         <x-page-header title="Messages" subtitle="Gérez vos conversations en cours" />
     </x-slot>

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :titre="__('seo.providers_index')" :description="__('seo.providers_index_description')">
     <x-slot name="header">
         <x-page-header title="Annuaire des prestataires"
                        subtitle="Trouvez les meilleurs professionnels au Cameroun." />
