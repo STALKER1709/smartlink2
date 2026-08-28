@@ -36,6 +36,7 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -89,6 +90,15 @@ Route::get('/cron/health', [CronController::class, 'health'])
 Route::get('/conditions-generales', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/mentions-legales', [LegalController::class, 'notice'])->name('legal.notice');
 Route::get('/confidentialite', [LegalController::class, 'privacy'])->name('legal.privacy');
+
+/*
+ * Plan du site et fichier des robots. Servis par l'application et non déposés
+ * en fichiers statiques : la directive « Sitemap » veut une URL absolue, que
+ * seul `APP_URL` connaît, et le plan doit refléter les fiches réellement
+ * ouvertes au public à l'instant où le robot passe.
+ */
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

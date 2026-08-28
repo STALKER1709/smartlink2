@@ -18,3 +18,5 @@ Disallow: /cron/
 
 # Ce qui fait venir : les fiches de services et de prestataires, l'accueil,
 # l'aide et les pages légales restent ouvertes.
+
+Sitemap: {{ route('sitemap') }}
