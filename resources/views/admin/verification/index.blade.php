@@ -41,19 +41,24 @@
 
                         {{-- La pièce déposée --}}
                         <div class="sm:w-44 sm:shrink-0">
-                            @php $ext = strtolower(pathinfo($profile->id_card_path, PATHINFO_EXTENSION)); @endphp
+                            @php
+                                $ext = strtolower(pathinfo($profile->id_card_path, PATHINFO_EXTENSION));
+                                // Le document ne vit plus sur une URL publique :
+                                // il passe par une route qui vérifie la Policy.
+                                $document = route('provider-profiles.id-document', $profile);
+                            @endphp
                             @if (in_array($ext, ['jpg', 'jpeg', 'png']))
                                 {{-- `object-cover` recadrait la pièce sur sa
                                      bande centrale : on ne voyait ni le type de
                                      document ni sa photo. Elle est montrée
                                      entière, quitte à laisser du fond autour. --}}
-                                <a href="{{ media_url($profile->id_card_path) }}" target="_blank" rel="noopener"
+                                <a href="{{ $document }}" target="_blank" rel="noopener"
                                    class="block rounded-lg border border-outline-variant bg-surface-container p-1 transition-colors hover:border-primary">
-                                    <img src="{{ media_url($profile->id_card_path) }}" alt="Pièce d'identité déposée"
+                                    <img src="{{ $document }}" alt="Pièce d'identité déposée"
                                          class="h-28 w-full object-contain">
                                 </a>
                             @else
-                                <a href="{{ media_url($profile->id_card_path) }}" target="_blank" rel="noopener"
+                                <a href="{{ $document }}" target="_blank" rel="noopener"
                                    class="flex h-28 items-center justify-center gap-2 rounded-lg border border-outline-variant bg-surface-container text-sm font-medium text-primary transition-colors hover:border-primary">
                                     <span class="material-symbols-outlined text-base" aria-hidden="true">description</span>
                                     Ouvrir le PDF

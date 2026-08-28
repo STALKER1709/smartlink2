@@ -225,6 +225,10 @@ class DeploymentCheckTest extends TestCase
         config([
             'filesystems.media' => 's3',
             'filesystems.disks.s3.url' => 'https://cdn.example.com',
+            // Les pièces d'identité ont leur propre seau, fermé : un disque
+            // local les perdrait au déploiement suivant, et la vérification
+            // des prestataires s'arrêterait sans erreur visible.
+            'filesystems.id_documents' => 's3_id_documents',
             'queue.default' => 'sync',
             'cron.secret' => 'un-secret',
             'logging.default' => 'stderr',
@@ -236,6 +240,28 @@ class DeploymentCheckTest extends TestCase
         $checks = app(DeploymentCheckService::class)->run();
 
         $this->assertFalse(app(DeploymentCheckService::class)->hasErrors($checks));
+    }
+
+    /**
+     * Le disque des pièces d'identité ne doit jamais être celui des images :
+     * ce dernier est public, donc servi sans passer par Laravel.
+     */
+    public function test_id_documents_sharing_the_public_media_disk_is_an_error(): void
+    {
+        config([
+            'filesystems.media' => 'public',
+            'filesystems.id_documents' => 'public',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('ID_DOCUMENTS_DISK'));
+    }
+
+    public function test_a_local_id_documents_disk_is_an_error_on_a_serverless_host(): void
+    {
+        $this->pretendServerless();
+        config(['filesystems.id_documents' => 'id_documents']);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('ID_DOCUMENTS_DISK'));
     }
 
     public function test_the_health_route_refuses_a_call_without_the_secret(): void

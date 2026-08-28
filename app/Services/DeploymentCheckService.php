@@ -37,6 +37,7 @@ class DeploymentCheckService
             ...$this->databaseChecks(),
             ...$this->databaseTransportChecks(),
             ...$this->mediaChecks(),
+            ...$this->idDocumentChecks(),
             ...$this->queueChecks(),
             ...$this->scheduleChecks(),
             ...$this->assetChecks(),
@@ -219,6 +220,49 @@ class DeploymentCheckService
         }
 
         return [$this->ok('MEDIA_DISK', "Disque « {$disk} » ({$driver}).")];
+    }
+
+    /**
+     * Les pièces d'identité doivent rester hors de portée d'une URL.
+     *
+     * Ce contrôle existe parce que la faute est invisible : un disque public
+     * sert les fichiers sans passer par Laravel, donc sans Policy, et rien
+     * dans l'application ne signale l'erreur. Elle ne se voit qu'en essayant
+     * l'URL — ce que personne ne fait.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function idDocumentChecks(): array
+    {
+        $disk = id_documents_disk();
+        $config = config("filesystems.disks.{$disk}");
+
+        if ($config === null) {
+            return [$this->error('ID_DOCUMENTS_DISK', "Disque « {$disk} » inconnu dans config/filesystems.php.")];
+        }
+
+        if ($disk === media_disk()) {
+            return [$this->error(
+                'ID_DOCUMENTS_DISK',
+                "Les pièces d'identité partagent le disque des images (« {$disk} ») : elles seraient servies par leur URL, sans authentification.",
+            )];
+        }
+
+        if (($config['visibility'] ?? null) === 'public') {
+            return [$this->error(
+                'ID_DOCUMENTS_DISK',
+                "Disque « {$disk} » en visibilité publique : les pièces d'identité seraient joignables par leur URL, sans authentification.",
+            )];
+        }
+
+        if (($config['driver'] ?? null) === 'local' && is_serverless()) {
+            return [$this->error(
+                'ID_DOCUMENTS_DISK',
+                "Disque « {$disk} » local sur un hébergement éphémère : les pièces déposées disparaîtront au déploiement suivant et la vérification des prestataires s'arrêtera.",
+            )];
+        }
+
+        return [$this->ok('ID_DOCUMENTS_DISK', "Disque « {$disk} » privé ({$config['driver']}).")];
     }
 
     /**

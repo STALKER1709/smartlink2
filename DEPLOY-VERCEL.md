@@ -105,13 +105,26 @@ Le mot de passe est haché automatiquement par le modèle.
 
 ### 2.2 Le stockage Supabase
 
-Le même projet Supabase porte les photos de profil, logos, images de services
-et pièces d'identité. Rien d'autre à ouvrir.
+Le même projet Supabase porte les fichiers déposés. Il faut **deux seaux**, et
+la distinction n'est pas cosmétique.
 
 1. **Storage → New bucket** : nommez-le `smartlink` et cochez **Public bucket**.
-   Les images s'affichent dans des balises `<img>` : un bucket privé les rendrait
-   toutes cassées.
-2. **Project Settings → Storage → S3 access keys → New access key** : notez la
+   Il porte les photos de profil, logos et images de services. Ces images
+   s'affichent dans des balises `<img>` : un bucket privé les rendrait toutes
+   cassées.
+2. **Storage → New bucket** : nommez-le `smartlink-id-documents` et laissez-le
+   **privé** (ne cochez pas « Public bucket »).
+
+   Il porte les pièces d'identité déposées pour la vérification. Un seau public
+   les servirait par leur URL, sans authentification : un nom de fichier
+   aléatoire n'est pas un contrôle d'accès, et une URL qui fuit une fois
+   (capture d'écran, en-tête `Referer`, journal d'un intermédiaire) ouvre le
+   document définitivement. Ces fichiers ne sortent que par une route de
+   l'application qui vérifie qui demande.
+
+   `php artisan deploy:check` refuse le déploiement si ce seau est public ou
+   confondu avec le premier.
+3. **Project Settings → Storage → S3 access keys → New access key** : notez la
    clé et le secret, ils ne sont montrés qu'une fois.
 
 Les trois valeurs qui en découlent, `<ref>` étant la référence du projet :
@@ -216,6 +229,11 @@ AWS_SECRET_ACCESS_KEY=…
 AWS_DEFAULT_REGION=eu-west-3
 AWS_BUCKET=smartlink
 AWS_ENDPOINT=https://<ref-projet>.supabase.co/storage/v1/s3
+
+# Indispensable : les pièces d'identité vont dans le seau privé, jamais dans
+# celui des images. Sans ces deux lignes, elles seraient servies par leur URL.
+ID_DOCUMENTS_DISK=s3_id_documents
+AWS_ID_DOCUMENTS_BUCKET=smartlink-id-documents
 AWS_URL=https://<ref-projet>.supabase.co/storage/v1/object/public/smartlink
 AWS_USE_PATH_STYLE_ENDPOINT=true
 AWS_VISIBILITY=private        # Supabase ne gère pas les ACL par objet
@@ -236,7 +254,7 @@ Ne cochez pas *Automatically expose System Environment Variables* pour y
 chercher `APP_KEY` : générez-la vous-même et collez-la. Sans `APP_KEY`, aucune
 session ne fonctionne.
 
-**Les six lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
+**Les sept lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
 celles que `deploy:check` et `/cron/health` contrôlent nommément, parce que
 l'application démarre parfaitement sans elles :
 
@@ -244,10 +262,16 @@ l'application démarre parfaitement sans elles :
 |---|---|
 | `QUEUE_CONNECTION=sync` | La modération des annonces et des avis ne s'exécute jamais |
 | `MEDIA_DISK=s3` | Chaque image déposée disparaît au déploiement suivant |
+| `ID_DOCUMENTS_DISK=s3_id_documents` | Les pièces d'identité sont servies par leur URL, sans authentification |
 | `AWS_VISIBILITY=private` | Chaque dépôt d'image échoue chez Supabase |
 | `CRON_SECRET` | Aucun abonnement n'expire, aucune relance n'est envoyée |
 | `DB_SSLMODE=require` | La connexion à la base peut passer en clair |
 | `HRSKILLS_WEBHOOK_SECRET` | Aucun abonnement n'est jamais crédité |
+
+**Après un déploiement sur une base qui a déjà reçu des dépôts**, lancez une
+fois `php artisan id-documents:secure` (ou `--dry-run` d'abord) : le code
+n'écrit plus jamais sur le disque public, mais les pièces déposées avant ce
+changement y restent joignables tant qu'elles n'ont pas été déplacées.
 
 ---
 

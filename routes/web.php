@@ -133,6 +133,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])
         ->middleware('throttle:10,1')
         ->name('phone.verify.check');
+
+    /*
+     * Seule sortie des pièces d'identité, qui vivent sur un disque privé.
+     *
+     * Volontairement hors du groupe « role:admin » : le prestataire doit
+     * pouvoir relire le document qu'il a lui-même déposé. C'est la Policy
+     * `viewIdDocument` qui tranche, pas la place de la route.
+     */
+    Route::get('/prestataires/{providerProfile}/piece-identite',
+        [ProviderVerificationController::class, 'document'])
+        ->name('provider-profiles.id-document');
 });
 
 /*

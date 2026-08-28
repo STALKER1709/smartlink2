@@ -111,11 +111,16 @@
 
                     @if ($providerProfile->id_card_path)
                         <div class="mb-3 flex items-center gap-3">
-                            @php $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION); @endphp
+                            @php
+                                $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION);
+                                // Passe par la route contrôlée : la pièce n'est
+                                // plus joignable par une URL publique.
+                                $document = route('provider-profiles.id-document', $providerProfile);
+                            @endphp
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <img src="{{ media_url($providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
+                                <img src="{{ $document }}" alt="Votre pièce d'identité déposée" class="h-20 w-32 object-cover rounded border border-outline-variant">
                             @else
-                                <a href="{{ media_url($providerProfile->id_card_path) }}" target="_blank" class="text-primary text-sm hover:underline">Voir le document</a>
+                                <a href="{{ $document }}" target="_blank" rel="noopener" class="text-primary text-sm hover:underline">Voir le document</a>
                             @endif
                             @if ($providerProfile->id_card_verified)
                                 <span class="inline-flex items-center rounded-full bg-secondary-container/40 px-2.5 py-0.5 text-xs font-medium text-on-secondary-container">Vérifié</span>

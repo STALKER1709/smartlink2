@@ -125,6 +125,15 @@ Un déploiement serverless sur Vercel est aussi possible (`DEPLOY-VERCEL.md`,
   `GET /cron/subscriptions-refresh`, protégé par `CRON_SECRET` (403 sans jeton, 503 sans
   secret configuré). Toute nouvelle tâche planifiée doit avoir son pendant HTTP.
 
+⚠️ **Une pièce d'identité ne va jamais sur le disque `media`.** Ce disque est public :
+ce qu'on y écrit est servi par le serveur web sans passer par Laravel, donc sans
+middleware ni Policy — un nom de fichier aléatoire n'y change rien. Les pièces d'identité
+passent par `id_documents_disk()` (privé) et ne ressortent que par
+`ProviderVerificationController::document()`, qui vérifie la Policy `viewIdDocument`.
+`deploy:check` refuse un disque public ou confondu avec `media`, et
+`tests/Feature/Provider/IdDocumentPrivacyTest.php` monte la garde. Toute nouvelle donnée
+sensible déposée par un utilisateur suit le même chemin.
+
 ⚠️ `composer.lock`, `package-lock.json` et `public/build` sont **versionnés**, contrairement
 à l'habitude Laravel. La fonction PHP déployée doit trouver `public/build/manifest.json`, et
 la reconstruction sur l'hébergeur doit produire exactement les fichiers hachés qui ont été
