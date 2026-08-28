@@ -39,10 +39,21 @@ class SubscriptionTest extends TestCase
         $this->assertSame(0, $subscription->daysRemaining());
     }
 
-    public function test_a_cancelled_subscription_opens_nothing_even_before_its_due_date(): void
+    /**
+     * `isUsable()` fonctionne par liste blanche : seuls « trialing » et
+     * « active » ouvrent des droits.
+     *
+     * Le statut « cancelled » n'existe plus côté code — aucun chemin n'y menait
+     * — mais la contrainte de la table l'autorise toujours, et une ligne
+     * antérieure peut le porter. Rétrécir l'énumération ferait échouer la
+     * migration sur cette donnée-là ; la garantie tenable est donc celle-ci :
+     * un statut que le code ne connaît pas n'ouvre rien, même avec une
+     * échéance dans le futur.
+     */
+    public function test_a_status_the_code_no_longer_knows_opens_nothing(): void
     {
         $subscription = Subscription::factory()->create([
-            'status' => Subscription::STATUS_CANCELLED,
+            'status' => 'cancelled',
             'ends_at' => now()->addDays(10),
         ]);
 
@@ -86,8 +97,12 @@ class SubscriptionTest extends TestCase
         Subscription::factory()->trialing()->create();
         Subscription::factory()->create();
         Subscription::factory()->expired()->create();
+
+        // Même garantie côté requête que côté modèle : la portée filtre sur la
+        // liste blanche, donc une ligne héritée au statut « cancelled » reste
+        // dehors sans qu'on ait à tenir une liste noire.
         Subscription::factory()->create([
-            'status' => Subscription::STATUS_CANCELLED,
+            'status' => 'cancelled',
             'ends_at' => now()->addDays(5),
         ]);
 

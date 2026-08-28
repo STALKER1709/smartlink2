@@ -86,7 +86,6 @@ class SubscriptionService
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => $subscription->starts_at ?? now(),
             'ends_at' => now()->addDays(config('subscription.cycle_days')),
-            'cancelled_at' => null,
             'last_reminder_day' => null,
         ]);
 
@@ -375,7 +374,6 @@ class SubscriptionService
                 'plan_id' => $payment->plan_id ?? $subscription->plan_id,
                 'status' => Subscription::STATUS_ACTIVE,
                 'ends_at' => $from->copy()->addDays(config('subscription.cycle_days')),
-                'cancelled_at' => null,
                 'last_reminder_day' => null,
             ]);
 
