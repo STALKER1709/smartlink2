@@ -62,6 +62,11 @@ class SubscriptionTest extends TestCase
             'plan_id' => $pro->id,
         ]);
 
+        // L'abonnement est mémoïsé le temps d'une requête : il vient d'être
+        // créé en dehors de cette instance, qui porte encore sa réponse
+        // précédente.
+        $provider->refresh();
+
         $this->assertTrue($provider->hasUsableSubscription());
         $this->assertSame(Plan::CODE_PRO, $provider->currentPlan()->code);
     }

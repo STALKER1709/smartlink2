@@ -179,6 +179,12 @@ class SubscriptionService
         if ($result->status === CollectionResult::STATUS_SUCCESS) {
             $payment->update(['status' => Payment::STATUS_SUCCESS, 'paid_at' => now()]);
             $this->recordSuccessfulPayment($payment->refresh());
+
+            // `recordSuccessfulPayment` rafraîchit le payeur qu'il a chargé
+            // par la relation ; l'instance reçue ici est celle de la requête,
+            // et c'est elle qui portera l'affichage. Sans cet oubli, elle
+            // rendrait encore l'ancien palier.
+            $provider->forgetActiveSubscription();
         } elseif ($result->status === CollectionResult::STATUS_FAILED) {
             $payment->update([
                 'status' => Payment::STATUS_FAILED,

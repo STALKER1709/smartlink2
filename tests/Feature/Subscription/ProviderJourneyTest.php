@@ -88,6 +88,12 @@ class ProviderJourneyTest extends TestCase
         $provider->subscriptions()->update(['ends_at' => now()->subDay()]);
         $this->artisan('subscriptions:refresh')->assertSuccessful();
 
+        // L'abonnement est mémoïsé le temps d'une requête. Le passage
+        // quotidien tourne dans son propre processus, et la requête suivante
+        // d'un prestataire reconstruit son utilisateur depuis la session :
+        // ici, une seule instance traverse les deux, il faut la relire.
+        $provider->refresh();
+
         $this->asVisitor();
         $this->get(route('services.index'))->assertOk()->assertDontSee($service->title);
         $this->get(route('services.show', $service))->assertNotFound();
@@ -127,6 +133,10 @@ class ProviderJourneyTest extends TestCase
             ],
             $body,
         )->assertOk();
+
+        // Le rappel de l'opérateur est une requête à part : elle a crédité
+        // l'abonnement sans passer par l'instance que porte ce test.
+        $provider->refresh();
 
         $subscription = $provider->activeSubscription();
         $this->assertSame(Subscription::STATUS_ACTIVE, $subscription->status);

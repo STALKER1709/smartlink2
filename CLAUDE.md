@@ -167,6 +167,19 @@ vide a donné un abonnement payé couvrant zéro jour, et `HRSKILLS_BASE_URL` vi
 une URL relative qui faisait échouer chaque encaissement.
 `tests/Unit/EnvFallbackTest.php` monte la garde.
 
+⚠️ **`User::activeSubscription()` est mémoïsé le temps de la requête.** Une seule page
+de prestataire rejouait la requête jusqu'à sept fois — barre de navigation, bandeau
+d'abonnement, bouton de publication et chaque appel de `QuotaService`. Invisible sur
+SQLite, autant d'allers-retours réseau sur Supabase.
+
+Conséquence : **toute écriture sur un abonnement doit appeler
+`$user->forgetActiveSubscription()`**, ou passer par `$user->refresh()` qui le fait.
+`SubscriptionService` s'en charge sur tous ses chemins d'écriture. Dans un test qui
+traverse plusieurs requêtes simulées ou qui écrit en masse
+(`$user->subscriptions()->update(...)`), relis l'instance : en production chaque requête
+reconstruit son utilisateur depuis la session, pas un test qui en garde un seul.
+`tests/Feature/Subscription/SubscriptionMemoTest.php` monte la garde.
+
 ⚠️ **N'écris jamais `where(..., 'like', ...)` à la main.** `like` est sensible à
 la casse sur PostgreSQL et ne l'est pas sur MySQL ni SQLite : la recherche
 renvoyait une page vide à qui tapait en minuscules, sans erreur nulle part et

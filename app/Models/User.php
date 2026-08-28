@@ -130,16 +130,65 @@ class User extends Authenticatable
     }
 
     /**
+     * Mémo de l'abonnement en cours, valable le temps de la requête HTTP.
+     *
+     * Deux champs plutôt qu'un : l'absence d'abonnement est une réponse en
+     * soi, et `null` seul ne dirait pas si la question a déjà été posée.
+     */
+    private ?Subscription $abonnementMemo = null;
+
+    private bool $abonnementResolu = false;
+
+    /**
      * L'abonnement qui ouvre les droits en ce moment : essai ou payé, non échu.
      * Renvoie null dès l'expiration — c'est ce qui masque les services.
+     *
+     * Le résultat est mémoïsé sur l'instance. Sans cela, une seule page de
+     * prestataire rejouait la requête jusqu'à sept fois : la barre de
+     * navigation, le bandeau d'abonnement, le bouton de publication et chaque
+     * appel de `QuotaService` la refaisaient chacun pour leur compte. Sans
+     * effet visible sur SQLite en local ; sur Supabase, autant d'allers-retours
+     * réseau depuis une fonction serverless.
+     *
+     * Toute écriture sur l'abonnement doit appeler `forgetActiveSubscription()`
+     * — c'est ce que fait `SubscriptionService`.
      */
     public function activeSubscription(): ?Subscription
     {
-        return $this->subscriptions()
+        if ($this->abonnementResolu) {
+            return $this->abonnementMemo;
+        }
+
+        $this->abonnementResolu = true;
+
+        return $this->abonnementMemo = $this->subscriptions()
             ->usable()
             ->with('plan')
             ->latest('ends_at')
             ->first();
+    }
+
+    /**
+     * Oublie l'abonnement mémoïsé : le prochain appel réinterrogera la base.
+     */
+    public function forgetActiveSubscription(): static
+    {
+        $this->abonnementResolu = false;
+        $this->abonnementMemo = null;
+
+        return $this;
+    }
+
+    /**
+     * `refresh()` recharge l'état depuis la base : le mémo doit tomber avec le
+     * reste, sinon un appel après rechargement rendrait une valeur périmée —
+     * ce que personne n'attend d'un modèle rafraîchi.
+     */
+    public function refresh(): static
+    {
+        $this->forgetActiveSubscription();
+
+        return parent::refresh();
     }
 
     public function currentPlan(): ?Plan
