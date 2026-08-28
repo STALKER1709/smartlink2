@@ -77,7 +77,11 @@ class RequestController extends Controller
         if ($user->isProvider()
             && $user->id === $serviceRequest->provider_id
             && $serviceRequest->status === ServiceRequest::STATUS_SENT) {
-            if (! $this->quotas->hasRequestQuotaLeft($user)) {
+            // La réservation vaut vérification : elle n'aboutit que s'il
+            // restait une place, et c'est la base qui tranche. Vérifier puis
+            // consommer en deux temps laissait deux lectures simultanées
+            // passer toutes les deux.
+            if (! $this->quotas->consumeRequestRead($user)) {
                 return view('requests.locked', [
                     'serviceRequest' => $serviceRequest,
                     'plan' => $this->quotas->plan($user),
@@ -85,7 +89,6 @@ class RequestController extends Controller
             }
 
             $this->requests->markViewed($serviceRequest, $user);
-            $this->quotas->consumeRequestRead($user);
         }
 
         $serviceRequest->load([
