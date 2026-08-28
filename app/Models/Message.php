@@ -30,9 +30,4 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
-
-    public function isRead(): bool
-    {
-        return ! is_null($this->read_at);
-    }
 }

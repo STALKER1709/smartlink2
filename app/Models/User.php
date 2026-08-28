@@ -99,29 +99,9 @@ class User extends Authenticatable
         return $this->hasMany(ServiceRequest::class, 'provider_id');
     }
 
-    public function reviewsGiven(): HasMany
-    {
-        return $this->hasMany(Review::class, 'client_id');
-    }
-
     public function reviewsReceived(): HasMany
     {
         return $this->hasMany(Review::class, 'provider_id');
-    }
-
-    public function conversationsAsClient(): HasMany
-    {
-        return $this->hasMany(Conversation::class, 'client_id');
-    }
-
-    public function conversationsAsProvider(): HasMany
-    {
-        return $this->hasMany(Conversation::class, 'provider_id');
-    }
-
-    public function auditLogs(): HasMany
-    {
-        return $this->hasMany(AuditLog::class);
     }
 
     public function subscriptions(): HasMany

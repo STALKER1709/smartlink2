@@ -2,6 +2,7 @@
 # maquettes, ni les fichiers régénérés à chaque déploiement.
 /tests
 /design
+/.claude
 /smartlink
 /node_modules
 /vendor
