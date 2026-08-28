@@ -175,7 +175,34 @@ L'URL à déclarer chez HR-Skills est indiquée au §6.
 Pour une première mise en ligne de démonstration, `PAYMENT_PROVIDER=mock`
 n'appelle aucune API et ne demande aucun compte.
 
-### 2.4 Une clé Anthropic (facultatif)
+### 2.4 Un relais d'e-mail transactionnel
+
+SmartLink notifie par SMS et dans l'application ; l'e-mail ne sert qu'à une
+chose, mais elle est vitale : **la réinitialisation du mot de passe**. C'est la
+seule voie de récupération d'un compte. Sans relais, un prestataire qui oublie
+son mot de passe perd son compte et l'abonnement qu'il a payé.
+
+Le défaut de Laravel est `MAIL_MAILER=log`, qui écrit le message dans un fichier
+au lieu de l'envoyer — et sur Vercel ce fichier n'existe même pas. Rien
+n'échoue, aucune erreur n'apparaît, le formulaire affiche « lien envoyé », et
+personne ne reçoit jamais rien. C'est la panne la plus discrète de cette liste :
+elle ne se voit que le jour où quelqu'un a vraiment besoin du lien.
+
+N'importe quel relais transactionnel convient (Resend, Brevo, Postmark,
+Mailgun…). Deux points à ne pas rater :
+
+- `MAIL_FROM_ADDRESS` doit être sur **un domaine que vous possédez** et que vous
+  avez authentifié chez le relais (SPF/DKIM). Une adresse en `example.com`, ou
+  un domaine non signé, part en indésirables sans qu'aucun journal ne le dise.
+- Ces envois sont synchrones sur Vercel (file en `sync`) : le formulaire attend
+  la réponse du relais. Préférez l'API HTTP du fournisseur au SMTP quand elle
+  est proposée, ou un port `587` en TLS — un `465` bloqué ferait expirer la
+  requête.
+
+`php artisan deploy:check` refuse un pilote qui n'envoie rien et signale une
+adresse d'expédition restée à l'exemple.
+
+### 2.5 Une clé Anthropic (facultatif)
 
 `AI_DRIVER=rule` ne demande ni compte ni réseau et ne coûte rien : l'assistant
 répond par règles. `AI_DRIVER=claude` avec `ANTHROPIC_API_KEY` active les
@@ -242,6 +269,18 @@ AWS_VISIBILITY=private        # Supabase ne gère pas les ACL par objet
 # « Authorization: Bearer <CRON_SECRET> » dès que cette variable existe.
 CRON_SECRET=…                 # openssl rand -hex 32
 
+# Indispensable : le défaut « log » écrit le message dans un fichier au lieu
+# de l'envoyer. C'est la seule voie de récupération d'un compte — sans un vrai
+# relais, le mot de passe oublié annonce « lien envoyé » sans rien envoyer.
+MAIL_MAILER=smtp
+MAIL_HOST=…                   # relais transactionnel (Resend, Brevo, Postmark…)
+MAIL_PORT=587
+MAIL_USERNAME=…
+MAIL_PASSWORD=…
+MAIL_SCHEME=tls
+MAIL_FROM_ADDRESS=contact@votre-domaine.cm   # un domaine que vous possédez
+MAIL_FROM_NAME=SmartLink
+
 PAYMENT_PROVIDER=hrskills
 HRSKILLS_CLE_A=hrsk_pk_live_…
 HRSKILLS_CLE_B=hrsk_sk_live_…
@@ -254,7 +293,7 @@ Ne cochez pas *Automatically expose System Environment Variables* pour y
 chercher `APP_KEY` : générez-la vous-même et collez-la. Sans `APP_KEY`, aucune
 session ne fonctionne.
 
-**Les sept lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
+**Les huit lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
 celles que `deploy:check` et `/cron/health` contrôlent nommément, parce que
 l'application démarre parfaitement sans elles :
 
@@ -267,6 +306,7 @@ l'application démarre parfaitement sans elles :
 | `CRON_SECRET` | Aucun abonnement n'expire, aucune relance n'est envoyée |
 | `DB_SSLMODE=require` | La connexion à la base peut passer en clair |
 | `HRSKILLS_WEBHOOK_SECRET` | Aucun abonnement n'est jamais crédité |
+| `MAIL_MAILER=smtp` | Le mot de passe oublié annonce « lien envoyé » sans rien envoyer |
 
 **Après un déploiement sur une base qui a déjà reçu des dépôts**, lancez une
 fois `php artisan id-documents:secure` (ou `--dry-run` d'abord) : le code

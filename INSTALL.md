@@ -48,6 +48,7 @@ Trois intégrations ont chacune un mode simulé, qui permet de développer et de
 | **HR-Skills Pay** (Mobile Money) | `PAYMENT_PROVIDER=hrskills`, `HRSKILLS_CLE_A`, `HRSKILLS_CLE_B`, `HRSKILLS_WEBHOOK_SECRET` | Encaissement simulé : montant pair, succès ; impair, échec |
 | **Africa's Talking** (SMS) | `AT_API_KEY`, `AT_SENDER_ID` | Les SMS sont écrits dans les journaux |
 | **Claude** (IA) | `ANTHROPIC_API_KEY`, `AI_DRIVER=claude` | L'assistant répond par mots-clés, sans coût |
+| **Relais e-mail** | `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS` | `MAIL_MAILER=log` écrit les messages dans `storage/logs` |
 
 > **`HRSKILLS_WEBHOOK_SECRET` est obligatoire en production.** Le rappel du fournisseur est le seul canal qui crédite un abonnement. Sans secret configuré, tout rappel est refusé : c'est délibéré, il vaut mieux ne rien créditer que de créditer n'importe qui. Renseignez la même valeur côté HR-Skills et dans `.env`.
 >
@@ -56,6 +57,14 @@ Trois intégrations ont chacune un mode simulé, qui permet de développer et de
 ```bash
 php artisan payment:check   # vérifie clés, environnement et secret de rappel
 ```
+
+> **En production, `MAIL_MAILER` doit désigner un vrai relais.** L'e-mail ne sert
+> qu'à la réinitialisation du mot de passe — mais c'est la seule voie de
+> récupération d'un compte. Avec le défaut `log`, le formulaire affiche « lien
+> envoyé », le message part dans un fichier, et l'utilisateur ne reçoit jamais
+> rien : aucune erreur nulle part. `MAIL_FROM_ADDRESS` doit être sur un domaine
+> que vous possédez et avez authentifié (SPF/DKIM), sans quoi les messages
+> partent en indésirables. `php artisan deploy:check` contrôle les deux.
 
 ### Base de données
 

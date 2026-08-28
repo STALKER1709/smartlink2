@@ -349,7 +349,51 @@ class DeploymentCheckService
                 : $this->ok('IA', 'Pilote claude configuré.'))
             : $this->warning('IA', "Pilote « {$ai} » : réponses par règles, aucun coût.");
 
+        $checks[] = $this->mailCheck();
+
         return $checks;
+    }
+
+    /**
+     * L'expédition d'e-mails, dont dépend la seule voie de récupération d'un
+     * compte.
+     *
+     * Les notifications métier passent par les SMS et la base — c'est le bon
+     * choix ici. Il ne reste qu'un usage de l'e-mail, la réinitialisation de
+     * mot de passe, mais celui-là est vital : sans lui, un utilisateur qui perd
+     * son mot de passe perd son compte.
+     *
+     * Le défaut de Laravel est `log`, qui écrit le message dans un fichier au
+     * lieu de l'envoyer. Rien ne casse, aucune erreur n'apparaît, le
+     * formulaire affiche « lien envoyé » — et personne ne reçoit jamais rien.
+     *
+     * @return array{name: string, status: string, message: string}
+     */
+    private function mailCheck(): array
+    {
+        $mailer = (string) config('mail.default');
+
+        if (in_array($mailer, ['log', 'array', 'null'], true)) {
+            return $this->error(
+                'MAIL_MAILER',
+                "Pilote « {$mailer} » : aucun e-mail ne part réellement. La réinitialisation de mot de passe affichera « lien envoyé » sans que personne ne reçoive rien.",
+            );
+        }
+
+        if ($mailer === 'smtp' && (string) config('mail.mailers.smtp.host') === '') {
+            return $this->error('MAIL_MAILER', 'Pilote smtp sans MAIL_HOST : chaque envoi échouera.');
+        }
+
+        $from = (string) config('mail.from.address');
+
+        if ($from === '' || str_ends_with($from, '@example.com')) {
+            return $this->warning(
+                'MAIL_FROM_ADDRESS',
+                "Adresse d'expédition « {$from} » : les messages partiront d'une adresse qui n'existe pas, et seront classés en indésirables.",
+            );
+        }
+
+        return $this->ok('MAIL_MAILER', "Pilote « {$mailer} », expéditeur {$from}.");
     }
 
     /**

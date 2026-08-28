@@ -29,6 +29,15 @@ class DeploymentCheckTest extends TestCase
         // ce que le contrôle signale. Ces tests portent sur autre chose : on
         // part donc d'une installation complète.
         Plan::factory()->create();
+
+        // La suite tourne avec MAIL_MAILER=array, qui est précisément une des
+        // configurations que le contrôle refuse. Les tests qui ne portent pas
+        // sur l'e-mail partent donc d'un expéditeur plausible.
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => 'smtp.hebergeur.invalid',
+            'mail.from.address' => 'contact@smartlink.cm',
+        ]);
     }
 
     private function statusOf(string $name): ?string
@@ -301,5 +310,50 @@ class DeploymentCheckTest extends TestCase
         $this->getJson(route('cron.health'), ['Authorization' => 'Bearer un-secret'])
             ->assertStatus(500)
             ->assertJson(['status' => 'failed', 'serverless' => true]);
+    }
+
+    /**
+     * Le défaut de Laravel écrit les messages dans un fichier au lieu de les
+     * envoyer. Rien ne casse, le formulaire affiche « lien envoyé », et
+     * l'utilisateur qui a perdu son mot de passe ne reçoit jamais rien : c'est
+     * la seule voie de récupération d'un compte.
+     */
+    public function test_a_mailer_that_sends_nothing_is_an_error(): void
+    {
+        foreach (['log', 'array', 'null'] as $pilote) {
+            config(['mail.default' => $pilote]);
+
+            $this->assertSame(
+                DeploymentCheckService::ERROR,
+                $this->statusOf('MAIL_MAILER'),
+                "Le pilote « {$pilote} » n'envoie rien et doit être signalé.",
+            );
+        }
+    }
+
+    public function test_an_smtp_mailer_without_a_host_is_an_error(): void
+    {
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => '',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('MAIL_MAILER'));
+    }
+
+    /**
+     * L'adresse d'exemple livrée dans .env.example : les messages partent, mais
+     * d'un domaine qui n'appartient à personne — ils finissent en indésirables.
+     */
+    public function test_the_example_sender_address_is_flagged(): void
+    {
+        config(['mail.from.address' => 'hello@example.com']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('MAIL_FROM_ADDRESS'));
+    }
+
+    public function test_a_real_smtp_configuration_passes(): void
+    {
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('MAIL_MAILER'));
     }
 }
