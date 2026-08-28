@@ -70,7 +70,7 @@ class PaymentController extends Controller
                 .'fournisseur : le paiement reste en attente.', $event->internalReference);
         }
 
-        $confirmed = DB::transaction(function () use ($payment, $status, $event) {
+        $tranche = DB::transaction(function () use ($payment, $status, $event) {
             $locked = Payment::whereKey($payment->id)->lockForUpdate()->first();
 
             if ($locked === null || $locked->status !== Payment::STATUS_PENDING) {
@@ -93,8 +93,15 @@ class PaymentController extends Controller
                 'failure_reason' => 'Refusé par l\'opérateur.',
             ]);
 
-            return null;
+            return $locked;
         });
+
+        /*
+         * Le paiement rendu par la transaction est celui que *ce* rappel a
+         * tranché — succès comme refus. `null` veut dire qu'il n'a rien
+         * tranché : un rappel concurrent était passé avant lui.
+         */
+        $confirmed = $tranche?->status === Payment::STATUS_SUCCESS ? $tranche : null;
 
         if ($confirmed !== null) {
             $this->subscriptions->recordSuccessfulPayment($confirmed);
@@ -107,6 +114,21 @@ class PaymentController extends Controller
                     'reference' => $confirmed->internal_reference,
                 ]));
             }
+        }
+
+        /*
+         * Le refus se dit aussi, et c'est le message qui compte le plus.
+         *
+         * Le rappel arrive après coup : le prestataire a quitté la page depuis
+         * longtemps, et rien à l'écran ne lui apprendra que son règlement a
+         * été refusé. Sans ce SMS, il se croit à jour et découvre la coupure
+         * en constatant qu'il ne reçoit plus de demandes — sans jamais faire
+         * le lien.
+         */
+        if ($tranche?->status === Payment::STATUS_FAILED && $tranche->payer?->phone !== null) {
+            $this->sms->send($tranche->payer->phone, __('sms.subscription_failed', [
+                'amount' => number_format($tranche->amount_xaf, 0, ',', ' '),
+            ]));
         }
 
         // Trois issues, à ne pas confondre dans la trace : créditée, refusée,

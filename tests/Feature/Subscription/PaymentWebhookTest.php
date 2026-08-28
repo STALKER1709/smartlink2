@@ -9,6 +9,7 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\Payment\CollectionResult;
+use App\Services\SmsService;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -70,6 +71,43 @@ class PaymentWebhookTest extends TestCase
             $endsAt->timestamp,
             $payment->subscription->fresh()->ends_at->timestamp,
         );
+    }
+
+    /**
+     * Le rappel arrive après coup : le prestataire a quitté la page depuis
+     * longtemps et rien à l'écran ne lui apprendra le refus. Sans ce SMS, il
+     * se croit à jour et découvre la coupure en constatant qu'il ne reçoit
+     * plus de demandes — sans jamais faire le lien avec son règlement.
+     */
+    public function test_a_refused_payment_is_told_to_the_provider(): void
+    {
+        $payment = $this->pendingPayment();
+        $this->fakeProvider($payment->internal_reference, 'failed');
+
+        $sms = $this->mock(SmsService::class);
+        $sms->shouldReceive('send')
+            ->once()
+            ->withArgs(fn (string $phone, string $message) => $phone === $payment->payer->phone
+                && str_contains($message, 'Échec du paiement'));
+
+        $this->postJson(route('payments.webhook'), [])->assertOk();
+    }
+
+    /**
+     * Un rappel qui ne tranche rien — un concurrent est passé avant lui — ne
+     * doit pas rejouer le message. Le prestataire recevrait deux SMS
+     * contradictoires pour un seul règlement.
+     */
+    public function test_a_callback_that_settles_nothing_sends_no_message(): void
+    {
+        $payment = $this->pendingPayment();
+        $payment->update(['status' => Payment::STATUS_FAILED]);
+        $this->fakeProvider($payment->internal_reference, 'failed');
+
+        $sms = $this->mock(SmsService::class);
+        $sms->shouldNotReceive('send');
+
+        $this->postJson(route('payments.webhook'), [])->assertOk();
     }
 
     /**
