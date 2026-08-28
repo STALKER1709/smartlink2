@@ -70,4 +70,49 @@ class PasswordResetTest extends TestCase
             return true;
         });
     }
+
+    /**
+     * La demande de réinitialisation envoie un courriel à une adresse que le
+     * demandeur ne possède pas forcément : sans plafond, la route sert à
+     * bombarder un tiers aux frais de notre réputation d'expéditeur.
+     */
+    public function test_reset_link_requests_are_rate_limited(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+
+        foreach (range(1, 5) as $ignored) {
+            $this->post('/forgot-password', ['email' => $user->email])
+                ->assertStatus(302);
+        }
+
+        $this->post('/forgot-password', ['email' => $user->email])
+            ->assertStatus(429);
+    }
+
+    /**
+     * Le formulaire de nouveau mot de passe consomme un jeton : le plafond
+     * ferme le passage en force sur un jeton deviné.
+     */
+    public function test_password_reset_submissions_are_rate_limited(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (range(1, 5) as $ignored) {
+            $this->post('/reset-password', [
+                'token' => 'jeton-invalide',
+                'email' => $user->email,
+                'password' => 'password',
+                'password_confirmation' => 'password',
+            ])->assertStatus(302);
+        }
+
+        $this->post('/reset-password', [
+            'token' => 'jeton-invalide',
+            'email' => $user->email,
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertStatus(429);
+    }
 }
