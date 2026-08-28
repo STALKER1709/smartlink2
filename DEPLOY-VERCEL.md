@@ -429,7 +429,80 @@ un abonnement réglé.
 
 ---
 
-## 7. Limites connues de cet hébergement
+## 7. Sauvegardes et supervision
+
+Ces deux points ne se voient pas tant que tout va bien. C'est pour ça qu'ils
+finissent oubliés — et qu'ils se paient très cher le jour où on en a besoin.
+
+### Ce qu'il faut sauvegarder, et ce qui l'est déjà
+
+L'hébergement ne sauvegarde **rien** : le code est dans Git, tout le reste vit
+chez des tiers, et chacun a sa propre politique.
+
+| Donnée | Où elle vit | Ce qui la protège |
+|---|---|---|
+| Le schéma et les données | PostgreSQL Supabase | Les sauvegardes de Supabase, **selon la formule** — à vérifier dans *Database → Backups* |
+| Les images déposées | Seau S3/Supabase Storage | Rien par défaut |
+| Les pièces d'identité | Seau privé | Rien par défaut |
+| Le code et `public/build` | Git | Le dépôt |
+| Les journaux | Sortie d'erreur Vercel | Purgés au bout de quelques jours |
+
+Deux conséquences à ne pas manquer.
+
+**La rétention Supabase dépend de la formule, et le plan gratuit n'en offre
+aucune.** Ouvrez *Database → Backups* et regardez ce qui s'y trouve
+réellement : c'est la seule réponse fiable. En attendant, une copie hors
+plateforme depuis votre machine, `.env` pointé sur la production :
+
+```bash
+pg_dump "$DATABASE_URL" --format=custom --file=smartlink-$(date +%F).dump
+```
+
+Une sauvegarde jamais restaurée n'est pas une sauvegarde. Vérifiez-en une :
+
+```bash
+createdb smartlink_essai
+pg_restore --dbname=smartlink_essai smartlink-2026-01-01.dump
+```
+
+**Les seaux ne sont pas sauvegardés par la base.** Ils vivent à côté : une
+restauration de la base rendrait les lignes qui pointent vers des images, pas
+les images. Le seau des pièces d'identité mérite le même soin, avec une
+précaution en plus — sa copie est une copie de pièces d'identité, elle se
+chiffre et ne se dépose pas n'importe où.
+
+### Être prévenu quand quelque chose casse
+
+Aucune erreur de production n'est signalée par défaut. Elle part sur la sortie
+d'erreur, Vercel la garde quelques jours, et personne ne la lit : le seul à
+l'avoir vue est le visiteur qui l'a subie, et il ne reviendra pas.
+
+Le plus simple ne coûte aucune dépendance — Laravel sait déjà pousser vers un
+webhook Slack :
+
+```dotenv
+LOG_CHANNEL=stack
+LOG_STACK=stderr,slack
+LOG_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/…
+LOG_LEVEL=error
+```
+
+`deploy:check` signale l'absence de destination d'alerte en production.
+
+Un service de suivi d'erreurs (Sentry, Bugsnag, Flare) apporte en plus la pile
+d'appels, le regroupement des occurrences et la requête fautive. Il demande
+d'ajouter un paquet Composer, donc un déploiement — c'est le pas d'après, pas
+un préalable.
+
+Et le contrôle qui répond depuis l'intérieur de la production reste
+`/cron/health` : branché sur un surveillant externe qui l'appelle chaque heure
+(UptimeRobot, Better Stack, la surveillance de votre hébergeur), il prévient
+d'une panne de base, d'un seau mal réglé ou d'une migration oubliée avant que
+quiconque ne s'en aperçoive.
+
+---
+
+## 8. Limites connues de cet hébergement
 
 - **Démarrage à froid.** Une requête sur une instance neuve recompile les vues
   Blade dans `/tmp` : comptez une seconde de plus. Les suivantes sont rapides.

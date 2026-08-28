@@ -56,6 +56,15 @@ class DeploymentCheckTest extends TestCase
         putenv('VERCEL=1');
     }
 
+    /**
+     * Les contrôles de supervision ne portent que sur la production : en local,
+     * des journaux dans un fichier et aucune alerte sont le bon réglage.
+     */
+    private function pretendProduction(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
+    }
+
     protected function tearDown(): void
     {
         putenv('VERCEL');
@@ -355,5 +364,45 @@ class DeploymentCheckTest extends TestCase
     public function test_a_real_smtp_configuration_passes(): void
     {
         $this->assertSame(DeploymentCheckService::OK, $this->statusOf('MAIL_MAILER'));
+    }
+
+    public function test_no_alert_destination_is_flagged_in_production(): void
+    {
+        $this->pretendProduction();
+        config(['logging.default' => 'stderr', 'logging.channels.slack.url' => null]);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Alertes'));
+    }
+
+    public function test_an_alert_destination_passes(): void
+    {
+        $this->pretendProduction();
+        config([
+            'logging.default' => 'stderr',
+            'logging.channels.slack.url' => 'https://hooks.slack.invalid/services/…',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('Alertes'));
+    }
+
+    /**
+     * Sur Vercel, un journal écrit dans l'arborescence disparaît au
+     * déploiement suivant — et il n'y a alors plus aucune trace des pannes.
+     */
+    public function test_a_file_log_channel_is_flagged_on_a_serverless_host(): void
+    {
+        $this->pretendProduction();
+        $this->pretendServerless();
+        config(['logging.default' => 'daily']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Journaux'));
+    }
+
+    public function test_the_observability_checks_stay_silent_outside_production(): void
+    {
+        config(['logging.default' => 'single', 'logging.channels.slack.url' => null]);
+
+        $this->assertNull($this->statusOf('Alertes'));
+        $this->assertNull($this->statusOf('Journaux'));
     }
 }

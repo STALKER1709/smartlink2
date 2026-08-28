@@ -199,6 +199,55 @@ php artisan queue:monitor default  # profondeur de la file
 
 Sur un hébergement serverless, aucun de ces deux processus ne peut tourner et le disque ne survit pas d'une requête à l'autre. La mise en production de référence — Vercel pour l'application, Supabase pour la base et le stockage, HR-Skills Pay pour l'encaissement — est décrite pas à pas dans [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md).
 
+## 6 ter. Sauvegardes et supervision
+
+Deux points qui ne se voient pas tant que tout va bien, et qui se paient très
+cher le jour où on en a besoin. Sur un serveur classique, tout est à mettre en
+place : rien n'est fourni.
+
+**Sauvegarder la base et les fichiers déposés, pas seulement la base.** Les
+images et les pièces d'identité vivent sur le disque (ou dans un seau S3) : une
+restauration de la base seule rendrait les lignes qui pointent vers des images,
+pas les images.
+
+```cron
+# Base, tous les jours à 3 h, avec 14 jours de rétention.
+0 3 * * * pg_dump -Fc smartlink > /var/sauvegardes/smartlink-$(date +\%F).dump && find /var/sauvegardes -name 'smartlink-*.dump' -mtime +14 -delete
+
+# Fichiers déposés, vers un stockage distant — une copie sur le même disque
+# ne protège de rien.
+30 3 * * * rsync -a --delete /chemin/vers/smartlink/storage/app/ sauvegarde:/smartlink/
+```
+
+Une sauvegarde jamais restaurée n'est pas une sauvegarde : vérifiez-en une
+(`pg_restore` dans une base d'essai) avant d'en avoir besoin. La copie des
+pièces d'identité mérite une précaution de plus — c'est une copie de pièces
+d'identité : elle se chiffre et ne se dépose pas n'importe où.
+
+**Être prévenu quand quelque chose casse.** Aucune erreur de production n'est
+signalée par défaut : elle part dans `storage/logs`, et personne ne lit un
+fichier de journal de sa propre initiative. Le plus simple ne demande aucune
+dépendance — Laravel sait déjà pousser les erreurs critiques vers un webhook :
+
+```dotenv
+LOG_CHANNEL=stack
+LOG_STACK=daily,slack
+LOG_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/…
+LOG_LEVEL=error
+```
+
+`php artisan deploy:check` signale l'absence de destination d'alerte en
+production. Un service de suivi d'erreurs (Sentry, Bugsnag, Flare) apporte en
+plus la pile d'appels et le regroupement des occurrences : c'est le pas
+d'après, il demande un paquet Composer.
+
+Surveillez aussi les deux processus qui n'ont pas de symptôme visible quand ils
+s'arrêtent : `queue:work` et `schedule:run`. Une file arrêtée laisse la
+modération en attente sans qu'aucune page ne change, et un planificateur arrêté
+laisse les abonnements échus actifs indéfiniment. `php artisan queue:monitor`
+et une alerte sur l'âge du dernier passage de `subscriptions:refresh` couvrent
+les deux.
+
 ## 7. Lancer les tests
 
 ```bash

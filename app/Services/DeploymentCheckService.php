@@ -43,7 +43,52 @@ class DeploymentCheckService
             ...$this->assetChecks(),
             ...$this->externalServiceChecks(),
             ...$this->subscriptionChecks(),
+            ...$this->observabilityChecks(),
         ];
+    }
+
+    /**
+     * Ce qui prévient quand quelque chose casse.
+     *
+     * Sans destination d'alerte, une erreur de production n'est vue que par
+     * celui qui la subit : les journaux sont là, mais personne ne les lit
+     * d'eux-mêmes, et sur un hébergement serverless ils sont purgés au bout de
+     * quelques jours. Un avertissement, pas un blocage — l'application marche
+     * sans, elle est simplement muette sur ses propres pannes.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function observabilityChecks(): array
+    {
+        if (! app()->isProduction()) {
+            return [];
+        }
+
+        $canaux = (string) config('logging.default') === 'stack'
+            ? array_map(trim(...), explode(',', (string) env_or('LOG_STACK', 'single')))
+            : [(string) config('logging.default')];
+
+        // Un canal qui écrit dans un fichier de l'arborescence ne survit pas
+        // au déploiement suivant sur un hébergement serverless.
+        $ephemere = is_serverless() && array_intersect($canaux, ['single', 'daily']) !== [];
+
+        if ($ephemere) {
+            return [$this->warning(
+                'Journaux',
+                'Les journaux vont dans un fichier du projet, effacé à chaque déploiement. Sur cet hébergement, LOG_CHANNEL=stderr.',
+            )];
+        }
+
+        $alerte = array_intersect($canaux, ['slack', 'papertrail']) !== [];
+
+        if (! $alerte && (string) config('logging.channels.slack.url') === '') {
+            return [$this->warning(
+                'Alertes',
+                "Aucune destination d'alerte : une erreur de production ne sera vue que par celui qui la subit. LOG_STACK=stderr,slack avec LOG_SLACK_WEBHOOK_URL suffit, sans dépendance à ajouter.",
+            )];
+        }
+
+        return [$this->ok('Alertes', 'Les erreurs critiques sont poussées vers une destination d\'alerte.')];
     }
 
     /**
