@@ -173,8 +173,14 @@
             <p class="block font-medium text-sm text-on-surface-variant mb-2">Images actuelles</p>
             <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
                 @foreach ($service->images as $image)
+                    {{-- L'image est dans le label de la case : son texte
+                         alternatif devient le libellé de la suppression. Il
+                         doit donc distinguer une photo de l'autre, sans quoi
+                         la liste annonce cinq fois la même chose. --}}
                     <label class="relative block cursor-pointer">
-                        <img src="{{ media_url($image->path) }}" class="h-20 w-full object-cover rounded-md">
+                        <img src="{{ media_url($image->path) }}"
+                             alt="Photo {{ $loop->iteration }} du service"
+                             class="h-20 w-full object-cover rounded-md">
                         <span class="absolute top-1 right-1 bg-white/90 rounded-full p-1">
                             <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded border-outline-variant text-primary focus:ring-primary">
                         </span>

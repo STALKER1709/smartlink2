@@ -39,7 +39,9 @@
                     <x-input-label value="Photo de profil (facultatif)" />
                     <div class="mt-1 flex items-center gap-4">
                         @if ($clientProfile->photo_path)
-                            <img src="{{ media_url($clientProfile->photo_path) }}" class="h-16 w-16 rounded-full object-cover">
+                            <img src="{{ media_url($clientProfile->photo_path) }}"
+                                 alt="Votre photo de profil actuelle"
+                                 class="h-16 w-16 rounded-full object-cover">
                         @endif
                         <x-file-input name="photo" accept="image/*" label="Choisir une photo" />
                     </div>

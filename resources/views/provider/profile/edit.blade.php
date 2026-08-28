@@ -195,7 +195,9 @@
                     <x-input-label value="Logo (facultatif)" />
                     <div class="mt-1 flex items-center gap-4">
                         @if ($providerProfile->logo_path)
-                            <img src="{{ media_url($providerProfile->logo_path) }}" class="h-16 w-16 rounded-full object-cover">
+                            <img src="{{ media_url($providerProfile->logo_path) }}"
+                                 alt="Logo actuel de {{ $providerProfile->business_name }}"
+                                 class="h-16 w-16 rounded-full object-cover">
                         @endif
                         <x-file-input name="logo" accept="image/*" label="Choisir un logo" />
                     </div>
