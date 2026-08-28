@@ -37,6 +37,7 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\WebManifestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -99,6 +100,13 @@ Route::get('/confidentialite', [LegalController::class, 'privacy'])->name('legal
  */
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+/*
+ * Installation sur l'écran d'accueil. La page hors-ligne n'est jamais atteinte
+ * par un lien : c'est le service worker qui la sert quand le réseau manque.
+ */
+Route::get('/manifest.json', WebManifestController::class)->name('manifest');
+Route::view('/hors-ligne', 'hors-ligne')->name('offline');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

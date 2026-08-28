@@ -101,6 +101,29 @@ php artisan migrate:fresh --seed
 
 Le seeder crée des catégories de services, des comptes de démonstration pour chaque rôle (voir [USAGE.md](USAGE.md)), des services publiés et des demandes à différents stades du cycle de vie.
 
+## 3 bis. Installation sur l'écran d'accueil
+
+L'application est installable : `/manifest.json` décrit le nom, les couleurs et
+les icônes, `public/sw.js` affiche une page d'attente quand le réseau manque.
+Rien à configurer — mais deux points valent d'être connus.
+
+Les icônes de `public/images/icone-*.png` sont **versionnées**, comme
+`public/build`. Elles sont redessinées à partir de la marque par :
+
+```bash
+php artisan icons:app
+```
+
+Cette commande n'a de raison d'être lancée que si le logo change ; les fichiers
+qu'elle produit se commitent avec le reste.
+
+Le service worker ne met en cache **que** la page hors-ligne : jamais une page
+du site. Une page HTML servie depuis un cache afficherait une demande déjà
+acceptée ou un abonnement déjà réglé, sans que le visiteur puisse rien y faire.
+Pour le retirer un jour du parc, il ne suffit pas d'effacer `public/sw.js` — il
+reste installé chez ceux qui l'ont déjà ; il faut déployer un fichier qui
+appelle `self.registration.unregister()`.
+
 ## 4. Lier le stockage public
 
 Les images de services, logos et photos de profil sont stockées sur le disque `public` et exposées via un lien symbolique :

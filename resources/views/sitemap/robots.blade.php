@@ -16,6 +16,10 @@ Disallow: /profile
 Disallow: /phone/
 Disallow: /cron/
 
+# La page d'attente hors connexion : servie par le service worker, elle n'a
+# aucun contenu propre.
+Disallow: /hors-ligne
+
 # Ce qui fait venir : les fiches de services et de prestataires, l'accueil,
 # l'aide et les pages légales restent ouvertes.
 
