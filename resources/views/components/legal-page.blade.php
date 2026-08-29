@@ -2,7 +2,15 @@
 
 @php
     $editeur = config('legal.editeur');
-    $incomplet = collect($editeur)->filter()->isEmpty();
+    /*
+     * Le bandeau s'affiche dès qu'une mention obligatoire manque, pas
+     * seulement quand elles manquent toutes. `filter()->isEmpty()` faisait
+     * disparaître l'avertissement au premier champ rempli, alors que le RCCM
+     * ou le siège pouvaient encore être vides — c'est-à-dire au moment précis
+     * où on croit avoir terminé.
+     */
+    $manquantes = collect($editeur)->filter(fn ($valeur) => blank($valeur))->keys();
+    $incomplet = $manquantes->isNotEmpty();
     $valide = (bool) config('legal.valide_juridiquement');
 @endphp
 

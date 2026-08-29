@@ -44,6 +44,7 @@ class DeploymentCheckService
             ...$this->externalServiceChecks(),
             ...$this->subscriptionChecks(),
             ...$this->observabilityChecks(),
+            ...$this->legalChecks(),
         ];
     }
 
@@ -89,6 +90,45 @@ class DeploymentCheckService
         }
 
         return [$this->ok('Alertes', 'Les erreurs critiques sont poussées vers une destination d\'alerte.')];
+    }
+
+    /**
+     * Les mentions légales de l'éditeur.
+     *
+     * Elles figurent sur les statuts de la société : personne ne peut les
+     * deviner, et l'application démarre parfaitement sans. Elles se remarquent
+     * donc le jour où quelqu'un les cherche — un client mécontent, ou un
+     * contrôle. Un avertissement, pas un blocage : c'est une exposition
+     * juridique, pas une panne technique.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function legalChecks(): array
+    {
+        if (! app()->environment('production')) {
+            return [];
+        }
+
+        $manquantes = array_keys(array_filter(
+            (array) config('legal.editeur'),
+            fn ($valeur) => blank($valeur),
+        ));
+
+        if ($manquantes !== []) {
+            return [$this->warning(
+                'Mentions légales',
+                'Renseignements manquants ('.implode(', ', $manquantes).') : les pages légales affichent un bandeau d’avertissement à la place. Variables LEGAL_* de l\'environnement.',
+            )];
+        }
+
+        if (! config('legal.valide_juridiquement')) {
+            return [$this->warning(
+                'Mentions légales',
+                "Complètes, mais LEGAL_VALIDE n'est pas posé : les pages portent la mention « document non validé juridiquement », visible du public.",
+            )];
+        }
+
+        return [$this->ok('Mentions légales', 'Identité de l\'éditeur complète et documents relus.')];
     }
 
     /**

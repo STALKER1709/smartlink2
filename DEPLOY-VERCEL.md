@@ -293,7 +293,7 @@ Ne cochez pas *Automatically expose System Environment Variables* pour y
 chercher `APP_KEY` : générez-la vous-même et collez-la. Sans `APP_KEY`, aucune
 session ne fonctionne.
 
-**Les neuf lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
+**Les dix lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
 celles que `deploy:check` et `/cron/health` contrôlent nommément, parce que
 l'application démarre parfaitement sans elles :
 
@@ -308,6 +308,7 @@ l'application démarre parfaitement sans elles :
 | `HRSKILLS_WEBHOOK_SECRET` | Aucun abonnement n'est jamais crédité |
 | `MAIL_MAILER=smtp` | Le mot de passe oublié annonce « lien envoyé » sans rien envoyer |
 | `APP_URL` en `https://` | Le filtrage des noms d'hôte s'éteint : un lien de mot de passe oublié devient détournable |
+| `LEGAL_*` | Les pages légales affichent publiquement « identité de l'éditeur non renseignée » |
 
 **Après un déploiement sur une base qui a déjà reçu des dépôts**, lancez une
 fois `php artisan id-documents:secure` (ou `--dry-run` d'abord) : le code

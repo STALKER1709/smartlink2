@@ -60,6 +60,13 @@ class DeploymentCheckTest extends TestCase
      * Les contrôles de supervision ne portent que sur la production : en local,
      * des journaux dans un fichier et aucune alerte sont le bon réglage.
      */
+    private function identiteLegaleComplete(): void
+    {
+        $cles = array_keys((array) config('legal.editeur'));
+
+        config(['legal.editeur' => array_combine($cles, array_map(fn (string $c) => 'valeur '.$c, $cles))]);
+    }
+
     private function pretendProduction(): void
     {
         $this->app->detectEnvironment(fn () => 'production');
@@ -404,5 +411,54 @@ class DeploymentCheckTest extends TestCase
 
         $this->assertNull($this->statusOf('Alertes'));
         $this->assertNull($this->statusOf('Journaux'));
+    }
+
+    /**
+     * Les mentions légales figurent sur les statuts de la société : personne
+     * ne peut les deviner, et l'application démarre parfaitement sans. Sans ce
+     * contrôle, leur absence ne se remarque que le jour où quelqu'un les
+     * cherche.
+     */
+    public function test_missing_legal_details_are_flagged_in_production(): void
+    {
+        $this->pretendProduction();
+        config(['legal.editeur.rccm' => '', 'legal.editeur.siege' => null]);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Mentions légales'));
+    }
+
+    /**
+     * Le piège que ce contrôle double : le bandeau de la page ne s'affichait
+     * que si *toutes* les mentions manquaient. Ici, une seule manque.
+     */
+    public function test_a_single_missing_detail_is_enough_to_flag(): void
+    {
+        $this->pretendProduction();
+        $this->identiteLegaleComplete();
+        config(['legal.editeur.niu' => '']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Mentions légales'));
+    }
+
+    public function test_complete_and_reviewed_legal_details_pass(): void
+    {
+        $this->pretendProduction();
+        $this->identiteLegaleComplete();
+        config(['legal.valide_juridiquement' => true]);
+
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('Mentions légales'));
+    }
+
+    /**
+     * Complètes mais non relues : les pages portent une mention visible du
+     * public, qui doit se voir aussi dans le contrôle.
+     */
+    public function test_unreviewed_documents_are_still_flagged(): void
+    {
+        $this->pretendProduction();
+        $this->identiteLegaleComplete();
+        config(['legal.valide_juridiquement' => false]);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Mentions légales'));
     }
 }
