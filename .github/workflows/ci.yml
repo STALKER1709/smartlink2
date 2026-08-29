@@ -135,7 +135,7 @@ jobs:
       - name: Analyse statique
         run: |
           if [ -x vendor/bin/phpstan ]; then
-            vendor/bin/phpstan analyse --no-progress
+            vendor/bin/phpstan analyse --no-progress --memory-limit=1G
           else
             echo "larastan absent : analyse statique passée. Voir phpstan.neon."
           fi

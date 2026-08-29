@@ -198,8 +198,14 @@ Depuis une machine ayant accès à GitHub, deux commandes suffisent :
 
 ```bash
 composer require --dev larastan/larastan
-vendor/bin/phpstan analyse --generate-baseline
+vendor/bin/phpstan analyse --generate-baseline --memory-limit=1G
 ```
+
+`--memory-limit` n'est pas un confort : PHPStan ne lit aucune limite mémoire
+depuis `phpstan.neon`, seulement depuis la ligne de commande ou `php.ini`, et
+les 128 Mo alloués par défaut ne suffisent pas à Laravel plus larastan.
+L'analyse traverse alors tous les fichiers puis meurt en écrivant son cache,
+sur une trace d'appels qui n'a rien à voir avec le dépôt.
 
 Le passage « Analyse statique » du CI s'allume alors tout seul : il est écrit
 pour ne rien faire tant que `vendor/bin/phpstan` n'existe pas.

@@ -9,11 +9,18 @@
 # Installation (une seule fois, sur une machine avec accès à GitHub) :
 #
 #     composer require --dev larastan/larastan
-#     vendor/bin/phpstan analyse --generate-baseline
+#     vendor/bin/phpstan analyse --generate-baseline --memory-limit=1G
 #
 # La seconde commande fige l'existant : le CI ne rougit alors que sur ce qui
 # est ajouté après, ce qui rend l'outil utilisable dès le premier jour au lieu
 # de demander une reprise complète avant d'être branché.
+#
+# ⚠️ `--memory-limit` n'est pas facultatif, et ne peut pas être posé ici :
+# PHPStan ne lit aucune limite mémoire depuis ce fichier, seulement depuis la
+# ligne de commande ou php.ini. Avec les 128 Mo que PHP alloue par défaut,
+# l'analyse traverse les fichiers puis meurt au moment d'écrire son cache —
+# « Allowed memory size exhausted », sans qu'aucune erreur du dépôt ne soit
+# en cause. Le passage du CI porte le même drapeau.
 
 includes:
     - vendor/larastan/larastan/extension.neon
