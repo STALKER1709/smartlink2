@@ -14,7 +14,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-sm text-on-secondary-container">
+            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-label-lg text-on-secondary-container">
                 {{ session('status') }}
             </div>
         @endif
@@ -26,10 +26,10 @@
                 ['Prix moyen indicatif', number_format($prixMoyen, 0, ',', ' ').' FCFA', true],
             ] as [$libelle, $valeur, $chiffre])
                 <div class="flex flex-col rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
-                    <span class="mb-2 font-body-md text-sm font-semibold uppercase tracking-wider text-on-surface-variant">{{ $libelle }}</span>
+                    <span class="mb-2 font-body-md text-label-lg font-semibold uppercase tracking-wider text-on-surface-variant">{{ $libelle }}</span>
                     <span @class([
                         'font-bold text-primary',
-                        'font-label-numeric text-2xl' => $chiffre,
+                        'font-label-numeric text-headline-md' => $chiffre,
                         'font-headline-xl text-headline-xl' => ! $chiffre,
                     ])>{{ $valeur }}</span>
                 </div>
@@ -64,27 +64,27 @@
                                     @endunless
                                 </div>
                                 @if ($category->description)
-                                    <p class="mt-1 line-clamp-2 text-sm text-on-surface-variant">{{ $category->description }}</p>
+                                    <p class="mt-1 line-clamp-2 text-label-lg text-on-surface-variant">{{ $category->description }}</p>
                                 @endif
                             </div>
 
                             <div class="md:col-span-2 md:text-right">
                                 <span class="font-label-numeric text-on-surface">{{ $category->services_count }}</span>
-                                <span class="text-sm text-on-surface-variant md:hidden">{{ Str::plural('service', $category->services_count) }}</span>
+                                <span class="text-label-lg text-on-surface-variant md:hidden">{{ Str::plural('service', $category->services_count) }}</span>
                             </div>
 
                             <div class="md:col-span-2 md:text-right">
                                 <span class="font-label-numeric text-on-surface-variant">{{ $category->active_services_count }}</span>
-                                <span class="text-sm text-on-surface-variant md:hidden">actifs</span>
+                                <span class="text-label-lg text-on-surface-variant md:hidden">actifs</span>
                             </div>
 
                             <div class="flex items-center justify-end gap-4 md:col-span-3">
-                                <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="text-label-lg font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
                                 <form action="{{ route('admin.categories.destroy', $category) }}" method="POST"
                                       onsubmit="return confirm('Supprimer « {{ $category->name }} » ? Les services qui s\'y rattachent perdront leur catégorie.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
+                                    <button type="submit" class="text-label-lg font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
                                 </form>
                             </div>
                         </div>

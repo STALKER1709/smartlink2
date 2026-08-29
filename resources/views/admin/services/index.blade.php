@@ -5,7 +5,7 @@
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if (session('status'))
-            <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-sm text-on-secondary-container">
+            <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-label-lg text-on-secondary-container">
                 {{ session('status') }}
             </div>
         @endif
@@ -24,7 +24,7 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-label-lg font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
                     {{ __("Filtrer") }}
                 </button>
             </div>
@@ -45,7 +45,7 @@
                                 <p class="font-medium text-on-surface">{{ $service->title }}</p>
                                 <x-status-badge :status="$service->status" />
                             </div>
-                            <p class="mt-0.5 text-sm text-on-surface-variant">
+                            <p class="mt-0.5 text-label-lg text-on-surface-variant">
                                 {{ $service->provider?->name }} · {{ $service->category?->name }}
                                 @if ($service->city) · {{ $service->city }} @endif
                             </p>
@@ -55,20 +55,20 @@
                              « Désactiver », deux cibles voisines au pouce. Il
                              est mis à part, à l'autre bout de la rangée. --}}
                         <div class="flex shrink-0 items-center gap-4">
-                            <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-primary hover:text-primary-container">
+                            <a href="{{ route('services.show', $service) }}" class="text-label-lg font-medium text-primary hover:text-primary-container">
                                 {{ __("Voir") }}
                             </a>
                             <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="text-sm font-medium text-tertiary hover:opacity-80">
+                                <button type="submit" class="text-label-lg font-medium text-tertiary hover:opacity-80">
                                     {{ $service->status === \App\Models\Service::STATUS_ACTIVE ? 'Désactiver' : 'Activer' }}
                                 </button>
                             </form>
                             <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="ml-auto sm:ml-4" onsubmit="return confirm('Supprimer définitivement « {{ $service->title }} » ? Cette action est irréversible.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-sm font-medium text-error hover:opacity-80">
+                                <button type="submit" class="text-label-lg font-medium text-error hover:opacity-80">
                                     {{ __("Supprimer") }}
                                 </button>
                             </form>

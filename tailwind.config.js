@@ -85,6 +85,8 @@ export default {
                 'headline-sm': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
                 'body-lg': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
                 'body-md': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
+                'label-lg': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
+                'label-md': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
                 'button-text': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
                 'label-numeric': ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
             },
@@ -99,6 +101,17 @@ export default {
                 'headline-sm': ['16px', { lineHeight: '24px', letterSpacing: '-0.01em', fontWeight: '600' }],
                 'body-lg': ['18px', { lineHeight: '26px', fontWeight: '400' }],
                 'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+                // Les étiquettes : ce qui nomme une donnée sans être une
+                // phrase — intitulé de champ, libellé d'onglet, métier en
+                // capitales au-dessus d'un titre, texte d'une pastille. Elles
+                // manquaient, et la même étiquette s'écrivait de neuf façons
+                // au fil des vues : `text-xs`, `text-sm`, `text-[10px]`,
+                // `text-[11px]`, `text-[12px]`, `text-[13px]`, et trois de ces
+                // variantes en chasse fixe, sur des mots. Les deux paliers
+                // viennent de la charte Stitch « SmartLink Core », où ils
+                // portent déjà ces noms.
+                'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '500' }],
+                'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.5px', fontWeight: '500' }],
                 'label-numeric': ['14px', { lineHeight: '20px', fontWeight: '500' }],
                 'button-text': ['16px', { lineHeight: '24px', fontWeight: '600' }],
             },

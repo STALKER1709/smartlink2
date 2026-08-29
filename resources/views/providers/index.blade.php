@@ -30,7 +30,7 @@
                     >
                 </div>
 
-                <select name="category_id" class="rounded-xl border-outline-variant text-sm focus:border-primary focus:ring-primary sm:w-48">
+                <select name="category_id" class="rounded-xl border-outline-variant text-label-lg focus:border-primary focus:ring-primary sm:w-48">
                     <option value="">{{ __("Toutes les catégories") }}</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
@@ -42,7 +42,7 @@
                     name="city"
                     value="{{ request('city') }}"
                     placeholder="{{ __('Ville') }}"
-                    class="rounded-xl border-outline-variant text-sm focus:border-primary focus:ring-primary sm:w-40"
+                    class="rounded-xl border-outline-variant text-label-lg focus:border-primary focus:ring-primary sm:w-40"
                 >
 
                 <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
@@ -50,7 +50,7 @@
                 </button>
             </div>
 
-            <label class="mt-3 inline-flex items-center gap-2 px-1 text-sm text-on-surface-variant">
+            <label class="mt-3 inline-flex items-center gap-2 px-1 text-label-lg text-on-surface-variant">
                 <input type="checkbox" name="verified_only" value="1" @checked(request('verified_only'))
                        onchange="this.form.submit()"
                        class="rounded border-outline-variant text-primary focus:ring-primary">
@@ -59,15 +59,15 @@
         </form>
 
         <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="font-label-numeric text-label-numeric text-on-surface-variant">
-                {{ $providers->total() }} {{ Str::plural('prestataire', $providers->total()) }}
+            <p class="font-label-lg text-label-lg text-on-surface-variant">
+                <span class="font-label-numeric">{{ $providers->total() }}</span> {{ Str::plural('prestataire', $providers->total()) }}
             </p>
 
             @if ($actifs->isNotEmpty())
                 <div class="flex flex-wrap items-center gap-2">
                     @foreach ($actifs as $cle => $valeur)
                         <a href="{{ route('providers.index', collect(request()->query())->except($cle)->all()) }}"
-                           class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-xs font-medium text-on-surface hover:border-primary/50">
+                           class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-label-md font-medium text-on-surface hover:border-primary/50">
                             {{ $valeur }}
                             <span class="material-symbols-outlined text-sm text-on-surface-variant">close</span>
                         </a>

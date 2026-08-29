@@ -74,13 +74,13 @@
             </div>
             <div>
                 <h3 class="font-headline-sm text-headline-sm leading-tight">{{ __('ui.assistant.title') }}</h3>
-                <p class="text-xs text-on-primary-container">{{ __('ui.assistant.subtitle') }}</p>
+                <p class="text-label-md text-on-primary-container">{{ __('ui.assistant.subtitle') }}</p>
             </div>
         </div>
 
         <div x-ref="messages" class="flex-1 overflow-y-auto p-3 space-y-2 bg-surface">
             <template x-if="history.length === 0">
-                <p class="text-sm text-on-surface-variant text-center mt-4">
+                <p class="text-label-lg text-on-surface-variant text-center mt-4">
                     {{ __('ui.assistant.greeting') }}
                 </p>
             </template>
@@ -89,14 +89,14 @@
                 <div :class="entry.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
                     <div
                         :class="entry.role === 'user' ? 'rounded-tr-sm bg-primary text-on-primary' : 'rounded-tl-sm bg-surface-container-lowest text-on-surface border border-outline-variant'"
-                        class="rounded-2xl px-3 py-2 text-sm max-w-[85%] whitespace-pre-wrap shadow-sm"
+                        class="rounded-2xl px-3 py-2 text-label-lg max-w-[85%] whitespace-pre-wrap shadow-sm"
                         x-text="entry.content"
                     ></div>
                 </div>
             </template>
 
             <div x-show="sending" x-cloak class="flex justify-start">
-                <div class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant rounded-2xl rounded-tl-sm px-3 py-2 text-sm">
+                <div class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant rounded-2xl rounded-tl-sm px-3 py-2 text-label-lg">
                     {{ __('ui.assistant.typing') }}
                 </div>
             </div>
@@ -108,7 +108,7 @@
                 x-model="message"
                 :disabled="sending"
                 placeholder="{{ __('ui.assistant.placeholder') }}"
-                class="flex-1 rounded-full border-outline-variant text-sm focus:border-primary focus:ring-primary"
+                class="flex-1 rounded-full border-outline-variant text-label-lg focus:border-primary focus:ring-primary"
             >
             <button
                 type="submit"

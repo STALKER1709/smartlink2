@@ -49,7 +49,7 @@
             <span class="material-symbols-outlined mt-1 text-on-secondary-container" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">edit_note</span>
             <div>
                 <h2 class="font-headline-md text-headline-md text-on-secondary-container">{{ __('ui.draft.label') }}</h2>
-                <p class="mt-1 text-sm text-on-secondary-container/80">{{ __('ui.draft.hint') }}</p>
+                <p class="mt-1 text-label-lg text-on-secondary-container/80">{{ __('ui.draft.hint') }}</p>
             </div>
         </div>
         <label for="ai-notes" class="sr-only">{{ __('ui.draft.label') }}</label>
@@ -78,8 +78,8 @@
         </div>
 
         <div class="mt-2 flex flex-wrap justify-end gap-3">
-            <p x-show="applied" x-cloak class="text-sm text-on-secondary-container">{{ __('ui.draft.applied') }}</p>
-            <p x-show="error" x-cloak x-text="error" class="text-sm text-error"></p>
+            <p x-show="applied" x-cloak class="text-label-lg text-on-secondary-container">{{ __('ui.draft.applied') }}</p>
+            <p x-show="error" x-cloak x-text="error" class="text-label-lg text-error"></p>
         </div>
     </div>
 @endif
@@ -123,7 +123,7 @@
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
         <x-input-label for="city" :value="__('Ville')" />
-        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary text-sm">
+        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary text-label-lg">
             <option value="">{{ __("— Choisir une ville —") }}</option>
             @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
                 <option value="{{ $ville }}" @selected(old('city', $service?->city) === $ville)>{{ $ville }}</option>
@@ -145,7 +145,7 @@
 </div>
 
 <div class="mt-4">
-    <label class="flex items-center gap-2 text-sm text-on-surface-variant">
+    <label class="flex items-center gap-2 text-label-lg text-on-surface-variant">
         <input type="hidden" name="is_available" value="0">
         <input type="checkbox" name="is_available" value="1" class="rounded border-outline-variant text-primary focus:ring-primary" @checked(old('is_available', $service?->is_available ?? true))>
         {{ __("Disponible actuellement") }}
@@ -170,7 +170,7 @@
 
     @if ($service->images->isNotEmpty())
         <div class="mt-4">
-            <p class="block font-medium text-sm text-on-surface-variant mb-2">{{ __("Images actuelles") }}</p>
+            <p class="block font-medium text-label-lg text-on-surface-variant mb-2">{{ __("Images actuelles") }}</p>
             <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
                 @foreach ($service->images as $image)
                     {{-- L'image est dans le label de la case : son texte
@@ -187,7 +187,7 @@
                     </label>
                 @endforeach
             </div>
-            <p class="mt-1 text-xs text-on-surface-variant">{{ __("Cochez les images à supprimer.") }}</p>
+            <p class="mt-1 text-label-md text-on-surface-variant">{{ __("Cochez les images à supprimer.") }}</p>
         </div>
     @endif
 @endif

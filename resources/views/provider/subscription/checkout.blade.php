@@ -21,12 +21,12 @@
 
             <div class="mt-2 flex items-center justify-between border-t border-outline-variant pt-4">
                 <span class="font-body-lg text-body-lg text-on-surface">{{ __("Total à payer") }}</span>
-                <span class="font-label-numeric text-xl text-primary">{{ $plan->formattedPrice() }}</span>
+                <span class="font-label-numeric text-headline-md text-primary">{{ $plan->formattedPrice() }}</span>
             </div>
         </section>
 
         <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
-            <p class="text-sm text-on-surface-variant">
+            <p class="text-label-lg text-on-surface-variant">
                 @if ($subscription && $subscription->ends_at->isFuture())
                     {{ __('ui.subscription.extend_note', ['days' => config('subscription.cycle_days')]) }}
                 @else
@@ -45,8 +45,8 @@
                                 <input type="radio" name="operator" value="{{ $value }}"
                                        @checked(old('operator') === $value)
                                        class="sr-only peer">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs {{ $meta[1] }}">{{ $meta[2] }}</div>
-                                <span class="text-sm font-medium text-on-surface text-center">{{ __($meta[0]) }}</span>
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-label-md {{ $meta[1] }}">{{ $meta[2] }}</div>
+                                <span class="text-label-lg font-medium text-on-surface text-center">{{ __($meta[0]) }}</span>
                                 <span class="material-symbols-outlined absolute top-2 right-2 text-primary text-lg opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: 'FILL' 1;">check_circle</span>
                             </label>
                         @endforeach
@@ -58,17 +58,17 @@
                     <x-input-label for="phone" :value="__('ui.payment.phone')" />
                     <x-text-input id="phone" name="phone" type="tel" class="mt-1 block w-full"
                                   :value="old('phone', auth()->user()->phone)" required />
-                    <p class="mt-1 text-xs text-on-surface-variant">{{ __('ui.payment.phone_hint') }}</p>
+                    <p class="mt-1 text-label-md text-on-surface-variant">{{ __('ui.payment.phone_hint') }}</p>
                     <x-input-error :messages="$errors->get('phone')" class="mt-2" />
                 </div>
 
-                <div class="rounded-lg bg-secondary-container/20 border border-outline-variant p-4 text-sm text-on-secondary-container space-y-2">
+                <div class="rounded-lg bg-secondary-container/20 border border-outline-variant p-4 text-label-lg text-on-secondary-container space-y-2">
                     <p>{{ __('ui.subscription.checkout_intro') }}</p>
                     <p>{{ __('ui.subscription.no_auto_debit') }}</p>
                 </div>
 
                 <div class="flex items-center justify-between gap-3">
-                    <a href="{{ route('provider.subscription.show') }}" class="text-sm text-on-surface-variant hover:text-on-surface">
+                    <a href="{{ route('provider.subscription.show') }}" class="text-label-lg text-on-surface-variant hover:text-on-surface">
                         {{ __('ui.cancel') }}
                     </a>
                     <x-primary-button>

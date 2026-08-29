@@ -21,7 +21,7 @@
             <x-natural-search class="mx-auto mt-8 max-w-2xl" />
 
             @if ($providerCount > 0)
-                <p class="mt-6 font-label-numeric text-label-numeric text-on-surface-variant">
+                <p class="mt-6 font-label-lg text-label-lg text-on-surface-variant">
                     {{ trans_choice(':count prestataire|:count prestataires', $providerCount) }}
                     · {{ trans_choice(':count service en ligne|:count services en ligne', $serviceCount) }}
                 </p>
@@ -74,7 +74,7 @@
 
                         <div @class(['flex flex-1 flex-col justify-center gap-1 px-4 pb-6', 'pt-8' => (bool) $photo, 'pt-3' => ! $photo])>
                             <span class="font-medium leading-tight text-on-background">{{ $category->name }}</span>
-                            <span class="font-label-numeric text-xs text-on-surface-variant">
+                            <span class="font-label-numeric text-label-md text-on-surface-variant">
                                 {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
                             </span>
                         </div>
@@ -120,7 +120,7 @@
                                         <img src="{{ media_url($providerProfile->logo_path) }}" alt="" loading="lazy"
                                              class="h-full w-full object-cover" onerror="this.remove()">
                                     @else
-                                        <span class="font-headline-md text-lg font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
+                                        <span class="font-headline-md text-headline-md font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
                                     @endif
                                 </div>
 
@@ -134,7 +134,7 @@
                                     @endif
 
                                     @if ($providerProfile->city)
-                                        <p class="mt-1 flex items-center gap-1 text-sm text-on-surface-variant">
+                                        <p class="mt-1 flex items-center gap-1 text-label-lg text-on-surface-variant">
                                             <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
                                             {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
                                         </p>
@@ -147,14 +147,18 @@
                                     @if ($providerProfile->rating_count)
                                         <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
                                     @else
-                                        <span class="text-sm text-on-surface-variant">{{ __('Pas encore d\'avis') }}</span>
+                                        <span class="text-label-lg text-on-surface-variant">{{ __('Pas encore d\'avis') }}</span>
                                     @endif
 
-                                    <span class="font-label-numeric text-label-numeric text-primary">
+                                    {{-- Le montant en chasse fixe, la phrase qui le
+                                         porte non : « À partir de » composé en
+                                         JetBrains Mono ouvre un blanc de deux
+                                         caractères avant le prix. --}}
+                                    <span class="font-label-lg text-label-lg text-primary">
                                         @if ($providerProfile->min_price)
-                                            À partir de {{ number_format((float) $providerProfile->min_price, 0, ',', ' ') }} FCFA
+                                            {{ __('À partir de') }} <span class="font-label-numeric">{{ number_format((float) $providerProfile->min_price, 0, ',', ' ') }} FCFA</span>
                                         @else
-                                            Prix à convenir
+                                            {{ __('Prix à convenir') }}
                                         @endif
                                     </span>
                                 </div>
@@ -224,7 +228,7 @@
                             <span class="font-label-numeric text-label-numeric text-on-surface-variant">0{{ $index + 1 }}</span>
                         </div>
                         <h3 class="mt-4 font-headline-sm text-headline-sm text-on-surface">{{ $titre }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">{{ $texte }}</p>
+                        <p class="mt-2 text-label-lg leading-relaxed text-on-surface-variant">{{ $texte }}</p>
                     </li>
                 @endforeach
             </ol>

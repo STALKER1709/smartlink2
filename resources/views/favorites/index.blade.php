@@ -5,7 +5,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-sm text-on-secondary-container">
+            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-label-lg text-on-secondary-container">
                 {{ session('status') }}
             </div>
         @endif
@@ -37,15 +37,15 @@
                                 @if ($profil->logo_path)
                                     <img src="{{ media_url($profil->logo_path) }}" alt="" loading="lazy" class="h-full w-full object-cover" onerror="this.remove()">
                                 @else
-                                    <span class="font-headline-md text-lg font-bold text-primary">{{ Str::upper(Str::substr($profil->business_name, 0, 1)) }}</span>
+                                    <span class="font-headline-md text-headline-md font-bold text-primary">{{ Str::upper(Str::substr($profil->business_name, 0, 1)) }}</span>
                                 @endif
                             </div>
                             <div class="min-w-0">
-                                <p class="text-xs font-semibold uppercase tracking-wide text-primary">{{ $profil->category?->name }}</p>
+                                <p class="text-label-md font-semibold uppercase tracking-wide text-primary">{{ $profil->category?->name }}</p>
                                 <h3 class="mt-1 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
                                     {{ $profil->business_name }}
                                 </h3>
-                                <p class="mt-1 text-sm text-on-surface-variant">
+                                <p class="mt-1 text-label-lg text-on-surface-variant">
                                     {{ $profil->city }}
                                     <span aria-hidden="true" class="text-outline">·</span>
                                     <span class="font-label-numeric">{{ $profil->services_count }}</span> {{ Str::plural('service', $profil->services_count) }}
@@ -57,7 +57,7 @@
                             @if ($profil->rating_count)
                                 <x-star-rating :rating="$profil->rating_avg" :count="$profil->rating_count" compact />
                             @else
-                                <span class="text-xs text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
+                                <span class="text-label-md text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
                             @endif
 
                             <a href="{{ route('requests.create', ['provider_id' => $profil->user_id]) }}"

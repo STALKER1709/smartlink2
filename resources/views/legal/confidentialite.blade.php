@@ -80,7 +80,7 @@
         </p>
 
         <div class="mt-4 overflow-x-auto rounded-xl border border-outline-variant">
-            <table class="w-full min-w-[42rem] border-collapse text-left text-sm">
+            <table class="w-full min-w-[42rem] border-collapse text-left text-label-lg">
                 <thead class="bg-surface-container-low">
                     <tr>
                         <th scope="col" class="p-3 font-semibold text-on-surface">Prestataire</th>

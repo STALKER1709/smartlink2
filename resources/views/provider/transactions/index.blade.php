@@ -36,10 +36,10 @@
             ] as [$libelle, $montant, $icone, $teinte])
                 <div class="flex h-[120px] flex-col justify-between rounded-xl border border-outline-variant bg-surface p-4">
                     <div class="flex items-center justify-between gap-2 text-on-surface-variant">
-                        <span class="text-sm">{{ $libelle }}</span>
+                        <span class="text-label-lg">{{ $libelle }}</span>
                         <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icone }}</span>
                     </div>
-                    <div class="font-label-numeric text-[28px] font-bold text-on-background">
+                    <div class="font-label-numeric text-headline-lg text-on-background">
                         {{ number_format($montant, 0, ',', ' ') }} FCFA
                     </div>
                 </div>
@@ -68,21 +68,21 @@
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                                 <p class="font-medium text-on-surface">{{ $payment->plan?->name() ?? 'Abonnement' }}</p>
-                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 font-button-text text-xs font-semibold {{ $meta['class'] }}">
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 font-button-text text-label-md font-semibold {{ $meta['class'] }}">
                                     {{ $meta['label'] }}
                                 </span>
                             </div>
-                            <p class="mt-0.5 font-label-numeric text-sm text-on-surface-variant">
+                            <p class="mt-0.5 font-label-numeric text-label-lg text-on-surface-variant">
                                 {{ ($payment->paid_at ?? $payment->created_at)->format('d/m/Y H:i') }}
                             </p>
                             @if ($payment->failure_reason)
-                                <p class="mt-0.5 text-sm text-error">{{ $payment->failure_reason }}</p>
+                                <p class="mt-0.5 text-label-lg text-error">{{ $payment->failure_reason }}</p>
                             @endif
                             {{-- Référence et numéro débité sur la même ligne :
                                  séparés, le point médian de la date restait
                                  orphelin en bout de ligne à 390 px. --}}
                             @if ($payment->internal_reference || $payment->phone)
-                                <p class="mt-1 font-label-numeric text-xs text-on-surface-variant">
+                                <p class="mt-1 font-label-numeric text-label-md text-on-surface-variant">
                                     @if ($payment->internal_reference){{ __('Réf.') }} {{ $payment->internal_reference }}@endif
                                     @if ($payment->internal_reference && $payment->phone) · @endif
                                     {{ $payment->phone }}

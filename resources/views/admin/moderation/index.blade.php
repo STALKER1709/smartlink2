@@ -42,17 +42,17 @@
                         <div class="p-6">
                             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                                 <div class="flex items-center gap-2">
-                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-numeric text-xs uppercase tracking-wider text-on-surface">
+                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-md text-label-md uppercase tracking-wider text-on-surface">
                                         {{ $isService ? __('ui.moderation.service') : __('ui.moderation.review') }}
                                     </span>
-                                    <span class="font-label-numeric text-sm text-on-surface-variant">{{ $report->created_at->translatedFormat('d M, H:i') }}</span>
+                                    <span class="font-label-numeric text-label-lg text-on-surface-variant">{{ $report->created_at->translatedFormat('d M, H:i') }}</span>
                                 </div>
 
                                 @if ($categories !== [])
                                     <div class="flex flex-wrap justify-end gap-2">
                                         @foreach ($categories as $category)
                                             @php $cle = 'ui.moderation.categories.'.$category; @endphp
-                                            <span class="flex items-center gap-1 rounded-full bg-error-container px-3 py-1 font-label-numeric text-xs text-on-error-container">
+                                            <span class="flex items-center gap-1 rounded-full bg-error-container px-3 py-1 font-label-numeric text-label-md text-on-error-container">
                                                 <span class="material-symbols-outlined text-[14px]" aria-hidden="true">warning</span>
                                                 {{ Lang::has($cle) ? __($cle) : $category }}
                                             </span>
@@ -61,7 +61,7 @@
                                 @endif
                             </div>
 
-                            <p class="font-headline-md text-body-lg text-on-surface">
+                            <p class="font-headline-sm text-headline-sm text-on-surface">
                                 @if ($content === null)
                                     <span class="text-on-surface-variant">{{ __("— supprimé —") }}</span>
                                 @elseif ($isService)

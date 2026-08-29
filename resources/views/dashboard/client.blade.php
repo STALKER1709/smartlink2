@@ -76,7 +76,7 @@
                     {{-- Les intitulés de colonnes n'apparaissent qu'à partir de
                          `md` : sur un téléphone, chaque champ porte déjà son
                          sens par sa place et sa forme. --}}
-                    <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low p-4 font-label-numeric text-label-numeric uppercase text-on-surface-variant md:grid">
+                    <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low p-4 font-label-md text-label-md uppercase text-on-surface-variant md:grid">
                         <div class="col-span-3">{{ __("Prestataire") }}</div>
                         <div class="col-span-4">{{ __("Service") }}</div>
                         <div class="col-span-2">{{ __("Date") }}</div>

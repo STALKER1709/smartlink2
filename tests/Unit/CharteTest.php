@@ -47,6 +47,17 @@ class CharteTest extends TestCase
             // une classe.
             'partials/pwa-head.blade.php',
         ],
+        // Une icône n'est pas du texte : sa taille est une dimension, et
+        // Material Symbols la prend en `font-size`. Les trois porteurs
+        // d'icône du dépôt sont donc hors de l'échelle typographique.
+        'icone' => [
+            'material-symbols',
+            'x-category-icon',
+            'x-service-thumb',
+            // La taille par défaut du pictogramme de repli, déclarée en
+            // propriété du composant qui le porte.
+            "'size' =>",
+        ],
     ];
 
     /**
@@ -185,5 +196,91 @@ class CharteTest extends TestCase
 
         $this->assertSame([], $fautifs,
             'Titre écrit hors de l\'échelle : '.implode(', ', $fautifs));
+    }
+
+    /**
+     * Les lignes qui portent une icône, écartées des règles typographiques.
+     *
+     * @return array<int, string>
+     */
+    private function lignesSansIcone(string $relatif): array
+    {
+        $lignes = explode("\n", $this->contenuSansCommentaires($relatif));
+
+        return array_filter($lignes, function (string $ligne): bool {
+            foreach (self::EXCEPTIONS['icone'] as $porteur) {
+                if (str_contains($ligne, $porteur)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
+
+    public function test_no_text_size_is_written_in_raw_pixels(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            foreach ($this->lignesSansIcone($vue) as $numero => $ligne) {
+                if (preg_match('/\btext-\[\d+px\]/', $ligne, $m)) {
+                    $fautifs[] = $vue.':'.($numero + 1).' ('.$m[0].')';
+                }
+            }
+        }
+
+        // Quatorze corps écrits à la main — 10, 11, 12, 13, 14, 16, 18, 20,
+        // 22, 28, 30, 32, 40 et 120 px — pour ce que la table nomme en sept
+        // paliers. Chacun avait sa raison locale ; ensemble ils faisaient une
+        // échelle que personne n'a dessinée.
+        $this->assertSame([], $fautifs,
+            'Corps de texte écrit en pixels, hors de la table : '.implode(', ', $fautifs));
+    }
+
+    public function test_text_sizes_come_from_the_named_scale(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            foreach ($this->lignesSansIcone($vue) as $numero => $ligne) {
+                // L'échelle générique de Tailwind — `text-sm`, `text-2xl` —
+                // dit une taille ; celle de la charte dit un rôle. Les deux
+                // rendent les mêmes pixels sur les quatre premiers paliers,
+                // et c'est bien le danger : la dérive ne se voit pas.
+                if (preg_match('/\btext-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl)\b/', $ligne, $m)) {
+                    $fautifs[] = $vue.':'.($numero + 1).' ('.$m[0].')';
+                }
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Taille hors de l\'échelle nommée : '.implode(', ', $fautifs));
+    }
+
+    public function test_monospace_is_kept_for_figures(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            foreach (explode("\n", $this->contenuSansCommentaires($vue)) as $numero => $ligne) {
+                if (! str_contains($ligne, 'font-label-numeric')) {
+                    continue;
+                }
+
+                // Une famille de titre ou de corps posée sur la même ligne que
+                // la chasse fixe : l'une des deux ne s'applique pas, et on ne
+                // sait pas laquelle en lisant.
+                if (preg_match('/\bfont-(headline-(xl|lg|md|sm)|body-(lg|md)|label-(lg|md)|button-text)\b/', $ligne, $m)) {
+                    $fautifs[] = $vue.':'.($numero + 1).' ('.$m[0].')';
+                }
+            }
+        }
+
+        // La chasse fixe est pour les chiffres : prix, dates, références,
+        // compteurs. Composé en JetBrains Mono, un mot ouvre un blanc de deux
+        // caractères devant chaque valeur et se lit comme une donnée.
+        $this->assertSame([], $fautifs,
+            'Chasse fixe et police de texte sur la même ligne : '.implode(', ', $fautifs));
     }
 }

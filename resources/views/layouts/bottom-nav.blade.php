@@ -33,7 +33,7 @@
                           @if ($actif) style="font-variation-settings: 'FILL' 1;" @endif>{{ $onglet['icone'] }}</span>
                 </span>
                 <span @class([
-                    'text-[11px] leading-tight',
+                    'font-label-md text-label-md leading-tight',
                     'font-semibold text-primary' => $actif,
                     'text-on-surface-variant' => ! $actif,
                 ])>{{ $onglet['court'] }}</span>
@@ -53,7 +53,7 @@
                       @if ($compteActif) style="font-variation-settings: 'FILL' 1;" @endif>{{ $compte['icone'] }}</span>
             </span>
             <span @class([
-                'text-[11px] leading-tight',
+                'font-label-md text-label-md leading-tight',
                 'font-semibold text-primary' => $compteActif,
                 'text-on-surface-variant' => ! $compteActif,
             ])>{{ $compte['court'] }}</span>

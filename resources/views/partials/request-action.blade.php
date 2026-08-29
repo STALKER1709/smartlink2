@@ -6,7 +6,7 @@
     $compact = $compact ?? false;
     $icon = $icon ?? null;
     $classes = 'inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary font-button-text font-semibold text-on-primary transition-colors hover:bg-primary-container '
-        .($compact ? 'px-5 py-2.5 text-sm' : 'px-4 py-3');
+        .($compact ? 'px-5 py-2.5 text-label-lg' : 'px-4 py-3');
 @endphp
 
 @auth
@@ -16,7 +16,7 @@
             {{ $compact ? ($compactLabel ?? $label) : $label }}
         </a>
     @else
-        <p class="text-center text-sm text-on-surface-variant">{{ __("Seuls les clients peuvent envoyer une demande.") }}</p>
+        <p class="text-center text-label-lg text-on-surface-variant">{{ __("Seuls les clients peuvent envoyer une demande.") }}</p>
     @endcan
 @else
     {{-- Le visiteur vise la demande, pas la connexion : le bouton porte donc
@@ -30,7 +30,7 @@
     </a>
 
     @unless ($compact)
-        <p class="mt-2 text-center text-xs text-on-surface-variant">
+        <p class="mt-2 text-center text-label-md text-on-surface-variant">
             {{ __("Connexion ou création de compte à l'étape suivante.") }}
             <span class="font-semibold text-primary">{{ __("Gratuit pour les clients.") }}</span>
         </p>

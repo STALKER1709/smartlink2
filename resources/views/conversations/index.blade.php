@@ -50,7 +50,7 @@
 
                         <div class="min-w-0 flex-1">
                             <div class="mb-1 flex items-baseline justify-between gap-2">
-                                <h3 class="truncate font-headline-md text-body-lg text-on-background">{{ $nom }}</h3>
+                                <h3 class="truncate font-headline-sm text-headline-sm text-on-background">{{ $nom }}</h3>
                                 <span @class([
                                     'shrink-0 whitespace-nowrap font-label-numeric text-label-numeric',
                                     'text-primary' => $nonLus > 0,
@@ -76,7 +76,7 @@
                                 </p>
 
                                 @if ($nonLus > 0)
-                                    <span class="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 font-label-numeric text-xs font-bold text-on-primary"
+                                    <span class="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 font-label-numeric text-label-md font-bold text-on-primary"
                                           aria-label="{{ $nonLus }} message(s) non lu(s)">{{ $nonLus }}</span>
                                 @endif
                             </div>

@@ -60,7 +60,7 @@
                                 @endif
                             </div>
                             <div class="min-w-0">
-                                <h3 class="font-headline-md text-[18px] text-on-surface">{{ $nomAutre }}</h3>
+                                <h3 class="font-headline-md text-headline-md text-on-surface">{{ $nomAutre }}</h3>
                                 <p class="font-label-numeric text-label-numeric text-on-surface-variant">
                                     {{ $profil?->category?->name ?? ($moiClient ? 'Prestataire' : 'Client') }}
                                     @if ($profil?->rating_count)
@@ -92,7 +92,7 @@
 
                 @if ($serviceRequest->preferred_date || $serviceRequest->service)
                     <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-4 md:p-6">
-                        <dl class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+                        <dl class="grid grid-cols-1 gap-3 text-label-lg sm:grid-cols-2">
                             @if ($serviceRequest->service)
                                 <div>
                                     <dt class="text-on-surface-variant">{{ __("Service concerné") }}</dt>
@@ -122,7 +122,7 @@
                                  menu. Des boutons radio, donc — l'étoile reste
                                  cliquable sans JavaScript. --}}
                             <fieldset>
-                                <legend class="block font-medium text-sm text-on-surface-variant">{{ __("Votre note") }}</legend>
+                                <legend class="block font-medium text-label-lg text-on-surface-variant">{{ __("Votre note") }}</legend>
                                 <div class="mt-1 flex flex-row-reverse justify-end gap-1">
                                     @for ($i = 5; $i >= 1; $i--)
                                         <input type="radio" id="rating-{{ $i }}" name="rating" value="{{ $i }}" required class="peer sr-only">
@@ -151,7 +151,7 @@
                         <h3 class="font-headline-md text-headline-md text-on-surface mb-2">{{ __("Votre avis") }}</h3>
                         <x-star-rating :rating="$serviceRequest->review->rating" />
                         @if ($serviceRequest->review->comment)
-                            <p class="mt-2 text-sm text-on-surface">{{ $serviceRequest->review->comment }}</p>
+                            <p class="mt-2 text-label-lg text-on-surface">{{ $serviceRequest->review->comment }}</p>
                         @endif
                     </div>
                 @endif
@@ -164,20 +164,20 @@
                             <li class="flex gap-3">
                                 <div class="h-2 w-2 mt-1.5 rounded-full bg-primary shrink-0"></div>
                                 <div>
-                                    <p class="text-sm text-on-surface">
+                                    <p class="text-label-lg text-on-surface">
                                         @if ($history->from_status)
                                             {{ $statusLabels[$history->from_status] ?? $history->from_status }} →
                                         @endif
                                         {{ $statusLabels[$history->to_status] ?? $history->to_status }}
                                     </p>
-                                    <p class="text-xs text-on-surface-variant">
+                                    <p class="text-label-md text-on-surface-variant">
                                         {{ $history->created_at->format('d/m/Y H:i') }}
                                         @if ($history->changedBy)
                                             · {{ $history->changedBy->name }}
                                         @endif
                                     </p>
                                     @if ($history->note)
-                                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $history->note }}</p>
+                                        <p class="text-label-md text-on-surface-variant mt-0.5">{{ $history->note }}</p>
                                     @endif
                                 </div>
                             </li>
@@ -189,7 +189,7 @@
                      la demande engagée, et pas déjà un signalement ouvert. --}}
                 @can('create', [\App\Models\Dispute::class, $serviceRequest])
                     <a href="{{ route('disputes.create', $serviceRequest) }}"
-                       class="inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-error">
+                       class="inline-flex items-center gap-2 text-label-lg font-medium text-on-surface-variant transition-colors hover:text-error">
                         <span class="material-symbols-outlined text-base" aria-hidden="true">flag</span>
                         {{ __("Signaler un problème sur cette demande") }}
                     </a>
@@ -202,7 +202,7 @@
                 @if ($serviceRequest->conversation)
                     <x-message-thread :conversation="$serviceRequest->conversation" />
                 @else
-                    <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6 text-sm text-on-surface-variant">
+                    <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6 text-label-lg text-on-surface-variant">
                         {{ __("La conversation s'ouvrira automatiquement une fois la demande acceptée par le prestataire.") }}
                     </div>
                 @endif

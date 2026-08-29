@@ -22,7 +22,7 @@
 
             <div class="mb-8 flex w-full items-start gap-3 rounded-lg border border-outline-variant bg-surface-container p-4">
                 <span class="material-symbols-outlined mt-0.5 text-primary" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">info</span>
-                <p class="flex-1 text-left font-label-numeric text-label-numeric text-on-surface-variant">
+                <p class="flex-1 text-left font-body-md text-body-md text-on-surface-variant">
                     {{ __("Cette demande vous attend : elle reste lisible dès que votre plafond se renouvelle, le premier jour du mois prochain.") }}
                 </p>
             </div>

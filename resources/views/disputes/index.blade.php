@@ -12,11 +12,11 @@
                 @foreach ($disputes as $dispute)
                     <article class="rounded-xl border border-outline-variant bg-surface p-4">
                         <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-                            <span class="rounded bg-surface-container-high px-2 py-1 font-label-numeric text-xs uppercase tracking-wider text-on-surface">
+                            <span class="rounded bg-surface-container-high px-2 py-1 font-label-md text-label-md uppercase tracking-wider text-on-surface">
                                 {{ \App\Models\Dispute::reasonLabel($dispute->reason) }}
                             </span>
                             <span @class([
-                                'rounded-full px-3 py-1 font-label-numeric text-xs',
+                                'rounded-full px-3 py-1 font-label-md text-label-md',
                                 'bg-tertiary-container/30 text-tertiary' => $dispute->isOpen(),
                                 'bg-secondary-container text-on-secondary-container' => $dispute->status === \App\Models\Dispute::STATUS_RESOLVED,
                                 'bg-surface-container-high text-on-surface-variant' => $dispute->status === \App\Models\Dispute::STATUS_REJECTED,
@@ -25,20 +25,20 @@
 
                         <p class="font-medium text-on-surface">
                             {{ $dispute->request?->service?->title ?? 'Demande directe' }}
-                            <span class="font-label-numeric text-sm text-on-surface-variant">· n° {{ $dispute->id }}</span>
+                            <span class="font-label-numeric text-label-lg text-on-surface-variant">· n° {{ $dispute->id }}</span>
                         </p>
-                        <p class="mt-1 line-clamp-3 text-sm text-on-surface-variant">{{ $dispute->description }}</p>
+                        <p class="mt-1 line-clamp-3 text-label-lg text-on-surface-variant">{{ $dispute->description }}</p>
 
                         @if ($dispute->resolution)
                             {{-- La décision est rendue au déclarant, pas seulement
                                  consignée : « résolu » sans un mot ne dit rien. --}}
                             <div class="mt-3 rounded-lg border border-outline-variant bg-surface-container-low p-3">
                                 <p class="mb-1 font-button-text text-button-text text-on-surface">{{ __("Réponse de l'équipe") }}</p>
-                                <p class="text-sm text-on-surface-variant">{{ $dispute->resolution }}</p>
+                                <p class="text-label-lg text-on-surface-variant">{{ $dispute->resolution }}</p>
                             </div>
                         @endif
 
-                        <p class="mt-3 font-label-numeric text-xs text-on-surface-variant">
+                        <p class="mt-3 font-label-md text-label-md text-on-surface-variant">
                             Déposé le {{ $dispute->created_at->translatedFormat('j F Y') }}
                             @if ($dispute->reviewed_at)
                                 · tranché le {{ $dispute->reviewed_at->translatedFormat('j F Y') }}

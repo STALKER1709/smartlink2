@@ -3,7 +3,7 @@
         <x-page-header :title="__('Demandes')" :subtitle="$requests->total().' '.Str::plural('demande', $requests->total())">
             @if (Auth::user()->isClient())
                 <x-slot name="action">
-                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-container">
                         <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
                         {{ __("Nouvelle demande") }}
                     </a>
@@ -88,7 +88,7 @@
                                 @endif
                             </div>
                             <div class="min-w-0">
-                                <h3 class="font-headline-md text-body-lg text-on-surface group-hover:text-primary">{{ $nom ?? 'Non assigné' }}</h3>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary">{{ $nom ?? 'Non assigné' }}</h3>
                                 @if ($metier)
                                     <p class="font-body-md text-label-numeric text-on-surface-variant">{{ $metier }}</p>
                                 @endif
@@ -97,7 +97,7 @@
 
                         <div class="mb-3">
                             <x-status-badge :status="$serviceRequest->status" variant="caps" class="mb-2" />
-                            <h4 class="font-headline-md text-body-lg text-on-surface">{{ $serviceRequest->service?->title ?? 'Demande directe' }}</h4>
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface">{{ $serviceRequest->service?->title ?? 'Demande directe' }}</h4>
                             @if ($serviceRequest->message)
                                 <p class="mt-1 line-clamp-2 font-body-md text-body-md text-on-surface-variant">{{ $serviceRequest->message }}</p>
                             @endif

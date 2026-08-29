@@ -43,7 +43,7 @@
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         <div class="max-w-2xl">
-            <h1 class="mb-4 font-headline-xl text-[32px] font-extrabold leading-[40px] tracking-tight text-primary md:text-[40px] md:leading-[48px]">
+            <h1 class="mb-4 font-headline-lg text-headline-lg text-primary md:font-headline-xl md:text-headline-xl">
                 {{ __("Comment pouvons-nous vous aider ?") }}
             </h1>
             <p class="mb-8 font-body-lg text-body-lg text-on-surface-variant">
@@ -84,7 +84,7 @@
                                     {{ $item['q'] }}
                                     <span class="material-symbols-outlined text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
                                 </summary>
-                                <p class="mt-3 text-sm text-on-surface-variant">{{ $item['a'] }}</p>
+                                <p class="mt-3 text-label-lg text-on-surface-variant">{{ $item['a'] }}</p>
                             </details>
                         @endforeach
                     </div>
@@ -94,7 +94,7 @@
 
         <div class="mt-10 bg-secondary-container/20 border border-outline-variant rounded-xl p-6">
             <h2 class="font-headline-md text-headline-md text-primary mb-2">{{ __("Besoin d'une assistance personnalisée ?") }}</h2>
-            <p class="text-sm text-on-surface-variant">
+            <p class="text-label-lg text-on-surface-variant">
                 {{ __("Utilisez l'assistant SmartLink (icône en bas à droite de l'écran) pour poser directement votre question.") }}
             </p>
         </div>

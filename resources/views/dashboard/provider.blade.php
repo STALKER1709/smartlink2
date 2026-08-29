@@ -84,13 +84,13 @@
                                 <p class="font-body-md text-body-md text-on-surface-variant">
                                     {{ $demande->service?->category?->name }}@if ($demande->service) — {{ $demande->service->title }}@endif
                                 </p>
-                                <div class="mt-1 flex flex-wrap items-center gap-1 text-sm text-on-surface-variant">
+                                <div class="mt-1 flex flex-wrap items-center gap-1 text-label-lg text-on-surface-variant">
                                     @if ($demande->preferred_date)
                                         <span class="material-symbols-outlined text-[16px]" aria-hidden="true">schedule</span>
                                         <span class="font-label-numeric">{{ $demande->preferred_date->translatedFormat('j F') }}</span>
                                         <span class="mx-1 text-outline-variant" aria-hidden="true">•</span>
                                     @endif
-                                    <span class="font-label-numeric">{{ $demande->created_at->diffForHumans() }}</span>
+                                    <span class="font-label-lg text-label-lg">{{ $demande->created_at->diffForHumans() }}</span>
                                 </div>
                             </div>
                         </a>
@@ -121,9 +121,9 @@
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
                     <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Vos services") }}</h3>
                     @if ($masques > 0)
-                        <span class="font-label-numeric text-label-numeric text-tertiary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
+                        <span class="font-label-lg text-label-lg text-tertiary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
                     @elseif ($auPlafond)
-                        <span class="font-label-numeric text-label-numeric text-tertiary">{{ __("Plafond atteint") }}</span>
+                        <span class="font-label-lg text-label-lg text-tertiary">{{ __("Plafond atteint") }}</span>
                     @endif
                 </div>
 
@@ -148,7 +148,7 @@
                         <span class="material-symbols-outlined shrink-0 text-outline transition-colors group-hover:text-primary" aria-hidden="true">chevron_right</span>
                     </a>
                 @empty
-                    <p class="text-sm text-on-surface-variant">{{ __("Vous n'avez pas encore publié de service.") }}</p>
+                    <p class="text-label-lg text-on-surface-variant">{{ __("Vous n'avez pas encore publié de service.") }}</p>
                 @endforelse
 
                 <a href="{{ route('provider.services.index') }}" class="mt-2 flex items-center gap-1 font-button-text text-button-text text-primary hover:underline">

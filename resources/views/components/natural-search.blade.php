@@ -39,5 +39,5 @@
         </button>
     </div>
 
-    <p class="mt-2 px-1 text-xs text-on-surface-variant">{{ __('ui.search.natural_hint') }}</p>
+    <p class="mt-2 px-1 text-label-md text-on-surface-variant">{{ __('ui.search.natural_hint') }}</p>
 </form>

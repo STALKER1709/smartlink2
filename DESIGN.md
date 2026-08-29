@@ -48,6 +48,12 @@ typography:
     fontWeight: 600
     lineHeight: "28px"
     letterSpacing: "-0.01em"
+  headline-sm:
+    fontFamily: "Hanken Grotesk, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "16px"
+    fontWeight: 600
+    lineHeight: "24px"
+    letterSpacing: "-0.01em"
   body-lg:
     fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
     fontSize: "18px"
@@ -58,6 +64,18 @@ typography:
     fontSize: "16px"
     fontWeight: 400
     lineHeight: "24px"
+  label-lg:
+    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 500
+    lineHeight: "20px"
+    letterSpacing: "0.1px"
+  label-md:
+    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "12px"
+    fontWeight: 500
+    lineHeight: "16px"
+    letterSpacing: "0.5px"
   button-text:
     fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
     fontSize: "16px"
@@ -133,6 +151,55 @@ Mode dominant : **Operate**. Les pages publiques — accueil, recherche, fiche s
 annuaire — basculent en **Persuade** : elles doivent convaincre un visiteur qui ne
 connaît pas SmartLink.
 
+## La charte amont, et ce qui en est retenu
+
+Le projet a une charte Google Stitch, **« SmartLink Core »**
+(`assets/5e99e7e1a5a6427bbf3597f66c1de755`, projet `7168677943593520780`,
+trente écrans). Ce document-ci reste celui qui fait foi pour le code ; la
+comparaison des deux a été faite, et voici son résultat, pour qu'on n'ait pas à
+la refaire.
+
+**Ce qui concorde déjà, à la valeur près.** Les couleurs de réglage de la charte
+Stitch — primaire `#005538`, secondaire `#aff1cf`, tertiaire `#7b3500`, neutre
+`#f9faf7` — sont exactement celles du frontmatter ci-dessus. Toute la hiérarchie
+de surfaces (`surface-container-lowest` à `-highest`, `outline`,
+`outline-variant`) est identique. La doctrine de profondeur l'est aussi, jusqu'à
+la formulation : la profondeur vient des couches tonales et des bordures de un
+pixel, pas des ombres, et le survol change un fond au lieu de soulever. Il n'y a
+donc rien à importer de ce côté-là — les deux systèmes sont le même.
+
+⚠️ La charte Stitch se contredit sur trois couleurs dérivées : son `designMd`
+donne `primary: #003c26` et `tertiary: #582400` là où ses couleurs de réglage,
+celles que l'auteur a posées, donnent `#005538` et `#7b3500`. **Ce sont les
+réglages qui font foi**, et ce sont eux que porte ce document. Ne pas « aligner »
+la palette sur les valeurs dérivées : elles ne concordent ni avec les réglages ni
+avec les couleurs nommées du même fichier.
+
+**Ce qui en a été retenu.** Les deux paliers d'étiquette, `label-lg` et
+`label-md`, sous ces noms et à ces valeurs. Ils manquaient ici, et leur absence
+se lisait dans les vues.
+
+**Ce qui est volontairement divergent**, et pourquoi :
+
+- **Les familles.** Stitch prescrit Manrope pour les titres et Inter pour le
+  corps. On garde Hanken Grotesk et Source Sans 3, et surtout **JetBrains Mono**,
+  dont la charte amont n'a pas d'équivalent : la chasse fixe y remplit un rôle
+  fonctionnel — aligner les colonnes de montants, distinguer une donnée d'une
+  phrase — qu'aucune des deux familles de Stitch ne rendrait. Changer de familles
+  coûterait la refonte de tout ce qui est mesuré à 390 px pour ne rien gagner.
+- **Les rayons.** Stitch prescrit 8 px pour les contrôles et 16 px pour les
+  cartes. On garde **12 px pour tout conteneur et la pilule pour toute action** :
+  ce contraste entre le rectangle arrondi des structures et la pilule des boutons
+  rend les zones cliquables lisibles sans couleur supplémentaire, ce que la paire
+  8/16 ne fait pas. `CharteTest` tient déjà cette règle sur soixante vues.
+- **L'échelle de titres.** Stitch en compte sept paliers (`display-lg` 57 px à
+  `title-md` 16 px). On en garde quatre. Sept paliers sur des écrans dont la
+  largeur de référence est 390 px produisent des différences que personne ne voit
+  et que tout le monde peut confondre.
+- **Le conteneur** à 1 200 px, pas 1 280 : les rangées de services passent à deux
+  colonnes à partir de `lg`, et 1 280 px les étire au-delà de la longueur de
+  ligne confortable.
+
 ## Colors
 
 - **Vert principal `#005538`** : actions clés, chiffres qui comptent, état actif. Sa
@@ -167,6 +234,26 @@ poids 600. Le dernier est le titre d'une carte ou d'une rangée de liste ; il a 
 ajouté parce qu'il manquait, et que six vues l'avaient reconstitué à la main en
 `text-base font-semibold` — deux d'entre elles avec un pixel d'écart. Un titre écrit
 avec une taille hors de cette table est un palier de plus que personne n'a décidé.
+
+**Deux paliers d'étiquette**, `label-lg` 14/20 poids 500 et `label-md` 12/16 poids
+500. Une étiquette est ce qui nomme une donnée sans être une phrase : intitulé de
+champ, libellé d'onglet, métier en capitales au-dessus d'un titre, texte d'une
+pastille. Ils manquaient, et la même étiquette s'écrivait de neuf façons au fil des
+vues — `text-xs`, `text-sm`, `text-[10px]`, `text-[11px]`, `text-[12px]`,
+`text-[13px]`, trois d'entre elles en JetBrains Mono, sur des mots.
+
+**Un chiffre prend un palier de titre, en JetBrains Mono.** Il n'y a pas d'échelle
+séparée pour les nombres : un prix mis en avant, un compteur de tuile, un montant
+d'abonnement se composent en `text-headline-lg` ou `text-headline-xl` selon leur
+poids dans la page. Sans cette règle, cinq corps circulaient pour la même chose —
+20, 24, 30, 36 et 48 px — chacun choisi dans sa vue.
+
+**Aucune taille ne s'écrit hors de cette table**, ni dans l'échelle générique de
+Tailwind (`text-sm`, `text-2xl`), ni en pixels (`text-[13px]`). Les deux échelles
+rendent les mêmes pixels sur les premiers paliers, et c'est bien le danger : la
+dérive ne se voit pas. Seules les icônes en sont exemptes — Material Symbols prend
+sa dimension en `font-size`, et une icône n'est pas du texte. `CharteTest` tient les
+trois règles.
 
 Les termes techniques français sont plus longs que leurs équivalents anglais. Les
 libellés de boutons et d'onglets doivent être éprouvés à 390 px avant d'être adoptés, pas
@@ -229,7 +316,9 @@ clair pour une sélection.
 
 > **Ce document fait foi pour la mise en page des écrans.** Les maquettes
 > Google Stitch qui ont servi à la refonte ont été retirées du dépôt une fois
-> l'intégration faite et vérifiée à l'écran ; l'historique Git les conserve.
+> l'intégration faite et vérifiée à l'écran ; l'historique Git les conserve, et
+> le projet amont (`7168677943593520780`) reste consultable — voir « La charte
+> amont » plus haut pour ce qui en est retenu et ce qui en diverge.
 > Elles n'avaient de toute façon pas été éprouvées à 390 px : là où une
 > maquette laissait un titre et son lien côte à côte, ou un bouton comprimer
 > son libellé, la règle appliquée est celle énoncée ici — l'élément secondaire

@@ -29,7 +29,7 @@
         <span class="material-symbols-outlined text-[16px] {{ $ambre }}" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
         <span class="font-label-numeric text-label-numeric text-on-surface">{{ $note }}</span>
         @if (! is_null($count))
-            <span class="text-xs text-on-surface-variant">({{ $count }})</span>
+            <span class="text-label-md text-on-surface-variant">({{ $count }})</span>
         @endif
     </span>
 @else

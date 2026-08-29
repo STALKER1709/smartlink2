@@ -83,11 +83,11 @@
                             ])>{{ $texte }}</p>
 
                             <div class="flex flex-wrap items-center gap-x-3">
-                                <span class="block font-label-numeric text-label-numeric text-on-surface-variant">{{ $notification->created_at->diffForHumans() }}</span>
+                                <span class="block font-label-lg text-label-lg text-on-surface-variant">{{ $notification->created_at->diffForHumans() }}</span>
                                 @unless ($lue)
                                     <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-xs font-medium text-primary hover:text-primary-container">
+                                        <button type="submit" class="text-label-md font-medium text-primary hover:text-primary-container">
                                             {{ __("Marquer comme lu") }}
                                         </button>
                                     </form>

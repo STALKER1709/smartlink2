@@ -64,7 +64,7 @@
                         <img src="{{ media_url($providerProfile->logo_path) }}" alt="{{ $providerProfile->business_name }}"
                              class="h-full w-full object-cover" onerror="this.remove()">
                     @else
-                        <span class="font-headline-lg text-4xl font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
+                        <span class="font-headline-lg text-headline-xl font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
                     @endif
                 </div>
 
@@ -103,7 +103,7 @@
                     @if ($providerProfile->rating_count)
                         <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
                     @else
-                        <span class="text-sm text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
+                        <span class="text-label-lg text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
                     @endif
                     <span aria-hidden="true" class="text-outline">·</span>
                     <span class="font-label-numeric text-label-numeric text-on-surface-variant">
@@ -115,7 +115,7 @@
             @if ($providerProfile->is_verified || $providerProfile->is_promoted)
                 <div class="flex flex-wrap justify-center gap-2">
                     @if ($providerProfile->is_verified)
-                        <span class="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+                        <span class="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-label-lg font-semibold text-primary">
                             <span class="material-symbols-outlined text-sm" aria-hidden="true">workspace_premium</span>
                             {{ __("Prestataire vérifié") }}
                         </span>
@@ -150,7 +150,7 @@
                 @endif
             </div>
 
-            <p class="flex items-start gap-2 text-left text-xs leading-relaxed text-on-surface-variant sm:text-center">
+            <p class="flex items-start gap-2 text-left text-label-md leading-relaxed text-on-surface-variant sm:text-center">
                 <span class="material-symbols-outlined text-base text-primary" aria-hidden="true">shield</span>
                 {{ __("SmartLink ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.") }}
             </p>
@@ -207,7 +207,7 @@
                                 </h3>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($providerProfile->service_areas as $area)
-                                        <span class="rounded-full bg-surface-container px-3 py-1 text-sm text-on-surface-variant">{{ $area }}</span>
+                                        <span class="rounded-full bg-surface-container px-3 py-1 text-label-lg text-on-surface-variant">{{ $area }}</span>
                                     @endforeach
                                 </div>
                             </div>
@@ -291,7 +291,7 @@
                                 <div class="flex items-start justify-between gap-3">
                                     <h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary">{{ $service->title }}</h3>
                                     @unless ($service->is_available)
-                                        <span class="shrink-0 rounded-full bg-surface-container px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-on-surface-variant">
+                                        <span class="shrink-0 rounded-full bg-surface-container px-2 py-0.5 font-label-md text-label-md font-semibold uppercase tracking-wide text-on-surface-variant">
                                             {{ __("Indisponible") }}
                                         </span>
                                     @endunless
@@ -307,10 +307,10 @@
                                     @if ($service->price_amount)
                                         {{ number_format((float) $service->price_amount, 0, ',', ' ') }} FCFA
                                         @if ($service->price_unit)
-                                            <span class="font-body-md text-sm font-normal text-on-surface-variant">/ {{ $service->price_unit }}</span>
+                                            <span class="font-body-md text-label-lg font-normal text-on-surface-variant">/ {{ $service->price_unit }}</span>
                                         @endif
                                     @else
-                                        <span class="font-body-md text-sm font-normal text-on-surface-variant">{{ __("Prix à convenir") }}</span>
+                                        <span class="font-body-md text-label-lg font-normal text-on-surface-variant">{{ __("Prix à convenir") }}</span>
                                     @endif
                                 </span>
                                 <span class="material-symbols-outlined text-primary" aria-hidden="true">arrow_forward</span>
@@ -350,7 +350,7 @@
                             @if ($review->comment)
                                 <p class="mt-2 leading-relaxed text-on-surface">{{ $review->comment }}</p>
                             @endif
-                            <p class="mt-2 font-label-numeric text-xs text-on-surface-variant">{{ $review->created_at->format('d/m/Y') }}</p>
+                            <p class="mt-2 font-label-numeric text-label-md text-on-surface-variant">{{ $review->created_at->format('d/m/Y') }}</p>
                         </article>
                     @endforeach
                 </div>

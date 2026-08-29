@@ -44,7 +44,7 @@
                               x-init="restant = 500 - $el.value.length"
                               placeholder="{{ __('Expliquez en détail le problème rencontré…') }}"
                               class="w-full resize-none rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 font-body-md text-on-surface transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary">{{ old('description') }}</textarea>
-                    <p class="mt-2 text-right font-label-numeric text-sm text-on-surface-variant">
+                    <p class="mt-2 text-right font-label-numeric text-label-lg text-on-surface-variant">
                         <span x-text="500 - restant">0</span> {{ __('/ 500 caractères') }}
                     </p>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
@@ -52,7 +52,7 @@
 
                 <div>
                     <label class="mb-2 block font-body-md text-body-md text-on-surface">{{ __("Preuves visuelles (facultatif)") }}</label>
-                    <p class="mb-3 font-body-md text-sm text-on-surface-variant">
+                    <p class="mb-3 font-body-md text-label-lg text-on-surface-variant">
                         {{ __("Ajoutez jusqu'à trois photos pour aider à trancher plus vite.") }}
                     </p>
                     <x-file-input name="evidence" accept="image/*" multiple
@@ -67,7 +67,7 @@
                          être lu pendant qu'on peut encore renoncer. --}}
                     <div class="mb-6 flex items-start gap-3 rounded-lg border border-error-container bg-error-container/20 p-4">
                         <span class="material-symbols-outlined mt-0.5 text-error" aria-hidden="true">info</span>
-                        <p class="font-body-md text-sm text-on-surface">
+                        <p class="font-body-md text-label-lg text-on-surface">
                             {{ __("Les fausses déclarations peuvent entraîner la suspension de votre compte. Assurez-vous que toutes les informations fournies sont exactes.") }}
                         </p>
                     </div>

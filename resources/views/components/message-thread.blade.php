@@ -26,7 +26,7 @@
         'max-h-96 overflow-y-auto' => ! $plein,
     ])>
         @if ($conversation->request?->service)
-            <p class="text-center font-body-md text-sm text-on-surface-variant">
+            <p class="text-center font-body-md text-label-lg text-on-surface-variant">
                 La discussion a été ouverte au sujet de « {{ $conversation->request->service->title }} ».
             </p>
         @endif
@@ -41,7 +41,7 @@
 
             @if ($jour !== $jourPrecedent)
                 <div class="my-2 flex items-center justify-center">
-                    <span class="rounded-full border border-outline-variant bg-surface-container-low px-3 py-1 font-label-numeric text-xs text-on-surface-variant">
+                    <span class="rounded-full border border-outline-variant bg-surface-container-low px-3 py-1 font-label-md text-label-md text-on-surface-variant">
                         {{ $message->created_at->isToday()
                             ? "Aujourd'hui"
                             : ($message->created_at->isYesterday() ? 'Hier' : $message->created_at->translatedFormat('j F Y')) }}
@@ -63,13 +63,13 @@
                     <p class="whitespace-pre-line font-body-md">{{ $message->body }}</p>
                 </div>
                 <span @class([
-                    'font-label-numeric text-xs text-on-surface-variant',
+                    'font-label-numeric text-label-md text-on-surface-variant',
                     'mr-1' => $moi,
                     'ml-1' => ! $moi,
                 ])>{{ $message->created_at->format('H:i') }}</span>
             </div>
         @empty
-            <p class="py-6 text-center text-sm text-on-surface-variant">
+            <p class="py-6 text-center text-label-lg text-on-surface-variant">
                 {{ __("Aucun message pour le moment. Écrivez le premier.") }}
             </p>
         @endforelse

@@ -22,13 +22,13 @@
             <img src="{{ media_url($providerProfile->logo_path) }}" alt="" loading="lazy"
                  class="h-full w-full object-cover" onerror="this.remove()">
         @else
-            <span class="font-headline-md text-lg font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
+            <span class="font-headline-md text-headline-md font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
         @endif
     </div>
 
     <div class="min-w-0 flex-1">
         <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <p class="text-xs font-semibold uppercase tracking-wide text-primary">{{ $providerProfile->category?->name }}</p>
+            <p class="text-label-md font-semibold uppercase tracking-wide text-primary">{{ $providerProfile->category?->name }}</p>
             <x-promoted-badge :profile="$providerProfile" />
         </div>
 
@@ -41,7 +41,7 @@
             @endif
         </h3>
 
-        <p class="mt-1 text-sm text-on-surface-variant">
+        <p class="mt-1 text-label-lg text-on-surface-variant">
             {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
             @isset($providerProfile->services_count)
                 <span aria-hidden="true" class="text-outline">·</span>
@@ -54,7 +54,7 @@
             @if ($providerProfile->rating_count)
                 <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
             @else
-                <span class="text-xs text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
+                <span class="text-label-md text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
             @endif
         </div>
     </div>

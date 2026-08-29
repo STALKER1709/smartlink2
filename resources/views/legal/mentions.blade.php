@@ -31,7 +31,7 @@
                 'Téléphone' => $e['telephone'],
             ] as $libelle => $valeur)
                 <div class="flex flex-col gap-1 p-4 sm:flex-row sm:items-baseline sm:gap-4">
-                    <dt class="w-full shrink-0 text-sm text-on-surface-variant sm:w-64">{{ $libelle }}</dt>
+                    <dt class="w-full shrink-0 text-label-lg text-on-surface-variant sm:w-64">{{ $libelle }}</dt>
                     <dd @class(['text-on-surface', 'text-outline' => ! $valeur])>{{ $manquant($valeur) }}</dd>
                 </div>
             @endforeach

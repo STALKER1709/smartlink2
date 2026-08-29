@@ -33,7 +33,7 @@
                     @if ($photo)
                         <img src="{{ media_url($photo) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
                     @else
-                        <span class="font-headline-md text-2xl font-bold text-primary">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
+                        <span class="font-headline-md text-headline-md font-bold text-primary">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                     @endif
                 </div>
 
@@ -48,7 +48,7 @@
 
             <div>
                 <p class="font-medium text-on-surface">{{ __('Profile photo') }}</p>
-                <p class="mt-0.5 text-sm text-on-surface-variant">{{ __('A square image of at least 400×400 px works best.') }}</p>
+                <p class="mt-0.5 text-label-lg text-on-surface-variant">{{ __('A square image of at least 400×400 px works best.') }}</p>
             </div>
         </div>
 
@@ -71,16 +71,16 @@
                 <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
                 @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                    <p class="mt-2 text-sm text-on-surface">
+                    <p class="mt-2 text-label-lg text-on-surface">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="rounded-md text-sm text-on-surface-variant underline hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                        <button form="send-verification" class="rounded-md text-label-lg text-on-surface-variant underline hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 text-sm font-medium text-secondary">
+                        <p class="mt-2 text-label-lg font-medium text-secondary">
                             {{ __('A new verification link has been sent to your email address.') }}
                         </p>
                     @endif
@@ -97,7 +97,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-on-surface-variant"
+                    class="text-label-lg text-on-surface-variant"
                 >{{ __('Saved.') }}</p>
             @endif
         </div>

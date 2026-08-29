@@ -45,8 +45,8 @@
      demandes. --}}
 @php
     $forme = $variant === 'caps'
-        ? 'rounded-sm px-2 py-1 font-label-numeric text-[12px] uppercase tracking-wider'
-        : 'rounded-full px-3 py-1 font-button-text text-xs font-semibold';
+        ? 'rounded-sm px-2 py-1 font-label-md text-label-md uppercase tracking-wider'
+        : 'rounded-full px-3 py-1 font-button-text text-label-md font-semibold';
 @endphp
 
 <span {{ $attributes->merge(['class' => 'inline-flex items-center '.$forme.' '.($colors[$status] ?? 'bg-surface-container-high text-on-surface-variant')]) }}>

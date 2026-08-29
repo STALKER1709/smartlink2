@@ -18,23 +18,23 @@
                                 @if ($profile->logo_path)
                                     <img src="{{ media_url($profile->logo_path) }}" alt="" class="h-10 w-10 shrink-0 rounded-full object-cover">
                                 @else
-                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-container/40 text-sm font-bold text-on-secondary-container">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-container/40 text-label-lg font-bold text-on-secondary-container">
                                         {{ Str::substr($profile->business_name, 0, 1) }}
                                     </div>
                                 @endif
                                 <div class="min-w-0">
                                     <p class="font-medium text-on-surface">{{ $profile->business_name }}</p>
-                                    <p class="break-all text-sm text-on-surface-variant">{{ $profile->user->email }}</p>
+                                    <p class="break-all text-label-lg text-on-surface-variant">{{ $profile->user->email }}</p>
                                 </div>
                             </div>
 
-                            <p class="mt-2 text-sm text-on-surface-variant">
+                            <p class="mt-2 text-label-lg text-on-surface-variant">
                                 {{ $profile->city }}@if ($profile->quarter) · {{ $profile->quarter }} @endif
                                 @if ($profile->user->phone)
                                     · <span class="font-label-numeric">{{ $profile->user->phone }}</span>
                                 @endif
                             </p>
-                            <p class="mt-0.5 text-sm text-on-surface-variant">
+                            <p class="mt-0.5 text-label-lg text-on-surface-variant">
                                 {{ __("Soumis le") }} <span class="font-label-numeric">{{ $profile->updated_at->format('d/m/Y H:i') }}</span>
                             </p>
                         </div>
@@ -59,7 +59,7 @@
                                 </a>
                             @else
                                 <a href="{{ $document }}" target="_blank" rel="noopener"
-                                   class="flex h-28 items-center justify-center gap-2 rounded-lg border border-outline-variant bg-surface-container text-sm font-medium text-primary transition-colors hover:border-primary">
+                                   class="flex h-28 items-center justify-center gap-2 rounded-lg border border-outline-variant bg-surface-container text-label-lg font-medium text-primary transition-colors hover:border-primary">
                                     <span class="material-symbols-outlined text-base" aria-hidden="true">description</span>
                                     {{ __("Ouvrir le PDF") }}
                                 </a>

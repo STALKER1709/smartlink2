@@ -29,11 +29,11 @@
         {{-- Ce qui a été compris de la phrase, corrigeable par les filtres ci-dessous --}}
         @if (session('searchIntent'))
             <div class="flex flex-wrap items-center gap-2 rounded-xl border border-outline-variant bg-secondary-container/30 px-4 py-3">
-                <span class="text-sm font-medium text-on-secondary-container">{{ __('ui.search.understood') }}</span>
+                <span class="text-label-lg font-medium text-on-secondary-container">{{ __('ui.search.understood') }}</span>
                 @foreach (session('searchIntent') as $piece)
-                    <span class="rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-xs font-medium text-on-surface">{{ $piece }}</span>
+                    <span class="rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-label-md font-medium text-on-surface">{{ $piece }}</span>
                 @endforeach
-                <a href="{{ route('services.index') }}" class="ml-auto text-xs text-primary underline hover:text-primary-container">
+                <a href="{{ route('services.index') }}" class="ml-auto text-label-md text-primary underline hover:text-primary-container">
                     {{ __('ui.search.understood_reset') }}
                 </a>
             </div>
@@ -53,7 +53,7 @@
                     <span class="material-symbols-outlined text-on-surface-variant">tune</span>
                     {{ __('ui.search.or_filter') }}
                     @if ($actifs->isNotEmpty())
-                        <span class="rounded-full bg-primary px-2 py-0.5 font-label-numeric text-xs text-on-primary">{{ $actifs->count() }}</span>
+                        <span class="rounded-full bg-primary px-2 py-0.5 font-label-numeric text-label-md text-on-primary">{{ $actifs->count() }}</span>
                     @endif
                 </span>
                 <span class="material-symbols-outlined text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
@@ -61,16 +61,16 @@
 
             <form action="{{ route('services.index') }}" method="GET" class="grid grid-cols-1 gap-3 border-t border-outline-variant p-4 sm:grid-cols-2 lg:grid-cols-3">
                 <input type="text" name="term" value="{{ request('term') }}" placeholder="{{ __('Mot-clé') }}"
-                       class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                       class="rounded-lg border-outline-variant text-label-lg focus:border-primary focus:ring-primary">
 
-                <select name="category_id" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                <select name="category_id" class="rounded-lg border-outline-variant text-label-lg focus:border-primary focus:ring-primary">
                     <option value="">{{ __("Toutes les catégories") }}</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
                     @endforeach
                 </select>
 
-                <select name="city" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                <select name="city" class="rounded-lg border-outline-variant text-label-lg focus:border-primary focus:ring-primary">
                     <option value="">{{ __("Toutes les villes") }}</option>
                     @foreach ($villes as $ville)
                         <option value="{{ $ville }}" @selected(request('city') === $ville)>{{ $ville }}</option>
@@ -78,15 +78,15 @@
                 </select>
 
                 <input type="text" name="quarter" value="{{ request('quarter') }}" placeholder="{{ __('Quartier') }}"
-                       class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                       class="rounded-lg border-outline-variant text-label-lg focus:border-primary focus:ring-primary">
 
-                <select name="sort" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
+                <select name="sort" class="rounded-lg border-outline-variant text-label-lg focus:border-primary focus:ring-primary">
                     <option value="">{{ __("Plus récents") }}</option>
                     <option value="price_asc" @selected(request('sort') === 'price_asc')>{{ __("Prix croissant") }}</option>
                     <option value="price_desc" @selected(request('sort') === 'price_desc')>{{ __("Prix décroissant") }}</option>
                 </select>
 
-                <label class="flex items-center gap-2 text-sm text-on-surface-variant">
+                <label class="flex items-center gap-2 text-label-lg text-on-surface-variant">
                     <input type="checkbox" name="available_only" value="1" @checked(request('available_only'))
                            class="rounded border-outline-variant text-primary focus:ring-primary">
                     {{ __("Disponibles uniquement") }}
@@ -96,8 +96,8 @@
                      posait sur ce bouton. Pleine largeur sur mobile, il reste
                      atteignable au pouce et son libellé se lit à gauche d'elle. --}}
                 <div class="flex flex-col-reverse items-stretch gap-2 sm:col-span-2 sm:flex-row sm:justify-end lg:col-span-3">
-                    <a href="{{ route('services.index') }}" class="px-3 py-2 text-center text-sm text-on-surface-variant hover:text-on-surface">{{ __("Réinitialiser") }}</a>
-                    <button type="submit" class="rounded-full bg-primary px-5 py-3 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container sm:py-2">
+                    <a href="{{ route('services.index') }}" class="px-3 py-2 text-center text-label-lg text-on-surface-variant hover:text-on-surface">{{ __("Réinitialiser") }}</a>
+                    <button type="submit" class="rounded-full bg-primary px-5 py-3 font-button-text text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-container sm:py-2">
                         {{ __("Filtrer") }}
                     </button>
                 </div>
@@ -105,15 +105,15 @@
         </details>
 
         <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="font-label-numeric text-label-numeric text-on-surface-variant">
-                {{ $services->total() }} {{ Str::plural('service', $services->total()) }}
+            <p class="font-label-lg text-label-lg text-on-surface-variant">
+                <span class="font-label-numeric">{{ $services->total() }}</span> {{ Str::plural('service', $services->total()) }}
             </p>
 
             @if ($actifs->isNotEmpty())
                 <div class="flex flex-wrap items-center gap-2">
                     @foreach ($actifs as $cle => $valeur)
                         <a href="{{ route('services.index', collect(request()->query())->except($cle)->all()) }}"
-                           class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-xs font-medium text-on-surface hover:border-primary/50">
+                           class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-label-md font-medium text-on-surface hover:border-primary/50">
                             {{ $valeur }}
                             <span class="material-symbols-outlined text-sm text-on-surface-variant">close</span>
                         </a>

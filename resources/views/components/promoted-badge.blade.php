@@ -4,8 +4,8 @@
     // Sur la fiche prestataire, ce badge tient dans une rangée de puces plus
     // grandes ; à la même taille qu'ailleurs il s'y lisait comme une note.
     $gabarit = $taille === 'md'
-        ? 'border border-tertiary/20 px-3 py-1 text-sm'
-        : 'px-2 py-0.5 text-xs';
+        ? 'border border-tertiary/20 px-3 py-1 text-label-lg'
+        : 'px-2 py-0.5 text-label-md';
 @endphp
 
 @if ($profile?->is_promoted)

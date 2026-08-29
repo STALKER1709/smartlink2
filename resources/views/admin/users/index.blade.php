@@ -16,7 +16,7 @@
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if (session('status'))
-            <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-sm text-on-secondary-container">
+            <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-label-lg text-on-secondary-container">
                 {{ session('status') }}
             </div>
         @endif
@@ -36,7 +36,7 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-label-lg font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
                     {{ __("Filtrer") }}
                 </button>
             </div>
@@ -66,8 +66,8 @@
                                     <x-status-badge :status="$user->status" />
                                 @endif
                             </div>
-                            <p class="mt-0.5 break-all text-sm text-on-surface-variant">{{ $user->email }}</p>
-                            <p class="mt-0.5 text-sm text-on-surface-variant">
+                            <p class="mt-0.5 break-all text-label-lg text-on-surface-variant">{{ $user->email }}</p>
+                            <p class="mt-0.5 text-label-lg text-on-surface-variant">
                                 {{ $roles[$user->role] ?? $user->role }} ·
                                 inscrit le <span class="font-label-numeric">{{ $user->created_at->format('d/m/Y') }}</span>
                             </p>
@@ -77,14 +77,14 @@
                             @can('suspend', $user)
                                 <form action="{{ route('admin.users.suspend', $user) }}" method="POST" onsubmit="return confirm('Suspendre le compte de {{ $user->name }} ?');">
                                     @csrf
-                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">{{ __("Suspendre") }}</button>
+                                    <button type="submit" class="text-label-lg font-medium text-error hover:opacity-80">{{ __("Suspendre") }}</button>
                                 </form>
                             @endcan
                             @can('reactivate', $user)
                                 @if ($user->status === \App\Models\User::STATUS_SUSPENDED)
                                     <form action="{{ route('admin.users.reactivate', $user) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-sm font-medium text-secondary hover:opacity-80">{{ __("Réactiver") }}</button>
+                                        <button type="submit" class="text-label-lg font-medium text-secondary hover:opacity-80">{{ __("Réactiver") }}</button>
                                     </form>
                                 @endif
                             @endcan

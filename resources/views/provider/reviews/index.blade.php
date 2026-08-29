@@ -9,7 +9,7 @@
              le chiffre, deux tiers pour les barres. --}}
         <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
             <div class="flex flex-col items-center justify-center rounded-xl border border-outline-variant bg-surface-container-lowest p-6 text-center md:col-span-1">
-                <span class="mb-2 font-headline-xl text-5xl text-primary">{{ number_format((float) $ratingAvg, 1, ',', ' ') }}</span>
+                <span class="mb-2 font-headline-xl text-headline-xl text-primary">{{ number_format((float) $ratingAvg, 1, ',', ' ') }}</span>
                 <x-star-rating :rating="$ratingAvg" :afficher-note="false" class="mb-2" />
                 <p class="font-body-md text-on-surface-variant">
                     @if ($ratingCount > 0)
@@ -50,8 +50,8 @@
                                     {{ Str::upper(Str::substr($nom ?? '?', 0, 2)) }}
                                 </span>
                                 <div class="min-w-0">
-                                    <h3 class="font-headline-md text-body-lg text-on-surface">{{ $nom }}</h3>
-                                    <p class="font-label-numeric text-label-numeric text-on-surface-variant">{{ $review->created_at->diffForHumans() }}</p>
+                                    <h3 class="font-headline-sm text-headline-sm text-on-surface">{{ $nom }}</h3>
+                                    <p class="font-label-lg text-label-lg text-on-surface-variant">{{ $review->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                             <x-star-rating :rating="$review->rating" :afficher-note="false" class="shrink-0" />

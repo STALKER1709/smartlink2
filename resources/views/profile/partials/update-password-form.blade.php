@@ -3,7 +3,7 @@
         @csrf
         @method('put')
 
-        <p class="text-sm text-on-surface-variant">
+        <p class="text-label-lg text-on-surface-variant">
             {{ __('Ensure your account is using a long, random password to stay secure.') }}
         </p>
 
@@ -36,7 +36,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-on-surface-variant"
+                    class="text-label-lg text-on-surface-variant"
                 >{{ __('Saved.') }}</p>
             @endif
         </div>
