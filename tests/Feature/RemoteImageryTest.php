@@ -135,7 +135,7 @@ class RemoteImageryTest extends TestCase
         $this->get(route('legal.notice'))
             ->assertOk()
             ->assertSee('Crédits photographiques')
-            ->assertSee('Aucune photographie de tiers n\'est employée', false);
+            ->assertSee('Aucune photographie de tiers n\'est employée');
     }
 
     public function test_the_legal_notice_lists_the_photos_that_are_used(): void

@@ -1,4 +1,4 @@
-<x-app-layout titre="Modifier le palier" :indexable="false">
+<x-app-layout :titre="__('Modifier le palier')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.admin_plans.title') }} — {{ $plan->name()" :back="route('admin.plans.index')" back-label="Formules" />
     </x-slot>

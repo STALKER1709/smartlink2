@@ -2,7 +2,15 @@
 
 @php
     $editeur = config('legal.editeur');
-    $incomplet = collect($editeur)->filter()->isEmpty();
+    /*
+     * Le bandeau s'affiche dès qu'une mention obligatoire manque, pas
+     * seulement quand elles manquent toutes. `filter()->isEmpty()` faisait
+     * disparaître l'avertissement au premier champ rempli, alors que le RCCM
+     * ou le siège pouvaient encore être vides — c'est-à-dire au moment précis
+     * où on croit avoir terminé.
+     */
+    $manquantes = collect($editeur)->filter(fn ($valeur) => blank($valeur))->keys();
+    $incomplet = $manquantes->isNotEmpty();
     $valide = (bool) config('legal.valide_juridiquement');
 @endphp
 
@@ -10,7 +18,7 @@
      et leur titre est déjà celui du document. --}}
 <x-app-layout :titre="$title" :description="$description ?? $intro">
     <x-slot name="header">
-        <x-page-header :title="$title" :subtitle="'Dernière révision : '.config('legal.derniere_revision')" />
+        <x-page-header :title="$title" :subtitle="__('Dernière révision : :date', ['date' => config('legal.derniere_revision')])" />
     </x-slot>
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
@@ -21,8 +29,8 @@
                  colonne collante volerait la moitié de l'écran. --}}
             @if ($sections)
                 <nav class="mb-8 shrink-0 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 lg:sticky lg:top-6 lg:mb-0 lg:w-64"
-                     aria-label="Sommaire">
-                    <p class="font-headline-md text-base text-on-surface">Sommaire</p>
+                     aria-label="{{ __('Sommaire') }}">
+                    <p class="font-headline-md text-base text-on-surface">{{ __("Sommaire") }}</p>
                     <ol class="mt-3 space-y-2">
                         @foreach ($sections as $ancre => $libelle)
                             <li>
@@ -43,23 +51,19 @@
                     <div class="rounded-xl border border-tertiary/30 bg-tertiary-container/10 p-4">
                         <p class="flex gap-2 font-semibold text-tertiary">
                             <span class="material-symbols-outlined shrink-0" aria-hidden="true">shield</span>
-                            Document non validé juridiquement
+                            {{ __("Document non validé juridiquement") }}
                         </p>
                         <p class="mt-1 text-sm text-on-surface-variant">
-                            Ce texte a été rédigé d'après le fonctionnement réel de la plateforme, mais il n'a
-                            pas été relu par un juriste. Il ne doit pas être considéré comme un engagement
-                            contractuel opposable en l'état.
+                            {{ __("Ce texte a été rédigé d'après le fonctionnement réel de la plateforme, mais il n'a pas été relu par un juriste. Il ne doit pas être considéré comme un engagement contractuel opposable en l'état.") }}
                         </p>
                     </div>
                 @endunless
 
                 @if ($incomplet)
                     <div class="mt-4 rounded-xl border border-error/30 bg-error-container/40 p-4">
-                        <p class="font-semibold text-on-error-container">Identité de l'éditeur non renseignée</p>
+                        <p class="font-semibold text-on-error-container">{{ __("Identité de l'éditeur non renseignée") }}</p>
                         <p class="mt-1 text-sm text-on-error-container/90">
-                            Raison sociale, RCCM, siège social et contact sont à poser dans les variables
-                            <span class="font-label-numeric">LEGAL_*</span> de l'environnement. Ces informations
-                            figurent sur vos statuts : elles ne peuvent pas être devinées.
+                            {!! __('Raison sociale, RCCM, siège social et contact sont à poser dans les variables <span class="font-label-numeric">LEGAL_*</span> de l\'environnement. Ces informations figurent sur vos statuts : elles ne peuvent pas être devinées.') !!}
                         </p>
                     </div>
                 @endif

@@ -1,6 +1,6 @@
-<x-app-layout titre="Nouvelle demande" :indexable="false">
+<x-app-layout :titre="__('Nouvelle demande')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Nouvelle demande" :back="route('requests.index')" back-label="Mes demandes" />
+        <x-page-header :title="__('Nouvelle demande')" :back="route('requests.index')" :back-label="__('Mes demandes')" />
     </x-slot>
 
     <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -41,18 +41,16 @@
                      n'est pas présent » — deux champs qu'il n'a jamais vus,
                      nommés comme des colonnes. On demande le destinataire
                      avant le message, pas l'inverse. --}}
-                <p class="font-headline-md text-headline-md text-on-surface">À qui adressez-vous cette demande ?</p>
+                <p class="font-headline-md text-headline-md text-on-surface">{{ __("À qui adressez-vous cette demande ?") }}</p>
                 <p class="prose-measure mt-2 text-body-md text-on-surface-variant">
-                    Une demande part toujours vers un prestataire précis. Choisissez d'abord le
-                    service qui vous intéresse, ou le prestataire à qui vous voulez écrire —
-                    le formulaire s'ouvrira avec son nom déjà rempli.
+                    {{ __("Une demande part toujours vers un prestataire précis. Choisissez d'abord le service qui vous intéresse, ou le prestataire à qui vous voulez écrire — le formulaire s'ouvrira avec son nom déjà rempli.") }}
                 </p>
                 <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                        Parcourir les services
+                        {{ __("Parcourir les services") }}
                     </a>
                     <a href="{{ route('providers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-5 py-2.5 font-button-text text-sm font-semibold text-primary transition-colors hover:bg-primary-container/10">
-                        Parcourir les prestataires
+                        {{ __("Parcourir les prestataires") }}
                     </a>
                 </div>
             @else
@@ -66,7 +64,7 @@
                 @endif
 
                 <div>
-                    <x-input-label for="message" value="Votre message" />
+                    <x-input-label for="message" :value="__('Votre message')" />
                     <textarea
                         id="message"
                         name="message"
@@ -74,13 +72,13 @@
                         required
                         maxlength="2000"
                         class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary"
-                        placeholder="Décrivez votre besoin, le lieu, et toute information utile au prestataire…"
+                        placeholder="{{ __('Décrivez votre besoin, le lieu, et toute information utile au prestataire…') }}"
                     >{{ old('message') }}</textarea>
                     <x-input-error :messages="$errors->get('message')" class="mt-2" />
                 </div>
 
                 <div>
-                    <x-input-label for="preferred_date" value="Date souhaitée (facultatif)" />
+                    <x-input-label for="preferred_date" :value="__('Date souhaitée (facultatif)')" />
                     <x-text-input
                         id="preferred_date"
                         name="preferred_date"
@@ -97,10 +95,10 @@
                      l'anglais. Empilés, l'action principale en premier. --}}
                 <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
                     <x-secondary-button type="submit" name="action" value="draft" class="w-full sm:w-auto">
-                        Enregistrer comme brouillon
+                        {{ __("Enregistrer comme brouillon") }}
                     </x-secondary-button>
                     <x-primary-button type="submit" name="action" value="send" class="w-full sm:w-auto">
-                        Envoyer la demande
+                        {{ __("Envoyer la demande") }}
                     </x-primary-button>
                 </div>
             </form>

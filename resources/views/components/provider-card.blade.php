@@ -37,7 +37,7 @@
         <h3 class="mt-1 flex items-start gap-1.5 font-headline-md text-base font-semibold leading-snug text-on-surface group-hover:text-primary sm:text-lg">
             <span class="line-clamp-2">{{ $providerProfile->business_name }}</span>
             @if ($providerProfile->is_verified)
-                <span class="material-symbols-outlined mt-0.5 shrink-0 text-lg text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="Prestataire vérifié">verified</span>
+                <span class="material-symbols-outlined mt-0.5 shrink-0 text-lg text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="{{ __('Prestataire vérifié') }}">verified</span>
             @endif
         </h3>
 
@@ -54,7 +54,7 @@
             @if ($providerProfile->rating_count)
                 <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
             @else
-                <span class="text-xs text-on-surface-variant">Pas encore d'avis</span>
+                <span class="text-xs text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
             @endif
         </div>
     </div>

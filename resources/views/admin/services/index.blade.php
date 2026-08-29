@@ -1,6 +1,6 @@
-<x-app-layout titre="Services" :indexable="false">
+<x-app-layout :titre="__('Services')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Gérer les services" />
+        <x-page-header :title="__('Gérer les services')" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -12,26 +12,26 @@
 
         <form method="GET" class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-                <x-input-label for="term" value="Recherche" />
-                <x-text-input id="term" name="term" type="text" class="mt-1 block w-full" :value="request('term')" placeholder="Titre du service" />
+                <x-input-label for="term" :value="__('Recherche')" />
+                <x-text-input id="term" name="term" type="text" class="mt-1 block w-full" :value="request('term')" :placeholder="__('Titre du service')" />
             </div>
             <div>
-                <x-input-label for="status" value="Statut" />
+                <x-input-label for="status" :value="__('Statut')" />
                 <select id="status" name="status" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
-                    <option value="">Tous</option>
-                    <option value="{{ \App\Models\Service::STATUS_ACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_ACTIVE)>Actif</option>
-                    <option value="{{ \App\Models\Service::STATUS_INACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_INACTIVE)>Inactif</option>
+                    <option value="">{{ __("Tous") }}</option>
+                    <option value="{{ \App\Models\Service::STATUS_ACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_ACTIVE)>{{ __("Actif") }}</option>
+                    <option value="{{ \App\Models\Service::STATUS_INACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_INACTIVE)>{{ __("Inactif") }}</option>
                 </select>
             </div>
             <div class="flex items-end">
                 <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                    Filtrer
+                    {{ __("Filtrer") }}
                 </button>
             </div>
         </form>
 
         @if ($services->isEmpty())
-            <x-empty-state title="Aucun service trouvé." description="Aucun service ne correspond à ces critères." />
+            <x-empty-state :title="__('Aucun service trouvé.')" :description="__('Aucun service ne correspond à ces critères.')" />
         @else
             {{-- Le titre d'abord, sur toute la largeur. Il était tronqué à
                  « Recherc… » parce que trois actions se partageaient la ligne :
@@ -56,7 +56,7 @@
                              est mis à part, à l'autre bout de la rangée. --}}
                         <div class="flex shrink-0 items-center gap-4">
                             <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-primary hover:text-primary-container">
-                                Voir
+                                {{ __("Voir") }}
                             </a>
                             <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST">
                                 @csrf
@@ -69,7 +69,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-sm font-medium text-error hover:opacity-80">
-                                    Supprimer
+                                    {{ __("Supprimer") }}
                                 </button>
                             </form>
                         </div>

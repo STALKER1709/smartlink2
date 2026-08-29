@@ -1,6 +1,6 @@
-<x-app-layout titre="Modifier le service" :indexable="false">
+<x-app-layout :titre="__('Modifier le service')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Modifier le service" :back="route('provider.services.index')" back-label="Mes services" />
+        <x-page-header :title="__('Modifier le service')" :back="route('provider.services.index')" :back-label="__('Mes services')" />
     </x-slot>
 
     <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -13,7 +13,7 @@
 
                 <div class="mt-6 flex justify-end">
                     <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                        Enregistrer les modifications
+                        {{ __("Enregistrer les modifications") }}
                     </button>
                 </div>
             </form>

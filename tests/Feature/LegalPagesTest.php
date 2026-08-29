@@ -55,16 +55,46 @@ class LegalPagesTest extends TestCase
     {
         config()->set('legal.editeur', array_fill_keys(array_keys(config('legal.editeur')), null));
 
-        $this->get(route('legal.notice'))->assertSee('Identité de l\'éditeur non renseignée', false);
+        $this->get(route('legal.notice'))->assertSee('Identité de l\'éditeur non renseignée');
     }
 
     public function test_a_filled_identity_replaces_the_warning(): void
     {
+        $this->identiteComplete();
         config()->set('legal.editeur.raison_sociale', 'SmartLink SARL');
 
         $this->get(route('legal.notice'))
             ->assertSee('SmartLink SARL')
-            ->assertDontSee('Identité de l\'éditeur non renseignée', false);
+            ->assertDontSee('Identité de l\'éditeur non renseignée');
+    }
+
+    /**
+     * Le bandeau ne se déclenchait que si *toutes* les mentions manquaient :
+     * renseigner la raison sociale le faisait disparaître alors que le RCCM ou
+     * le siège restaient vides — c'est-à-dire au moment précis où on croit
+     * avoir terminé, et où plus rien ne signale ce qu'il reste à faire.
+     */
+    public function test_a_single_missing_detail_keeps_the_warning(): void
+    {
+        $this->identiteComplete();
+        config()->set('legal.editeur.siege', '');
+
+        $this->get(route('legal.notice'))
+            ->assertSee('Identité de l\'éditeur non renseignée');
+    }
+
+    /**
+     * Toutes les clés que la vue lit, renseignées. config/legal.php les
+     * fournit toujours toutes : seule leur valeur peut être vide.
+     */
+    private function identiteComplete(): void
+    {
+        $cles = array_keys((array) config('legal.editeur'));
+
+        config()->set('legal.editeur', array_combine(
+            $cles,
+            array_map(fn (string $cle) => 'valeur '.$cle, $cles),
+        ));
     }
 
     /**

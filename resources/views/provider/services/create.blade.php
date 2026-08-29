@@ -1,6 +1,6 @@
-<x-app-layout titre="Publier un service" :indexable="false">
+<x-app-layout :titre="__('Publier un service')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Publier un service" :back="route('provider.services.index')" back-label="Mes services" />
+        <x-page-header :title="__('Publier un service')" :back="route('provider.services.index')" :back-label="__('Mes services')" />
     </x-slot>
 
     <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -12,7 +12,7 @@
 
                 <div class="mt-6 flex justify-end">
                     <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                        Publier le service
+                        {{ __("Publier le service") }}
                     </button>
                 </div>
             </form>

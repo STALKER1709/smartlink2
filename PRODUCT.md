@@ -108,9 +108,9 @@ juridiquement** : elle doit être relue par un juriste avant l'ouverture au publ
 
 ## Evidence on Hand
 
-- `design/stitch-imports/` : 30 écrans Google Stitch avec leur HTML, plus
-  `smartlink/DESIGN.md` — jetons de couleur, typographie, formes, principes. C'est
-  l'autorité visuelle héritée.
+- `DESIGN.md` — jetons de couleur, typographie, formes, principes. C'est
+  l'autorité visuelle, et la seule depuis que les maquettes Google Stitch qui
+  ont servi à la refonte ont été retirées du dépôt, l'intégration faite.
 - `CLAUDE.md` : contraintes d'ingénierie et pièges déjà rencontrés en production.
 - `USAGE.md` : les parcours réels, rôle par rôle.
 - Contenu de démonstration réel en base (`DemoSeeder`) : 14 prestataires, 27 services,

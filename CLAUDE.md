@@ -180,6 +180,53 @@ traverse plusieurs requêtes simulées ou qui écrit en masse
 reconstruit son utilisateur depuis la session, pas un test qui en garde un seul.
 `tests/Feature/Subscription/SubscriptionMemoTest.php` monte la garde.
 
+## Analyse statique
+
+`phpstan.neon` est écrit et le CI l'exécute — mais **larastan n'est pas encore
+installé**, et c'est délibéré, pas un oubli. `phpstan/phpstan` n'est distribué
+que par un zip de l'API GitHub (aucune `source` dans ses métadonnées), et cet
+hôte est inaccessible depuis l'environnement où le dépôt a été préparé : ni
+`--prefer-source`, ni `use-github-api false` ne contournent le problème,
+puisqu'il n'y a rien d'autre à récupérer.
+
+Sans larastan, PHPStan ne sait pas ce que rend `User::create()` ni quel type a
+une colonne lue en propriété : il signale 404 « erreurs » sur ce dépôt, dont
+aucune n'est un vrai défaut. Un baseline construit dans ces conditions serait
+un mensonge figé.
+
+Depuis une machine ayant accès à GitHub, deux commandes suffisent :
+
+```bash
+composer require --dev larastan/larastan
+vendor/bin/phpstan analyse --generate-baseline
+```
+
+Le passage « Analyse statique » du CI s'allume alors tout seul : il est écrit
+pour ne rien faire tant que `vendor/bin/phpstan` n'existe pas.
+
+⚠️ **Tout texte d'interface passe par `__()`, avec le français pour clé.**
+`lang/en.json` traduit ces clés ; `lang/fr/*.php` et `lang/en/*.php` portent les
+clés structurées (`ui.*`, `sms.*`, `seo.*`), employées depuis le code PHP.
+Une clé française sans entrée dans `lang/en.json` **ne casse rien** : Laravel
+rend la clé telle quelle, donc du français au milieu d'une page anglaise, sans
+la moindre erreur. `tests/Feature/TranslationCoverageTest.php` monte la garde
+dans les deux sens — pas de clé sans traduction, pas de traduction sans clé.
+
+Les trois pages légales (`resources/views/legal/`) restent volontairement en
+français seul : traduire des CGU engage juridiquement, et les documents ne sont
+pas encore relus par un juriste (`LEGAL_VALIDE`).
+
+⚠️ **`APP_URL` est un réglage de sécurité, pas seulement de confort.** Laravel
+compose ses URL absolues à partir de l'en-tête `Host` de la requête — et de
+`X-Forwarded-Host`, honoré parce que `trustProxies(at: '*')` fait confiance à
+tous les répartiteurs. C'est-à-dire à partir d'une valeur que le client choisit.
+Une demande de mot de passe oublié envoyée avec un `Host` falsifié fait donc
+partir, vers la boîte du titulaire, un lien de réinitialisation **valide qui
+pointe chez l'attaquant**. `trustHosts` (`bootstrap/app.php`) filtre les noms
+d'hôte à partir d'`APP_URL` ; un `APP_URL` vide vide la liste et éteint le
+filtrage sans rien dire, d'où le contrôle dans `deploy:check`.
+`tests/Feature/TrustedHostsTest.php` monte la garde.
+
 ⚠️ **N'écris jamais `where(..., 'like', ...)` à la main.** `like` est sensible à
 la casse sur PostgreSQL et ne l'est pas sur MySQL ni SQLite : la recherche
 renvoyait une page vide à qui tapait en minuscules, sans erreur nulle part et

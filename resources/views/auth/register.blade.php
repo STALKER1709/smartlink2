@@ -1,6 +1,6 @@
 <x-guest-layout :titre="__('seo.register')" :indexable="true" :description="__('seo.register_description')">
-    <h1 class="font-headline-lg text-2xl font-bold text-on-surface">Créer votre compte</h1>
-    <p class="mt-1 text-sm text-on-surface-variant">Gratuit pour les clients. 30 jours d'essai pour les prestataires.</p>
+    <h1 class="font-headline-lg text-2xl font-bold text-on-surface">{{ __("Créer votre compte") }}</h1>
+    <p class="mt-1 text-sm text-on-surface-variant">{{ __("Gratuit pour les clients. 30 jours d'essai pour les prestataires.") }}</p>
 
     <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4" x-data="{ role: '{{ old('role', 'client') }}' }">
         @csrf
@@ -11,7 +11,7 @@
             {{-- La maquette centre la question et met le geste devant le rôle :
                  « Je cherche un prestataire » se choisit plus vite que
                  « Client », qui demande de se ranger dans une catégorie. --}}
-            <span class="mb-3 block text-center text-sm font-medium text-on-surface-variant">Je souhaite utiliser SmartLink pour :</span>
+            <span class="mb-3 block text-center text-sm font-medium text-on-surface-variant">{{ __("Je souhaite utiliser SmartLink pour :") }}</span>
             <div class="grid grid-cols-2 gap-4">
                 <label
                     class="flex cursor-pointer flex-col items-center rounded-xl border p-4 text-center transition-colors"
@@ -22,7 +22,7 @@
                           :class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'"
                           style="font-variation-settings: 'FILL' 1;" aria-hidden="true">person_search</span>
                     <span class="font-body-md text-sm font-semibold md:text-base"
-                          :class="role === 'client' ? 'text-primary' : 'text-on-surface'">Je cherche un prestataire</span>
+                          :class="role === 'client' ? 'text-primary' : 'text-on-surface'">{{ __("Je cherche un prestataire") }}</span>
                 </label>
 
                 <label
@@ -34,7 +34,7 @@
                           :class="role === 'provider' ? 'text-primary' : 'text-on-surface-variant'"
                           aria-hidden="true">handyman</span>
                     <span class="font-body-md text-sm font-semibold md:text-base"
-                          :class="role === 'provider' ? 'text-primary' : 'text-on-surface'">Je propose mes services</span>
+                          :class="role === 'provider' ? 'text-primary' : 'text-on-surface'">{{ __("Je propose mes services") }}</span>
                 </label>
             </div>
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
@@ -61,7 +61,7 @@
         <div>
             <x-input-label for="phone" :value="__('Téléphone')" />
             <x-text-input id="phone" class="mt-1 block w-full" type="tel" name="phone" :value="old('phone')" required autocomplete="tel" placeholder="6XXXXXXXX" />
-            <p class="mt-1 text-xs text-on-surface-variant">C'est par là que les prestataires vous joindront.</p>
+            <p class="mt-1 text-xs text-on-surface-variant">{{ __("C'est par là que les prestataires vous joindront.") }}</p>
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
@@ -87,10 +87,10 @@
              deux documents sont accessibles depuis l'endroit exact où
              l'engagement se prend. --}}
         <p class="text-center text-xs leading-relaxed text-on-surface-variant">
-            En créant un compte, vous acceptez les
-            <a href="{{ route('legal.terms') }}" class="font-semibold text-primary hover:underline">conditions générales</a>
-            et la
-            <a href="{{ route('legal.privacy') }}" class="font-semibold text-primary hover:underline">politique de confidentialité</a>.
+            {{ __("En créant un compte, vous acceptez les") }}
+            <a href="{{ route('legal.terms') }}" class="font-semibold text-primary hover:underline">{{ __('conditions générales') }}</a>
+            {{ __('et la') }}
+            <a href="{{ route('legal.privacy') }}" class="font-semibold text-primary hover:underline">{{ __('politique de confidentialité') }}</a>.
         </p>
     </form>
 

@@ -134,9 +134,15 @@ class SeoMetadataTest extends TestCase
         $this->get(route('login'))->assertSee('name="robots"', false);
     }
 
+    /**
+     * Le fichier n'est plus déposé dans `public/` : il est servi par
+     * l'application, pour que la ligne « Sitemap » porte une adresse absolue
+     * juste sur chaque environnement. Le reste de son contenu ne change pas.
+     * Les règles elles-mêmes sont éprouvées dans `SitemapTest`.
+     */
     public function test_robots_txt_closes_the_private_areas(): void
     {
-        $robots = file_get_contents(public_path('robots.txt'));
+        $robots = $this->get('/robots.txt')->assertOk()->getContent();
 
         $this->assertStringContainsString('Disallow: /admin', $robots);
         $this->assertStringContainsString('Disallow: /dashboard', $robots);

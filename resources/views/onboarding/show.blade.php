@@ -17,7 +17,7 @@
 
         <footer class="fixed bottom-0 z-10 flex w-full flex-col items-center justify-between gap-6 border-t border-outline-variant bg-surface-container px-margin-mobile py-6 md:flex-row">
             <div class="flex w-full justify-center gap-2 md:order-2 md:w-auto" role="img"
-                 aria-label="Étape {{ $etape }} sur {{ $total }}">
+                 aria-label="{{ __('Étape :etape sur :total', ['etape' => $etape, 'total' => $total]) }}">
                 @for ($i = 1; $i <= $total; $i++)
                     <span @class([
                         'h-2 rounded-full transition-all duration-300',
@@ -39,7 +39,7 @@
                 @if ($etape < $total)
                     <a href="{{ route('onboarding.show', $etape + 1) }}"
                        class="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-colors duration-100 hover:bg-primary-container active:scale-95">
-                        Suivant
+                        {{ __("Suivant") }}
                         <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                     </a>
                 @else
@@ -47,7 +47,7 @@
                         @csrf
                         <button type="submit"
                                 class="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-colors duration-100 hover:bg-primary-container active:scale-95">
-                            Commencer
+                            {{ __("Commencer") }}
                             <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                         </button>
                     </form>

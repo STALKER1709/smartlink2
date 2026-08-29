@@ -1,6 +1,6 @@
-<x-app-layout titre="Modifier la catégorie" :indexable="false">
+<x-app-layout :titre="__('Modifier la catégorie')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Modifier la catégorie" :back="route('admin.categories.index')" back-label="Catégories" />
+        <x-page-header :title="__('Modifier la catégorie')" :back="route('admin.categories.index')" :back-label="__('Catégories')" />
     </x-slot>
 
     <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -13,7 +13,7 @@
 
                 <div class="mt-6 flex justify-end">
                     <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                        Enregistrer les modifications
+                        {{ __("Enregistrer les modifications") }}
                     </button>
                 </div>
             </form>

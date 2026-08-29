@@ -1,12 +1,12 @@
-<x-app-layout titre="Mes litiges" :indexable="false">
+<x-app-layout :titre="__('Mes litiges')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Mes signalements" subtitle="Ce que vous avez déclaré, et ce qui en a été décidé." />
+        <x-page-header :title="__('Mes signalements')" :subtitle="__('Ce que vous avez déclaré, et ce qui en a été décidé.')" />
     </x-slot>
 
     <div class="mx-auto w-full max-w-3xl px-margin-mobile py-8 md:px-margin-desktop">
         @if ($disputes->isEmpty())
-            <x-empty-state title="Aucun signalement."
-                           description="Si une prestation se passe mal, vous pouvez la signaler depuis la fiche de la demande." />
+            <x-empty-state :title="__('Aucun signalement.')"
+                           :description="__('Si une prestation se passe mal, vous pouvez la signaler depuis la fiche de la demande.')" />
         @else
             <div class="flex flex-col gap-4">
                 @foreach ($disputes as $dispute)
@@ -33,7 +33,7 @@
                             {{-- La décision est rendue au déclarant, pas seulement
                                  consignée : « résolu » sans un mot ne dit rien. --}}
                             <div class="mt-3 rounded-lg border border-outline-variant bg-surface-container-low p-3">
-                                <p class="mb-1 font-button-text text-button-text text-on-surface">Réponse de l'équipe</p>
+                                <p class="mb-1 font-button-text text-button-text text-on-surface">{{ __("Réponse de l'équipe") }}</p>
                                 <p class="text-sm text-on-surface-variant">{{ $dispute->resolution }}</p>
                             </div>
                         @endif

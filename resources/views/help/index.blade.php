@@ -1,36 +1,36 @@
 @php
     $faqs = [
         'compte' => [
-            'label' => 'Compte & Profil',
+            'label' => __('Compte & Profil'),
             'icon' => 'account_circle',
             'items' => [
-                ['q' => 'Comment créer un compte ?', 'a' => "Cliquez sur « S'inscrire », choisissez si vous êtes client ou prestataire, puis renseignez vos informations. Un profil est créé automatiquement selon votre rôle."],
-                ['q' => 'Comment modifier mes informations ?', 'a' => 'Rendez-vous dans « Paramètres du compte » (ou « Mon profil client / prestataire ») depuis le menu en haut à droite.'],
+                ['q' => __('Comment créer un compte ?'), 'a' => __("Cliquez sur « S'inscrire », choisissez si vous êtes client ou prestataire, puis renseignez vos informations. Un profil est créé automatiquement selon votre rôle.")],
+                ['q' => __('Comment modifier mes informations ?'), 'a' => __('Rendez-vous dans « Paramètres du compte » (ou « Mon profil client / prestataire ») depuis le menu en haut à droite.')],
             ],
         ],
         'demandes' => [
-            'label' => 'Services & Demandes',
+            'label' => __('Services & Demandes'),
             'icon' => 'assignment',
             'items' => [
-                ['q' => 'Comment trouver un prestataire ?', 'a' => 'Parcourez les services ou les prestataires depuis le menu, filtrez par catégorie, ville ou mot-clé, puis consultez les profils vérifiés.'],
-                ['q' => 'Comment envoyer une demande ?', 'a' => "Depuis la fiche d'un service ou d'un prestataire, cliquez sur « Faire une demande », décrivez votre besoin et envoyez. Vous pouvez suivre son statut dans « Mes demandes »."],
-                ['q' => 'Que se passe-t-il une fois la demande acceptée ?', 'a' => 'Une conversation s\'ouvre automatiquement avec le prestataire pour échanger les détails, avant que la prestation ne démarre puis se termine.'],
+                ['q' => __('Comment trouver un prestataire ?'), 'a' => __('Parcourez les services ou les prestataires depuis le menu, filtrez par catégorie, ville ou mot-clé, puis consultez les profils vérifiés.')],
+                ['q' => __('Comment envoyer une demande ?'), 'a' => __("Depuis la fiche d'un service ou d'un prestataire, cliquez sur « Faire une demande », décrivez votre besoin et envoyez. Vous pouvez suivre son statut dans « Mes demandes ».")],
+                ['q' => __('Que se passe-t-il une fois la demande acceptée ?'), 'a' => __('Une conversation s\'ouvre automatiquement avec le prestataire pour échanger les détails, avant que la prestation ne démarre puis se termine.')],
             ],
         ],
         'paiement' => [
-            'label' => 'Paiement',
+            'label' => __('Paiement'),
             'icon' => 'payments',
             'items' => [
-                ['q' => 'SmartLink prend-il une commission ?', 'a' => "Non. SmartLink ne prélève absolument rien sur vos échanges avec un prestataire : ce n'est pas une place de marché, seulement un outil de mise en relation."],
-                ['q' => "Comment se passe le règlement d'un service ?", 'a' => 'Le règlement se négocie et s\'effectue directement entre le client et le prestataire, en dehors de la plateforme. Les prix affichés sont indicatifs.'],
+                ['q' => __('SmartLink prend-il une commission ?'), 'a' => __("Non. SmartLink ne prélève absolument rien sur vos échanges avec un prestataire : ce n'est pas une place de marché, seulement un outil de mise en relation.")],
+                ['q' => __("Comment se passe le règlement d'un service ?"), 'a' => __('Le règlement se négocie et s\'effectue directement entre le client et le prestataire, en dehors de la plateforme. Les prix affichés sont indicatifs.')],
             ],
         ],
         'securite' => [
-            'label' => 'Confiance & Sécurité',
+            'label' => __('Confiance & Sécurité'),
             'icon' => 'shield',
             'items' => [
-                ['q' => 'Que signifie « Prestataire vérifié » ?', 'a' => "Un badge de vérification indique qu'un administrateur a validé la pièce d'identité du prestataire."],
-                ['q' => 'Comment laisser un avis ?', 'a' => "Une fois une demande marquée « Terminée », vous pouvez noter la prestation et laisser un commentaire depuis la page de la demande."],
+                ['q' => __('Que signifie « Prestataire vérifié » ?'), 'a' => __("Un badge de vérification indique qu'un administrateur a validé la pièce d'identité du prestataire.")],
+                ['q' => __('Comment laisser un avis ?'), 'a' => __("Une fois une demande marquée « Terminée », vous pouvez noter la prestation et laisser un commentaire depuis la page de la demande.")],
             ],
         ],
     ];
@@ -38,16 +38,16 @@
 
 <x-app-layout :titre="__('seo.help')" :description="__('seo.help_description')">
     <x-slot name="header">
-        <x-page-header title="Centre d'aide" />
+        <x-page-header :title="__('Centre d\'aide')" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         <div class="max-w-2xl">
             <h1 class="mb-4 font-headline-xl text-[32px] font-extrabold leading-[40px] tracking-tight text-primary md:text-[40px] md:leading-[48px]">
-                Comment pouvons-nous vous aider ?
+                {{ __("Comment pouvons-nous vous aider ?") }}
             </h1>
             <p class="mb-8 font-body-lg text-body-lg text-on-surface-variant">
-                Trouvez des réponses rapides à vos questions, ou demandez à l'assistant SmartLink.
+                {{ __("Trouvez des réponses rapides à vos questions, ou demandez à l'assistant SmartLink.") }}
             </p>
 
             {{-- La recherche filtre les questions sur place, sans recharger :
@@ -62,9 +62,9 @@
                 });
             })">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" aria-hidden="true">search</span>
-                <label for="faq-search" class="sr-only">Rechercher de l'aide</label>
+                <label for="faq-search" class="sr-only">{{ __("Rechercher de l'aide") }}</label>
                 <input id="faq-search" type="search" x-model="q"
-                       placeholder="Rechercher de l'aide (ex : paiements, compte…)"
+                       placeholder="{{ __('Rechercher de l\'aide (ex : paiements, compte…)') }}"
                        class="w-full rounded-xl border border-outline-variant bg-surface py-4 pl-12 pr-4 font-body-md text-body-md text-on-surface shadow-sm transition-all placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary-container/20">
             </div>
         </div>
@@ -93,9 +93,9 @@
         </div>
 
         <div class="mt-10 bg-secondary-container/20 border border-outline-variant rounded-xl p-6">
-            <h2 class="font-headline-md text-headline-md text-primary mb-2">Besoin d'une assistance personnalisée ?</h2>
+            <h2 class="font-headline-md text-headline-md text-primary mb-2">{{ __("Besoin d'une assistance personnalisée ?") }}</h2>
             <p class="text-sm text-on-surface-variant">
-                Utilisez l'assistant SmartLink (icône en bas à droite de l'écran) pour poser directement votre question.
+                {{ __("Utilisez l'assistant SmartLink (icône en bas à droite de l'écran) pour poser directement votre question.") }}
             </p>
         </div>
     </div>

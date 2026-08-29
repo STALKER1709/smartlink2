@@ -2,7 +2,7 @@
     $statusLabels = \App\Support\RequestStatus::labels();
 @endphp
 
-<x-app-layout titre="Détail de la demande" :indexable="false">
+<x-app-layout :titre="__('Détail de la demande')" :indexable="false">
     <x-slot name="header">
         {{-- « Demande n° 28 » : le client ne connaît pas ce numéro et ne
              s'en sert jamais. Il reconnaît sa demande à la prestation
@@ -74,7 +74,7 @@
                         @if ($profil)
                             <a href="{{ route('providers.show', $profil) }}"
                                class="shrink-0 rounded-lg border border-primary px-4 py-2 font-button-text text-button-text text-primary transition-colors hover:bg-surface-container-low">
-                                Voir profil
+                                {{ __("Voir profil") }}
                             </a>
                         @endif
                     </div>
@@ -84,7 +84,7 @@
                     <div class="rounded-xl border border-outline-variant bg-surface-container-low p-4 md:p-6">
                         <h3 class="mb-2 flex items-center gap-2 font-button-text text-button-text text-on-surface">
                             <span class="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
-                            Message initial
+                            {{ __("Message initial") }}
                         </h3>
                         <p class="italic text-on-surface-variant">« {{ $serviceRequest->message }} »</p>
                     </div>
@@ -95,13 +95,13 @@
                         <dl class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                             @if ($serviceRequest->service)
                                 <div>
-                                    <dt class="text-on-surface-variant">Service concerné</dt>
+                                    <dt class="text-on-surface-variant">{{ __("Service concerné") }}</dt>
                                     <dd><a href="{{ route('services.show', $serviceRequest->service) }}" class="font-medium text-primary hover:text-primary-container">{{ $serviceRequest->service->title }}</a></dd>
                                 </div>
                             @endif
                             @if ($serviceRequest->preferred_date)
                                 <div>
-                                    <dt class="text-on-surface-variant">Date souhaitée</dt>
+                                    <dt class="text-on-surface-variant">{{ __("Date souhaitée") }}</dt>
                                     <dd class="font-label-numeric font-medium text-on-surface">{{ $serviceRequest->preferred_date->translatedFormat('j F Y') }}</dd>
                                 </div>
                             @endif
@@ -112,7 +112,7 @@
                 <!-- Review -->
                 @can('create', [\App\Models\Review::class, $serviceRequest])
                     <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
-                        <h3 class="font-headline-md text-headline-md text-on-surface mb-3">Laisser un avis</h3>
+                        <h3 class="font-headline-md text-headline-md text-on-surface mb-3">{{ __("Laisser un avis") }}</h3>
                         <form action="{{ route('requests.review', $serviceRequest) }}" method="POST" class="space-y-3">
                             @csrf
                             {{-- La note se choisissait dans une liste
@@ -122,14 +122,14 @@
                                  menu. Des boutons radio, donc — l'étoile reste
                                  cliquable sans JavaScript. --}}
                             <fieldset>
-                                <legend class="block font-medium text-sm text-on-surface-variant">Votre note</legend>
+                                <legend class="block font-medium text-sm text-on-surface-variant">{{ __("Votre note") }}</legend>
                                 <div class="mt-1 flex flex-row-reverse justify-end gap-1">
                                     @for ($i = 5; $i >= 1; $i--)
                                         <input type="radio" id="rating-{{ $i }}" name="rating" value="{{ $i }}" required class="peer sr-only">
                                         <label for="rating-{{ $i }}"
                                                class="cursor-pointer rounded-full p-1 text-outline-variant transition-colors hover:text-tertiary-container peer-checked:text-tertiary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary"
-                                               title="{{ $i }} étoile{{ $i > 1 ? 's' : '' }}">
-                                            <span class="sr-only">{{ $i }} étoile{{ $i > 1 ? 's' : '' }}</span>
+                                               title="{{ trans_choice(':count étoile|:count étoiles', $i) }}">
+                                            <span class="sr-only">{{ trans_choice(':count étoile|:count étoiles', $i) }}</span>
                                             <span class="material-symbols-outlined block text-[30px]" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
                                         </label>
                                     @endfor
@@ -137,18 +137,18 @@
                                 <x-input-error :messages="$errors->get('rating')" class="mt-2" />
                             </fieldset>
                             <div>
-                                <x-input-label for="comment" value="Commentaire (facultatif)" />
+                                <x-input-label for="comment" :value="__('Commentaire (facultatif)')" />
                                 <textarea id="comment" name="comment" rows="3" maxlength="1000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary"></textarea>
                                 <x-input-error :messages="$errors->get('comment')" class="mt-2" />
                             </div>
-                            <x-primary-button type="submit">Envoyer mon avis</x-primary-button>
+                            <x-primary-button type="submit">{{ __("Envoyer mon avis") }}</x-primary-button>
                         </form>
                     </div>
                 @endcan
 
                 @if ($serviceRequest->review)
                     <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
-                        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Votre avis</h3>
+                        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">{{ __("Votre avis") }}</h3>
                         <x-star-rating :rating="$serviceRequest->review->rating" />
                         @if ($serviceRequest->review->comment)
                             <p class="mt-2 text-sm text-on-surface">{{ $serviceRequest->review->comment }}</p>
@@ -158,7 +158,7 @@
 
                 <!-- Status history -->
                 <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
-                    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Historique</h3>
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">{{ __("Historique") }}</h3>
                     <ol class="space-y-4">
                         @foreach ($serviceRequest->statusHistory as $history)
                             <li class="flex gap-3">
@@ -191,19 +191,19 @@
                     <a href="{{ route('disputes.create', $serviceRequest) }}"
                        class="inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-error">
                         <span class="material-symbols-outlined text-base" aria-hidden="true">flag</span>
-                        Signaler un problème sur cette demande
+                        {{ __("Signaler un problème sur cette demande") }}
                     </a>
                 @endcan
             </div>
 
             <!-- Conversation -->
             <div>
-                <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Conversation</h3>
+                <h3 class="font-headline-md text-headline-md text-on-surface mb-4">{{ __("Conversation") }}</h3>
                 @if ($serviceRequest->conversation)
                     <x-message-thread :conversation="$serviceRequest->conversation" />
                 @else
                     <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6 text-sm text-on-surface-variant">
-                        La conversation s'ouvrira automatiquement une fois la demande acceptée par le prestataire.
+                        {{ __("La conversation s'ouvrira automatiquement une fois la demande acceptée par le prestataire.") }}
                     </div>
                 @endif
             </div>

@@ -1,13 +1,13 @@
-<x-app-layout titre="Vérifications prestataires" :indexable="false">
+<x-app-layout :titre="__('Vérifications prestataires')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Vérifications prestataires"
-                       :subtitle="$pending->total().' '.Str::plural('pièce', $pending->total()).' en attente'" />
+        <x-page-header :title="__('Vérifications prestataires')"
+                       :subtitle="trans_choice(':count pièce en attente|:count pièces en attente', $pending->total())" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if ($pending->isEmpty())
-            <x-empty-state title="Aucune vérification en attente."
-                           description="Les pièces d'identité déposées par les prestataires arrivent ici." />
+            <x-empty-state :title="__('Aucune vérification en attente.')"
+                           :description="__('Les pièces d\'identité déposées par les prestataires arrivent ici.')" />
         @else
             <x-list-panel>
                 @foreach ($pending as $profile)
@@ -35,7 +35,7 @@
                                 @endif
                             </p>
                             <p class="mt-0.5 text-sm text-on-surface-variant">
-                                Soumis le <span class="font-label-numeric">{{ $profile->updated_at->format('d/m/Y H:i') }}</span>
+                                {{ __("Soumis le") }} <span class="font-label-numeric">{{ $profile->updated_at->format('d/m/Y H:i') }}</span>
                             </p>
                         </div>
 
@@ -54,14 +54,14 @@
                                      entière, quitte à laisser du fond autour. --}}
                                 <a href="{{ $document }}" target="_blank" rel="noopener"
                                    class="block rounded-lg border border-outline-variant bg-surface-container p-1 transition-colors hover:border-primary">
-                                    <img src="{{ $document }}" alt="Pièce d'identité déposée"
+                                    <img src="{{ $document }}" alt="{{ __('Pièce d\'identité déposée') }}"
                                          class="h-28 w-full object-contain">
                                 </a>
                             @else
                                 <a href="{{ $document }}" target="_blank" rel="noopener"
                                    class="flex h-28 items-center justify-center gap-2 rounded-lg border border-outline-variant bg-surface-container text-sm font-medium text-primary transition-colors hover:border-primary">
                                     <span class="material-symbols-outlined text-base" aria-hidden="true">description</span>
-                                    Ouvrir le PDF
+                                    {{ __("Ouvrir le PDF") }}
                                 </a>
                             @endif
                         </div>
@@ -71,7 +71,7 @@
                             <form action="{{ route('admin.verifications.approve', $profile) }}" method="POST" class="flex-1">
                                 @csrf
                                 <x-primary-button type="submit" class="w-full">
-                                    Approuver
+                                    {{ __("Approuver") }}
                                 </x-primary-button>
                             </form>
                             {{-- Le refus est une action pleine, pas un lien : il
@@ -82,7 +82,7 @@
                                   onsubmit="return confirm('Rejeter la pièce de {{ $profile->business_name }} ? Le prestataire devra en soumettre une nouvelle.')">
                                 @csrf
                                 <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-full border border-error px-6 py-2.5 font-button-text text-button-text text-error transition-colors hover:bg-error-container focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2">
-                                    Rejeter
+                                    {{ __("Rejeter") }}
                                 </button>
                             </form>
                         </div>

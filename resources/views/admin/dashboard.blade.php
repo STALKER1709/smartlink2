@@ -2,10 +2,10 @@
     $statusLabels = \App\Support\RequestStatus::labels();
 @endphp
 
-<x-app-layout titre="Administration" :indexable="false">
+<x-app-layout :titre="__('Administration')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Vue d'ensemble"
-                       :subtitle="'Supervision de la plateforme au '.now()->translatedFormat('j F Y')" />
+        <x-page-header :title="__('Vue d\'ensemble')"
+                       :subtitle="__('Supervision de la plateforme au :date', ['date' => now()->translatedFormat('j F Y')])" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -17,27 +17,27 @@
              compteur des suspensions prend le fond de l'erreur — c'est la
              seule tuile qui sorte du blanc. --}}
         <x-stat-grid :cols="6">
-            <x-stat-tile label="Clients" icon="person" tone="primary" :value="number_format($stats['clients'], 0, ',', ' ')"
+            <x-stat-tile :label="__('Clients')" icon="person" tone="primary" :value="number_format($stats['clients'], 0, ',', ' ')"
                          :trend="$tendances['clients']"
                          :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_CLIENT])" />
-            <x-stat-tile label="Prestataires" icon="handyman" tone="secondary" :value="number_format($stats['providers'], 0, ',', ' ')"
+            <x-stat-tile :label="__('Prestataires')" icon="handyman" tone="secondary" :value="number_format($stats['providers'], 0, ',', ' ')"
                          :trend="$tendances['providers']"
                          :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_PROVIDER])" />
-            <x-stat-tile label="Comptes suspendus" icon="block" tone="error" alert
+            <x-stat-tile :label="__('Comptes suspendus')" icon="block" tone="error" alert
                          :value="number_format($stats['suspended_users'], 0, ',', ' ')" />
-            <x-stat-tile label="Services actifs" icon="check_circle" tone="primary"
+            <x-stat-tile :label="__('Services actifs')" icon="check_circle" tone="primary"
                          :value="number_format($stats['services_active'], 0, ',', ' ')"
                          :href="route('admin.services.index')" />
-            <x-stat-tile label="Services au total" icon="home_repair_service" tone="secondary"
+            <x-stat-tile :label="__('Services au total')" icon="home_repair_service" tone="secondary"
                          :value="number_format($stats['services_total'], 0, ',', ' ')"
                          :href="route('admin.services.index')" />
-            <x-stat-tile label="Demandes au total" icon="inbox" tone="secondary"
+            <x-stat-tile :label="__('Demandes au total')" icon="inbox" tone="secondary"
                          :value="number_format($stats['requests_total'], 0, ',', ' ')" />
         </x-stat-grid>
 
         <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
-                <h3 class="font-headline-md text-headline-md text-on-surface mb-3 border-b border-outline-variant pb-2">Demandes par statut</h3>
+                <h3 class="font-headline-md text-headline-md text-on-surface mb-3 border-b border-outline-variant pb-2">{{ __("Demandes par statut") }}</h3>
                 <ul class="space-y-2">
                     @foreach ($statusLabels as $value => $label)
                         <li class="flex items-center justify-between text-sm">
@@ -50,8 +50,8 @@
 
             <div>
                 <div class="mb-3 flex items-center justify-between border-b border-outline-variant pb-2">
-                    <h3 class="font-headline-md text-headline-md text-on-surface">Derniers utilisateurs inscrits</h3>
-                    <a href="{{ route('admin.users.index') }}" class="text-sm font-medium text-primary hover:text-primary-container">Voir tout →</a>
+                    <h3 class="font-headline-md text-headline-md text-on-surface">{{ __("Derniers utilisateurs inscrits") }}</h3>
+                    <a href="{{ route('admin.users.index') }}" class="text-sm font-medium text-primary hover:text-primary-container">{{ __("Voir tout →") }}</a>
                 </div>
                 <ul class="divide-y divide-outline-variant">
                     @foreach ($recentUsers as $user)
@@ -73,7 +73,7 @@
              qu'aucun compteur ne porte. --}}
         <div class="mt-8 flex flex-wrap gap-3 border-t border-outline-variant pt-6">
             <a href="{{ route('admin.categories.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                Catégories
+                {{ __("Catégories") }}
             </a>
             <a href="{{ route('admin.plans.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 {{ __('ui.admin_plans.title') }}

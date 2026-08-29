@@ -40,11 +40,11 @@
     <div class="mx-auto max-w-container px-margin-mobile py-6 pb-28 md:px-margin-desktop md:py-8 lg:pb-8">
         <a href="{{ route('services.index') }}" class="mb-4 inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary sm:hidden">
             <span class="material-symbols-outlined text-base">arrow_back</span>
-            Tous les services
+            {{ __("Tous les services") }}
         </a>
 
         <nav class="mb-4 hidden items-center gap-1 text-sm text-on-surface-variant sm:flex">
-            <a href="{{ route('services.index') }}" class="hover:text-primary">Services</a>
+            <a href="{{ route('services.index') }}" class="hover:text-primary">{{ __("Services") }}</a>
             <span class="material-symbols-outlined text-base">chevron_right</span>
             @if ($service->category)
                 <a href="{{ route('services.index', ['category_id' => $service->category_id]) }}" class="hover:text-primary">{{ $service->category->name }}</a>
@@ -107,7 +107,7 @@
                         </p>
                     @endif
 
-                    <h2 class="mt-8 font-headline-md text-headline-md text-on-surface">Description</h2>
+                    <h2 class="mt-8 font-headline-md text-headline-md text-on-surface">{{ __("Description") }}</h2>
                     <p class="prose-measure mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $service->description }}</p>
                 </div>
 
@@ -123,15 +123,15 @@
                                 <span class="font-body-md text-base text-on-surface-variant">/ {{ $service->price_unit }}</span>
                             @endif
                         @else
-                            <span class="font-body-md text-base text-on-surface-variant">Prix à convenir</span>
+                            <span class="font-body-md text-base text-on-surface-variant">{{ __("Prix à convenir") }}</span>
                         @endif
                     </div>
-                    <p class="mt-1 text-xs text-on-surface-variant">Prix indicatif — le montant se convient avec le prestataire.</p>
+                    <p class="mt-1 text-xs text-on-surface-variant">{{ __("Prix indicatif — le montant se convient avec le prestataire.") }}</p>
 
                     <div class="mt-4">
                         @include('partials.request-action', [
                             'href' => route('requests.create', ['service_id' => $service->id]),
-                            'label' => 'Faire une demande',
+                            'label' => __('Faire une demande'),
                         ])
                     </div>
                 </div>
@@ -139,13 +139,13 @@
                 {{-- Une rangée seule a besoin d'un cadre : son filet du bas
                      n'a rien à séparer, et le `[&>a]:border-0` le retire. --}}
                 <div class="mt-4 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 pb-2 [&>a]:border-0">
-                    <p class="pt-4 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">Le prestataire</p>
+                    <p class="pt-4 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">{{ __("Le prestataire") }}</p>
                     <x-provider-card :provider-profile="$profile" />
                 </div>
 
                 <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant bg-surface-container-low px-4 py-3 text-xs leading-relaxed text-on-surface-variant">
                     <span class="material-symbols-outlined text-base text-primary">shield</span>
-                    SmartLink ne prend aucune commission et ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.
+                    {{ __("SmartLink ne prend aucune commission et ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.") }}
                 </p>
             </aside>
         </div>
@@ -158,7 +158,7 @@
              même occasion. --}}
         @if ($relatedServices->isNotEmpty())
             <div class="mt-12">
-                <h2 class="font-headline-md text-headline-md text-on-surface">Services similaires</h2>
+                <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Services similaires") }}</h2>
                 <div class="mt-2 -mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:px-0 lg:grid lg:grid-cols-2 lg:gap-x-10">
                     @foreach ($relatedServices as $related)
                         <x-service-card :service="$related" />
@@ -184,7 +184,7 @@
             <div class="shrink-0">
                 @include('partials.request-action', [
                     'href' => route('requests.create', ['service_id' => $service->id]),
-                    'label' => 'Faire une demande',
+                    'label' => __('Faire une demande'),
                     'compactLabel' => 'Demander',
                     'compact' => true,
                 ])

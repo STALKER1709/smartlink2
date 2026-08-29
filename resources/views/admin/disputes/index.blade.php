@@ -1,6 +1,6 @@
-<x-app-layout titre="Litiges" :indexable="false">
+<x-app-layout :titre="__('Litiges')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Litiges" subtitle="Les signalements déposés par les clients et les prestataires." />
+        <x-page-header :title="__('Litiges')" :subtitle="__('Les signalements déposés par les clients et les prestataires.')" />
     </x-slot>
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
@@ -17,7 +17,7 @@
                    'border border-transparent bg-primary-container text-on-primary-container' => ! request('status'),
                    'border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low' => request('status'),
                ])>
-                Tous <span class="font-label-numeric">{{ array_sum($comptes) }}</span>
+                {{ __("Tous") }} <span class="font-label-numeric">{{ array_sum($comptes) }}</span>
             </a>
             @foreach (\App\Models\Dispute::statuses() as $valeur => $libelle)
                 @continue (($comptes[$valeur] ?? 0) === 0)
@@ -33,7 +33,7 @@
         </div>
 
         @if ($disputes->isEmpty())
-            <x-empty-state title="Aucun litige." description="Les signalements déposés arrivent ici." />
+            <x-empty-state :title="__('Aucun litige.')" :description="__('Les signalements déposés arrivent ici.')" />
         @else
             <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
                 @foreach ($disputes as $dispute)
@@ -55,9 +55,9 @@
                                 {{ $dispute->request?->service?->title ?? 'Demande directe' }}
                             </p>
                             <p class="mt-1 text-sm text-on-surface-variant">
-                                Déposé par {{ $dispute->reporter?->name }}
+                                {{ __('Déposé par :nom', ['nom' => $dispute->reporter?->name]) }}
                                 @if ($dispute->request)
-                                    · <a href="{{ route('requests.show', $dispute->request) }}" class="text-primary hover:text-primary-container">voir la demande</a>
+                                    · <a href="{{ route('requests.show', $dispute->request) }}" class="text-primary hover:text-primary-container">{{ __('voir la demande') }}</a>
                                 @endif
                             </p>
 
@@ -68,7 +68,7 @@
                                     @foreach ($dispute->evidence_paths as $chemin)
                                         <a href="{{ media_url($chemin) }}" target="_blank" rel="noopener"
                                            class="block h-20 w-20 overflow-hidden rounded-lg border border-outline-variant bg-surface-container">
-                                            <img src="{{ media_url($chemin) }}" alt="Preuve déposée" class="h-full w-full object-cover" onerror="this.remove()">
+                                            <img src="{{ media_url($chemin) }}" alt="{{ __('Preuve déposée') }}" class="h-full w-full object-cover" onerror="this.remove()">
                                         </a>
                                     @endforeach
                                 </div>
@@ -77,20 +77,20 @@
                             @if ($dispute->isOpen())
                                 <form action="{{ route('admin.disputes.resolve', $dispute) }}" method="POST" class="mt-6 border-t border-outline-variant pt-4">
                                     @csrf
-                                    <label for="resolution-{{ $dispute->id }}" class="mb-2 block text-sm font-medium text-on-surface">Ce qui a été décidé</label>
+                                    <label for="resolution-{{ $dispute->id }}" class="mb-2 block text-sm font-medium text-on-surface">{{ __("Ce qui a été décidé") }}</label>
                                     <textarea id="resolution-{{ $dispute->id }}" name="resolution" rows="2" required maxlength="1000"
-                                              placeholder="Le déclarant recevra ce texte."
+                                              placeholder="{{ __('Le déclarant recevra ce texte.') }}"
                                               class="w-full resize-none rounded-lg border border-outline-variant bg-surface-container-low px-3 py-2 text-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary"></textarea>
                                     <x-input-error :messages="$errors->get('resolution')" class="mt-2" />
 
                                     <div class="mt-3 flex flex-wrap justify-end gap-3">
                                         <button type="submit" name="status" value="{{ \App\Models\Dispute::STATUS_REJECTED }}"
                                                 class="rounded-full border border-outline px-4 py-2 font-button-text text-button-text text-on-surface-variant transition-colors hover:bg-surface-container-low">
-                                            Rejeter
+                                            {{ __("Rejeter") }}
                                         </button>
                                         <button type="submit" name="status" value="{{ \App\Models\Dispute::STATUS_RESOLVED }}"
                                                 class="rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
-                                            Résolu
+                                            {{ __("Résolu") }}
                                         </button>
                                     </div>
                                 </form>

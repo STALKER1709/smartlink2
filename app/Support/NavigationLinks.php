@@ -34,7 +34,7 @@ class NavigationLinks
             return collect([
                 self::lien('services.index', 'services.*', __('Services'), __('Services'), 'search'),
                 self::lien('providers.index', 'providers.*', __('Prestataires'), __('Prestataires'), 'person_search'),
-                self::lien('help.index', 'help.*', 'Aide', 'Aide', 'chat'),
+                self::lien('help.index', 'help.*', __('Aide'), __('Aide'), 'chat'),
             ]);
         }
 
@@ -49,7 +49,7 @@ class NavigationLinks
 
         if ($utilisateur->isProvider()) {
             return collect([
-                self::lien('dashboard', 'dashboard', __('Tableau de bord'), __('Accueil'), 'home'),
+                self::lien('dashboard', 'dashboard', __('Tableau de bord'), __(__('Accueil')), 'home'),
                 self::lien('requests.index', 'requests.*', __('Demandes'), __('Demandes'), 'inbox'),
                 self::lien('conversations.index', 'conversations.*', __('Messages'), __('Messages'), 'forum'),
                 self::lien('provider.services.index', 'provider.services.*', __('Mes services'), __('Services'), 'home_repair_service'),
@@ -91,8 +91,8 @@ class NavigationLinks
         if ($utilisateur->isClient()) {
             $entrees->push(self::entree('dashboard', __('Tableau de bord'), 'dashboard'));
             $entrees->push(self::entree('client.profile.edit', __('Mon profil client'), 'badge'));
-            $entrees->push(self::entree('favorites.index', 'Mes favoris', 'favorite'));
-            $entrees->push(self::entree('disputes.index', 'Mes signalements', 'flag'));
+            $entrees->push(self::entree('favorites.index', __('Mes favoris'), 'favorite'));
+            $entrees->push(self::entree('disputes.index', __('Mes signalements'), 'flag'));
         } elseif ($utilisateur->isProvider()) {
             $entrees->push(self::entree('provider.profile.edit', __('Mon profil prestataire'), 'badge'));
 
@@ -101,15 +101,15 @@ class NavigationLinks
             }
 
             $entrees->push(self::entree('provider.subscription.show', __('ui.nav.subscription'), 'card_membership'));
-            $entrees->push(self::entree('provider.reviews.index', 'Mes avis', 'star'));
-            $entrees->push(self::entree('provider.transactions.index', 'Mes transactions', 'receipt_long'));
-            $entrees->push(self::entree('disputes.index', 'Mes signalements', 'flag'));
+            $entrees->push(self::entree('provider.reviews.index', __('Mes avis'), 'star'));
+            $entrees->push(self::entree('provider.transactions.index', __('Mes transactions'), 'receipt_long'));
+            $entrees->push(self::entree('disputes.index', __('Mes signalements'), 'flag'));
         } else {
             $entrees->push(self::entree('requests.index', __('Demandes'), 'inbox'));
-            $entrees->push(self::entree('admin.disputes.index', 'Signalements', 'flag'));
+            $entrees->push(self::entree('admin.disputes.index', __('Signalements'), 'flag'));
         }
 
-        $entrees->push(self::entree('help.index', 'Aide', 'help'));
+        $entrees->push(self::entree('help.index', __('Aide'), 'help'));
         $entrees->push(self::entree('profile.edit', __('Paramètres du compte'), 'settings'));
 
         return $entrees;

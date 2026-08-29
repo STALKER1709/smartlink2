@@ -11,19 +11,19 @@
     <section class="border-b border-outline-variant bg-surface-container-low">
         <div class="mx-auto max-w-container px-margin-mobile py-12 text-center md:px-margin-desktop md:py-16">
             <h1 class="font-headline-xl text-headline-xl text-on-background">
-                Un artisan de confiance,<br class="hidden sm:inline"> près de chez vous
+                {!! __('Un artisan de confiance,<br class="hidden sm:inline"> près de chez vous') !!}
             </h1>
             <p class="mx-auto mt-4 max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
-                Plombiers, électriciens, coiffeuses, répétiteurs — décrivez votre besoin,
-                nous trouvons le prestataire. <strong class="font-semibold text-primary">Gratuit pour les clients.</strong>
+                {{ __('Plombiers, électriciens, coiffeuses, répétiteurs — décrivez votre besoin, nous trouvons le prestataire.') }}
+                <strong class="font-semibold text-primary">{{ __('Gratuit pour les clients.') }}</strong>
             </p>
 
             <x-natural-search class="mx-auto mt-8 max-w-2xl" />
 
             @if ($providerCount > 0)
                 <p class="mt-6 font-label-numeric text-label-numeric text-on-surface-variant">
-                    {{ $providerCount }} {{ Str::plural('prestataire', $providerCount) }}
-                    · {{ $serviceCount }} {{ Str::plural('service', $serviceCount) }} en ligne
+                    {{ trans_choice(':count prestataire|:count prestataires', $providerCount) }}
+                    · {{ trans_choice(':count service en ligne|:count services en ligne', $serviceCount) }}
                 </p>
             @endif
         </div>
@@ -39,7 +39,7 @@
          qui en fait déjà plus de cinq mille pixels. --}}
     @if ($categories->isNotEmpty())
         <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-            <x-section-header title="Catégories populaires" :href="route('services.index')" link-label="Tous les services" />
+            <x-section-header :title="__('Catégories populaires')" :href="route('services.index')" :link-label="__('Tous les services')" />
 
             <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
                 @foreach ($categories->take(8) as $category)
@@ -101,8 +101,8 @@
     @if ($featuredProviders->isNotEmpty())
         <section class="bg-surface-container-low">
             <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-                <x-section-header title="Prestataires vérifiés"
-                                  subtitle="Pièce d'identité contrôlée par notre équipe."
+                <x-section-header :title="__('Prestataires vérifiés')"
+                                  :subtitle="__('Pièce d\'identité contrôlée par notre équipe.')"
                                   :href="route('providers.index', ['verified_only' => 1])"
                                   link-label="Voir l'annuaire" />
 
@@ -147,7 +147,7 @@
                                     @if ($providerProfile->rating_count)
                                         <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
                                     @else
-                                        <span class="text-sm text-on-surface-variant">Pas encore d'avis</span>
+                                        <span class="text-sm text-on-surface-variant">{{ __('Pas encore d\'avis') }}</span>
                                     @endif
 
                                     <span class="font-label-numeric text-label-numeric text-primary">
@@ -178,7 +178,7 @@
                                 @else
                                     <a href="{{ route('providers.show', $providerProfile) }}"
                                        class="inline-flex w-full items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest px-6 py-3 font-button-text font-semibold text-on-surface transition-colors hover:border-primary/50">
-                                        Voir la fiche
+                                        {{ __('Voir la fiche') }}
                                     </a>
                                 @endif
                             </div>
@@ -191,10 +191,10 @@
 
     {{-- ══ Services récents ══ --}}
     <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-        <x-section-header title="Derniers services publiés" :href="route('services.index')" />
+        <x-section-header :title="__('Derniers services publiés')" :href="route('services.index')" />
 
         @if ($recentServices->isEmpty())
-            <x-empty-state class="mt-6" title="Aucun service disponible pour le moment." />
+            <x-empty-state class="mt-6" :title="__('Aucun service disponible pour le moment.')" />
         @else
             <div class="mt-4 -mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:rounded-xl md:border md:border-b-0 md:px-6 lg:grid lg:grid-cols-2 lg:gap-x-10">
                 @foreach ($recentServices as $service)
@@ -208,13 +208,13 @@
          le client ne paie rien ici, et le règlement se convient de gré à gré. --}}
     <section class="border-b border-outline-variant bg-surface-container-low">
         <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
-            <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">Comment ça marche</h2>
+            <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">{{ __('Comment ça marche') }}</h2>
 
             <ol class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
                 @foreach ([
-                    ['search', 'Décrivez votre besoin', 'Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.'],
-                    ['forum', 'Comparez et contactez', 'Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.'],
-                    ['handshake', 'Convenez entre vous', "Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission."],
+                    ['search', __('Décrivez votre besoin'), __('Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.')],
+                    ['forum', __('Comparez et contactez'), __('Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.')],
+                    ['handshake', __('Convenez entre vous'), __('Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission.')],
                 ] as $index => [$icon, $titre, $texte])
                     <li class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
                         <div class="flex items-center gap-3">
@@ -252,13 +252,13 @@
             @endif
 
             <div class="relative mx-auto max-w-container px-margin-mobile py-14 text-center md:px-margin-desktop">
-                <h2 class="font-headline-lg text-headline-lg text-inverse-on-surface">Vous êtes prestataire de services ?</h2>
+                <h2 class="font-headline-lg text-headline-lg text-inverse-on-surface">{{ __('Vous êtes prestataire de services ?') }}</h2>
                 <p class="mx-auto mt-3 max-w-xl font-body-md text-body-md text-inverse-on-surface/80">
-                    Publiez vos services, recevez des demandes, développez votre clientèle.
-                    <strong class="font-semibold text-inverse-on-surface">30 jours d'essai gratuit</strong>, sans engagement.
+                    {{ __('Publiez vos services, recevez des demandes, développez votre clientèle.') }}
+                    <strong class="font-semibold text-inverse-on-surface">{{ __("30 jours d'essai gratuit") }}</strong>{{ __(', sans engagement.') }}
                 </p>
                 <a href="{{ route('register') }}" class="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
-                    Créer un compte prestataire
+                    {{ __('Créer un compte prestataire') }}
                     <span class="material-symbols-outlined text-base">arrow_forward</span>
                 </a>
             </div>

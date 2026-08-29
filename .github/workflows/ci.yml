@@ -125,6 +125,21 @@ jobs:
       - name: Vulnérabilités des dépendances PHP
         run: composer audit --no-interaction
 
+      # L'analyse statique ne tourne que si larastan est installé. Elle ne
+      # l'est pas encore : le paquet dont elle dépend n'est distribué que par
+      # l'API de GitHub, inaccessible depuis l'environnement où ce dépôt a été
+      # préparé (voir CLAUDE.md, « Analyse statique »). Ce passage s'allume
+      # donc de lui-même le jour où la dépendance entre dans composer.json,
+      # sans qu'il faille penser à revenir modifier ce fichier — et il ne
+      # rougit pas d'ici là.
+      - name: Analyse statique
+        run: |
+          if [ -x vendor/bin/phpstan ]; then
+            vendor/bin/phpstan analyse --no-progress
+          else
+            echo "larastan absent : analyse statique passée. Voir phpstan.neon."
+          fi
+
   # ---------------------------------------------------------------------
   # Le paquet front est versionné (voir CLAUDE.md) : la fonction PHP déployée
   # lit `public/build/manifest.json` tel qu'il est dans le dépôt. Si un commit

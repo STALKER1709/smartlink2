@@ -50,11 +50,6 @@ class Payment extends Model
         return $this->belongsTo(User::class, 'payer_id');
     }
 
-    public function isSuccessful(): bool
-    {
-        return $this->status === self::STATUS_SUCCESS;
-    }
-
     public function formattedAmount(): string
     {
         return number_format($this->amount_xaf, 0, ',', ' ').' FCFA';
