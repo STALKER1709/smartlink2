@@ -1,21 +1,21 @@
 @php
     $statusMeta = [
-        \App\Models\Payment::STATUS_SUCCESS => ['label' => 'Réglé', 'class' => 'bg-secondary-container/40 text-on-secondary-container'],
-        \App\Models\Payment::STATUS_PENDING => ['label' => 'En attente', 'class' => 'bg-tertiary-container/20 text-tertiary'],
-        \App\Models\Payment::STATUS_FAILED => ['label' => 'Échec', 'class' => 'bg-error-container text-on-error-container'],
-        \App\Models\Payment::STATUS_CANCELLED => ['label' => 'Annulé', 'class' => 'bg-surface-container-high text-on-surface-variant'],
+        \App\Models\Payment::STATUS_SUCCESS => ['label' => __('Réglé'), 'class' => 'bg-secondary-container/40 text-on-secondary-container'],
+        \App\Models\Payment::STATUS_PENDING => ['label' => __('En attente'), 'class' => 'bg-tertiary-container/20 text-tertiary'],
+        \App\Models\Payment::STATUS_FAILED => ['label' => __('Échec'), 'class' => 'bg-error-container text-on-error-container'],
+        \App\Models\Payment::STATUS_CANCELLED => ['label' => __('Annulé'), 'class' => 'bg-surface-container-high text-on-surface-variant'],
     ];
 @endphp
 
-<x-app-layout titre="Mes transactions" :indexable="false">
+<x-app-layout :titre="__('Mes transactions')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Historique des transactions" subtitle="Vos règlements d'abonnement SmartLink.">
+        <x-page-header :title="__('Historique des transactions')" :subtitle="__('Vos règlements d\'abonnement SmartLink.')">
             @if ($payments->isNotEmpty())
                 <x-slot name="action">
                     <a href="{{ route('provider.transactions.export') }}"
                        class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container md:w-auto">
                         <span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
-                        Exporter (CSV)
+                        {{ __("Exporter (CSV)") }}
                     </a>
                 </x-slot>
             @endif
@@ -47,11 +47,11 @@
         </div>
 
         <p class="prose-measure mb-6 text-body-md text-on-surface-variant">
-            SmartLink ne traite aucun paiement entre vous et vos clients : seul votre abonnement transite ici.
+            {{ __("SmartLink ne traite aucun paiement entre vous et vos clients : seul votre abonnement transite ici.") }}
         </p>
 
         @if ($payments->isEmpty())
-            <x-empty-state title="Aucune transaction pour le moment." description="Vos règlements d'abonnement apparaîtront ici." />
+            <x-empty-state :title="__('Aucune transaction pour le moment.')" :description="__('Vos règlements d\'abonnement apparaîtront ici.')" />
         @else
             {{-- C'était une grille de douze colonnes qui se dépliait en cinq
                  blocs empilés sur mobile, la référence en tête de chaque

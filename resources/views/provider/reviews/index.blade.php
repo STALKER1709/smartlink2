@@ -1,6 +1,6 @@
-<x-app-layout titre="Mes avis" :indexable="false">
+<x-app-layout :titre="__('Mes avis')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Mes avis"
+        <x-page-header :title="__('Mes avis')"
                        :subtitle="$ratingCount > 0 ? $ratingCount.' '.Str::plural('avis reçu', $ratingCount) : null" />
     </x-slot>
 
@@ -38,7 +38,7 @@
         </div>
 
         @if ($reviews->isEmpty())
-            <x-empty-state title="Aucun avis pour le moment." description="Les clients laissent un avis après une prestation terminée." />
+            <x-empty-state :title="__('Aucun avis pour le moment.')" :description="__('Les clients laissent un avis après une prestation terminée.')" />
         @else
             <div class="space-y-6">
                 @foreach ($reviews as $review)
