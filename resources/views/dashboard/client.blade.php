@@ -29,7 +29,7 @@
         {{-- « Reprendre une recherche » : le client vient chercher quelqu'un.
              La barre de recherche appartient à son écran d'accueil, pas
              seulement à la page publique. --}}
-        <section class="flex flex-col items-center gap-6 rounded-xl border border-outline-variant bg-surface-container-low p-6 md:flex-row">
+        <section class="flex flex-col items-center gap-6 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-low p-6 md:flex-row">
             <form action="{{ route('services.index') }}" method="GET" class="w-full flex-1">
                 <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Reprendre une recherche") }}</h2>
                 <div class="relative mt-4 w-full">
@@ -72,11 +72,11 @@
                     :action-href="route('services.index')"
                 />
             @else
-                <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+                <div class="overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest">
                     {{-- Les intitulés de colonnes n'apparaissent qu'à partir de
                          `md` : sur un téléphone, chaque champ porte déjà son
                          sens par sa place et sa forme. --}}
-                    <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low p-4 font-label-md text-label-md uppercase text-on-surface-variant md:grid">
+                    <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low p-4 font-label-sm text-label-sm uppercase text-on-surface-variant md:grid">
                         <div class="col-span-3">{{ __("Prestataire") }}</div>
                         <div class="col-span-4">{{ __("Service") }}</div>
                         <div class="col-span-2">{{ __("Date") }}</div>

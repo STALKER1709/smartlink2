@@ -1,10 +1,10 @@
 <x-guest-layout>
-    <div class="mb-4 text-label-lg text-on-surface-variant">
+    <div class="mb-4 text-label-md text-on-surface-variant">
         {{ __('ui.phone_verification.description', ['phone' => Auth::user()->phone]) }}
     </div>
 
     @if (session('status'))
-        <div class="mb-4 text-label-lg font-medium text-secondary">
+        <div class="mb-4 text-label-md font-medium text-secondary">
             {{ session('status') }}
         </div>
     @endif
@@ -33,7 +33,7 @@
         </x-primary-button>
     </form>
 
-    <div class="mt-4 flex items-center justify-between text-label-lg">
+    <div class="mt-4 flex items-center justify-between text-label-md">
         <form method="POST" action="{{ route('phone.verify.send') }}">
             @csrf
             <button type="submit" class="text-primary hover:text-primary-container underline">

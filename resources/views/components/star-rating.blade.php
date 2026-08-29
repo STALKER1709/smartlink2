@@ -11,11 +11,16 @@
     $note = number_format((float) $rating, 1, ',', ' ');
 
     /*
-     * L'étoile prend l'ambre de la palette et non l'or de Google (#fbbc04) qui
-     * traînait ici : dans un monde vert et crème, une couleur importée se voit,
-     * et c'était la seule teinte de la page à n'appartenir à aucun jeton.
+     * L'étoile prend le jaune de la palette, et non l'or de Google (#fbbc04)
+     * qui traînait ici : une couleur importée se voit, et c'était la seule
+     * teinte de la page à n'appartenir à aucun jeton.
+     *
+     * Le jaune, et non plus l'ambre : la note et un abonnement qui expire
+     * portaient la même couleur tant que la palette n'en comptait qu'une de
+     * chaude. La charte réserve désormais le jaune aux notes, le rouge aux
+     * alertes.
      */
-    $ambre = 'text-tertiary-container';
+    $jaune = 'text-secondary-container';
 
     // Cinq ligatures « star » ne disent rien à un lecteur d'écran.
     $annonce = $note.' sur 5'.(is_null($count) ? '' : ', '.$count.' avis');
@@ -26,16 +31,16 @@
          une étoile pleine et la note suffisent à porter l'information. --}}
     <span {{ $attributes->merge(['class' => 'inline-flex items-center gap-1']) }}
           role="img" aria-label="{{ $annonce }}">
-        <span class="material-symbols-outlined text-[16px] {{ $ambre }}" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
+        <span class="material-symbols-outlined text-[16px] {{ $jaune }}" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
         <span class="font-label-numeric text-label-numeric text-on-surface">{{ $note }}</span>
         @if (! is_null($count))
-            <span class="text-label-md text-on-surface-variant">({{ $count }})</span>
+            <span class="text-label-sm text-on-surface-variant">({{ $count }})</span>
         @endif
     </span>
 @else
     <span {{ $attributes->merge(['class' => 'inline-flex items-center gap-1.5']) }}
           role="img" aria-label="{{ $annonce }}">
-        <span class="flex {{ $ambre }}" aria-hidden="true">
+        <span class="flex {{ $jaune }}" aria-hidden="true">
             @for ($i = 1; $i <= 5; $i++)
                 <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' {{ $i <= $pleines ? 1 : 0 }};">star</span>
             @endfor

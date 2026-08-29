@@ -41,7 +41,7 @@
         // seule tuile des maquettes qui sorte du blanc.
         'border-error/20 bg-error-container text-on-error-container' => $alert,
         'border-outline-variant bg-surface-container-lowest' => ! $alert,
-        'transition-colors hover:border-primary/50' => (bool) $href,
+        'transition-colors hover:border-primary/50 hover:shadow-elevation-2' => (bool) $href,
     ])
     {{ $attributes->except('class') }}
 >
@@ -51,10 +51,10 @@
         @endif
         {{-- Le chiffre en vert et en chasse fixe, le libellé en dessous :
              c'est la disposition du tableau de bord prestataire. --}}
-        <span class="mt-2 block font-label-numeric text-headline-lg leading-none text-primary sm:text-headline-xl">{{ $value }}</span>
+        <span class="mt-2 block font-label-numeric text-headline-lg leading-none text-primary sm:text-display-lg">{{ $value }}</span>
         <span class="mt-1 block font-body-md text-body-md leading-tight text-on-surface-variant">{{ $label }}</span>
         <span @class([
-            'mt-0.5 block min-h-[1rem] text-label-md',
+            'mt-0.5 block min-h-[1rem] text-label-sm',
             $tons[$hintTone] ?? 'text-on-surface-variant',
             'font-medium' => $hintTone !== null,
         ])>{{ $hint }}</span>
@@ -66,7 +66,7 @@
             <span class="min-w-0 text-right font-label-numeric text-label-numeric text-on-surface-variant">{{ $label }}</span>
         </div>
         <span @class([
-            'block font-label-numeric text-headline-lg font-bold leading-none sm:text-headline-xl',
+            'block font-label-numeric text-headline-lg font-bold leading-none sm:text-display-lg',
             'text-on-error-container' => $alert,
             'text-on-surface' => ! $alert,
         ])>{{ $value }}</span>
@@ -76,13 +76,13 @@
         @if ($trend !== null)
             <span @class(['mt-1 flex items-center gap-1', 'text-primary' => $trend >= 0, 'text-error' => $trend < 0])>
                 <span class="material-symbols-outlined text-[16px]" aria-hidden="true">{{ $trend >= 0 ? 'trending_up' : 'trending_down' }}</span>
-                <span class="font-label-numeric text-label-md">{{ $trend > 0 ? '+' : '' }}{{ $trend }} %</span>
+                <span class="font-label-numeric text-label-sm">{{ $trend > 0 ? '+' : '' }}{{ $trend }} %</span>
             </span>
         @endif
 
         @if ($hint)
             <span @class([
-                'mt-1 block text-label-md',
+                'mt-1 block text-label-sm',
                 $tons[$hintTone] ?? 'text-on-surface-variant',
                 'font-medium' => $hintTone !== null,
             ])>{{ $hint }}</span>

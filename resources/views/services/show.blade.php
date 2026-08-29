@@ -38,12 +38,12 @@
     @endphp
 
     <div class="mx-auto max-w-container px-margin-mobile py-6 pb-28 md:px-margin-desktop md:py-8 lg:pb-8">
-        <a href="{{ route('services.index') }}" class="mb-4 inline-flex items-center gap-1 text-label-lg text-on-surface-variant hover:text-primary sm:hidden">
+        <a href="{{ route('services.index') }}" class="mb-4 inline-flex items-center gap-1 text-label-md text-on-surface-variant hover:text-primary sm:hidden">
             <span class="material-symbols-outlined text-base">arrow_back</span>
             {{ __("Tous les services") }}
         </a>
 
-        <nav class="mb-4 hidden items-center gap-1 text-label-lg text-on-surface-variant sm:flex">
+        <nav class="mb-4 hidden items-center gap-1 text-label-md text-on-surface-variant sm:flex">
             <a href="{{ route('services.index') }}" class="hover:text-primary">{{ __("Services") }}</a>
             <span class="material-symbols-outlined text-base">chevron_right</span>
             @if ($service->category)
@@ -57,8 +57,8 @@
             <div class="lg:col-span-2">
                 {{-- Une image maîtresse plutôt qu'une mosaïque : c'est elle qui
                      donne envie, les autres ne sont que des compléments. --}}
-                <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
-                    <div class="aspect-[16/9] bg-secondary-container/40">
+                <div class="overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest">
+                    <div class="aspect-[16/9] bg-surface-container-high">
                         @if ($service->images->isNotEmpty())
                             <img src="{{ media_url($service->images->first()->path) }}" alt="{{ $service->title }}" class="h-full w-full object-cover">
                         @else
@@ -80,7 +80,7 @@
                 <div class="mt-6">
                     <div class="flex flex-wrap items-center gap-2">
                         @if ($service->category)
-                            <span class="rounded-full bg-secondary-container/50 px-3 py-1 text-label-md font-semibold text-on-secondary-container">{{ $service->category->name }}</span>
+                            <span class="rounded-full bg-primary-container/20 px-3 py-1 text-label-sm font-semibold text-primary">{{ $service->category->name }}</span>
                         @endif
                         <x-status-badge :status="$service->is_available ? 'active' : 'inactive'" />
                         <x-promoted-badge :profile="$profile" />
@@ -89,7 +89,7 @@
                     <h1 class="mt-3 font-headline-lg text-headline-lg text-on-surface">{{ $service->title }}</h1>
 
                     @if ($service->city)
-                        <p class="mt-2 flex items-center gap-1 text-label-lg text-on-surface-variant">
+                        <p class="mt-2 flex items-center gap-1 text-label-md text-on-surface-variant">
                             <span class="material-symbols-outlined text-base">location_on</span>
                             {{-- « location » est une adresse libre : quand le
                                  prestataire y a simplement retapé son quartier,
@@ -101,7 +101,7 @@
                     @endif
 
                     @if ($service->availability_note)
-                        <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant bg-tertiary-container/15 px-4 py-3 text-label-lg text-on-surface">
+                        <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant shadow-elevation-1 bg-tertiary-container/15 px-4 py-3 text-label-md text-on-surface">
                             <span class="material-symbols-outlined text-base text-tertiary">schedule</span>
                             {{ $service->availability_note }}
                         </p>
@@ -115,7 +115,7 @@
 
             {{-- Colonne d'action, collante au défilement sur grand écran. --}}
             <aside class="lg:sticky lg:top-6 lg:self-start">
-                <div class="hidden rounded-xl border border-outline-variant bg-surface-container-lowest p-5 lg:block">
+                <div class="hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-5 lg:block">
                     <div class="font-label-numeric text-headline-md text-on-surface">
                         @if ($prix)
                             {{ $prix }}
@@ -126,7 +126,7 @@
                             <span class="font-body-md text-body-md text-on-surface-variant">{{ __("Prix à convenir") }}</span>
                         @endif
                     </div>
-                    <p class="mt-1 text-label-md text-on-surface-variant">{{ __("Prix indicatif — le montant se convient avec le prestataire.") }}</p>
+                    <p class="mt-1 text-label-sm text-on-surface-variant">{{ __("Prix indicatif — le montant se convient avec le prestataire.") }}</p>
 
                     <div class="mt-4">
                         @include('partials.request-action', [
@@ -138,12 +138,12 @@
 
                 {{-- Une rangée seule a besoin d'un cadre : son filet du bas
                      n'a rien à séparer, et le `[&>a]:border-0` le retire. --}}
-                <div class="mt-4 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 pb-2 [&>a]:border-0">
-                    <p class="pt-4 text-label-md font-semibold uppercase tracking-wide text-on-surface-variant">{{ __("Le prestataire") }}</p>
+                <div class="mt-4 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest px-4 pb-2 [&>a]:border-0">
+                    <p class="pt-4 text-label-sm font-semibold uppercase tracking-wide text-on-surface-variant">{{ __("Le prestataire") }}</p>
                     <x-provider-card :provider-profile="$profile" />
                 </div>
 
-                <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant bg-surface-container-low px-4 py-3 text-label-md leading-relaxed text-on-surface-variant">
+                <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-low px-4 py-3 text-label-sm leading-relaxed text-on-surface-variant">
                     <span class="material-symbols-outlined text-base text-primary">shield</span>
                     {{ __("SmartLink ne prend aucune commission et ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.") }}
                 </p>
@@ -176,10 +176,10 @@
                 <div class="truncate font-label-numeric text-body-md text-on-surface">
                     {{ $prix ?? 'Prix à convenir' }}
                     @if ($prix && $service->price_unit)
-                        <span class="font-body-md text-label-md text-on-surface-variant">/ {{ $service->price_unit }}</span>
+                        <span class="font-body-md text-label-sm text-on-surface-variant">/ {{ $service->price_unit }}</span>
                     @endif
                 </div>
-                <p class="truncate text-label-md text-on-surface-variant">{{ $profile->business_name }}</p>
+                <p class="truncate text-label-sm text-on-surface-variant">{{ $profile->business_name }}</p>
             </div>
             <div class="shrink-0">
                 @include('partials.request-action', [

@@ -20,7 +20,7 @@
     reste utilisable, seul le nom du fichier choisi ne s'affiche pas.
 --}}
 <div x-data="{ noms: [] }" {{ $attributes->only('class') }}>
-    <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-2 font-button-text text-label-lg font-semibold text-primary transition-colors hover:bg-surface-container-low focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+    <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-2 font-button-text text-label-md font-semibold text-primary transition-colors hover:bg-surface-container-low focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
         <span class="material-symbols-outlined text-base" aria-hidden="true">upload</span>
         {{ $label ?? __('Choisir un fichier') }}
         <input
@@ -34,6 +34,6 @@
         >
     </label>
 
-    <p class="mt-1.5 text-label-lg text-on-surface-variant"
+    <p class="mt-1.5 text-label-md text-on-surface-variant"
        x-text="noms.length ? noms.join(' · ') : {{ Js::from($hint) }}">{{ $hint }}</p>
 </div>

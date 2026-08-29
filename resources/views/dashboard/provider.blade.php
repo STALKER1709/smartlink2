@@ -72,7 +72,7 @@
 
                 @forelse ($pendingRequests as $demande)
                     @php $client = $demande->client; @endphp
-                    <article class="flex flex-col items-start justify-between gap-4 rounded-xl border border-outline-variant bg-surface p-4 md:flex-row md:items-center">
+                    <article class="flex flex-col items-start justify-between gap-4 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-4 md:flex-row md:items-center">
                         <a href="{{ route('requests.show', $demande) }}" class="group flex min-w-0 items-start gap-4">
                             <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-container font-semibold text-on-surface-variant">
                                 {{ Str::upper(Str::substr($client?->clientProfile?->fullName() ?? $client?->name ?? '?', 0, 2)) }}
@@ -84,13 +84,13 @@
                                 <p class="font-body-md text-body-md text-on-surface-variant">
                                     {{ $demande->service?->category?->name }}@if ($demande->service) — {{ $demande->service->title }}@endif
                                 </p>
-                                <div class="mt-1 flex flex-wrap items-center gap-1 text-label-lg text-on-surface-variant">
+                                <div class="mt-1 flex flex-wrap items-center gap-1 text-label-md text-on-surface-variant">
                                     @if ($demande->preferred_date)
                                         <span class="material-symbols-outlined text-[16px]" aria-hidden="true">schedule</span>
                                         <span class="font-label-numeric">{{ $demande->preferred_date->translatedFormat('j F') }}</span>
                                         <span class="mx-1 text-outline-variant" aria-hidden="true">•</span>
                                     @endif
-                                    <span class="font-label-lg text-label-lg">{{ $demande->created_at->diffForHumans() }}</span>
+                                    <span class="font-label-md text-label-md">{{ $demande->created_at->diffForHumans() }}</span>
                                 </div>
                             </div>
                         </a>
@@ -121,9 +121,9 @@
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
                     <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Vos services") }}</h3>
                     @if ($masques > 0)
-                        <span class="font-label-lg text-label-lg text-tertiary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
+                        <span class="font-label-md text-label-md text-tertiary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
                     @elseif ($auPlafond)
-                        <span class="font-label-lg text-label-lg text-tertiary">{{ __("Plafond atteint") }}</span>
+                        <span class="font-label-md text-label-md text-tertiary">{{ __("Plafond atteint") }}</span>
                     @endif
                 </div>
 
@@ -131,7 +131,7 @@
                     <a href="{{ route('provider.services.edit', $service) }}"
                        class="group flex items-center justify-between rounded-lg border border-outline-variant bg-surface p-3 transition-colors hover:bg-surface-container-low">
                         <div class="flex min-w-0 items-center gap-3">
-                            <span class="shrink-0 rounded-md bg-secondary-container p-2 text-on-secondary-container">
+                            <span class="shrink-0 rounded-md bg-surface-container-high p-2 text-primary">
                                 <x-category-icon :icon="$service->category?->icon" />
                             </span>
                             <div class="min-w-0">
@@ -148,7 +148,7 @@
                         <span class="material-symbols-outlined shrink-0 text-outline transition-colors group-hover:text-primary" aria-hidden="true">chevron_right</span>
                     </a>
                 @empty
-                    <p class="text-label-lg text-on-surface-variant">{{ __("Vous n'avez pas encore publié de service.") }}</p>
+                    <p class="text-label-md text-on-surface-variant">{{ __("Vous n'avez pas encore publié de service.") }}</p>
                 @endforelse
 
                 <a href="{{ route('provider.services.index') }}" class="mt-2 flex items-center gap-1 font-button-text text-button-text text-primary hover:underline">

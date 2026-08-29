@@ -6,7 +6,7 @@
 <div {{ $attributes->merge(['class' => 'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between']) }}>
     <div class="min-w-0">
         @if ($back)
-            <a href="{{ $back }}" class="mb-1 inline-flex items-center gap-1 text-label-lg text-on-surface-variant hover:text-primary">
+            <a href="{{ $back }}" class="mb-1 inline-flex items-center gap-1 text-label-md text-on-surface-variant hover:text-primary">
                 <span class="material-symbols-outlined text-base">arrow_back</span>
                 {{ $backLabel }}
             </a>
@@ -18,7 +18,7 @@
              y placent la date avec son pictogramme, d'autres une simple
              phrase. --}}
         @if ($subtitle)
-            <div class="mt-0.5 text-label-lg text-on-surface-variant">{{ $subtitle }}</div>
+            <div class="mt-0.5 text-label-md text-on-surface-variant">{{ $subtitle }}</div>
         @endif
     </div>
 

@@ -26,7 +26,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-label-lg text-on-secondary-container">
+            <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif
@@ -45,10 +45,10 @@
             <div class="flex flex-col gap-4 md:gap-6">
                 @foreach ($services as $service)
                     @php $actif = $service->status === \App\Models\Service::STATUS_ACTIVE && $service->is_available; @endphp
-                    <div class="group relative flex flex-col items-stretch overflow-hidden rounded-xl border border-outline-variant bg-surface p-4 transition-colors hover:border-primary-fixed-dim sm:flex-row sm:items-center">
+                    <div class="group relative flex flex-col items-stretch overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-4 transition-colors hover:border-primary-fixed-dim hover:shadow-elevation-2 sm:flex-row sm:items-center">
                         <div class="relative mb-4 h-48 w-full shrink-0 overflow-hidden rounded-lg bg-surface-container-high sm:mb-0 sm:h-28 sm:w-28">
                             <x-service-thumb :service="$service" size="text-3xl" />
-                            <span class="absolute left-3 top-3 flex items-center gap-1 rounded-full px-2 py-1 font-label-md text-label-md shadow-sm sm:hidden {{ $actif ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-high text-on-surface-variant' }}">
+                            <span class="absolute left-3 top-3 flex items-center gap-1 rounded-full px-2 py-1 font-label-sm text-label-sm shadow-elevation-1 sm:hidden {{ $actif ? 'bg-primary-container/20 text-primary' : 'bg-surface-container-high text-on-surface-variant' }}">
                                 <span class="h-1.5 w-1.5 rounded-full {{ $actif ? 'bg-primary' : 'bg-outline' }}"></span>
                                 {{ $actif ? 'Actif' : 'Inactif' }}
                             </span>
@@ -56,13 +56,13 @@
 
                         <div class="flex flex-1 flex-col justify-center sm:ml-6">
                             <div class="mb-2 hidden items-center gap-3 sm:flex">
-                                <span class="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-label-md text-label-md {{ $actif ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-high text-on-surface-variant' }}">
+                                <span class="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-label-sm text-label-sm {{ $actif ? 'bg-primary-container/20 text-primary' : 'bg-surface-container-high text-on-surface-variant' }}">
                                     <span class="h-1.5 w-1.5 rounded-full {{ $actif ? 'bg-primary' : 'bg-outline' }}"></span>
                                     {{ $actif ? 'Actif' : 'Inactif' }}
                                 </span>
-                                <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface-variant">{{ $service->category?->name }}</span>
+                                <span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">{{ $service->category?->name }}</span>
                             </div>
-                            <div class="mb-1 font-label-lg text-label-lg uppercase tracking-wider text-on-surface-variant sm:hidden">{{ $service->category?->name }}</div>
+                            <div class="mb-1 font-label-md text-label-md uppercase tracking-wider text-on-surface-variant sm:hidden">{{ $service->category?->name }}</div>
 
                             <h3 class="mb-3 font-headline-md text-headline-md leading-tight text-on-surface">{{ $service->title }}</h3>
 
@@ -70,7 +70,7 @@
                                 <span class="flex items-center gap-1.5 rounded-lg border border-outline-variant bg-surface-container-low px-3 py-1.5">
                                     <span class="material-symbols-outlined text-[18px] text-primary" aria-hidden="true">forum</span>
                                     <span class="font-label-numeric text-label-numeric font-bold text-on-surface">{{ $service->requests_count ?? 0 }}</span>
-                                    <span class="font-label-lg text-label-lg">{{ Str::plural('demande', $service->requests_count ?? 0) }}</span>
+                                    <span class="font-label-md text-label-md">{{ Str::plural('demande', $service->requests_count ?? 0) }}</span>
                                 </span>
                                 @if ($service->price_amount)
                                     <span class="font-label-numeric text-label-numeric text-primary">
@@ -82,13 +82,13 @@
                         </div>
 
                         <div class="mt-4 flex shrink-0 items-center justify-end gap-4 sm:ml-4 sm:mt-0">
-                            <a href="{{ route('services.show', $service) }}" class="text-label-lg font-medium text-on-surface-variant hover:text-primary">{{ __("Voir") }}</a>
-                            <a href="{{ route('provider.services.edit', $service) }}" class="text-label-lg font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
+                            <a href="{{ route('services.show', $service) }}" class="text-label-md font-medium text-on-surface-variant hover:text-primary">{{ __("Voir") }}</a>
+                            <a href="{{ route('provider.services.edit', $service) }}" class="text-label-md font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
                             <form action="{{ route('provider.services.destroy', $service) }}" method="POST"
                                   onsubmit="return confirm('Supprimer « {{ $service->title }} » ? Cette action est définitive.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-label-lg font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
+                                <button type="submit" class="text-label-md font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
                             </form>
                         </div>
                     </div>

@@ -20,13 +20,13 @@
     href="{{ route('services.show', $service) }}"
     class="group relative flex items-start gap-4 border-b border-outline-variant py-4 transition-colors duration-150 hover:bg-surface-container-low/70 sm:gap-5 sm:py-5"
 >
-    <div class="relative w-20 shrink-0 overflow-hidden rounded-lg bg-secondary-container/40 sm:w-28">
+    <div class="relative w-20 shrink-0 overflow-hidden rounded-lg bg-surface-container-high sm:w-28">
         <div class="aspect-square">
             <x-service-thumb :service="$service" />
         </div>
 
         @unless ($service->is_available)
-            <span class="absolute inset-x-0 bottom-0 bg-inverse-surface/85 px-1 py-0.5 text-center font-label-md text-label-md font-semibold uppercase tracking-wide text-inverse-on-surface">
+            <span class="absolute inset-x-0 bottom-0 bg-inverse-surface/85 px-1 py-0.5 text-center font-label-sm text-label-sm font-semibold uppercase tracking-wide text-inverse-on-surface">
                 {{ __("Indisponible") }}
             </span>
         @endunless
@@ -38,7 +38,7 @@
              prestataire Pro : elle garde son badge entier, pas une abréviation.
              `PromotedBadgeTest` monte la garde. --}}
         <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <p class="text-label-md font-semibold uppercase tracking-wide text-primary">{{ $service->category?->name }}</p>
+            <p class="text-label-sm font-semibold uppercase tracking-wide text-primary">{{ $service->category?->name }}</p>
             <x-promoted-badge :profile="$profile" />
         </div>
 
@@ -46,7 +46,7 @@
             {{ $service->title }}
         </h3>
 
-        <p class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-label-lg text-on-surface-variant">
+        <p class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-label-md text-on-surface-variant">
             <span class="line-clamp-1">{{ $profile?->business_name ?? $service->provider?->name }}</span>
             @if ($profile?->is_verified)
                 <span class="material-symbols-outlined shrink-0 text-base text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="{{ __('Prestataire vérifié') }}">verified</span>
@@ -62,10 +62,10 @@
                 @if ($service->price_amount)
                     {{ number_format((float) $service->price_amount, 0, ',', ' ') }} FCFA
                     @if ($service->price_unit)
-                        <span class="font-body-md text-label-lg text-on-surface-variant">/ {{ $service->price_unit }}</span>
+                        <span class="font-body-md text-label-md text-on-surface-variant">/ {{ $service->price_unit }}</span>
                     @endif
                 @else
-                    <span class="font-body-md text-label-lg text-on-surface-variant">{{ __("Prix à convenir") }}</span>
+                    <span class="font-body-md text-label-md text-on-surface-variant">{{ __("Prix à convenir") }}</span>
                 @endif
             </span>
 

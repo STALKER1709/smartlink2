@@ -28,92 +28,103 @@ export default {
                 xs: '480px',
             },
             colors: {
-                surface: '#f9faf7',
-                'surface-dim': '#d9dad7',
-                'surface-bright': '#f9faf7',
+                surface: '#f9f9fc',
+                'surface-dim': '#dadadc',
+                'surface-bright': '#f9f9fc',
                 'surface-container-lowest': '#ffffff',
-                'surface-container-low': '#f3f4f1',
-                'surface-container': '#edeeeb',
-                'surface-container-high': '#e7e8e6',
-                'surface-container-highest': '#e2e3e0',
-                'surface-variant': '#e2e3e0',
-                'on-surface': '#191c1b',
-                'on-surface-variant': '#3f4943',
-                'inverse-surface': '#2e312f',
-                'inverse-on-surface': '#f0f1ee',
-                outline: '#6f7a72',
-                'outline-variant': '#bec9c0',
-                'surface-tint': '#086c49',
-                primary: '#005538',
+                'surface-container-low': '#f3f3f6',
+                'surface-container': '#eeeef0',
+                'surface-container-high': '#e8e8ea',
+                'surface-container-highest': '#e2e2e5',
+                'surface-variant': '#e2e2e5',
+                'on-surface': '#1a1c1e',
+                'on-surface-variant': '#3e4944',
+                'inverse-surface': '#2f3133',
+                'inverse-on-surface': '#f0f0f3',
+                outline: '#6e7a74',
+                'outline-variant': '#bdc9c2',
+                'surface-tint': '#006c53',
+                primary: '#005f48',
                 'on-primary': '#ffffff',
-                'primary-container': '#0f6f4c',
-                'on-primary-container': '#9aefc3',
-                'inverse-primary': '#83d7ad',
-                secondary: '#2a694f',
+                'primary-container': '#007a5e',
+                'on-primary-container': '#a4ffdd',
+                'inverse-primary': '#79d8b7',
+                secondary: '#805600',
                 'on-secondary': '#ffffff',
-                'secondary-container': '#aff1cf',
-                'on-secondary-container': '#317054',
-                tertiary: '#7b3500',
+                'secondary-container': '#feb637',
+                'on-secondary-container': '#6e4900',
+                tertiary: '#aa001a',
                 'on-tertiary': '#ffffff',
-                'tertiary-container': '#a04700',
-                'on-tertiary-container': '#ffd4bf',
+                'tertiary-container': '#d41829',
+                'on-tertiary-container': '#ffe8e6',
                 error: '#ba1a1a',
                 'on-error': '#ffffff',
                 'error-container': '#ffdad6',
                 'on-error-container': '#93000a',
-                'primary-fixed': '#9ff4c8',
-                'primary-fixed-dim': '#83d7ad',
-                'on-primary-fixed': '#002113',
-                'on-primary-fixed-variant': '#005236',
-                'secondary-fixed': '#aff1cf',
-                'secondary-fixed-dim': '#93d4b3',
-                'on-secondary-fixed': '#002114',
-                'on-secondary-fixed-variant': '#095138',
-                'tertiary-fixed': '#ffdbca',
-                'tertiary-fixed-dim': '#ffb68e',
-                'on-tertiary-fixed': '#331200',
-                'on-tertiary-fixed-variant': '#763300',
-                background: '#f9faf7',
-                'on-background': '#191c1b',
+                'primary-fixed': '#95f5d2',
+                'primary-fixed-dim': '#79d8b7',
+                'on-primary-fixed': '#002117',
+                'on-primary-fixed-variant': '#00513d',
+                'secondary-fixed': '#ffddaf',
+                'secondary-fixed-dim': '#ffba43',
+                'on-secondary-fixed': '#281800',
+                'on-secondary-fixed-variant': '#614000',
+                'tertiary-fixed': '#ffdad7',
+                'tertiary-fixed-dim': '#ffb3ae',
+                'on-tertiary-fixed': '#410004',
+                'on-tertiary-fixed-variant': '#930015',
+                background: '#f9f9fc',
+                'on-background': '#1a1c1e',
             },
 
             fontFamily: {
-                sans: ['Source Sans 3', ...defaultTheme.fontFamily.sans],
-                'headline-xl': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
-                'headline-lg': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
-                'headline-md': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
-                'headline-sm': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
-                'body-lg': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
-                'body-md': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
-                'label-lg': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
-                'label-md': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
-                'button-text': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                'display-lg': ['Lexend', ...defaultTheme.fontFamily.sans],
+                'headline-lg': ['Lexend', ...defaultTheme.fontFamily.sans],
+                'headline-md': ['Lexend', ...defaultTheme.fontFamily.sans],
+                'headline-sm': ['Lexend', ...defaultTheme.fontFamily.sans],
+                'body-lg': ['Inter', ...defaultTheme.fontFamily.sans],
+                'body-md': ['Inter', ...defaultTheme.fontFamily.sans],
+                'label-md': ['Inter', ...defaultTheme.fontFamily.sans],
+                'label-sm': ['Inter', ...defaultTheme.fontFamily.sans],
+                'button-text': ['Inter', ...defaultTheme.fontFamily.sans],
+                // La chasse fixe n'a pas d'équivalent dans la charte amont, et
+                // le rôle qu'elle remplit ici n'est pas décoratif : aligner les
+                // colonnes de montants, distinguer une donnée d'une phrase.
+                // Elle traverse la bascule.
                 'label-numeric': ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
             },
 
             fontSize: {
-                'headline-xl': ['36px', { lineHeight: '44px', letterSpacing: '-0.02em', fontWeight: '800' }],
-                'headline-lg': ['28px', { lineHeight: '34px', letterSpacing: '-0.01em', fontWeight: '700' }],
-                'headline-md': ['22px', { lineHeight: '28px', letterSpacing: '-0.01em', fontWeight: '600' }],
-                // Le titre d'une carte ou d'une rangée. Il manquait : six vues
-                // l'avaient reconstitué à la main en `text-base font-semibold`,
-                // et deux d'entre elles avaient déjà dérivé d'un pixel.
-                'headline-sm': ['16px', { lineHeight: '24px', letterSpacing: '-0.01em', fontWeight: '600' }],
-                'body-lg': ['18px', { lineHeight: '26px', fontWeight: '400' }],
+                'display-lg': ['48px', { lineHeight: '56px', letterSpacing: '-0.02em', fontWeight: '700' }],
+                'headline-lg': ['32px', { lineHeight: '40px', fontWeight: '600' }],
+                'headline-md': ['24px', { lineHeight: '32px', fontWeight: '600' }],
+                // Le titre d'une carte ou d'une rangée. La charte amont ne le
+                // nomme pas — et la maquette de son accueil est allée chercher
+                // `text-[20px]` six fois de suite, faute de l'avoir. Il est
+                // nommé ici.
+                'headline-sm': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+                'body-lg': ['18px', { lineHeight: '28px', fontWeight: '400' }],
                 'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
-                // Les étiquettes : ce qui nomme une donnée sans être une
-                // phrase — intitulé de champ, libellé d'onglet, métier en
-                // capitales au-dessus d'un titre, texte d'une pastille. Elles
-                // manquaient, et la même étiquette s'écrivait de neuf façons
-                // au fil des vues : `text-xs`, `text-sm`, `text-[10px]`,
-                // `text-[11px]`, `text-[12px]`, `text-[13px]`, et trois de ces
-                // variantes en chasse fixe, sur des mots. Les deux paliers
-                // viennent de la charte Stitch « SmartLink Core », où ils
-                // portent déjà ces noms.
-                'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '500' }],
-                'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.5px', fontWeight: '500' }],
+                'label-md': ['14px', { lineHeight: '20px', letterSpacing: '0.01em', fontWeight: '600' }],
+                'label-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }],
                 'label-numeric': ['14px', { lineHeight: '20px', fontWeight: '500' }],
                 'button-text': ['16px', { lineHeight: '24px', fontWeight: '600' }],
+            },
+
+            /*
+             * La profondeur, désormais tonale et ombrée. Trois paliers, et
+             * pas un de plus : une ombre écrite à la main est une valeur que
+             * personne n'a décidée, et `CharteTest` la refuse.
+             *
+             * Le survol passe de `elevation-1` à `elevation-2` — le
+             * soulèvement se lit dans l'ombre, jamais dans une translation :
+             * un bloc qui se déplace emmène avec lui ce que l'œil suivait.
+             */
+            boxShadow: {
+                'elevation-1': '0 4px 12px rgba(26, 28, 30, 0.12)',
+                'elevation-2': '0 8px 24px rgba(26, 28, 30, 0.16)',
+                overlay: '0 12px 32px rgba(26, 28, 30, 0.20)',
             },
 
             borderRadius: {
@@ -125,14 +136,18 @@ export default {
             },
 
             spacing: {
-                unit: '4px',
-                gutter: '16px',
+                unit: '8px',
+                gutter: '24px',
+                // La charte amont pose 64 px de marge — mais elle ne décrit
+                // que le bureau, et sa maquette d'accueil applique ces 64 px
+                // sans le moindre palier : sur un 390 px, 128 px de marges ne
+                // laissent que 262 px de contenu. Le téléphone garde ses 16 px.
                 'margin-mobile': '16px',
-                'margin-desktop': '32px',
+                'margin-desktop': '64px',
             },
 
             maxWidth: {
-                container: '1200px',
+                container: '1280px',
             },
         },
     },

@@ -1,5 +1,5 @@
 <x-guest-layout :titre="'Confirmer le mot de passe'" :indexable="false">
-    <div class="mb-4 text-label-lg text-on-surface-variant">
+    <div class="mb-4 text-label-md text-on-surface-variant">
         {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
     </div>
 

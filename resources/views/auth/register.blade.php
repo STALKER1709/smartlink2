@@ -1,6 +1,6 @@
 <x-guest-layout :titre="__('seo.register')" :indexable="true" :description="__('seo.register_description')">
     <h1 class="font-headline-md text-headline-md text-on-surface">{{ __("Créer votre compte") }}</h1>
-    <p class="mt-1 text-label-lg text-on-surface-variant">{{ __("Gratuit pour les clients. 30 jours d'essai pour les prestataires.") }}</p>
+    <p class="mt-1 text-label-md text-on-surface-variant">{{ __("Gratuit pour les clients. 30 jours d'essai pour les prestataires.") }}</p>
 
     <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4" x-data="{ role: '{{ old('role', 'client') }}' }">
         @csrf
@@ -11,29 +11,29 @@
             {{-- La maquette centre la question et met le geste devant le rôle :
                  « Je cherche un prestataire » se choisit plus vite que
                  « Client », qui demande de se ranger dans une catégorie. --}}
-            <span class="mb-3 block text-center text-label-lg font-medium text-on-surface-variant">{{ __("Je souhaite utiliser SmartLink pour :") }}</span>
+            <span class="mb-3 block text-center text-label-md font-medium text-on-surface-variant">{{ __("Je souhaite utiliser SmartLink pour :") }}</span>
             <div class="grid grid-cols-2 gap-4">
                 <label
                     class="flex cursor-pointer flex-col items-center rounded-xl border p-4 text-center transition-colors"
-                    :class="role === 'client' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40'"
+                    :class="role === 'client' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40 hover:shadow-elevation-2'"
                 >
                     <input type="radio" name="role" value="client" x-model="role" class="sr-only">
                     <span class="material-symbols-outlined mb-2 text-3xl"
                           :class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'"
                           style="font-variation-settings: 'FILL' 1;" aria-hidden="true">person_search</span>
-                    <span class="font-body-md text-label-lg font-semibold md:text-body-md"
+                    <span class="font-body-md text-label-md font-semibold md:text-body-md"
                           :class="role === 'client' ? 'text-primary' : 'text-on-surface'">{{ __("Je cherche un prestataire") }}</span>
                 </label>
 
                 <label
                     class="flex cursor-pointer flex-col items-center rounded-xl border p-4 text-center transition-colors"
-                    :class="role === 'provider' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40'"
+                    :class="role === 'provider' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40 hover:shadow-elevation-2'"
                 >
                     <input type="radio" name="role" value="provider" x-model="role" class="sr-only">
                     <span class="material-symbols-outlined mb-2 text-3xl"
                           :class="role === 'provider' ? 'text-primary' : 'text-on-surface-variant'"
                           aria-hidden="true">handyman</span>
-                    <span class="font-body-md text-label-lg font-semibold md:text-body-md"
+                    <span class="font-body-md text-label-md font-semibold md:text-body-md"
                           :class="role === 'provider' ? 'text-primary' : 'text-on-surface'">{{ __("Je propose mes services") }}</span>
                 </label>
             </div>
@@ -61,7 +61,7 @@
         <div>
             <x-input-label for="phone" :value="__('Téléphone')" />
             <x-text-input id="phone" class="mt-1 block w-full" type="tel" name="phone" :value="old('phone')" required autocomplete="tel" placeholder="6XXXXXXXX" />
-            <p class="mt-1 text-label-md text-on-surface-variant">{{ __("C'est par là que les prestataires vous joindront.") }}</p>
+            <p class="mt-1 text-label-sm text-on-surface-variant">{{ __("C'est par là que les prestataires vous joindront.") }}</p>
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
@@ -86,7 +86,7 @@
         {{-- On ne s'engage pas à des conditions qu'on n'a pas pu lire : les
              deux documents sont accessibles depuis l'endroit exact où
              l'engagement se prend. --}}
-        <p class="text-center text-label-md leading-relaxed text-on-surface-variant">
+        <p class="text-center text-label-sm leading-relaxed text-on-surface-variant">
             {{ __("En créant un compte, vous acceptez les") }}
             <a href="{{ route('legal.terms') }}" class="font-semibold text-primary hover:underline">{{ __('conditions générales') }}</a>
             {{ __('et la') }}
@@ -94,7 +94,7 @@
         </p>
     </form>
 
-    <p class="mt-6 border-t border-outline-variant pt-5 text-center text-label-lg text-on-surface-variant">
+    <p class="mt-6 border-t border-outline-variant pt-5 text-center text-label-md text-on-surface-variant">
         {{ __('Already registered?') }}
         <a href="{{ route('login') }}" class="font-semibold text-primary hover:text-primary-container hover:underline">{{ __('Log in') }}</a>
     </p>

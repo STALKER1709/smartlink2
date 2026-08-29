@@ -27,7 +27,7 @@
                              La chasse fixe ne va qu'aux chiffres : « Illimité »
                              composé en JetBrains Mono se lisait comme une
                              valeur machine. --}}
-                        <dl class="mt-2 space-y-0.5 text-label-lg text-on-surface-variant">
+                        <dl class="mt-2 space-y-0.5 text-label-md text-on-surface-variant">
                             @foreach ([
                                 [__('ui.admin_plans.max_services'), $plan->allowsUnlimitedServices() ? null : $plan->max_services],
                                 [__('ui.admin_plans.max_requests'), $plan->allowsUnlimitedRequests() ? null : $plan->max_monthly_requests],
@@ -45,7 +45,7 @@
                         </dl>
                     </div>
 
-                    <a href="{{ route('admin.plans.edit', $plan) }}" class="shrink-0 self-start pt-0.5 text-label-lg font-medium text-primary hover:text-primary-container">
+                    <a href="{{ route('admin.plans.edit', $plan) }}" class="shrink-0 self-start pt-0.5 text-label-md font-medium text-primary hover:text-primary-container">
                         {{ __('ui.admin_plans.edit') }}
                     </a>
                 </x-list-row>

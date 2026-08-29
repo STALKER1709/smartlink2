@@ -33,7 +33,7 @@
                         // quand quelque chose cloche.
                         $categories = is_array($report->categories) ? $report->categories : [];
                     @endphp
-                    <article class="group relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest transition-colors hover:border-outline">
+                    <article class="group relative overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest transition-colors hover:border-outline">
                         {{-- Le liseré ambre en tête de carte : il signale sans
                              crier, là où un fond coloré ferait de chaque
                              signalement une alerte. --}}
@@ -42,17 +42,17 @@
                         <div class="p-6">
                             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                                 <div class="flex items-center gap-2">
-                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-md text-label-md uppercase tracking-wider text-on-surface">
+                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
                                         {{ $isService ? __('ui.moderation.service') : __('ui.moderation.review') }}
                                     </span>
-                                    <span class="font-label-numeric text-label-lg text-on-surface-variant">{{ $report->created_at->translatedFormat('d M, H:i') }}</span>
+                                    <span class="font-label-numeric text-label-md text-on-surface-variant">{{ $report->created_at->translatedFormat('d M, H:i') }}</span>
                                 </div>
 
                                 @if ($categories !== [])
                                     <div class="flex flex-wrap justify-end gap-2">
                                         @foreach ($categories as $category)
                                             @php $cle = 'ui.moderation.categories.'.$category; @endphp
-                                            <span class="flex items-center gap-1 rounded-full bg-error-container px-3 py-1 font-label-numeric text-label-md text-on-error-container">
+                                            <span class="flex items-center gap-1 rounded-full bg-error-container px-3 py-1 font-label-numeric text-label-sm text-on-error-container">
                                                 <span class="material-symbols-outlined text-[14px]" aria-hidden="true">warning</span>
                                                 {{ Lang::has($cle) ? __($cle) : $category }}
                                             </span>

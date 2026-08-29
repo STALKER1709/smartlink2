@@ -32,7 +32,7 @@
                     <a href="{{ route('conversations.show', $conversation) }}"
                        @class([
                            'flex items-start border-b border-outline-variant p-4 transition-colors duration-200',
-                           'bg-secondary-container/20 hover:bg-secondary-container/30' => $nonLus > 0,
+                           'bg-primary-container/10 hover:bg-primary-container/15' => $nonLus > 0,
                            'hover:bg-surface-container-low' => $nonLus === 0,
                        ])>
                         <div class="relative mr-4 shrink-0">
@@ -76,7 +76,7 @@
                                 </p>
 
                                 @if ($nonLus > 0)
-                                    <span class="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 font-label-numeric text-label-md font-bold text-on-primary"
+                                    <span class="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 font-label-numeric text-label-sm font-bold text-on-primary"
                                           aria-label="{{ $nonLus }} message(s) non lu(s)">{{ $nonLus }}</span>
                                 @endif
                             </div>

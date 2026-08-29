@@ -25,7 +25,7 @@
     @endif
 
     <button type="submit"
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-lowest/90 text-on-surface-variant shadow-sm transition-colors hover:text-error focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary {{ $contour ? 'border border-outline-variant' : '' }}"
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-lowest/90 text-on-surface-variant shadow-elevation-1 transition-colors hover:text-error focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary {{ $contour ? 'border border-outline-variant' : '' }}"
             aria-label="{{ $enFavori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}"
             title="{{ $enFavori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
         <span class="material-symbols-outlined {{ $enFavori ? 'text-error' : '' }}"

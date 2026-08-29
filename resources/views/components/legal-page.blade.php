@@ -28,14 +28,14 @@
                  lit pas d'un trait. Il reste dans le flux sur mobile, où une
                  colonne collante volerait la moitié de l'écran. --}}
             @if ($sections)
-                <nav class="mb-8 shrink-0 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 lg:sticky lg:top-6 lg:mb-0 lg:w-64"
+                <nav class="mb-8 shrink-0 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-5 lg:sticky lg:top-6 lg:mb-0 lg:w-64"
                      aria-label="{{ __('Sommaire') }}">
                     <p class="font-headline-sm text-headline-sm text-on-surface">{{ __("Sommaire") }}</p>
                     <ol class="mt-3 space-y-2">
                         @foreach ($sections as $ancre => $libelle)
                             <li>
-                                <a href="#{{ $ancre }}" class="flex gap-2 text-label-lg text-on-surface-variant hover:text-primary">
-                                    <span class="font-label-numeric text-label-md text-outline">{{ $loop->iteration }}</span>
+                                <a href="#{{ $ancre }}" class="flex gap-2 text-label-md text-on-surface-variant hover:text-primary">
+                                    <span class="font-label-numeric text-label-sm text-outline">{{ $loop->iteration }}</span>
                                     <span>{{ $libelle }}</span>
                                 </a>
                             </li>
@@ -53,7 +53,7 @@
                             <span class="material-symbols-outlined shrink-0" aria-hidden="true">shield</span>
                             {{ __("Document non validé juridiquement") }}
                         </p>
-                        <p class="mt-1 text-label-lg text-on-surface-variant">
+                        <p class="mt-1 text-label-md text-on-surface-variant">
                             {{ __("Ce texte a été rédigé d'après le fonctionnement réel de la plateforme, mais il n'a pas été relu par un juriste. Il ne doit pas être considéré comme un engagement contractuel opposable en l'état.") }}
                         </p>
                     </div>
@@ -62,7 +62,7 @@
                 @if ($incomplet)
                     <div class="mt-4 rounded-xl border border-error/30 bg-error-container/40 p-4">
                         <p class="font-semibold text-on-error-container">{{ __("Identité de l'éditeur non renseignée") }}</p>
-                        <p class="mt-1 text-label-lg text-on-error-container/90">
+                        <p class="mt-1 text-label-md text-on-error-container/90">
                             {!! __('Raison sociale, RCCM, siège social et contact sont à poser dans les variables <span class="font-label-numeric">LEGAL_*</span> de l\'environnement. Ces informations figurent sur vos statuts : elles ne peuvent pas être devinées.') !!}
                         </p>
                     </div>
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="mt-12 border-t border-outline-variant pt-6">
-                    <p class="text-label-lg text-on-surface-variant">
+                    <p class="text-label-md text-on-surface-variant">
                         Une question sur ce document ?
                         @if ($editeur['email'])
                             Écrivez à <a href="mailto:{{ $editeur['email'] }}" class="font-semibold text-primary">{{ $editeur['email'] }}</a>.

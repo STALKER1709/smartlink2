@@ -14,7 +14,7 @@
                     </div>
                     <div>
                         <p class="font-medium text-on-surface">{{ $service->title }}</p>
-                        <p class="text-label-lg text-on-surface-variant">{{ $service->provider?->providerProfile?->business_name ?? $service->provider?->name }}</p>
+                        <p class="text-label-md text-on-surface-variant">{{ $service->provider?->providerProfile?->business_name ?? $service->provider?->name }}</p>
                     </div>
                 </div>
             @elseif ($provider)
@@ -28,7 +28,7 @@
                     </div>
                     <div>
                         <p class="font-medium text-on-surface">{{ $provider->providerProfile?->business_name ?? $provider->name }}</p>
-                        <p class="text-label-lg text-on-surface-variant">{{ $provider->providerProfile?->category?->name }}</p>
+                        <p class="text-label-md text-on-surface-variant">{{ $provider->providerProfile?->category?->name }}</p>
                     </div>
                 </div>
             @endif
@@ -46,10 +46,10 @@
                     {{ __("Une demande part toujours vers un prestataire précis. Choisissez d'abord le service qui vous intéresse, ou le prestataire à qui vous voulez écrire — le formulaire s'ouvrira avec son nom déjà rempli.") }}
                 </p>
                 <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                    <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 font-button-text text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container">
                         {{ __("Parcourir les services") }}
                     </a>
-                    <a href="{{ route('providers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-5 py-2.5 font-button-text text-label-lg font-semibold text-primary transition-colors hover:bg-primary-container/10">
+                    <a href="{{ route('providers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-5 py-2.5 font-button-text text-label-md font-semibold text-primary transition-colors hover:bg-primary-container/10">
                         {{ __("Parcourir les prestataires") }}
                     </a>
                 </div>
@@ -71,7 +71,7 @@
                         rows="5"
                         required
                         maxlength="2000"
-                        class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary"
+                        class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary"
                         placeholder="{{ __('Décrivez votre besoin, le lieu, et toute information utile au prestataire…') }}"
                     >{{ old('message') }}</textarea>
                     <x-input-error :messages="$errors->get('message')" class="mt-2" />

@@ -17,7 +17,7 @@
     href="{{ route('providers.show', $providerProfile) }}"
     {{ $attributes->merge(['class' => 'group flex items-start gap-4 border-b border-outline-variant py-4 transition-colors duration-150 hover:bg-surface-container-low/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:gap-5 sm:py-5']) }}
 >
-    <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-secondary-container/40 sm:h-16 sm:w-16">
+    <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-surface-container-high sm:h-16 sm:w-16">
         @if ($providerProfile->logo_path)
             <img src="{{ media_url($providerProfile->logo_path) }}" alt="" loading="lazy"
                  class="h-full w-full object-cover" onerror="this.remove()">
@@ -28,7 +28,7 @@
 
     <div class="min-w-0 flex-1">
         <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <p class="text-label-md font-semibold uppercase tracking-wide text-primary">{{ $providerProfile->category?->name }}</p>
+            <p class="text-label-sm font-semibold uppercase tracking-wide text-primary">{{ $providerProfile->category?->name }}</p>
             <x-promoted-badge :profile="$providerProfile" />
         </div>
 
@@ -41,7 +41,7 @@
             @endif
         </h3>
 
-        <p class="mt-1 text-label-lg text-on-surface-variant">
+        <p class="mt-1 text-label-md text-on-surface-variant">
             {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
             @isset($providerProfile->services_count)
                 <span aria-hidden="true" class="text-outline">·</span>
@@ -54,7 +54,7 @@
             @if ($providerProfile->rating_count)
                 <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
             @else
-                <span class="text-label-md text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
+                <span class="text-label-sm text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
             @endif
         </div>
     </div>

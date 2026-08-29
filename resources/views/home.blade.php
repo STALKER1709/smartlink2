@@ -10,7 +10,7 @@
          dessous, qui disait déjà la même chose vingt lignes plus bas. --}}
     <section class="border-b border-outline-variant bg-surface-container-low">
         <div class="mx-auto max-w-container px-margin-mobile py-12 text-center md:px-margin-desktop md:py-16">
-            <h1 class="font-headline-xl text-headline-xl text-on-background">
+            <h1 class="font-display-lg text-display-lg text-on-background">
                 {!! __('Un artisan de confiance,<br class="hidden sm:inline"> près de chez vous') !!}
             </h1>
             <p class="mx-auto mt-4 max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
@@ -21,7 +21,7 @@
             <x-natural-search class="mx-auto mt-8 max-w-2xl" />
 
             @if ($providerCount > 0)
-                <p class="mt-6 font-label-lg text-label-lg text-on-surface-variant">
+                <p class="mt-6 font-label-md text-label-md text-on-surface-variant">
                     {{ trans_choice(':count prestataire|:count prestataires', $providerCount) }}
                     · {{ trans_choice(':count service en ligne|:count services en ligne', $serviceCount) }}
                 </p>
@@ -45,7 +45,7 @@
                 @foreach ($categories->take(8) as $category)
                     <a href="{{ route('services.index', ['category_id' => $category->id]) }}"
                        @class([
-                           'group flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest text-center transition-colors hover:border-primary/50',
+                           'group flex-col overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest text-center transition-colors hover:border-primary/50 hover:shadow-elevation-2',
                            'flex' => $loop->index < 4,
                            'hidden sm:flex' => $loop->index >= 4,
                        ])>
@@ -56,7 +56,7 @@
                              métier se lit toujours au même dessin. --}}
                         @php($photo = image_categorie($category->name))
 
-                        <div @class(['relative w-full', 'h-24 bg-secondary-container/30' => (bool) $photo])>
+                        <div @class(['relative w-full', 'h-24 bg-surface-container-high' => (bool) $photo])>
                             @if ($photo)
                                 <img src="{{ $photo['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"
                                      @if ($photo['credit']) title="Photo : {{ $photo['credit'] }}" @endif
@@ -64,7 +64,7 @@
                             @endif
 
                             <span @class([
-                                'flex h-12 w-12 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container transition-colors group-hover:bg-primary group-hover:text-on-primary',
+                                'flex h-12 w-12 items-center justify-center rounded-full bg-surface-container-high text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary',
                                 'absolute -bottom-6 left-1/2 -translate-x-1/2 border-2 border-surface-container-lowest' => (bool) $photo,
                                 'mx-auto mt-6' => ! $photo,
                             ])>
@@ -74,7 +74,7 @@
 
                         <div @class(['flex flex-1 flex-col justify-center gap-1 px-4 pb-6', 'pt-8' => (bool) $photo, 'pt-3' => ! $photo])>
                             <span class="font-medium leading-tight text-on-background">{{ $category->name }}</span>
-                            <span class="font-label-numeric text-label-md text-on-surface-variant">
+                            <span class="font-label-numeric text-label-sm text-on-surface-variant">
                                 {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
                             </span>
                         </div>
@@ -109,13 +109,13 @@
                 <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-gutter lg:grid-cols-3">
                     @foreach ($featuredProviders as $providerProfile)
                         <article @class([
-                            'flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest',
+                            'flex-col overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest',
                             'flex' => $loop->index < 3,
                             'hidden md:flex' => $loop->index >= 3,
                         ])>
                             <a href="{{ route('providers.show', $providerProfile) }}"
                                class="group flex flex-1 items-start gap-4 border-b border-outline-variant p-4 transition-colors hover:bg-surface-container-low/70">
-                                <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-secondary-container/40">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-surface-container-high">
                                     @if ($providerProfile->logo_path)
                                         <img src="{{ media_url($providerProfile->logo_path) }}" alt="" loading="lazy"
                                              class="h-full w-full object-cover" onerror="this.remove()">
@@ -134,7 +134,7 @@
                                     @endif
 
                                     @if ($providerProfile->city)
-                                        <p class="mt-1 flex items-center gap-1 text-label-lg text-on-surface-variant">
+                                        <p class="mt-1 flex items-center gap-1 text-label-md text-on-surface-variant">
                                             <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
                                             {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
                                         </p>
@@ -147,14 +147,14 @@
                                     @if ($providerProfile->rating_count)
                                         <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
                                     @else
-                                        <span class="text-label-lg text-on-surface-variant">{{ __('Pas encore d\'avis') }}</span>
+                                        <span class="text-label-md text-on-surface-variant">{{ __('Pas encore d\'avis') }}</span>
                                     @endif
 
                                     {{-- Le montant en chasse fixe, la phrase qui le
                                          porte non : « À partir de » composé en
                                          JetBrains Mono ouvre un blanc de deux
                                          caractères avant le prix. --}}
-                                    <span class="font-label-lg text-label-lg text-primary">
+                                    <span class="font-label-md text-label-md text-primary">
                                         @if ($providerProfile->min_price)
                                             {{ __('À partir de') }} <span class="font-label-numeric">{{ number_format((float) $providerProfile->min_price, 0, ',', ' ') }} FCFA</span>
                                         @else
@@ -181,7 +181,7 @@
                                     </a>
                                 @else
                                     <a href="{{ route('providers.show', $providerProfile) }}"
-                                       class="inline-flex w-full items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest px-6 py-3 font-button-text font-semibold text-on-surface transition-colors hover:border-primary/50">
+                                       class="inline-flex w-full items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest px-6 py-3 font-button-text font-semibold text-on-surface transition-colors hover:border-primary/50 hover:shadow-elevation-2">
                                         {{ __('Voir la fiche') }}
                                     </a>
                                 @endif
@@ -220,7 +220,7 @@
                     ['forum', __('Comparez et contactez'), __('Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.')],
                     ['handshake', __('Convenez entre vous'), __('Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission.')],
                 ] as $index => [$icon, $titre, $texte])
-                    <li class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
+                    <li class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-6">
                         <div class="flex items-center gap-3">
                             <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container/20 text-primary">
                                 <span class="material-symbols-outlined">{{ $icon }}</span>
@@ -228,7 +228,7 @@
                             <span class="font-label-numeric text-label-numeric text-on-surface-variant">0{{ $index + 1 }}</span>
                         </div>
                         <h3 class="mt-4 font-headline-sm text-headline-sm text-on-surface">{{ $titre }}</h3>
-                        <p class="mt-2 text-label-lg leading-relaxed text-on-surface-variant">{{ $texte }}</p>
+                        <p class="mt-2 text-label-md leading-relaxed text-on-surface-variant">{{ $texte }}</p>
                     </li>
                 @endforeach
             </ol>

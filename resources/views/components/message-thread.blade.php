@@ -26,7 +26,7 @@
         'max-h-96 overflow-y-auto' => ! $plein,
     ])>
         @if ($conversation->request?->service)
-            <p class="text-center font-body-md text-label-lg text-on-surface-variant">
+            <p class="text-center font-body-md text-label-md text-on-surface-variant">
                 La discussion a été ouverte au sujet de « {{ $conversation->request->service->title }} ».
             </p>
         @endif
@@ -41,7 +41,7 @@
 
             @if ($jour !== $jourPrecedent)
                 <div class="my-2 flex items-center justify-center">
-                    <span class="rounded-full border border-outline-variant bg-surface-container-low px-3 py-1 font-label-md text-label-md text-on-surface-variant">
+                    <span class="rounded-full border border-outline-variant bg-surface-container-low px-3 py-1 font-label-sm text-label-sm text-on-surface-variant">
                         {{ $message->created_at->isToday()
                             ? "Aujourd'hui"
                             : ($message->created_at->isYesterday() ? 'Hier' : $message->created_at->translatedFormat('j F Y')) }}
@@ -56,20 +56,20 @@
                 'items-start self-start' => ! $moi,
             ])>
                 <div @class([
-                    'rounded-2xl px-4 py-3 shadow-sm',
+                    'rounded-2xl px-4 py-3 shadow-elevation-1',
                     'rounded-tr-sm bg-primary text-on-primary' => $moi,
                     'rounded-tl-sm border border-outline-variant bg-surface text-on-surface' => ! $moi,
                 ])>
                     <p class="whitespace-pre-line font-body-md">{{ $message->body }}</p>
                 </div>
                 <span @class([
-                    'font-label-numeric text-label-md text-on-surface-variant',
+                    'font-label-numeric text-label-sm text-on-surface-variant',
                     'mr-1' => $moi,
                     'ml-1' => ! $moi,
                 ])>{{ $message->created_at->format('H:i') }}</span>
             </div>
         @empty
-            <p class="py-6 text-center text-label-lg text-on-surface-variant">
+            <p class="py-6 text-center text-label-md text-on-surface-variant">
                 {{ __("Aucun message pour le moment. Écrivez le premier.") }}
             </p>
         @endforelse
@@ -81,7 +81,7 @@
               'sticky bottom-[4.75rem] md:bottom-0' => $plein,
           ])>
         @csrf
-        <div class="flex min-h-[48px] flex-1 items-end overflow-hidden rounded-xl border border-outline-variant bg-surface-container-low transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+        <div class="flex min-h-[48px] flex-1 items-end overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-low transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
             <label for="body-{{ $conversation->id }}" class="sr-only">{{ __("Votre message") }}</label>
             <textarea
                 id="body-{{ $conversation->id }}"

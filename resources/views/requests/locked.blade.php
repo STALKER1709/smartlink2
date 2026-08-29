@@ -7,8 +7,8 @@
          la phrase qui nomme le plafond, ce qui se passe, ce qui attend, et
          deux sorties. --}}
     <div class="mx-auto flex w-full max-w-[440px] px-margin-mobile py-12 md:px-margin-desktop">
-        <article class="flex w-full flex-col items-center rounded-xl border border-outline-variant bg-surface p-6 text-center md:p-8">
-            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container">
+        <article class="flex w-full flex-col items-center rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-6 text-center md:p-8">
+            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-surface-container-high text-primary">
                 <span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">pause_circle</span>
             </div>
 

@@ -40,7 +40,7 @@
                 <h3 class="font-headline-md text-headline-md text-on-surface mb-3 border-b border-outline-variant pb-2">{{ __("Demandes par statut") }}</h3>
                 <ul class="space-y-2">
                     @foreach ($statusLabels as $value => $label)
-                        <li class="flex items-center justify-between text-label-lg">
+                        <li class="flex items-center justify-between text-label-md">
                             <span class="text-on-surface-variant">{{ $label }}</span>
                             <span class="font-label-numeric font-medium text-on-surface">{{ $requestsByStatus[$value] ?? 0 }}</span>
                         </li>
@@ -51,16 +51,16 @@
             <div>
                 <div class="mb-3 flex items-center justify-between border-b border-outline-variant pb-2">
                     <h3 class="font-headline-md text-headline-md text-on-surface">{{ __("Derniers utilisateurs inscrits") }}</h3>
-                    <a href="{{ route('admin.users.index') }}" class="text-label-lg font-medium text-primary hover:text-primary-container">{{ __("Voir tout →") }}</a>
+                    <a href="{{ route('admin.users.index') }}" class="text-label-md font-medium text-primary hover:text-primary-container">{{ __("Voir tout →") }}</a>
                 </div>
                 <ul class="divide-y divide-outline-variant">
                     @foreach ($recentUsers as $user)
-                        <li class="flex items-center justify-between gap-3 py-2 text-label-lg">
+                        <li class="flex items-center justify-between gap-3 py-2 text-label-md">
                             <div class="min-w-0">
                                 <p class="font-medium text-on-surface">{{ $user->name }}</p>
                                 <p class="truncate text-on-surface-variant">{{ $user->email }}</p>
                             </div>
-                            <span class="font-label-numeric shrink-0 text-label-md text-on-surface-variant">{{ $user->created_at->format('d/m/Y') }}</span>
+                            <span class="font-label-numeric shrink-0 text-label-sm text-on-surface-variant">{{ $user->created_at->format('d/m/Y') }}</span>
                         </li>
                     @endforeach
                 </ul>
@@ -72,30 +72,30 @@
              seconde façon d'aller au même endroit. Ne restent que les écrans
              qu'aucun compteur ne porte. --}}
         <div class="mt-8 flex flex-wrap gap-3 border-t border-outline-variant pt-6">
-            <a href="{{ route('admin.categories.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-lg font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            <a href="{{ route('admin.categories.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 {{ __("Catégories") }}
             </a>
-            <a href="{{ route('admin.plans.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-lg font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            <a href="{{ route('admin.plans.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 {{ __('ui.admin_plans.title') }}
             </a>
-            <a href="{{ route('admin.moderation.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-lg font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            <a href="{{ route('admin.moderation.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 {{ __('ui.moderation.title') }}
                 @if (($stats['moderation_pending'] ?? 0) > 0)
-                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-tertiary px-2 py-0.5 font-label-numeric text-label-md font-bold text-on-tertiary">{{ $stats['moderation_pending'] }}</span>
+                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-tertiary px-2 py-0.5 font-label-numeric text-label-sm font-bold text-on-tertiary">{{ $stats['moderation_pending'] }}</span>
                 @endif
             </a>
-            <a href="{{ route('admin.disputes.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-lg font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            <a href="{{ route('admin.disputes.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 Litiges
                 @php $litiges = \App\Models\Dispute::query()->open()->count(); @endphp
                 @if ($litiges > 0)
-                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-error px-2 py-0.5 font-label-numeric text-label-md font-bold text-on-error">{{ $litiges }}</span>
+                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-error px-2 py-0.5 font-label-numeric text-label-sm font-bold text-on-error">{{ $litiges }}</span>
                 @endif
             </a>
-            <a href="{{ route('admin.verifications.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-lg font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            <a href="{{ route('admin.verifications.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 @php $pendingCount = \App\Models\ProviderProfile::whereNotNull('id_card_path')->where('id_card_verified', false)->count(); @endphp
                 Vérifications
                 @if ($pendingCount > 0)
-                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-error px-2 py-0.5 font-label-numeric text-label-md font-bold text-on-error">{{ $pendingCount }}</span>
+                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-error px-2 py-0.5 font-label-numeric text-label-sm font-bold text-on-error">{{ $pendingCount }}</span>
                 @endif
             </a>
         </div>

@@ -11,7 +11,7 @@
         >
             @if ($conversation->request)
                 <x-slot name="action">
-                    <a href="{{ route('requests.show', $conversation->request) }}" class="inline-flex items-center gap-1 rounded-full border border-outline-variant px-4 py-2 text-label-lg font-semibold text-primary transition-colors hover:border-primary/50">
+                    <a href="{{ route('requests.show', $conversation->request) }}" class="inline-flex items-center gap-1 rounded-full border border-outline-variant px-4 py-2 text-label-md font-semibold text-primary transition-colors hover:border-primary/50 hover:shadow-elevation-2">
                         {{ __("Voir la demande") }}
                         <span class="material-symbols-outlined text-base">arrow_forward</span>
                     </a>

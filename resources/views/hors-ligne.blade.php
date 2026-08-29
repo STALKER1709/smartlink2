@@ -12,7 +12,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <meta name="theme-color" content="#005538">
+    <meta name="theme-color" content="#005f48">
     <title>{{ __('pwa.offline_title') }} · {{ config('app.name', 'SmartLink') }}</title>
     <style>
         :root { color-scheme: light; }
@@ -29,7 +29,7 @@
             text-align: center;
         }
         .carte { max-width: 22rem; }
-        svg { color: #005538; }
+        svg { color: #005f48; }
         h1 { margin: 1.5rem 0 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; }
         p { margin: 0.75rem 0 0; line-height: 1.6; color: #414942; }
         button {
@@ -37,7 +37,7 @@
             padding: 0.75rem 1.5rem;
             border: 0;
             border-radius: 9999px;
-            background: #005538;
+            background: #005f48;
             color: #FFFFFF;
             font: inherit;
             font-weight: 600;

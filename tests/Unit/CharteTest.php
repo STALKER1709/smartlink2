@@ -26,12 +26,14 @@ class CharteTest extends TestCase
             'partials/chatbot-widget.blade.php',
             'components/message-thread.blade.php',
         ],
-        // Modales, menus et panneau de l'assistant : les seuls éléments qui
-        // passent au-dessus d'un contenu dont on ignore la couleur.
-        'shadow' => [
-            'components/modal.blade.php',
-            'components/dropdown.blade.php',
-            'partials/chatbot-widget.blade.php',
+        // Les trois paliers d'ombre de la charte. Toute autre écriture —
+        // `shadow-md`, `shadow-[0_8px_24px_rgba(0,0,0,.12)]` — est une
+        // profondeur que personne n'a décidée.
+        'ombre' => [
+            'shadow-elevation-1',
+            'shadow-elevation-2',
+            'shadow-overlay',
+            'shadow-none',
         ],
         // Le jaune MTN, le bleu Orange et le vert WhatsApp sont l'identité de
         // ces services, pas notre palette : les traduire en jetons les rendrait
@@ -116,24 +118,28 @@ class CharteTest extends TestCase
             'Rayon hors charte (12 px pour un conteneur) : '.implode(', ', $fautifs));
     }
 
-    public function test_depth_comes_from_borders_not_shadows(): void
+    public function test_depth_goes_through_the_three_elevation_steps(): void
     {
         $fautifs = [];
 
         foreach ($this->vues() as $vue) {
-            if (in_array($vue, self::EXCEPTIONS['shadow'], true)) {
-                continue;
-            }
+            preg_match_all('/\bshadow-\[?[a-z0-9_().,\/-]*\]?/', $this->contenuSansCommentaires($vue), $m);
 
-            // `shadow-sm` reste toléré : il ne crée pas de profondeur, il
-            // adoucit un bord. Les paliers au-delà, si.
-            if (preg_match('/shadow-(md|lg|xl|2xl|inner)\b/', $this->contenu($vue))) {
-                $fautifs[] = $vue;
+            foreach ($m[0] as $classe) {
+                // `hover:shadow-elevation-2` arrive ici sans son préfixe : le
+                // motif ne capture que la classe.
+                if (! in_array($classe, self::EXCEPTIONS['ombre'], true)) {
+                    $fautifs[] = $vue.' ('.$classe.')';
+                }
             }
         }
 
+        // La profondeur se lit sur trois paliers tonaux, pas sur une valeur
+        // choisie au cas par cas. La maquette amont écrivait six fois
+        // `shadow-[0_8px_24px_rgba(0,0,0,0.12)]` en clair, à deux opacités
+        // différentes pour le même rôle.
         $this->assertSame([], $fautifs,
-            'La profondeur vient des bordures, pas des ombres : '.implode(', ', $fautifs));
+            'Ombre hors des trois paliers : '.implode(', ', $fautifs));
     }
 
     public function test_nothing_lifts_on_hover(): void
@@ -143,9 +149,15 @@ class CharteTest extends TestCase
         foreach ($this->vues() as $vue) {
             // `translate-x` sur un pictogramme est toléré : la flèche d'un
             // lien avance de deux pixels *à l'intérieur* de la zone survolée,
-            // sans rien déplacer autour d'elle. Ce que la charte refuse, c'est
-            // qu'un bloc se soulève — agrandissement, ombre, montée.
-            if (preg_match('/hover:(scale-|shadow-|-?translate-y-)/', $this->contenu($vue))) {
+            // sans rien déplacer autour d'elle.
+            //
+            // L'ombre, elle, n'est plus refusée : la charte simule le
+            // soulèvement en passant d'`elevation-1` à `elevation-2`, ce qui
+            // ne déplace rien. Ce que la règle refuse reste la géométrie —
+            // agrandissement et montée. La maquette amont ajoutait
+            // `hover:-translate-y-1` par-dessus l'ombre, ce que sa propre
+            // charte ne demande nulle part.
+            if (preg_match('/(hover|group-hover|focus):(scale-|-?translate-y-)/', $this->contenu($vue))) {
                 $fautifs[] = $vue;
             }
         }

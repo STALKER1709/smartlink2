@@ -9,10 +9,10 @@
      */
     $points = [
         \App\Support\RequestStatus::DRAFT => 'bg-outline',
-        \App\Support\RequestStatus::SENT => 'bg-tertiary',
+        \App\Support\RequestStatus::SENT => 'bg-secondary-container',
         \App\Support\RequestStatus::VIEWED => 'bg-secondary',
         \App\Support\RequestStatus::ACCEPTED => 'bg-secondary',
-        \App\Support\RequestStatus::IN_PROGRESS => 'bg-tertiary',
+        \App\Support\RequestStatus::IN_PROGRESS => 'bg-secondary-container',
         \App\Support\RequestStatus::COMPLETED => 'bg-primary',
         \App\Support\RequestStatus::REFUSED => 'bg-error',
         \App\Support\RequestStatus::CANCELLED => 'bg-outline',

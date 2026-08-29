@@ -9,7 +9,7 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
         @include('partials.icon-font')
 
         @include('partials.pwa-head')
@@ -24,11 +24,11 @@
                     <span class="font-headline-md text-headline-md font-extrabold tracking-tight text-on-surface">SmartLink</span>
                 </a>
 
-                <div class="mt-8 rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm sm:p-8">
+                <div class="mt-8 rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation-1 sm:p-8">
                     {{ $slot }}
                 </div>
 
-                <a href="{{ route('home') }}" class="mx-auto mt-6 flex items-center gap-1 text-label-lg text-on-surface-variant hover:text-on-surface">
+                <a href="{{ route('home') }}" class="mx-auto mt-6 flex items-center gap-1 text-label-md text-on-surface-variant hover:text-on-surface">
                     <span class="material-symbols-outlined text-base">arrow_back</span>
                     {{ __("Retour à l'accueil") }}
                 </a>
@@ -36,7 +36,7 @@
                 {{-- Les écrans d'authentification n'ont pas de pied de page :
                      ces liens y seraient introuvables autrement, alors que
                      c'est précisément là qu'on s'engage. --}}
-                <p class="mx-auto mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 text-label-md text-on-surface-variant">
+                <p class="mx-auto mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 text-label-sm text-on-surface-variant">
                     <a href="{{ route('legal.terms') }}" class="hover:text-primary">{{ __("Conditions générales") }}</a>
                     <span aria-hidden="true">·</span>
                     <a href="{{ route('legal.privacy') }}" class="hover:text-primary">{{ __("Confidentialité") }}</a>

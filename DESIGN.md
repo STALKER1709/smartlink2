@@ -2,82 +2,78 @@
 name: SmartLink
 description: Place de marché de services de proximité au Cameroun — mise en relation, jamais transaction.
 colors:
-  primary: "#005538"
+  primary: "#005f48"
   on-primary: "#ffffff"
-  primary-container: "#0f6f4c"
-  on-primary-container: "#9aefc3"
-  secondary: "#2a694f"
+  primary-container: "#007a5e"
+  on-primary-container: "#a4ffdd"
+  secondary: "#805600"
   on-secondary: "#ffffff"
-  secondary-container: "#aff1cf"
-  on-secondary-container: "#317054"
-  tertiary: "#7b3500"
+  secondary-container: "#feb637"
+  on-secondary-container: "#6e4900"
+  tertiary: "#aa001a"
   on-tertiary: "#ffffff"
-  tertiary-container: "#a04700"
-  on-tertiary-container: "#ffd4bf"
+  tertiary-container: "#d41829"
+  on-tertiary-container: "#ffe8e6"
   error: "#ba1a1a"
   on-error: "#ffffff"
   error-container: "#ffdad6"
   on-error-container: "#93000a"
-  surface: "#f9faf7"
+  surface: "#f9f9fc"
   surface-container-lowest: "#ffffff"
-  surface-container-low: "#f3f4f1"
-  surface-container: "#edeeeb"
-  surface-container-high: "#e7e8e6"
-  on-surface: "#191c1b"
-  on-surface-variant: "#3f4943"
-  inverse-surface: "#2e312f"
-  inverse-on-surface: "#f0f1ee"
-  outline: "#6f7a72"
-  outline-variant: "#bec9c0"
+  surface-container-low: "#f3f3f6"
+  surface-container: "#eeeef0"
+  surface-container-high: "#e8e8ea"
+  on-surface: "#1a1c1e"
+  on-surface-variant: "#3e4944"
+  inverse-surface: "#2f3133"
+  inverse-on-surface: "#f0f0f3"
+  outline: "#6e7a74"
+  outline-variant: "#bdc9c2"
 typography:
-  headline-xl:
-    fontFamily: "Hanken Grotesk, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "36px"
-    fontWeight: 800
-    lineHeight: "44px"
+  display-lg:
+    fontFamily: "Lexend, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "48px"
+    fontWeight: 700
+    lineHeight: "56px"
     letterSpacing: "-0.02em"
   headline-lg:
-    fontFamily: "Hanken Grotesk, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "28px"
-    fontWeight: 700
-    lineHeight: "34px"
-    letterSpacing: "-0.01em"
+    fontFamily: "Lexend, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "32px"
+    fontWeight: 600
+    lineHeight: "40px"
   headline-md:
-    fontFamily: "Hanken Grotesk, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "22px"
+    fontFamily: "Lexend, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "24px"
+    fontWeight: 600
+    lineHeight: "32px"
+  headline-sm:
+    fontFamily: "Lexend, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "20px"
     fontWeight: 600
     lineHeight: "28px"
-    letterSpacing: "-0.01em"
-  headline-sm:
-    fontFamily: "Hanken Grotesk, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "16px"
-    fontWeight: 600
-    lineHeight: "24px"
-    letterSpacing: "-0.01em"
   body-lg:
-    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
     fontSize: "18px"
     fontWeight: 400
-    lineHeight: "26px"
+    lineHeight: "28px"
   body-md:
-    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
     fontSize: "16px"
     fontWeight: 400
     lineHeight: "24px"
-  label-lg:
-    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "14px"
-    fontWeight: 500
-    lineHeight: "20px"
-    letterSpacing: "0.1px"
   label-md:
-    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 600
+    lineHeight: "20px"
+    letterSpacing: "0.01em"
+  label-sm:
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
     fontSize: "12px"
     fontWeight: 500
     lineHeight: "16px"
-    letterSpacing: "0.5px"
   button-text:
-    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
     fontSize: "16px"
     fontWeight: 600
     lineHeight: "24px"
@@ -94,11 +90,15 @@ rounded:
   xl: "0.75rem"
   full: "9999px"
 spacing:
-  unit: "4px"
-  gutter: "16px"
+  unit: "8px"
+  gutter: "24px"
   margin-mobile: "16px"
-  margin-desktop: "32px"
-  container-max-width: "1200px"
+  margin-desktop: "64px"
+  container-max-width: "1280px"
+elevation:
+  elevation-1: "0 4px 12px rgba(26, 28, 30, 0.12)"
+  elevation-2: "0 8px 24px rgba(26, 28, 30, 0.16)"
+  overlay: "0 12px 32px rgba(26, 28, 30, 0.20)"
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
@@ -151,91 +151,90 @@ Mode dominant : **Operate**. Les pages publiques — accueil, recherche, fiche s
 annuaire — basculent en **Persuade** : elles doivent convaincre un visiteur qui ne
 connaît pas SmartLink.
 
-## La charte amont, et ce qui en est retenu
+## La charte, et d'où elle vient
 
-Le projet a une charte Google Stitch, **« SmartLink Core »**
-(`assets/5e99e7e1a5a6427bbf3597f66c1de755`, projet `7168677943593520780`,
-trente écrans). Ce document-ci reste celui qui fait foi pour le code ; la
-comparaison des deux a été faite, et voici son résultat, pour qu'on n'ait pas à
-la refaire.
+La charte du produit est **« SmartLink »**, la charte Google Stitch du projet
+`3364420177367452718` (`assets/cc5a3e92d2b241d2b97d469fc098f9f4`, 26 écrans).
+Ce document-ci reste celui qui fait foi pour le code ; il en énonce les règles
+et les quelques écarts tenus volontairement.
 
-**Ce qui concorde déjà, à la valeur près.** Les couleurs de réglage de la charte
-Stitch — primaire `#005538`, secondaire `#aff1cf`, tertiaire `#7b3500`, neutre
-`#f9faf7` — sont exactement celles du frontmatter ci-dessus. Toute la hiérarchie
-de surfaces (`surface-container-lowest` à `-highest`, `outline`,
-`outline-variant`) est identique. La doctrine de profondeur l'est aussi, jusqu'à
-la formulation : la profondeur vient des couches tonales et des bordures de un
-pixel, pas des ombres, et le survol change un fond au lieu de soulever. Il n'y a
-donc rien à importer de ce côté-là — les deux systèmes sont le même.
+Elle a remplacé une charte antérieure, « SmartLink Core » (projet
+`7168677943593520780`), dont l'historique Git garde la trace. Ce n'était pas un
+réglage : vert profond contre vert plus clair, vert clair contre **jaune**,
+ambre contre **rouge**, Hanken Grotesk et Source Sans 3 contre **Lexend et
+Inter**, et surtout des bordures contre des **ombres**. Le motif de la bascule
+est l'identité : vert, jaune, rouge sont les couleurs du drapeau camerounais,
+et une place de marché camerounaise gagne à les porter.
 
-⚠️ La charte Stitch se contredit sur trois couleurs dérivées : son `designMd`
-donne `primary: #003c26` et `tertiary: #582400` là où ses couleurs de réglage,
-celles que l'auteur a posées, donnent `#005538` et `#7b3500`. **Ce sont les
-réglages qui font foi**, et ce sont eux que porte ce document. Ne pas « aligner »
-la palette sur les valeurs dérivées : elles ne concordent ni avec les réglages ni
-avec les couleurs nommées du même fichier.
+**Ce qui n'a pas basculé, et pourquoi :**
 
-**Ce qui en a été retenu.** Les deux paliers d'étiquette, `label-lg` et
-`label-md`, sous ces noms et à ces valeurs. Ils manquaient ici, et leur absence
-se lisait dans les vues.
+- **JetBrains Mono pour les chiffres.** La charte amont n'a pas de police à
+  chasse fixe, et n'a rien pour remplir ce rôle : aligner les colonnes de
+  montants dans une liste, distinguer au premier coup d'œil une donnée d'une
+  phrase. C'est fonctionnel, pas décoratif.
+- **Les marges de téléphone.** La charte ne décrit que le bureau et pose 64 px
+  de marge ; sa maquette d'accueil les applique **sans le moindre palier**. Sur
+  un écran de 390 px, 128 px de marges ne laissent que 262 px de contenu. Le
+  téléphone garde ses 16 px, et 64 px commencent à `md`.
+- **La translation au survol.** Sa maquette ajoute `hover:-translate-y-1` à
+  l'ombre — ce que sa propre charte ne demande nulle part : elle écrit que le
+  soulèvement se *simule* par une ombre accrue. C'est cette lecture qui est
+  retenue, et la raison tient : un bloc qui se déplace emmène avec lui ce que
+  l'œil suivait, et répété sur une liste il rend la page instable.
+- **Le rayon de 12 px.** La charte annonce `xl: 1.5rem` dans son texte, mais la
+  configuration Tailwind que son propre code génère écrit `xl: 0.75rem`. Les
+  deux ne concordent pas ; c'est le code qui a été suivi, et il donne 12 px.
 
-**Ce qui est volontairement divergent**, et pourquoi :
+⚠️ Cette charte se contredit sur un dernier point : son frontmatter donne
+`primary: #005f48` quand sa couleur de réglage — celle que l'auteur a posée —
+donne `#007a5e`. Les deux sont retenues, la première comme `primary` et la
+seconde comme `primary-container` : c'est ainsi que son propre code les emploie.
 
-- **Les familles.** Stitch prescrit Manrope pour les titres et Inter pour le
-  corps. On garde Hanken Grotesk et Source Sans 3, et surtout **JetBrains Mono**,
-  dont la charte amont n'a pas d'équivalent : la chasse fixe y remplit un rôle
-  fonctionnel — aligner les colonnes de montants, distinguer une donnée d'une
-  phrase — qu'aucune des deux familles de Stitch ne rendrait. Changer de familles
-  coûterait la refonte de tout ce qui est mesuré à 390 px pour ne rien gagner.
-- **Les rayons.** Stitch prescrit 8 px pour les contrôles et 16 px pour les
-  cartes. On garde **12 px pour tout conteneur et la pilule pour toute action** :
-  ce contraste entre le rectangle arrondi des structures et la pilule des boutons
-  rend les zones cliquables lisibles sans couleur supplémentaire, ce que la paire
-  8/16 ne fait pas. `CharteTest` tient déjà cette règle sur soixante vues.
-- **L'échelle de titres.** Stitch en compte sept paliers (`display-lg` 57 px à
-  `title-md` 16 px). On en garde quatre. Sept paliers sur des écrans dont la
-  largeur de référence est 390 px produisent des différences que personne ne voit
-  et que tout le monde peut confondre.
-- **Le conteneur** à 1 200 px, pas 1 280 : les rangées de services passent à deux
-  colonnes à partir de `lg`, et 1 280 px les étire au-delà de la longueur de
-  ligne confortable.
 
 ## Colors
 
-- **Vert principal `#005538`** : actions clés, chiffres qui comptent, état actif. Sa
-  variante `primary-container #0f6f4c` sert le survol et l'appui.
-- **Vert clair `secondary-container #aff1cf`** : fonds de pastilles, sélection, zones de
-  succès. Employé à faible opacité (`/40`, `/60`) pour rester en arrière-plan.
-- **Ambre `tertiary #7b3500`** : réservé aux statuts professionnels et aux
-  avertissements — abonnement qui approche de l'échéance, plafond atteint, demande en
-  attente. Jamais décoratif.
-- **Rouge `error #ba1a1a`** : erreurs et actions destructives seulement.
-- **Surfaces** : le fond de page `#f9faf7` porte les contrôles — recherche, filtres —
-  tandis que les listes de résultats reposent sur du blanc, de bord à bord sur mobile.
-  C'est cette différence de un ton, et non une ombre, qui sépare ce sur quoi on agit de ce
-  qu'on lit.
+Les trois couleurs du drapeau, et chacune a un emploi, un seul.
 
-Le vert et l'ambre ne se disputent jamais le même écran comme accents concurrents : si
-un avertissement est présent, il est le seul point ambre visible.
+- **Vert `#005f48`** : actions clés, chiffres qui comptent, état actif, et le
+  badge « Vérifié » — le signal de confiance de la plateforme. Sa variante
+  `primary-container #007a5e` sert le survol et l'appui.
+- **Jaune `secondary-container #feb637`** : les **notes** et les mises en avant.
+  C'est le gain le plus net de la bascule : la note d'un prestataire et un
+  abonnement qui expire portaient jusqu'ici la même couleur ambre, faute d'en
+  avoir deux. Le texte posé dessus est `on-secondary-container #6e4900` — un
+  brun foncé, parce que du blanc sur ce jaune ne se lit pas.
+- **Rouge `tertiary-container #d41829`** : alertes critiques et statuts urgents.
+  Il ne décore jamais, et il ne se dispute pas l'écran avec `error` — celui-ci
+  reste réservé aux erreurs de formulaire et aux actions destructives.
+- **Surfaces** : le fond de page `#f9f9fc` porte les contrôles, les cartes
+  reposent sur du blanc. Cette différence d'un ton, doublée d'une ombre légère,
+  sépare ce sur quoi on agit de ce qu'on lit.
+
+Le jaune et le rouge ne paraissent jamais ensemble comme accents concurrents.
+
 
 ## Typography
 
 Deux intentions, deux familles.
 
-- **Hanken Grotesk** pour les titres, interlettrage resserré. Robuste, professionnel.
-- **Source Sans 3** pour le corps. Priorité absolue à la lisibilité sur petit écran.
+- **Lexend** pour les titres. Sa clarté géométrique reste lisible sur un écran de
+  milieu de gamme et pour un lecteur âgé — c'est la raison que la charte amont
+  en donne, et elle vaut ici plus qu'ailleurs.
+- **Inter** pour le corps et les étiquettes. Sa régularité tient les vues denses :
+  listes de services, fiches de prestataires, tableaux de montants.
 - **JetBrains Mono** pour **toute donnée chiffrée** : prix, dates, références,
   compteurs. La chasse fixe aligne les colonnes de montants dans une liste, et distingue
   au premier coup d'œil une donnée d'une phrase.
 
-Quatre paliers de titre, et pas un de plus : `headline-xl` 36/44 poids 800,
-`headline-lg` 28/34 poids 700, `headline-md` 22/28 poids 600, `headline-sm` 16/24
-poids 600. Le dernier est le titre d'une carte ou d'une rangée de liste ; il a été
-ajouté parce qu'il manquait, et que six vues l'avaient reconstitué à la main en
-`text-base font-semibold` — deux d'entre elles avec un pixel d'écart. Un titre écrit
-avec une taille hors de cette table est un palier de plus que personne n'a décidé.
+Quatre paliers de titre, et pas un de plus : `display-lg` 48/56 poids 700,
+`headline-lg` 32/40 poids 600, `headline-md` 24/32 poids 600, `headline-sm` 20/28
+poids 600. Le dernier est le titre d'une carte ou d'une rangée de liste. **La
+charte amont ne le nomme pas** — et la maquette de son accueil est allée chercher
+`text-[20px]` six fois de suite, faute de l'avoir. Il est nommé ici, à la taille
+qu'elle a réinventée à chaque fois. Un titre écrit avec une taille hors de cette
+table est un palier de plus que personne n'a décidé.
 
-**Deux paliers d'étiquette**, `label-lg` 14/20 poids 500 et `label-md` 12/16 poids
+**Deux paliers d'étiquette**, `label-md` 14/20 poids 600 et `label-sm` 12/16 poids
 500. Une étiquette est ce qui nomme une donnée sans être une phrase : intitulé de
 champ, libellé d'onglet, métier en capitales au-dessus d'un titre, texte d'une
 pastille. Ils manquaient, et la même étiquette s'écrivait de neuf façons au fil des
@@ -244,7 +243,7 @@ vues — `text-xs`, `text-sm`, `text-[10px]`, `text-[11px]`, `text-[12px]`,
 
 **Un chiffre prend un palier de titre, en JetBrains Mono.** Il n'y a pas d'échelle
 séparée pour les nombres : un prix mis en avant, un compteur de tuile, un montant
-d'abonnement se composent en `text-headline-lg` ou `text-headline-xl` selon leur
+d'abonnement se composent en `text-headline-lg` ou `text-display-lg` selon leur
 poids dans la page. Sans cette règle, cinq corps circulaient pour la même chose —
 20, 24, 30, 36 et 48 px — chacun choisi dans sa vue.
 
@@ -262,12 +261,15 @@ après.
 ## Layout
 
 - **Mobile d'abord, 390 px comme largeur de référence.** Marges latérales de 16 px,
-  32 px à partir de `md`.
+  64 px à partir de `md`. La charte amont ne décrit que le bureau et pose ces
+  64 px partout : sa maquette d'accueil les applique sans le moindre palier, ce
+  qui ne laisse que 262 px de contenu sur un téléphone.
 - **Palier `xs` à 480 px.** Le premier palier de Tailwind est à 640 px, ce qui laisse
   tous les téléphones du mauvais côté. En dessous de `xs`, les grilles passent à une
   colonne et les cartes de service adoptent une disposition horizontale.
-- **Conteneur** centré à 1 200 px au maximum.
-- **Rythme vertical** de 24 à 32 px entre blocs. Grille de base de 4 px.
+- **Conteneur** centré à 1 280 px au maximum.
+- **Rythme vertical** de 24 à 32 px entre blocs. Grille de base de 8 px,
+  gouttière de 24 px.
 - **Deux formes de navigation, une par plage de largeur.** Barre d'onglets basse
   sous 768 px (`md:hidden`), cinq entrées au maximum — le contenu réserve `4.75rem`
   en bas pour ne pas passer dessous. Barre horizontale au-dessus.
@@ -285,32 +287,43 @@ après.
 
 ## Elevation & Depth
 
-La profondeur vient des **bordures de 1 px** (`outline-variant #bec9c0`), pas des ombres.
-C'est la méthode principale pour délimiter une zone d'interaction.
+La profondeur vient de **couches tonales et de trois paliers d'ombre**. C'est ce
+qui a changé le plus profondément : la charte précédente la tirait des bordures
+d'un pixel et refusait toute ombre.
 
-Seuls les menus contextuels, les modales et le panneau de l'assistant portent une
-ombre, légère et diffuse. La bulle flottante de l'assistant, qui passe au-dessus de
-contenus dont on ignore la couleur, se détache par une **bordure** comme tout le reste
-— elle portait une ombre et un agrandissement au survol, deux règles enfreintes d'un
-coup par le seul élément qui flotte.
+- **`elevation-1`** `0 4px 12px` à 12 % — les cartes, les boutons flottants.
+  Une carte garde en plus sa bordure d'un pixel `outline-variant` : l'ombre
+  donne la profondeur, la bordure donne le bord net dont un écran de milieu de
+  gamme a besoin.
+- **`elevation-2`** `0 8px 24px` à 16 % — l'état survolé ou actif. Le
+  soulèvement se lit **dans l'ombre seule**.
+- **`overlay`** `0 12px 32px` à 20 % — modales, menus, panneau de l'assistant :
+  ce qui passe au-dessus d'un contenu dont on ignore la couleur.
 
-**Rien ne se soulève au survol.** Un élément qui bouge déplace ce que l'œil suivait, et
-répété sur toute une liste il rend la page instable. Le survol et l'état sélectionné se
-marquent par un **changement de fond** — vers `surface-container-low`, ou vers le vert
-clair pour une sélection.
+**Rien ne se déplace au survol.** L'ombre monte d'un palier, la géométrie ne
+bouge pas — ni `scale`, ni `translate-y`. `CharteTest` refuse les deux, et
+refuse aussi toute ombre écrite hors de ces trois paliers : la maquette amont
+écrivait six fois `shadow-[0_8px_24px_rgba(0,0,0,0.12)]` en clair, à deux
+opacités différentes pour le même rôle.
+
+**Les champs de saisie ne portent pas d'ombre.** Une bordure d'un pixel qui
+s'épaissit et verdit au focus, rien de plus. Treize d'entre eux traînaient un
+`shadow-sm` venu du gabarit Breeze, que personne n'avait décidé.
+
 
 ## Shapes
 
-- **Cartes, champs, conteneurs** : `rounded-xl` (12 px). Accueillant sans être mou.
-- **Boutons, pastilles, onglets** : `rounded-full`. Le contraste entre le rectangle
-  arrondi des structures et la pilule des actions rend les zones cliquables lisibles sans
-  couleur supplémentaire.
+- **Cartes, champs, conteneurs** : `rounded-xl` (12 px).
+- **Boutons, pastilles, onglets** : `rounded-full`. Le contraste entre le
+  rectangle arrondi des structures et la pilule des actions rend les zones
+  cliquables lisibles sans couleur supplémentaire.
 - **Vignettes d'illustration** : `rounded-lg`, carrées dans les rangées de liste.
 - **Rangées de liste** : aucun rayon. Un filet les sépare, rien ne les encadre.
-- **Une seule exception au 12 px** : les bulles de conversation, en `rounded-2xl`
-  (16 px). Une bulle n'est pas une carte — c'est la forme qui la distingue du reste de
-  la page, et c'est le motif des maquettes. Partout ailleurs, `rounded-2xl` sur un
+- **Une seule exception au 12 px** : les bulles de conversation, en
+  `rounded-2xl` (16 px). Une bulle n'est pas une carte — c'est la forme qui la
+  distingue du reste de la page. Partout ailleurs, `rounded-2xl` sur un
   conteneur est une dérive : `CharteTest` la refuse.
+
 
 ## Components
 
@@ -360,7 +373,7 @@ clair pour une sélection.
   une seconde vérité : un bouton offert au-delà du plafond mène à une page 403
   nue, au moment précis où l'utilisateur en a le plus besoin. Au plafond il ne
   disparaît pas — un prestataire qui ne trouve plus « Publier » croit à une
-  panne — il change de libellé, passe à l'ambre, dit ce qui bloque et mène là
+  panne — il change de libellé, passe au rouge, dit ce qui bloque et mène là
   où cela se débloque.
 - **Fil de discussion** — la zone de saisie **colle** au bas de l'écran
   (`sticky bottom-[4.75rem]`), au-dessus de la barre d'onglets ; elle ne se
@@ -432,7 +445,7 @@ clair pour une sélection.
 - Énoncer clairement que SmartLink ne perçoit aucun paiement entre client et
   prestataire, partout où un prix apparaît.
 - Éprouver toute mise en page à 390 px **avant** de la juger sur un écran large.
-- Réserver l'ambre aux statuts et avertissements.
+- Réserver le jaune aux notes et aux mises en avant, le rouge aux alertes.
 - Faire porter les états vides par une action : ce qu'il faut faire, pas ce qui manque.
 
 **À ne pas faire**
@@ -443,9 +456,11 @@ clair pour une sélection.
   produite sans intention. Une liste séparée par des filets dit la même chose, en plus
   dense et en plus rapide.
 - **Emboîter une carte dans une carte.** Jamais.
-- **Soulever un élément au survol.** Le changement de fond suffit, et il ne déplace pas
-  ce que l'œil suivait.
-- Ajouter une ombre là où une bordure suffit.
+- **Déplacer un élément au survol.** L'ombre monte d'un palier — c'est elle qui
+  porte le soulèvement. Ni `scale`, ni `translate-y` : un bloc qui bouge emmène
+  avec lui ce que l'œil suivait.
+- **Écrire une ombre hors des trois paliers.** `shadow-md`, ou une valeur en
+  clair dans des crochets, est une profondeur que personne n'a décidée.
 - Employer une couleur pour décorer.
 - Placer une action principale dans la barre de titre d'une section à laquelle elle
   n'appartient pas — sur mobile elle passe à la ligne et paraît agir sur ce titre.

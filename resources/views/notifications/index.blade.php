@@ -8,7 +8,7 @@
         'request.status_changed' => ['check_circle', 'bg-primary text-on-primary'],
         'request.new' => ['assignment', 'bg-primary text-on-primary'],
         'message.new' => ['chat', 'bg-tertiary-container text-on-tertiary'],
-        'review.new' => ['star', 'bg-secondary-container text-on-secondary-container'],
+        'review.new' => ['star', 'bg-secondary-container/30 text-on-secondary-container'],
     ];
 @endphp
 
@@ -63,7 +63,7 @@
                     <{{ $link ? 'a' : 'div' }} @if ($link) href="{{ $link }}" @endif
                         @class([
                             'group relative flex items-start gap-4 rounded-lg border border-outline-variant p-4 transition-colors',
-                            'bg-secondary-container/20 hover:bg-secondary-container/30' => ! $lue,
+                            'bg-primary-container/10 hover:bg-primary-container/15' => ! $lue,
                             'bg-surface hover:bg-surface-container-low' => $lue,
                         ])>
                         @unless ($lue)
@@ -83,11 +83,11 @@
                             ])>{{ $texte }}</p>
 
                             <div class="flex flex-wrap items-center gap-x-3">
-                                <span class="block font-label-lg text-label-lg text-on-surface-variant">{{ $notification->created_at->diffForHumans() }}</span>
+                                <span class="block font-label-md text-label-md text-on-surface-variant">{{ $notification->created_at->diffForHumans() }}</span>
                                 @unless ($lue)
                                     <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-label-md font-medium text-primary hover:text-primary-container">
+                                        <button type="submit" class="text-label-sm font-medium text-primary hover:text-primary-container">
                                             {{ __("Marquer comme lu") }}
                                         </button>
                                     </form>

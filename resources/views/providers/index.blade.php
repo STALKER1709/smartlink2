@@ -16,7 +16,7 @@
     <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-desktop">
 
         <form action="{{ route('providers.index') }}" method="GET">
-            <div class="flex flex-col gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-2 shadow-sm sm:flex-row sm:items-center">
+            <div class="flex flex-col gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-2 shadow-elevation-1 sm:flex-row sm:items-center">
                 <label for="term" class="sr-only">{{ __("Rechercher un prestataire") }}</label>
                 <div class="flex flex-1 items-center gap-2 px-3">
                     <span class="material-symbols-outlined text-on-surface-variant">search</span>
@@ -30,7 +30,7 @@
                     >
                 </div>
 
-                <select name="category_id" class="rounded-xl border-outline-variant text-label-lg focus:border-primary focus:ring-primary sm:w-48">
+                <select name="category_id" class="rounded-xl border-outline-variant text-label-md focus:border-primary focus:ring-primary sm:w-48">
                     <option value="">{{ __("Toutes les catégories") }}</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
@@ -42,7 +42,7 @@
                     name="city"
                     value="{{ request('city') }}"
                     placeholder="{{ __('Ville') }}"
-                    class="rounded-xl border-outline-variant text-label-lg focus:border-primary focus:ring-primary sm:w-40"
+                    class="rounded-xl border-outline-variant text-label-md focus:border-primary focus:ring-primary sm:w-40"
                 >
 
                 <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
@@ -50,7 +50,7 @@
                 </button>
             </div>
 
-            <label class="mt-3 inline-flex items-center gap-2 px-1 text-label-lg text-on-surface-variant">
+            <label class="mt-3 inline-flex items-center gap-2 px-1 text-label-md text-on-surface-variant">
                 <input type="checkbox" name="verified_only" value="1" @checked(request('verified_only'))
                        onchange="this.form.submit()"
                        class="rounded border-outline-variant text-primary focus:ring-primary">
@@ -59,7 +59,7 @@
         </form>
 
         <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="font-label-lg text-label-lg text-on-surface-variant">
+            <p class="font-label-md text-label-md text-on-surface-variant">
                 <span class="font-label-numeric">{{ $providers->total() }}</span> {{ Str::plural('prestataire', $providers->total()) }}
             </p>
 
@@ -67,7 +67,7 @@
                 <div class="flex flex-wrap items-center gap-2">
                     @foreach ($actifs as $cle => $valeur)
                         <a href="{{ route('providers.index', collect(request()->query())->except($cle)->all()) }}"
-                           class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-label-md font-medium text-on-surface hover:border-primary/50">
+                           class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-label-sm font-medium text-on-surface hover:border-primary/50 hover:shadow-elevation-2">
                             {{ $valeur }}
                             <span class="material-symbols-outlined text-sm text-on-surface-variant">close</span>
                         </a>

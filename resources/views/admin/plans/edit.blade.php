@@ -20,14 +20,14 @@
                     <x-input-label for="max_services" :value="__('ui.admin_plans.max_services')" />
                     <x-text-input id="max_services" name="max_services" type="number" min="1"
                                   class="mt-1 block w-full" :value="old('max_services', $plan->max_services)" />
-                    <p class="mt-1 text-label-md text-on-surface-variant">{{ __('ui.admin_plans.unlimited_hint') }}</p>
+                    <p class="mt-1 text-label-sm text-on-surface-variant">{{ __('ui.admin_plans.unlimited_hint') }}</p>
                     <x-input-error :messages="$errors->get('max_services')" class="mt-2" />
                 </div>
                 <div>
                     <x-input-label for="max_monthly_requests" :value="__('ui.admin_plans.max_requests')" />
                     <x-text-input id="max_monthly_requests" name="max_monthly_requests" type="number" min="1"
                                   class="mt-1 block w-full" :value="old('max_monthly_requests', $plan->max_monthly_requests)" />
-                    <p class="mt-1 text-label-md text-on-surface-variant">{{ __('ui.admin_plans.unlimited_hint') }}</p>
+                    <p class="mt-1 text-label-sm text-on-surface-variant">{{ __('ui.admin_plans.unlimited_hint') }}</p>
                     <x-input-error :messages="$errors->get('max_monthly_requests')" class="mt-2" />
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     'has_stats' => 'ui.admin_plans.has_stats',
                     'is_active' => 'ui.admin_plans.is_active',
                 ] as $field => $label)
-                    <label class="flex items-center gap-3 text-label-lg text-on-surface">
+                    <label class="flex items-center gap-3 text-label-md text-on-surface">
                         <input type="hidden" name="{{ $field }}" value="0">
                         <input type="checkbox" name="{{ $field }}" value="1"
                                @checked(old($field, $plan->$field))
@@ -50,7 +50,7 @@
             </div>
 
             <div class="flex items-center justify-between gap-3 border-t border-outline-variant pt-5">
-                <a href="{{ route('admin.plans.index') }}" class="text-label-lg text-on-surface-variant hover:text-on-surface">
+                <a href="{{ route('admin.plans.index') }}" class="text-label-md text-on-surface-variant hover:text-on-surface">
                     {{ __('ui.cancel') }}
                 </a>
                 <x-primary-button>{{ __('ui.save') }}</x-primary-button>

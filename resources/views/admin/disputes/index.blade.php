@@ -5,7 +5,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-label-lg text-on-secondary-container">
+            <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif
@@ -37,24 +37,24 @@
         @else
             <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
                 @foreach ($disputes as $dispute)
-                    <article class="relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+                    <article class="relative overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest">
                         <div class="absolute left-0 top-0 h-1 w-full {{ $dispute->isOpen() ? 'bg-error' : 'bg-outline-variant' }}" aria-hidden="true"></div>
 
                         <div class="p-6">
                             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-md text-label-md uppercase tracking-wider text-on-surface">
+                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
                                         {{ \App\Models\Dispute::reasonLabel($dispute->reason) }}
                                     </span>
-                                    <span class="font-label-numeric text-label-lg text-on-surface-variant">{{ $dispute->created_at->translatedFormat('d M, H:i') }}</span>
+                                    <span class="font-label-numeric text-label-md text-on-surface-variant">{{ $dispute->created_at->translatedFormat('d M, H:i') }}</span>
                                 </div>
-                                <span class="font-label-numeric text-label-lg text-on-surface-variant">n° {{ $dispute->id }}</span>
+                                <span class="font-label-numeric text-label-md text-on-surface-variant">n° {{ $dispute->id }}</span>
                             </div>
 
                             <p class="font-headline-sm text-headline-sm text-on-surface">
                                 {{ $dispute->request?->service?->title ?? 'Demande directe' }}
                             </p>
-                            <p class="mt-1 text-label-lg text-on-surface-variant">
+                            <p class="mt-1 text-label-md text-on-surface-variant">
                                 {{ __('Déposé par :nom', ['nom' => $dispute->reporter?->name]) }}
                                 @if ($dispute->request)
                                     · <a href="{{ route('requests.show', $dispute->request) }}" class="text-primary hover:text-primary-container">{{ __('voir la demande') }}</a>
@@ -77,10 +77,10 @@
                             @if ($dispute->isOpen())
                                 <form action="{{ route('admin.disputes.resolve', $dispute) }}" method="POST" class="mt-6 border-t border-outline-variant pt-4">
                                     @csrf
-                                    <label for="resolution-{{ $dispute->id }}" class="mb-2 block text-label-lg font-medium text-on-surface">{{ __("Ce qui a été décidé") }}</label>
+                                    <label for="resolution-{{ $dispute->id }}" class="mb-2 block text-label-md font-medium text-on-surface">{{ __("Ce qui a été décidé") }}</label>
                                     <textarea id="resolution-{{ $dispute->id }}" name="resolution" rows="2" required maxlength="1000"
                                               placeholder="{{ __('Le déclarant recevra ce texte.') }}"
-                                              class="w-full resize-none rounded-lg border border-outline-variant bg-surface-container-low px-3 py-2 text-label-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary"></textarea>
+                                              class="w-full resize-none rounded-lg border border-outline-variant bg-surface-container-low px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary"></textarea>
                                     <x-input-error :messages="$errors->get('resolution')" class="mt-2" />
 
                                     <div class="mt-3 flex flex-wrap justify-end gap-3">
@@ -99,10 +99,10 @@
                                     <p class="mb-1 font-button-text text-button-text text-on-surface">
                                         {{ \App\Models\Dispute::statuses()[$dispute->status] ?? $dispute->status }}
                                         @if ($dispute->reviewer)
-                                            <span class="font-body-md text-label-lg font-normal text-on-surface-variant">par {{ $dispute->reviewer->name }}</span>
+                                            <span class="font-body-md text-label-md font-normal text-on-surface-variant">par {{ $dispute->reviewer->name }}</span>
                                         @endif
                                     </p>
-                                    <p class="text-label-lg text-on-surface-variant">{{ $dispute->resolution }}</p>
+                                    <p class="text-label-md text-on-surface-variant">{{ $dispute->resolution }}</p>
                                 </div>
                             @endif
                         </div>

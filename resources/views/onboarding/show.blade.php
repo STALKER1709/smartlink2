@@ -3,14 +3,14 @@
          traverse, il ne se parcourt pas. --}}
     <div class="flex min-h-screen flex-col">
         <main class="mx-auto flex w-full max-w-container flex-1 flex-col items-center justify-center px-margin-mobile pb-40 md:px-margin-desktop">
-            <div class="relative mb-8 aspect-square w-full max-w-[320px] overflow-hidden rounded-xl border border-outline-variant bg-secondary-container/30 shadow-sm md:max-w-[480px]">
+            <div class="relative mb-8 aspect-square w-full max-w-[320px] overflow-hidden rounded-xl border border-outline-variant bg-surface-container-high shadow-elevation-1 md:max-w-[480px]">
                 <div class="flex h-full w-full items-center justify-center">
                     <span class="material-symbols-outlined text-[120px] text-primary/40" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">{{ $contenu['icone'] }}</span>
                 </div>
             </div>
 
             <div class="max-w-[400px] text-center">
-                <h1 class="mb-4 font-headline-xl text-headline-xl text-primary">{{ $contenu['titre'] }}</h1>
+                <h1 class="mb-4 font-display-lg text-display-lg text-primary">{{ $contenu['titre'] }}</h1>
                 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ $contenu['texte'] }}</p>
             </div>
         </main>

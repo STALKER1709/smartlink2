@@ -9,7 +9,7 @@
             <div class="flex items-baseline justify-between border-b border-outline-variant pb-4">
                 <div>
                     <p class="font-semibold text-on-surface">{{ $plan->name() }}</p>
-                    <p class="text-label-lg text-on-surface-variant">{{ $plan->tagline() }}</p>
+                    <p class="text-label-md text-on-surface-variant">{{ $plan->tagline() }}</p>
                 </div>
                 <p class="font-label-numeric text-headline-md text-on-surface">{{ $plan->formattedPrice() }}</p>
             </div>
@@ -19,8 +19,8 @@
             {{-- Ce que la formule ouvre, et surtout ce qu'elle ferme : un
                  prestataire qui découvre ses limites après coup se croit
                  victime d'une panne. --}}
-            <p class="mt-6 text-label-lg font-semibold text-on-surface">{{ __('ui.subscription.free_included') }}</p>
-            <ul class="mt-2 space-y-1.5 text-label-lg text-on-surface">
+            <p class="mt-6 text-label-md font-semibold text-on-surface">{{ __('ui.subscription.free_included') }}</p>
+            <ul class="mt-2 space-y-1.5 text-label-md text-on-surface">
                 <li class="flex gap-2">
                     <span class="material-symbols-outlined text-base text-primary">check</span>
                     <span>{{ trans_choice('ui.plans.services_limit', $plan->max_services, ['count' => $plan->max_services]) }}</span>
@@ -31,8 +31,8 @@
                 </li>
             </ul>
 
-            <p class="mt-6 text-label-lg font-semibold text-on-surface">{{ __('ui.subscription.free_excluded') }}</p>
-            <ul class="mt-2 space-y-1.5 text-label-lg text-on-surface-variant">
+            <p class="mt-6 text-label-md font-semibold text-on-surface">{{ __('ui.subscription.free_excluded') }}</p>
+            <ul class="mt-2 space-y-1.5 text-label-md text-on-surface-variant">
                 @foreach (['ui.plans.featured', 'ui.plans.ai_writing', 'ui.plans.stats'] as $manque)
                     <li class="flex gap-2">
                         <span class="material-symbols-outlined text-base text-outline">close</span>
@@ -41,7 +41,7 @@
                 @endforeach
             </ul>
 
-            <div class="mt-6 rounded-lg bg-secondary-container/20 border border-outline-variant p-4 text-label-lg text-on-secondary-container space-y-2">
+            <div class="mt-6 rounded-lg bg-secondary-container/20 border border-outline-variant p-4 text-label-md text-on-secondary-container space-y-2">
                 <p>{{ __('ui.subscription.free_cap_warning', ['count' => $plan->max_services]) }}</p>
                 <p>{{ __('ui.subscription.free_upgrade_hint') }}</p>
             </div>
@@ -50,7 +50,7 @@
                 @csrf
 
                 <div class="flex items-center justify-between gap-3">
-                    <a href="{{ route('provider.subscription.show') }}" class="text-label-lg text-on-surface-variant hover:text-on-surface">
+                    <a href="{{ route('provider.subscription.show') }}" class="text-label-md text-on-surface-variant hover:text-on-surface">
                         {{ __('ui.cancel') }}
                     </a>
                     <x-primary-button>

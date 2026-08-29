@@ -79,8 +79,8 @@
             service. La liste correspond aux appels réellement effectués par l'application.
         </p>
 
-        <div class="mt-4 overflow-x-auto rounded-xl border border-outline-variant">
-            <table class="w-full min-w-[42rem] border-collapse text-left text-label-lg">
+        <div class="mt-4 overflow-x-auto rounded-xl border border-outline-variant shadow-elevation-1">
+            <table class="w-full min-w-[42rem] border-collapse text-left text-label-md">
                 <thead class="bg-surface-container-low">
                     <tr>
                         <th scope="col" class="p-3 font-semibold text-on-surface">Prestataire</th>

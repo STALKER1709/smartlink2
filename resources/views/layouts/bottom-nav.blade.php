@@ -26,14 +26,14 @@
                class="flex flex-1 flex-col items-center gap-0.5 px-1 pb-1.5 pt-2 text-center">
                 <span @class([
                     'flex h-7 w-14 items-center justify-center rounded-full transition-colors',
-                    'bg-secondary-container/60 text-primary' => $actif,
+                    'bg-primary-container/15 text-primary' => $actif,
                     'text-on-surface-variant' => ! $actif,
                 ])>
                     <span class="material-symbols-outlined text-[22px]"
                           @if ($actif) style="font-variation-settings: 'FILL' 1;" @endif>{{ $onglet['icone'] }}</span>
                 </span>
                 <span @class([
-                    'font-label-md text-label-md leading-tight',
+                    'font-label-sm text-label-sm leading-tight',
                     'font-semibold text-primary' => $actif,
                     'text-on-surface-variant' => ! $actif,
                 ])>{{ $onglet['court'] }}</span>
@@ -46,14 +46,14 @@
            class="flex flex-1 flex-col items-center gap-0.5 px-1 pb-1.5 pt-2 text-center">
             <span @class([
                 'flex h-7 w-14 items-center justify-center rounded-full transition-colors',
-                'bg-secondary-container/60 text-primary' => $compteActif,
+                'bg-primary-container/15 text-primary' => $compteActif,
                 'text-on-surface-variant' => ! $compteActif,
             ])>
                 <span class="material-symbols-outlined text-[22px]"
                       @if ($compteActif) style="font-variation-settings: 'FILL' 1;" @endif>{{ $compte['icone'] }}</span>
             </span>
             <span @class([
-                'font-label-md text-label-md leading-tight',
+                'font-label-sm text-label-sm leading-tight',
                 'font-semibold text-primary' => $compteActif,
                 'text-on-surface-variant' => ! $compteActif,
             ])>{{ $compte['court'] }}</span>

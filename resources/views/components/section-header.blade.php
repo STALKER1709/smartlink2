@@ -12,12 +12,12 @@
     <div class="min-w-0">
         <h2 class="font-headline-lg text-headline-lg text-on-surface">{{ $title }}</h2>
         @if ($subtitle)
-            <p class="mt-1 text-label-lg text-on-surface-variant">{{ $subtitle }}</p>
+            <p class="mt-1 text-label-md text-on-surface-variant">{{ $subtitle }}</p>
         @endif
     </div>
 
     @if ($href)
-        <a href="{{ $href }}" class="flex shrink-0 items-center gap-1 text-label-lg font-semibold text-primary hover:text-primary-container">
+        <a href="{{ $href }}" class="flex shrink-0 items-center gap-1 text-label-md font-semibold text-primary hover:text-primary-container">
             {{ $linkLabel }}
             <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
         </a>

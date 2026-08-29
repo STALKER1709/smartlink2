@@ -5,7 +5,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-secondary-container/30 px-4 py-3 text-label-lg text-on-secondary-container">
+            <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif
@@ -29,11 +29,11 @@
         @else
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($favorites as $profil)
-                    <div class="relative flex flex-col gap-4 rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
+                    <div class="relative flex flex-col gap-4 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-4">
                         <x-favorite-button :provider-profile="$profil" flottant />
 
                         <a href="{{ route('providers.show', $profil) }}" class="group flex items-start gap-4 pr-12">
-                            <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-secondary-container/40">
+                            <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-surface-container-high">
                                 @if ($profil->logo_path)
                                     <img src="{{ media_url($profil->logo_path) }}" alt="" loading="lazy" class="h-full w-full object-cover" onerror="this.remove()">
                                 @else
@@ -41,11 +41,11 @@
                                 @endif
                             </div>
                             <div class="min-w-0">
-                                <p class="text-label-md font-semibold uppercase tracking-wide text-primary">{{ $profil->category?->name }}</p>
+                                <p class="text-label-sm font-semibold uppercase tracking-wide text-primary">{{ $profil->category?->name }}</p>
                                 <h3 class="mt-1 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
                                     {{ $profil->business_name }}
                                 </h3>
-                                <p class="mt-1 text-label-lg text-on-surface-variant">
+                                <p class="mt-1 text-label-md text-on-surface-variant">
                                     {{ $profil->city }}
                                     <span aria-hidden="true" class="text-outline">·</span>
                                     <span class="font-label-numeric">{{ $profil->services_count }}</span> {{ Str::plural('service', $profil->services_count) }}
@@ -57,7 +57,7 @@
                             @if ($profil->rating_count)
                                 <x-star-rating :rating="$profil->rating_avg" :count="$profil->rating_count" compact />
                             @else
-                                <span class="text-label-md text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
+                                <span class="text-label-sm text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
                             @endif
 
                             <a href="{{ route('requests.create', ['provider_id' => $profil->user_id]) }}"

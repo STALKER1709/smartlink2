@@ -15,7 +15,7 @@
     elle ne portait plus que deux propriétés que la charte interdit.
 --}}
 <form action="{{ route('services.index') }}" method="GET" {{ $attributes->only('class') }}>
-    <div class="flex flex-col gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-2 sm:flex-row sm:items-center">
+    <div class="flex flex-col gap-2 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-2 sm:flex-row sm:items-center">
         <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
 
         <div class="flex flex-1 items-center gap-2 px-3">
@@ -39,5 +39,5 @@
         </button>
     </div>
 
-    <p class="mt-2 px-1 text-label-md text-on-surface-variant">{{ __('ui.search.natural_hint') }}</p>
+    <p class="mt-2 px-1 text-label-sm text-on-surface-variant">{{ __('ui.search.natural_hint') }}</p>
 </form>

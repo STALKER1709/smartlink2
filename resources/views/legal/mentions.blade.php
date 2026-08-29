@@ -18,7 +18,7 @@
     <section id="editeur">
         <h2 class="font-headline-lg text-headline-lg text-on-surface">1. Éditeur du site</h2>
 
-        <dl class="mt-4 divide-y divide-outline-variant rounded-xl border border-outline-variant bg-surface-container-lowest">
+        <dl class="mt-4 divide-y divide-outline-variant rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest">
             @foreach ([
                 'Raison sociale' => $e['raison_sociale'],
                 'Forme juridique' => $e['forme_juridique'],
@@ -31,7 +31,7 @@
                 'Téléphone' => $e['telephone'],
             ] as $libelle => $valeur)
                 <div class="flex flex-col gap-1 p-4 sm:flex-row sm:items-baseline sm:gap-4">
-                    <dt class="w-full shrink-0 text-label-lg text-on-surface-variant sm:w-64">{{ $libelle }}</dt>
+                    <dt class="w-full shrink-0 text-label-md text-on-surface-variant sm:w-64">{{ $libelle }}</dt>
                     <dd @class(['text-on-surface', 'text-outline' => ! $valeur])>{{ $manquant($valeur) }}</dd>
                 </div>
             @endforeach
@@ -62,7 +62,7 @@
             partielle, sans autorisation écrite préalable est interdite.
         </p>
         <p class="mt-3">
-            Les polices de caractères employées — Hanken Grotesk, Source Sans 3, JetBrains Mono — et
+            Les polices de caractères employées — Lexend, Inter, JetBrains Mono — et
             les icônes Material Symbols sont diffusées sous licences libres par leurs auteurs
             respectifs.
         </p>

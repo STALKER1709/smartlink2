@@ -48,7 +48,7 @@
                     {{-- Le bouton passe sous la ligne quand la place manque :
                          côte à côte à 390 px, il réduisait « Soudure &
                          ferronnerie • 4,0 ★ » à trois lignes. --}}
-                    <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-4">
                         <div class="flex min-w-0 flex-1 items-center gap-4">
                             <div class="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-outline-variant bg-surface-container-high">
                                 @if ($profil?->logo_path)
@@ -81,7 +81,7 @@
                 @endif
 
                 @if ($serviceRequest->message)
-                    <div class="rounded-xl border border-outline-variant bg-surface-container-low p-4 md:p-6">
+                    <div class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-low p-4 md:p-6">
                         <h3 class="mb-2 flex items-center gap-2 font-button-text text-button-text text-on-surface">
                             <span class="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
                             {{ __("Message initial") }}
@@ -91,8 +91,8 @@
                 @endif
 
                 @if ($serviceRequest->preferred_date || $serviceRequest->service)
-                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-4 md:p-6">
-                        <dl class="grid grid-cols-1 gap-3 text-label-lg sm:grid-cols-2">
+                    <div class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-4 md:p-6">
+                        <dl class="grid grid-cols-1 gap-3 text-label-md sm:grid-cols-2">
                             @if ($serviceRequest->service)
                                 <div>
                                     <dt class="text-on-surface-variant">{{ __("Service concerné") }}</dt>
@@ -122,7 +122,7 @@
                                  menu. Des boutons radio, donc — l'étoile reste
                                  cliquable sans JavaScript. --}}
                             <fieldset>
-                                <legend class="block font-medium text-label-lg text-on-surface-variant">{{ __("Votre note") }}</legend>
+                                <legend class="block font-medium text-label-md text-on-surface-variant">{{ __("Votre note") }}</legend>
                                 <div class="mt-1 flex flex-row-reverse justify-end gap-1">
                                     @for ($i = 5; $i >= 1; $i--)
                                         <input type="radio" id="rating-{{ $i }}" name="rating" value="{{ $i }}" required class="peer sr-only">
@@ -138,7 +138,7 @@
                             </fieldset>
                             <div>
                                 <x-input-label for="comment" :value="__('Commentaire (facultatif)')" />
-                                <textarea id="comment" name="comment" rows="3" maxlength="1000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary"></textarea>
+                                <textarea id="comment" name="comment" rows="3" maxlength="1000" class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary"></textarea>
                                 <x-input-error :messages="$errors->get('comment')" class="mt-2" />
                             </div>
                             <x-primary-button type="submit">{{ __("Envoyer mon avis") }}</x-primary-button>
@@ -151,7 +151,7 @@
                         <h3 class="font-headline-md text-headline-md text-on-surface mb-2">{{ __("Votre avis") }}</h3>
                         <x-star-rating :rating="$serviceRequest->review->rating" />
                         @if ($serviceRequest->review->comment)
-                            <p class="mt-2 text-label-lg text-on-surface">{{ $serviceRequest->review->comment }}</p>
+                            <p class="mt-2 text-label-md text-on-surface">{{ $serviceRequest->review->comment }}</p>
                         @endif
                     </div>
                 @endif
@@ -164,20 +164,20 @@
                             <li class="flex gap-3">
                                 <div class="h-2 w-2 mt-1.5 rounded-full bg-primary shrink-0"></div>
                                 <div>
-                                    <p class="text-label-lg text-on-surface">
+                                    <p class="text-label-md text-on-surface">
                                         @if ($history->from_status)
                                             {{ $statusLabels[$history->from_status] ?? $history->from_status }} →
                                         @endif
                                         {{ $statusLabels[$history->to_status] ?? $history->to_status }}
                                     </p>
-                                    <p class="text-label-md text-on-surface-variant">
+                                    <p class="text-label-sm text-on-surface-variant">
                                         {{ $history->created_at->format('d/m/Y H:i') }}
                                         @if ($history->changedBy)
                                             · {{ $history->changedBy->name }}
                                         @endif
                                     </p>
                                     @if ($history->note)
-                                        <p class="text-label-md text-on-surface-variant mt-0.5">{{ $history->note }}</p>
+                                        <p class="text-label-sm text-on-surface-variant mt-0.5">{{ $history->note }}</p>
                                     @endif
                                 </div>
                             </li>
@@ -189,7 +189,7 @@
                      la demande engagée, et pas déjà un signalement ouvert. --}}
                 @can('create', [\App\Models\Dispute::class, $serviceRequest])
                     <a href="{{ route('disputes.create', $serviceRequest) }}"
-                       class="inline-flex items-center gap-2 text-label-lg font-medium text-on-surface-variant transition-colors hover:text-error">
+                       class="inline-flex items-center gap-2 text-label-md font-medium text-on-surface-variant transition-colors hover:text-error">
                         <span class="material-symbols-outlined text-base" aria-hidden="true">flag</span>
                         {{ __("Signaler un problème sur cette demande") }}
                     </a>
@@ -202,7 +202,7 @@
                 @if ($serviceRequest->conversation)
                     <x-message-thread :conversation="$serviceRequest->conversation" />
                 @else
-                    <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6 text-label-lg text-on-surface-variant">
+                    <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6 text-label-md text-on-surface-variant">
                         {{ __("La conversation s'ouvrira automatiquement une fois la demande acceptée par le prestataire.") }}
                     </div>
                 @endif

@@ -16,19 +16,19 @@
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         @if (session('status'))
-            <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-label-lg text-on-secondary-container">
+            <div class="mb-4 rounded-md bg-primary-container/15 border border-outline-variant px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif
 
-        <form method="GET" class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <form method="GET" class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-elevation-1 p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
                 <x-input-label for="term" :value="__('Recherche')" />
                 <x-text-input id="term" name="term" type="text" class="mt-1 block w-full" :value="request('term')" :placeholder="__('Nom ou email')" />
             </div>
             <div>
                 <x-input-label for="role" :value="__('Rôle')" />
-                <select id="role" name="role" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
+                <select id="role" name="role" class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary">
                     <option value="">{{ __("Tous") }}</option>
                     @foreach ($roles as $valeur => $libelle)
                         <option value="{{ $valeur }}" @selected(request('role') === $valeur)>{{ $libelle }}</option>
@@ -36,7 +36,7 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-label-lg font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-label-md font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
                     {{ __("Filtrer") }}
                 </button>
             </div>
@@ -66,8 +66,8 @@
                                     <x-status-badge :status="$user->status" />
                                 @endif
                             </div>
-                            <p class="mt-0.5 break-all text-label-lg text-on-surface-variant">{{ $user->email }}</p>
-                            <p class="mt-0.5 text-label-lg text-on-surface-variant">
+                            <p class="mt-0.5 break-all text-label-md text-on-surface-variant">{{ $user->email }}</p>
+                            <p class="mt-0.5 text-label-md text-on-surface-variant">
                                 {{ $roles[$user->role] ?? $user->role }} ·
                                 inscrit le <span class="font-label-numeric">{{ $user->created_at->format('d/m/Y') }}</span>
                             </p>
@@ -77,14 +77,14 @@
                             @can('suspend', $user)
                                 <form action="{{ route('admin.users.suspend', $user) }}" method="POST" onsubmit="return confirm('Suspendre le compte de {{ $user->name }} ?');">
                                     @csrf
-                                    <button type="submit" class="text-label-lg font-medium text-error hover:opacity-80">{{ __("Suspendre") }}</button>
+                                    <button type="submit" class="text-label-md font-medium text-error hover:opacity-80">{{ __("Suspendre") }}</button>
                                 </form>
                             @endcan
                             @can('reactivate', $user)
                                 @if ($user->status === \App\Models\User::STATUS_SUSPENDED)
                                     <form action="{{ route('admin.users.reactivate', $user) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-label-lg font-medium text-secondary hover:opacity-80">{{ __("Réactiver") }}</button>
+                                        <button type="submit" class="text-label-md font-medium text-secondary hover:opacity-80">{{ __("Réactiver") }}</button>
                                     </form>
                                 @endif
                             @endcan

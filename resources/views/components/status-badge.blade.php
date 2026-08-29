@@ -20,7 +20,7 @@
         // de tous les verts.
         'draft' => 'bg-surface-container-high text-on-surface-variant',
         'sent' => 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-        'viewed' => 'bg-secondary-container text-on-secondary-container',
+        'viewed' => 'bg-primary-container/20 text-primary',
 
         // Engagé.
         'accepted' => 'bg-secondary-fixed-dim text-on-secondary-fixed-variant',
@@ -34,7 +34,7 @@
         'cancelled' => 'bg-surface-container-high text-on-surface-variant line-through',
 
         // États de service et de compte.
-        'active' => 'bg-secondary-container text-on-secondary-container',
+        'active' => 'bg-primary-container/20 text-primary',
         'inactive' => 'bg-surface-container-high text-on-surface-variant',
         'suspended' => 'bg-error-container text-on-error-container',
     ];
@@ -45,8 +45,8 @@
      demandes. --}}
 @php
     $forme = $variant === 'caps'
-        ? 'rounded-sm px-2 py-1 font-label-md text-label-md uppercase tracking-wider'
-        : 'rounded-full px-3 py-1 font-button-text text-label-md font-semibold';
+        ? 'rounded-sm px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider'
+        : 'rounded-full px-3 py-1 font-button-text text-label-sm font-semibold';
 @endphp
 
 <span {{ $attributes->merge(['class' => 'inline-flex items-center '.$forme.' '.($colors[$status] ?? 'bg-surface-container-high text-on-surface-variant')]) }}>

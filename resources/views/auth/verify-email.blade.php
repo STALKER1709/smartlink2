@@ -1,10 +1,10 @@
 <x-guest-layout :titre="'Vérifier votre e-mail'" :indexable="false">
-    <div class="mb-4 text-label-lg text-on-surface-variant">
+    <div class="mb-4 text-label-md text-on-surface-variant">
         {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
     </div>
 
     @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-label-lg text-secondary">
+        <div class="mb-4 font-medium text-label-md text-secondary">
             {{ __('A new verification link has been sent to the email address you provided during registration.') }}
         </div>
     @endif
@@ -23,7 +23,7 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
 
-            <button type="submit" class="underline text-label-lg text-on-surface-variant hover:text-on-surface rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            <button type="submit" class="underline text-label-md text-on-surface-variant hover:text-on-surface rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                 {{ __('Log Out') }}
             </button>
         </form>

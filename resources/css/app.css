@@ -14,16 +14,16 @@
  */
 @layer base {
     ::selection {
-        background-color: #aff1cf; /* secondary-container */
-        color: #00432c;
+        background-color: #feb637; /* secondary-container */
+        color: #6e4900;
     }
 
     :root {
         /* Le curseur de saisie prend le vert de la marque, et les barres de
            défilement se fondent dans la page au lieu d'y poser deux traits
            gris système. */
-        caret-color: #005538;
-        scrollbar-color: #bec9c0 transparent;
+        caret-color: #005f48;
+        scrollbar-color: #bdc9c2 transparent;
         scrollbar-width: thin;
     }
 
@@ -37,7 +37,7 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background-color: #bec9c0; /* outline-variant */
+        background-color: #bdc9c2; /* outline-variant */
         border: 3px solid transparent;
         border-radius: 9999px;
         background-clip: content-box;
@@ -54,7 +54,7 @@
      * ni rouge.
      */
     :focus-visible {
-        outline: 2px solid #005538;
+        outline: 2px solid #005f48;
         outline-offset: 2px;
         border-radius: 4px;
     }
