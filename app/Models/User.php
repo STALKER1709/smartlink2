@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +18,7 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'phone', 'password', 'role', 'locale'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -57,9 +58,19 @@ class User extends Authenticatable
         $this->forceFill(['phone_verified_at' => now()])->save();
     }
 
+    /**
+     * La langue dans laquelle écrire à cette personne.
+     *
+     * Lue par Laravel du fait de `HasLocalePreference` — sans le contrat, la
+     * méthode existait sans que rien ne l'appelle jamais. Elle compte surtout
+     * pour la réinitialisation de mot de passe : l'utilisateur n'est alors pas
+     * connecté, la langue de la session n'existe pas, et le message partait
+     * donc systématiquement dans la langue par défaut, quelle que soit celle
+     * choisie par le destinataire.
+     */
     public function preferredLocale(): string
     {
-        return $this->locale ?? 'fr';
+        return $this->locale ?? config('app.fallback_locale', 'fr');
     }
 
     public function clientProfile(): HasOne
