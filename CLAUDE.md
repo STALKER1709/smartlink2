@@ -180,6 +180,30 @@ traverse plusieurs requêtes simulées ou qui écrit en masse
 reconstruit son utilisateur depuis la session, pas un test qui en garde un seul.
 `tests/Feature/Subscription/SubscriptionMemoTest.php` monte la garde.
 
+## Analyse statique
+
+`phpstan.neon` est écrit et le CI l'exécute — mais **larastan n'est pas encore
+installé**, et c'est délibéré, pas un oubli. `phpstan/phpstan` n'est distribué
+que par un zip de l'API GitHub (aucune `source` dans ses métadonnées), et cet
+hôte est inaccessible depuis l'environnement où le dépôt a été préparé : ni
+`--prefer-source`, ni `use-github-api false` ne contournent le problème,
+puisqu'il n'y a rien d'autre à récupérer.
+
+Sans larastan, PHPStan ne sait pas ce que rend `User::create()` ni quel type a
+une colonne lue en propriété : il signale 404 « erreurs » sur ce dépôt, dont
+aucune n'est un vrai défaut. Un baseline construit dans ces conditions serait
+un mensonge figé.
+
+Depuis une machine ayant accès à GitHub, deux commandes suffisent :
+
+```bash
+composer require --dev larastan/larastan
+vendor/bin/phpstan analyse --generate-baseline
+```
+
+Le passage « Analyse statique » du CI s'allume alors tout seul : il est écrit
+pour ne rien faire tant que `vendor/bin/phpstan` n'existe pas.
+
 ⚠️ **`APP_URL` est un réglage de sécurité, pas seulement de confort.** Laravel
 compose ses URL absolues à partir de l'en-tête `Host` de la requête — et de
 `X-Forwarded-Host`, honoré parce que `trustProxies(at: '*')` fait confiance à

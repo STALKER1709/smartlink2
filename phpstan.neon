@@ -1,0 +1,36 @@
+# Analyse statique — voir CLAUDE.md, « Analyse statique ».
+#
+# La configuration attend larastan/larastan, qui apporte à PHPStan ce qu'il ne
+# peut pas deviner d'une application Laravel : ce que rend `User::create()`,
+# le type d'une colonne lue en propriété, ce qu'une portée d'Eloquent produit.
+# Sans lui, PHPStan signale ces constructions comme des erreurs — 404 sur ce
+# dépôt, dont aucune n'est un vrai défaut.
+#
+# Installation (une seule fois, sur une machine avec accès à GitHub) :
+#
+#     composer require --dev larastan/larastan
+#     vendor/bin/phpstan analyse --generate-baseline
+#
+# La seconde commande fige l'existant : le CI ne rougit alors que sur ce qui
+# est ajouté après, ce qui rend l'outil utilisable dès le premier jour au lieu
+# de demander une reprise complète avant d'être branché.
+
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+
+    paths:
+        - app
+        - database
+        - routes
+
+    # Les fichiers produits par Blade, et le point d'entrée serverless qui
+    # déplace des chemins avant que Laravel ne démarre.
+    excludePaths:
+        - storage/framework/views/*
+
+    # Une propriété de modèle mal orthographiée rend `null` sans rien dire :
+    # c'est le genre de faute que seule l'analyse statique attrape.
+    checkModelProperties: true
