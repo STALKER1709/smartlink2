@@ -24,6 +24,10 @@
 
 includes:
     - vendor/larastan/larastan/extension.neon
+    # L'existant, figé. `--generate-baseline` écrit ce fichier mais ne le
+    # branche pas : sans cette ligne, les 111 erreurs sont analysées et
+    # signalées comme si de rien n'était.
+    - phpstan-baseline.neon
 
 parameters:
     level: 5
@@ -41,3 +45,15 @@ parameters:
     # Une propriété de modèle mal orthographiée rend `null` sans rien dire :
     # c'est le genre de faute que seule l'analyse statique attrape.
     checkModelProperties: true
+
+    # Corriger une erreur figée ne doit pas casser le CI.
+    #
+    # Par défaut, PHPStan signale une entrée du baseline qui ne correspond
+    # plus à rien — et le passage échoue. Autrement dit, réparer un défaut
+    # rendrait le CI rouge tant que le baseline n'a pas été régénéré, ce qui
+    # demande une machine, la bonne limite mémoire et un commit de plus.
+    # Punir la réparation est le plus sûr moyen qu'elle n'ait pas lieu.
+    #
+    # Contrepartie : le baseline garde des entrées périmées. Le régénérer de
+    # temps en temps le remet au propre.
+    reportUnmatchedIgnoredErrors: false
