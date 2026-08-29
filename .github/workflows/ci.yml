@@ -102,7 +102,12 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      - run: php artisan test --configuration=phpunit.pgsql.xml
+      # PHPUnit est appelé directement, et non par `php artisan test`.
+      # Ce dernier rend un code de sortie 1 avec `--configuration`, alors que
+      # les 652 tests passent : le passage était rouge sur une suite verte.
+      # `phpunit.pgsql.xml` porte lui-même tous les DB_* en `force="true"`,
+      # la surcouche n'apportait donc rien ici.
+      - run: vendor/bin/phpunit --configuration=phpunit.pgsql.xml
 
   # ---------------------------------------------------------------------
   # Style et dépendances : rapide, sans base de données.

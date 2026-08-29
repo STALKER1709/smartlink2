@@ -83,8 +83,15 @@ Et, dès que tu touches à une requête, à une contrainte ou à une migration, 
 second passage sur le moteur de la production :
 
 ```bash
-php artisan test --configuration=phpunit.pgsql.xml   # PostgreSQL local requis
+vendor/bin/phpunit --configuration=phpunit.pgsql.xml   # PostgreSQL local requis
 ```
+
+⚠️ **PHPUnit directement, pas `php artisan test --configuration=…`.** Cette
+seconde forme rend un code de sortie 1 alors que la suite entière passe — le
+résumé annonce « 652 passed » et le processus échoue quand même. On le voit sur
+un CI, jamais à l'œil dans un terminal, et on cherche alors un test cassé qui
+n'existe pas. `phpunit.pgsql.xml` porte lui-même tous les `DB_*` en
+`force="true"` : la surcouche d'Artisan n'apporte rien sur ce passage.
 
 ⚠️ Le glob de contenu de Tailwind inclut `storage/framework/views`, le cache des vues
 Blade compilées. Après un changement de classes, les anciennes survivent dans la feuille
