@@ -19,10 +19,10 @@
             <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10">
                 <a href="{{ route('home') }}" class="mx-auto flex items-center gap-2.5 text-primary">
                     <x-application-logo class="h-9 w-9" />
-                    <span class="font-headline-lg text-2xl font-extrabold tracking-tight text-on-surface">SmartLink</span>
+                    <span class="font-headline-md text-headline-md font-extrabold tracking-tight text-on-surface">SmartLink</span>
                 </a>
 
-                <div class="mt-8 rounded-2xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm sm:p-8">
+                <div class="mt-8 rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm sm:p-8">
                     {{ $slot }}
                 </div>
 

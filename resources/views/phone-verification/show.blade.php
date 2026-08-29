@@ -1,10 +1,10 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
+    <div class="mb-4 text-sm text-on-surface-variant">
         {{ __('ui.phone_verification.description', ['phone' => Auth::user()->phone]) }}
     </div>
 
     @if (session('status'))
-        <div class="mb-4 text-sm font-medium text-green-600">
+        <div class="mb-4 text-sm font-medium text-secondary">
             {{ session('status') }}
         </div>
     @endif
@@ -42,7 +42,7 @@
         </form>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="text-gray-500 hover:text-gray-700">
+            <button type="submit" class="text-on-surface-variant hover:text-on-surface">
                 {{ __('ui.phone_verification.logout') }}
             </button>
         </form>

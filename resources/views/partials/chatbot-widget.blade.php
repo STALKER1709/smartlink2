@@ -53,7 +53,7 @@
     <!-- Toggle Button -->
     <button
         @click="open = ! open"
-        class="flex items-center justify-center h-14 w-14 rounded-full bg-primary-container text-white shadow-lg hover:scale-105 active:scale-95 transition-all focus:outline-none"
+        class="flex h-14 w-14 items-center justify-center rounded-full border border-outline-variant bg-primary-container text-on-primary transition-colors hover:bg-primary focus:outline-none"
         aria-label="{{ __('ui.assistant.title') }}"
     >
         <span x-show="! open" class="material-symbols-outlined" style="font-size: 28px;">chat</span>
@@ -68,12 +68,12 @@
         class="absolute bottom-16 right-0 w-80 sm:w-96 bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant flex flex-col overflow-hidden"
         style="height: 28rem;"
     >
-        <div class="flex items-center gap-3 bg-primary-container px-4 py-3 text-white">
-            <div class="flex size-9 shrink-0 items-center justify-center bg-white/20 rounded-full">
+        <div class="flex items-center gap-3 bg-primary-container px-4 py-3 text-on-primary">
+            <div class="flex size-9 shrink-0 items-center justify-center bg-on-primary/20 rounded-full">
                 <span class="material-symbols-outlined text-lg">smart_toy</span>
             </div>
             <div>
-                <h3 class="font-semibold text-sm leading-tight">{{ __('ui.assistant.title') }}</h3>
+                <h3 class="font-headline-sm text-headline-sm leading-tight">{{ __('ui.assistant.title') }}</h3>
                 <p class="text-xs text-on-primary-container">{{ __('ui.assistant.subtitle') }}</p>
             </div>
         </div>

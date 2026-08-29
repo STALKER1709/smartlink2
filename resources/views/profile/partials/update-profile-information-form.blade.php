@@ -33,7 +33,7 @@
                     @if ($photo)
                         <img src="{{ media_url($photo) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
                     @else
-                        <span class="font-headline-lg text-2xl font-bold text-primary">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
+                        <span class="font-headline-md text-2xl font-bold text-primary">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                     @endif
                 </div>
 

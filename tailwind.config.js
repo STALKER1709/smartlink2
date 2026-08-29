@@ -82,6 +82,7 @@ export default {
                 'headline-xl': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
                 'headline-lg': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
                 'headline-md': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
+                'headline-sm': ['Hanken Grotesk', ...defaultTheme.fontFamily.sans],
                 'body-lg': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
                 'body-md': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
                 'button-text': ['Source Sans 3', ...defaultTheme.fontFamily.sans],
@@ -92,6 +93,10 @@ export default {
                 'headline-xl': ['36px', { lineHeight: '44px', letterSpacing: '-0.02em', fontWeight: '800' }],
                 'headline-lg': ['28px', { lineHeight: '34px', letterSpacing: '-0.01em', fontWeight: '700' }],
                 'headline-md': ['22px', { lineHeight: '28px', letterSpacing: '-0.01em', fontWeight: '600' }],
+                // Le titre d'une carte ou d'une rangée. Il manquait : six vues
+                // l'avaient reconstitué à la main en `text-base font-semibold`,
+                // et deux d'entre elles avaient déjà dérivé d'un pixel.
+                'headline-sm': ['16px', { lineHeight: '24px', letterSpacing: '-0.01em', fontWeight: '600' }],
                 'body-lg': ['18px', { lineHeight: '26px', fontWeight: '400' }],
                 'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
                 'label-numeric': ['14px', { lineHeight: '20px', fontWeight: '500' }],

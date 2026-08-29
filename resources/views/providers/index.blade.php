@@ -16,7 +16,7 @@
     <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-desktop">
 
         <form action="{{ route('providers.index') }}" method="GET">
-            <div class="flex flex-col gap-2 rounded-2xl border border-outline-variant bg-surface-container-lowest p-2 shadow-sm sm:flex-row sm:items-center">
+            <div class="flex flex-col gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-2 shadow-sm sm:flex-row sm:items-center">
                 <label for="term" class="sr-only">Rechercher un prestataire</label>
                 <div class="flex flex-1 items-center gap-2 px-3">
                     <span class="material-symbols-outlined text-on-surface-variant">search</span>

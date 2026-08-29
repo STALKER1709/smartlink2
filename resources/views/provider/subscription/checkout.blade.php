@@ -45,7 +45,7 @@
                                 <input type="radio" name="operator" value="{{ $value }}"
                                        @checked(old('operator') === $value)
                                        class="sr-only peer">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shadow-inner {{ $meta[1] }}">{{ $meta[2] }}</div>
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs {{ $meta[1] }}">{{ $meta[2] }}</div>
                                 <span class="text-sm font-medium text-on-surface text-center">{{ __($meta[0]) }}</span>
                                 <span class="material-symbols-outlined absolute top-2 right-2 text-primary text-lg opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: 'FILL' 1;">check_circle</span>
                             </label>

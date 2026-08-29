@@ -81,7 +81,7 @@
             <a href="{{ route('admin.moderation.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 {{ __('ui.moderation.title') }}
                 @if (($stats['moderation_pending'] ?? 0) > 0)
-                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-tertiary px-2 py-0.5 font-label-numeric text-xs font-bold text-white">{{ $stats['moderation_pending'] }}</span>
+                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-tertiary px-2 py-0.5 font-label-numeric text-xs font-bold text-on-tertiary">{{ $stats['moderation_pending'] }}</span>
                 @endif
             </a>
             <a href="{{ route('admin.disputes.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">

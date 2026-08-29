@@ -26,7 +26,7 @@
             <div class="lg:col-span-2">
                 {{-- Une image maîtresse plutôt qu'une mosaïque : c'est elle qui
                      donne envie, les autres ne sont que des compléments. --}}
-                <div class="overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
+                <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
                     <div class="aspect-[16/9] bg-secondary-container/40">
                         @if ($service->images->isNotEmpty())
                             <img src="{{ media_url($service->images->first()->path) }}" alt="{{ $service->title }}" class="h-full w-full object-cover">
@@ -84,7 +84,7 @@
 
             {{-- Colonne d'action, collante au défilement sur grand écran. --}}
             <aside class="lg:sticky lg:top-6 lg:self-start">
-                <div class="hidden rounded-2xl border border-outline-variant bg-surface-container-lowest p-5 lg:block">
+                <div class="hidden rounded-xl border border-outline-variant bg-surface-container-lowest p-5 lg:block">
                     <div class="font-label-numeric text-2xl text-on-surface">
                         @if ($prix)
                             {{ $prix }}

@@ -221,7 +221,7 @@
                             </span>
                             <span class="font-label-numeric text-label-numeric text-on-surface-variant">0{{ $index + 1 }}</span>
                         </div>
-                        <h3 class="mt-4 font-headline-md text-base font-semibold text-on-surface">{{ $titre }}</h3>
+                        <h3 class="mt-4 font-headline-sm text-headline-sm text-on-surface">{{ $titre }}</h3>
                         <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">{{ $texte }}</p>
                     </li>
                 @endforeach

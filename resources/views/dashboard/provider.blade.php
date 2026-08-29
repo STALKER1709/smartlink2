@@ -78,7 +78,7 @@
                                 {{ Str::upper(Str::substr($client?->clientProfile?->fullName() ?? $client?->name ?? '?', 0, 2)) }}
                             </span>
                             <div class="min-w-0">
-                                <h4 class="font-headline-md text-lg text-on-background group-hover:text-primary">
+                                <h4 class="font-headline-sm text-headline-sm text-on-background group-hover:text-primary">
                                     {{ $client?->clientProfile?->fullName() ?? $client?->name }}
                                 </h4>
                                 <p class="font-body-md text-body-md text-on-surface-variant">

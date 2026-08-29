@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h1 class="font-headline-lg text-2xl font-bold text-on-surface">Créer votre compte</h1>
+    <h1 class="font-headline-md text-headline-md text-on-surface">Créer votre compte</h1>
     <p class="mt-1 text-sm text-on-surface-variant">Gratuit pour les clients. 30 jours d'essai pour les prestataires.</p>
 
     <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4" x-data="{ role: '{{ old('role', 'client') }}' }">

@@ -20,7 +20,7 @@
             @if ($sections)
                 <nav class="mb-8 shrink-0 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 lg:sticky lg:top-6 lg:mb-0 lg:w-64"
                      aria-label="Sommaire">
-                    <p class="font-headline-md text-base text-on-surface">Sommaire</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">Sommaire</p>
                     <ol class="mt-3 space-y-2">
                         @foreach ($sections as $ancre => $libelle)
                             <li>

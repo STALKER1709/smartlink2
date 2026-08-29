@@ -1,4 +1,4 @@
-@props(['hero' => false, 'value' => null])
+@props(['value' => null])
 
 {{--
     La recherche en langage naturel — l'entrée principale du produit.
@@ -9,15 +9,13 @@
     champ de l'accueil avait déjà pris l'alignement centré de son bloc parent,
     pas celui de la liste.
 
-    `hero` pour la version posée sur le vert : ombre plutôt que bordure, qui ne
-    se verrait pas, et texte d'aide en blanc.
+    Une variante `hero` a existé, pour la version posée sur le bandeau vert de
+    l'accueil : ombre au lieu de bordure, texte d'aide en blanc. Le bandeau vert
+    est parti avec la maquette de l'accueil, et la variante est partie avec lui —
+    elle ne portait plus que deux propriétés que la charte interdit.
 --}}
 <form action="{{ route('services.index') }}" method="GET" {{ $attributes->only('class') }}>
-    <div @class([
-        'flex flex-col gap-2 rounded-2xl bg-surface-container-lowest p-2 sm:flex-row sm:items-center',
-        'shadow-xl' => $hero,
-        'border border-outline-variant shadow-sm' => ! $hero,
-    ])>
+    <div class="flex flex-col gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-2 sm:flex-row sm:items-center">
         <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
 
         <div class="flex flex-1 items-center gap-2 px-3">
@@ -41,8 +39,5 @@
         </button>
     </div>
 
-    <p @class([
-        'mt-3 text-sm text-white/75' => $hero,
-        'mt-2 px-1 text-xs text-on-surface-variant' => ! $hero,
-    ])>{{ __('ui.search.natural_hint') }}</p>
+    <p class="mt-2 px-1 text-xs text-on-surface-variant">{{ __('ui.search.natural_hint') }}</p>
 </form>

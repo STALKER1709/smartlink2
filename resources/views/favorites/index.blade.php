@@ -42,7 +42,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-primary">{{ $profil->category?->name }}</p>
-                                <h3 class="mt-1 font-headline-md text-base font-semibold leading-snug text-on-surface group-hover:text-primary">
+                                <h3 class="mt-1 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
                                     {{ $profil->business_name }}
                                 </h3>
                                 <p class="mt-1 text-sm text-on-surface-variant">

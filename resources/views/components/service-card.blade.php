@@ -42,7 +42,7 @@
             <x-promoted-badge :profile="$profile" />
         </div>
 
-        <h3 class="mt-1 font-headline-md text-base font-semibold leading-snug text-on-surface group-hover:text-primary sm:text-lg">
+        <h3 class="mt-1 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
             {{ $service->title }}
         </h3>
 

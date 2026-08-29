@@ -161,6 +161,13 @@ Deux intentions, deux familles.
   compteurs. La chasse fixe aligne les colonnes de montants dans une liste, et distingue
   au premier coup d'œil une donnée d'une phrase.
 
+Quatre paliers de titre, et pas un de plus : `headline-xl` 36/44 poids 800,
+`headline-lg` 28/34 poids 700, `headline-md` 22/28 poids 600, `headline-sm` 16/24
+poids 600. Le dernier est le titre d'une carte ou d'une rangée de liste ; il a été
+ajouté parce qu'il manquait, et que six vues l'avaient reconstitué à la main en
+`text-base font-semibold` — deux d'entre elles avec un pixel d'écart. Un titre écrit
+avec une taille hors de cette table est un palier de plus que personne n'a décidé.
+
 Les termes techniques français sont plus longs que leurs équivalents anglais. Les
 libellés de boutons et d'onglets doivent être éprouvés à 390 px avant d'être adoptés, pas
 après.
@@ -194,7 +201,11 @@ après.
 La profondeur vient des **bordures de 1 px** (`outline-variant #bec9c0`), pas des ombres.
 C'est la méthode principale pour délimiter une zone d'interaction.
 
-Seuls les menus contextuels et les modales portent une ombre, légère et diffuse.
+Seuls les menus contextuels, les modales et le panneau de l'assistant portent une
+ombre, légère et diffuse. La bulle flottante de l'assistant, qui passe au-dessus de
+contenus dont on ignore la couleur, se détache par une **bordure** comme tout le reste
+— elle portait une ombre et un agrandissement au survol, deux règles enfreintes d'un
+coup par le seul élément qui flotte.
 
 **Rien ne se soulève au survol.** Un élément qui bouge déplace ce que l'œil suivait, et
 répété sur toute une liste il rend la page instable. Le survol et l'état sélectionné se
@@ -209,6 +220,10 @@ clair pour une sélection.
   couleur supplémentaire.
 - **Vignettes d'illustration** : `rounded-lg`, carrées dans les rangées de liste.
 - **Rangées de liste** : aucun rayon. Un filet les sépare, rien ne les encadre.
+- **Une seule exception au 12 px** : les bulles de conversation, en `rounded-2xl`
+  (16 px). Une bulle n'est pas une carte — c'est la forme qui la distingue du reste de
+  la page, et c'est le motif des maquettes. Partout ailleurs, `rounded-2xl` sur un
+  conteneur est une dérive : `CharteTest` la refuse.
 
 ## Components
 
