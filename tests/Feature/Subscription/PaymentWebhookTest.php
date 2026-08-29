@@ -9,6 +9,8 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\Payment\CollectionResult;
+use App\Services\SmsService;
+use Closure;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -70,6 +72,74 @@ class PaymentWebhookTest extends TestCase
             $endsAt->timestamp,
             $payment->subscription->fresh()->ends_at->timestamp,
         );
+    }
+
+    /**
+     * Le rappel arrive après coup : le prestataire a quitté la page depuis
+     * longtemps et rien à l'écran ne lui apprendra le refus. Sans ce SMS, il
+     * se croit à jour et découvre la coupure en constatant qu'il ne reçoit
+     * plus de demandes — sans jamais faire le lien avec son règlement.
+     */
+    public function test_a_refused_payment_is_told_to_the_provider(): void
+    {
+        $payment = $this->pendingPayment();
+        $this->fakeProvider($payment->internal_reference, 'failed');
+
+        $sms = $this->mock(SmsService::class);
+        $sms->shouldReceive('send')
+            ->once()
+            ->withArgs(fn (string $phone, string $message) => $phone === $payment->payer->phone
+                && str_contains($message, 'Échec du paiement'));
+
+        $this->postJson(route('payments.webhook'), [])->assertOk();
+    }
+
+    /**
+     * La vraie course : le paiement est encore en attente quand le contrôleur
+     * le lit, et un autre rappel le tranche avant que la transaction ne
+     * verrouille la ligne.
+     *
+     * Ce rappel-ci ne doit alors rien envoyer — sans quoi le prestataire
+     * reçoit deux SMS pour un seul règlement — et sa trace doit dire qu'il n'a
+     * rien tranché, au lieu d'écrire un deuxième « Règlement refusé ».
+     */
+    public function test_a_callback_that_settles_nothing_stays_silent(): void
+    {
+        $capture = new TestHandler;
+        Log::getLogger()->pushHandler($capture);
+
+        $payment = $this->pendingPayment();
+
+        $this->fakeProvider($payment->internal_reference, 'failed', pendant: function () use ($payment) {
+            Payment::whereKey($payment->id)->update(['status' => Payment::STATUS_FAILED]);
+        });
+
+        $sms = $this->mock(SmsService::class);
+        $sms->shouldNotReceive('send');
+
+        $this->postJson(route('payments.webhook'), [])->assertOk();
+
+        $this->assertTrue(
+            $capture->hasInfoThatContains('rappel concurrent'),
+            'La trace doit distinguer un rappel qui ne tranche rien d\'un vrai refus.',
+        );
+    }
+
+    /**
+     * Un rappel sur un paiement déjà tranché s'arrête avant même la lecture du
+     * statut. Chemin voisin du précédent, mais distinct : il n'atteint jamais
+     * la transaction.
+     */
+    public function test_a_callback_on_an_already_settled_payment_sends_no_message(): void
+    {
+        $payment = $this->pendingPayment();
+        $payment->update(['status' => Payment::STATUS_FAILED]);
+        $this->fakeProvider($payment->internal_reference, 'failed');
+
+        $sms = $this->mock(SmsService::class);
+        $sms->shouldNotReceive('send');
+
+        $this->postJson(route('payments.webhook'), [])->assertOk();
     }
 
     /**
@@ -190,14 +260,22 @@ class PaymentWebhookTest extends TestCase
      * Le fournisseur est remplacé par un double : le contrôleur ne doit rien
      * savoir de la signature ni de la forme des charges utiles.
      */
-    private function fakeProvider(?string $internalReference, ?string $status, bool $authentic = true): void
+    /**
+     * @param  ?Closure  $pendant  Joué à l'intérieur de `status()`, c'est-à-dire
+     *                             dans la fenêtre exacte où un rappel concurrent
+     *                             peut trancher : après la lecture du
+     *                             contrôleur, avant que sa transaction ne
+     *                             verrouille la ligne.
+     */
+    private function fakeProvider(?string $internalReference, ?string $status, bool $authentic = true, ?Closure $pendant = null): void
     {
-        $fake = new class($internalReference, $status, $authentic) implements PaymentProvider
+        $fake = new class($internalReference, $status, $authentic, $pendant) implements PaymentProvider
         {
             public function __construct(
                 private readonly ?string $internalReference,
                 private readonly ?string $status,
                 private readonly bool $authentic,
+                private readonly ?Closure $pendant = null,
             ) {}
 
             public function collect(
@@ -212,6 +290,8 @@ class PaymentWebhookTest extends TestCase
 
             public function status(string $providerReference): ?string
             {
+                ($this->pendant ?? fn () => null)();
+
                 return $this->status;
             }
 

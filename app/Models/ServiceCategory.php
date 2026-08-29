@@ -32,11 +32,6 @@ class ServiceCategory extends Model
         ];
     }
 
-    public function providerProfiles(): HasMany
-    {
-        return $this->hasMany(ProviderProfile::class, 'category_id');
-    }
-
     public function services(): HasMany
     {
         return $this->hasMany(Service::class, 'category_id');

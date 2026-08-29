@@ -4,20 +4,40 @@ use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('media_disk')) {
     /**
-     * Le disque qui porte les fichiers déposés par les utilisateurs (photos de
-     * profil, logos, images de services, pièces d'identité).
+     * Le disque qui porte les fichiers déposés destinés à être vus (photos de
+     * profil, logos, images de services).
      *
      * En local c'est « public », servi par le lien symbolique storage/. Sur un
      * hébergement au système de fichiers éphémère — Vercel, par exemple — les
      * fichiers écrits par une requête n'existent plus à la suivante : il faut
      * alors pointer MEDIA_DISK sur « s3 » (ou tout stockage compatible S3),
      * sinon chaque image déposée est perdue sans le moindre message d'erreur.
+     *
+     * ⚠️ Les pièces d'identité n'ont rien à faire ici : ce disque est public,
+     * donc servi sans passer par Laravel. Voir `id_documents_disk()`.
      */
     function media_disk(): string
     {
         $disk = config('filesystems.media');
 
         return is_string($disk) && $disk !== '' ? $disk : 'public';
+    }
+}
+
+if (! function_exists('id_documents_disk')) {
+    /**
+     * Le disque qui porte les pièces d'identité, toujours privé.
+     *
+     * Rien de ce qui y est écrit n'est atteignable par une URL : ces documents
+     * ne sortent que par une route qui vérifie la Policy. Sur un hébergement
+     * sans disque durable, pointer ID_DOCUMENTS_DISK sur « s3_id_documents »,
+     * dont le seau doit rester fermé.
+     */
+    function id_documents_disk(): string
+    {
+        $disk = config('filesystems.id_documents');
+
+        return is_string($disk) && $disk !== '' ? $disk : 'id_documents';
     }
 }
 

@@ -3,17 +3,17 @@
     $plafond = $plan && ! $plan->allowsUnlimitedServices() ? $plan->max_services : null;
 @endphp
 
-<x-app-layout>
+<x-app-layout :titre="__('Mes services')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Mes services">
+        <x-page-header :title="__('Mes services')">
             <x-slot name="subtitle">
                 <span class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
                     <span class="material-symbols-outlined text-[20px]" aria-hidden="true">inventory_2</span>
                     <span>
                         <span class="font-label-numeric">{{ $services->total() }}</span>
-                        {{ Str::plural('service', $services->total()) }} publié{{ $services->total() > 1 ? 's' : '' }}
+                        {{ trans_choice('service publié|services publiés', $services->total()) }}
                         @if ($plafond !== null)
-                            sur <span class="font-label-numeric">{{ $plafond }}</span> autorisé{{ $plafond > 1 ? 's' : '' }}
+                            {{ __('sur') }} <span class="font-label-numeric">{{ $plafond }}</span> {{ trans_choice('autorisé|autorisés', $plafond) }}
                         @endif
                     </span>
                 </span>
@@ -33,9 +33,9 @@
 
         @if ($services->isEmpty())
             <x-empty-state
-                title="Vous n'avez pas encore publié de service."
-                description="Un service bien décrit, avec une photo et un prix indicatif, est ce qui décide un client à vous écrire."
-                action-label="Publier mon premier service"
+                :title="__('Vous n\'avez pas encore publié de service.')"
+                :description="__('Un service bien décrit, avec une photo et un prix indicatif, est ce qui décide un client à vous écrire.')"
+                :action-label="__('Publier mon premier service')"
                 :action-href="route('provider.services.create')"
             />
         @else
@@ -82,13 +82,13 @@
                         </div>
 
                         <div class="mt-4 flex shrink-0 items-center justify-end gap-4 sm:ml-4 sm:mt-0">
-                            <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-on-surface-variant hover:text-primary">Voir</a>
-                            <a href="{{ route('provider.services.edit', $service) }}" class="text-sm font-medium text-primary hover:text-primary-container">Modifier</a>
+                            <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-on-surface-variant hover:text-primary">{{ __("Voir") }}</a>
+                            <a href="{{ route('provider.services.edit', $service) }}" class="text-sm font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
                             <form action="{{ route('provider.services.destroy', $service) }}" method="POST"
                                   onsubmit="return confirm('Supprimer « {{ $service->title }} » ? Cette action est définitive.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-sm font-medium text-error hover:opacity-80">Supprimer</button>
+                                <button type="submit" class="text-sm font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
                             </form>
                         </div>
                     </div>

@@ -8,9 +8,9 @@
     ];
 @endphp
 
-<x-app-layout>
+<x-app-layout :titre="__('Utilisateurs')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Gérer les utilisateurs"
+        <x-page-header :title="__('Gérer les utilisateurs')"
                        :subtitle="$users->total().' '.Str::plural('compte', $users->total())" />
     </x-slot>
 
@@ -23,13 +23,13 @@
 
         <form method="GET" class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-                <x-input-label for="term" value="Recherche" />
-                <x-text-input id="term" name="term" type="text" class="mt-1 block w-full" :value="request('term')" placeholder="Nom ou email" />
+                <x-input-label for="term" :value="__('Recherche')" />
+                <x-text-input id="term" name="term" type="text" class="mt-1 block w-full" :value="request('term')" :placeholder="__('Nom ou email')" />
             </div>
             <div>
-                <x-input-label for="role" value="Rôle" />
+                <x-input-label for="role" :value="__('Rôle')" />
                 <select id="role" name="role" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
-                    <option value="">Tous</option>
+                    <option value="">{{ __("Tous") }}</option>
                     @foreach ($roles as $valeur => $libelle)
                         <option value="{{ $valeur }}" @selected(request('role') === $valeur)>{{ $libelle }}</option>
                     @endforeach
@@ -37,13 +37,13 @@
             </div>
             <div class="flex items-end">
                 <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                    Filtrer
+                    {{ __("Filtrer") }}
                 </button>
             </div>
         </form>
 
         @if ($users->isEmpty())
-            <x-empty-state title="Aucun utilisateur trouvé." description="Aucun compte ne correspond à ces critères." />
+            <x-empty-state :title="__('Aucun utilisateur trouvé.')" :description="__('Aucun compte ne correspond à ces critères.')" />
         @else
             {{-- C'était un tableau à six colonnes qui débordait de l'écran :
                  « Rôle » se lisait « Pr… », les noms se coupaient en deux et
@@ -77,14 +77,14 @@
                             @can('suspend', $user)
                                 <form action="{{ route('admin.users.suspend', $user) }}" method="POST" onsubmit="return confirm('Suspendre le compte de {{ $user->name }} ?');">
                                     @csrf
-                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">Suspendre</button>
+                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">{{ __("Suspendre") }}</button>
                                 </form>
                             @endcan
                             @can('reactivate', $user)
                                 @if ($user->status === \App\Models\User::STATUS_SUSPENDED)
                                     <form action="{{ route('admin.users.reactivate', $user) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-sm font-medium text-secondary hover:opacity-80">Réactiver</button>
+                                        <button type="submit" class="text-sm font-medium text-secondary hover:opacity-80">{{ __("Réactiver") }}</button>
                                     </form>
                                 @endif
                             @endcan

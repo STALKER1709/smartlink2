@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +18,7 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'phone', 'password', 'role', 'locale'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -57,9 +58,19 @@ class User extends Authenticatable
         $this->forceFill(['phone_verified_at' => now()])->save();
     }
 
+    /**
+     * La langue dans laquelle écrire à cette personne.
+     *
+     * Lue par Laravel du fait de `HasLocalePreference` — sans le contrat, la
+     * méthode existait sans que rien ne l'appelle jamais. Elle compte surtout
+     * pour la réinitialisation de mot de passe : l'utilisateur n'est alors pas
+     * connecté, la langue de la session n'existe pas, et le message partait
+     * donc systématiquement dans la langue par défaut, quelle que soit celle
+     * choisie par le destinataire.
+     */
     public function preferredLocale(): string
     {
-        return $this->locale ?? 'fr';
+        return $this->locale ?? config('app.fallback_locale', 'fr');
     }
 
     public function clientProfile(): HasOne
@@ -99,29 +110,9 @@ class User extends Authenticatable
         return $this->hasMany(ServiceRequest::class, 'provider_id');
     }
 
-    public function reviewsGiven(): HasMany
-    {
-        return $this->hasMany(Review::class, 'client_id');
-    }
-
     public function reviewsReceived(): HasMany
     {
         return $this->hasMany(Review::class, 'provider_id');
-    }
-
-    public function conversationsAsClient(): HasMany
-    {
-        return $this->hasMany(Conversation::class, 'client_id');
-    }
-
-    public function conversationsAsProvider(): HasMany
-    {
-        return $this->hasMany(Conversation::class, 'provider_id');
-    }
-
-    public function auditLogs(): HasMany
-    {
-        return $this->hasMany(AuditLog::class);
     }
 
     public function subscriptions(): HasMany
@@ -130,16 +121,65 @@ class User extends Authenticatable
     }
 
     /**
+     * Mémo de l'abonnement en cours, valable le temps de la requête HTTP.
+     *
+     * Deux champs plutôt qu'un : l'absence d'abonnement est une réponse en
+     * soi, et `null` seul ne dirait pas si la question a déjà été posée.
+     */
+    private ?Subscription $abonnementMemo = null;
+
+    private bool $abonnementResolu = false;
+
+    /**
      * L'abonnement qui ouvre les droits en ce moment : essai ou payé, non échu.
      * Renvoie null dès l'expiration — c'est ce qui masque les services.
+     *
+     * Le résultat est mémoïsé sur l'instance. Sans cela, une seule page de
+     * prestataire rejouait la requête jusqu'à sept fois : la barre de
+     * navigation, le bandeau d'abonnement, le bouton de publication et chaque
+     * appel de `QuotaService` la refaisaient chacun pour leur compte. Sans
+     * effet visible sur SQLite en local ; sur Supabase, autant d'allers-retours
+     * réseau depuis une fonction serverless.
+     *
+     * Toute écriture sur l'abonnement doit appeler `forgetActiveSubscription()`
+     * — c'est ce que fait `SubscriptionService`.
      */
     public function activeSubscription(): ?Subscription
     {
-        return $this->subscriptions()
+        if ($this->abonnementResolu) {
+            return $this->abonnementMemo;
+        }
+
+        $this->abonnementResolu = true;
+
+        return $this->abonnementMemo = $this->subscriptions()
             ->usable()
             ->with('plan')
             ->latest('ends_at')
             ->first();
+    }
+
+    /**
+     * Oublie l'abonnement mémoïsé : le prochain appel réinterrogera la base.
+     */
+    public function forgetActiveSubscription(): static
+    {
+        $this->abonnementResolu = false;
+        $this->abonnementMemo = null;
+
+        return $this;
+    }
+
+    /**
+     * `refresh()` recharge l'état depuis la base : le mémo doit tomber avec le
+     * reste, sinon un appel après rechargement rendrait une valeur périmée —
+     * ce que personne n'attend d'un modèle rafraîchi.
+     */
+    public function refresh(): static
+    {
+        $this->forgetActiveSubscription();
+
+        return parent::refresh();
     }
 
     public function currentPlan(): ?Plan

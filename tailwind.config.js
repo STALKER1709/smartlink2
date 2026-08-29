@@ -2,9 +2,9 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
 /**
- * Design tokens SmartLink — voir design/stitch-imports/smartlink/DESIGN.md
- * (charte graphique générée avec Google Stitch). Ne pas modifier ces valeurs
- * sans mettre à jour ce fichier source.
+ * Design tokens SmartLink — voir DESIGN.md à la racine, qui fait foi. Ne pas
+ * modifier ces valeurs sans l'y répercuter : c'est lui que lisent les écrans
+ * suivants, pas ce fichier.
  */
 
 /** @type {import('tailwindcss').Config} */

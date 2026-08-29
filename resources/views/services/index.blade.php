@@ -1,6 +1,6 @@
-<x-app-layout>
+<x-app-layout :titre="__('seo.services_index')" :description="__('seo.services_index_description')">
     <x-slot name="header">
-        <x-page-header title="Services" />
+        <x-page-header :title="__('Services')" />
     </x-slot>
 
     @php
@@ -60,45 +60,45 @@
             </summary>
 
             <form action="{{ route('services.index') }}" method="GET" class="grid grid-cols-1 gap-3 border-t border-outline-variant p-4 sm:grid-cols-2 lg:grid-cols-3">
-                <input type="text" name="term" value="{{ request('term') }}" placeholder="Mot-clé"
+                <input type="text" name="term" value="{{ request('term') }}" placeholder="{{ __('Mot-clé') }}"
                        class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
 
                 <select name="category_id" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                    <option value="">Toutes les catégories</option>
+                    <option value="">{{ __("Toutes les catégories") }}</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
                     @endforeach
                 </select>
 
                 <select name="city" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                    <option value="">Toutes les villes</option>
+                    <option value="">{{ __("Toutes les villes") }}</option>
                     @foreach ($villes as $ville)
                         <option value="{{ $ville }}" @selected(request('city') === $ville)>{{ $ville }}</option>
                     @endforeach
                 </select>
 
-                <input type="text" name="quarter" value="{{ request('quarter') }}" placeholder="Quartier"
+                <input type="text" name="quarter" value="{{ request('quarter') }}" placeholder="{{ __('Quartier') }}"
                        class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
 
                 <select name="sort" class="rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                    <option value="">Plus récents</option>
-                    <option value="price_asc" @selected(request('sort') === 'price_asc')>Prix croissant</option>
-                    <option value="price_desc" @selected(request('sort') === 'price_desc')>Prix décroissant</option>
+                    <option value="">{{ __("Plus récents") }}</option>
+                    <option value="price_asc" @selected(request('sort') === 'price_asc')>{{ __("Prix croissant") }}</option>
+                    <option value="price_desc" @selected(request('sort') === 'price_desc')>{{ __("Prix décroissant") }}</option>
                 </select>
 
                 <label class="flex items-center gap-2 text-sm text-on-surface-variant">
                     <input type="checkbox" name="available_only" value="1" @checked(request('available_only'))
                            class="rounded border-outline-variant text-primary focus:ring-primary">
-                    Disponibles uniquement
+                    {{ __("Disponibles uniquement") }}
                 </label>
 
                 {{-- La bulle de l'assistant flotte au-dessus du contenu et se
                      posait sur ce bouton. Pleine largeur sur mobile, il reste
                      atteignable au pouce et son libellé se lit à gauche d'elle. --}}
                 <div class="flex flex-col-reverse items-stretch gap-2 sm:col-span-2 sm:flex-row sm:justify-end lg:col-span-3">
-                    <a href="{{ route('services.index') }}" class="px-3 py-2 text-center text-sm text-on-surface-variant hover:text-on-surface">Réinitialiser</a>
+                    <a href="{{ route('services.index') }}" class="px-3 py-2 text-center text-sm text-on-surface-variant hover:text-on-surface">{{ __("Réinitialiser") }}</a>
                     <button type="submit" class="rounded-full bg-primary px-5 py-3 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container sm:py-2">
-                        Filtrer
+                        {{ __("Filtrer") }}
                     </button>
                 </div>
             </form>
@@ -131,8 +131,8 @@
                 :title="request('term')
                     ? 'Aucun service ne correspond à « '.request('term').' ».'
                     : 'Aucun service ne correspond à ces filtres.'"
-                description="Essayez avec moins de filtres, une autre ville, ou des mots plus simples — « plombier » plutôt que « réparation de canalisation »."
-                action-label="Voir tous les services"
+                :description="__('Essayez avec moins de filtres, une autre ville, ou des mots plus simples — « plombier » plutôt que « réparation de canalisation ».')"
+                :action-label="__('Voir tous les services')"
                 :action-href="route('services.index')"
             />
         @else

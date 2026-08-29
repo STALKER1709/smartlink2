@@ -1,12 +1,12 @@
-<x-app-layout>
+<x-app-layout :titre="__('Catégories')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Catégories de services"
-                       subtitle="Gérez la taxonomie des services proposés sur la plateforme.">
+        <x-page-header :title="__('Catégories de services')"
+                       :subtitle="__('Gérez la taxonomie des services proposés sur la plateforme.')">
             <x-slot name="action">
                 <a href="{{ route('admin.categories.create') }}"
                    class="flex items-center gap-2 rounded-lg bg-primary px-[24px] py-3 font-button-text text-button-text text-on-primary shadow-sm transition-colors hover:bg-primary-container">
                     <span class="material-symbols-outlined" aria-hidden="true">add</span>
-                    Ajouter une catégorie
+                    {{ __("Ajouter une catégorie") }}
                 </a>
             </x-slot>
         </x-page-header>
@@ -37,17 +37,17 @@
         </div>
 
         @if ($categories->isEmpty())
-            <x-empty-state title="Aucune catégorie pour le moment." description="Les catégories structurent la recherche : sans elles, rien n'est classable." />
+            <x-empty-state :title="__('Aucune catégorie pour le moment.')" :description="__('Les catégories structurent la recherche : sans elles, rien n\'est classable.')" />
         @else
             {{-- Le tableau de la maquette à partir de `md`. En dessous il
                  déborderait de l'écran : à 390 px, une rangée empilée dit les
                  mêmes choses sans rien couper. --}}
             <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
                 <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low px-6 py-4 font-body-md text-body-md font-semibold text-on-surface md:grid">
-                    <div class="col-span-5">Catégorie</div>
-                    <div class="col-span-2 text-right">Services</div>
-                    <div class="col-span-2 text-right">Actifs</div>
-                    <div class="col-span-3 text-right">Actions</div>
+                    <div class="col-span-5">{{ __("Catégorie") }}</div>
+                    <div class="col-span-2 text-right">{{ __("Services") }}</div>
+                    <div class="col-span-2 text-right">{{ __("Actifs") }}</div>
+                    <div class="col-span-3 text-right">{{ __("Actions") }}</div>
                 </div>
 
                 <div class="divide-y divide-outline-variant">
@@ -79,12 +79,12 @@
                             </div>
 
                             <div class="flex items-center justify-end gap-4 md:col-span-3">
-                                <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-primary hover:text-primary-container">Modifier</a>
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
                                 <form action="{{ route('admin.categories.destroy', $category) }}" method="POST"
                                       onsubmit="return confirm('Supprimer « {{ $category->name }} » ? Les services qui s\'y rattachent perdront leur catégorie.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">Supprimer</button>
+                                    <button type="submit" class="text-sm font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
                                 </form>
                             </div>
                         </div>

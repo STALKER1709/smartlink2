@@ -28,14 +28,13 @@
                 @endif
                 @if (! empty($photo['source']))
                     <a href="{{ $photo['source'] }}" target="_blank" rel="noopener noreferrer"
-                       class="font-semibold text-primary">voir la source</a>
+                       class="font-semibold text-primary">{{ __('voir la source') }}</a>
                 @endif
             </li>
         @endforeach
     </ul>
 @else
     <p class="mt-4">
-        Les illustrations de métier affichées aujourd'hui sont dessinées pour SmartLink et lui
-        appartiennent. Aucune photographie de tiers n'est employée.
+        {{ __("Les illustrations de métier affichées aujourd'hui sont dessinées pour SmartLink et lui appartiennent. Aucune photographie de tiers n'est employée.") }}
     </p>
 @endif

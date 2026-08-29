@@ -70,7 +70,7 @@ class PaymentController extends Controller
                 .'fournisseur : le paiement reste en attente.', $event->internalReference);
         }
 
-        $confirmed = DB::transaction(function () use ($payment, $status, $event) {
+        $tranche = DB::transaction(function () use ($payment, $status, $event) {
             $locked = Payment::whereKey($payment->id)->lockForUpdate()->first();
 
             if ($locked === null || $locked->status !== Payment::STATUS_PENDING) {
@@ -93,8 +93,15 @@ class PaymentController extends Controller
                 'failure_reason' => 'Refusé par l\'opérateur.',
             ]);
 
-            return null;
+            return $locked;
         });
+
+        /*
+         * Le paiement rendu par la transaction est celui que *ce* rappel a
+         * tranché — succès comme refus. `null` veut dire qu'il n'a rien
+         * tranché : un rappel concurrent était passé avant lui.
+         */
+        $confirmed = $tranche?->status === Payment::STATUS_SUCCESS ? $tranche : null;
 
         if ($confirmed !== null) {
             $this->subscriptions->recordSuccessfulPayment($confirmed);
@@ -109,13 +116,35 @@ class PaymentController extends Controller
             }
         }
 
-        // Trois issues, à ne pas confondre dans la trace : créditée, refusée,
-        // ou déjà tranchée par un rappel concurrent — ce dernier cas se
-        // reconnaît à ce que le fournisseur dit « réglé » alors que la
-        // transaction n'a rien eu à mettre à jour.
+        /*
+         * Le refus se dit aussi, et c'est le message qui compte le plus.
+         *
+         * Le rappel arrive après coup : le prestataire a quitté la page depuis
+         * longtemps, et rien à l'écran ne lui apprendra que son règlement a
+         * été refusé. Sans ce SMS, il se croit à jour et découvre la coupure
+         * en constatant qu'il ne reçoit plus de demandes — sans jamais faire
+         * le lien.
+         */
+        if ($tranche?->status === Payment::STATUS_FAILED && $tranche->payer?->phone !== null) {
+            $this->sms->send($tranche->payer->phone, __('sms.subscription_failed', [
+                'amount' => number_format($tranche->amount_xaf, 0, ',', ' '),
+            ]));
+        }
+
+        /*
+         * Trois issues, à ne pas confondre dans la trace : créditée, refusée,
+         * ou déjà tranchée par un rappel concurrent.
+         *
+         * C'est `$tranche` qui les sépare, pas le statut annoncé : `null` veut
+         * dire que la transaction n'a rien eu à mettre à jour, donc qu'un
+         * autre rappel était passé avant. Discriminer sur `$status` ne
+         * reconnaissait ce cas que sur un succès — un refus concurrent
+         * écrivait une deuxième fois « Règlement refusé » pour un seul
+         * paiement, et rien dans la trace ne disait que c'était un doublon.
+         */
         return $this->outcome('ok', match (true) {
+            $tranche === null => 'Déjà tranché par un rappel concurrent.',
             $confirmed !== null => 'Règlement confirmé, abonnement crédité.',
-            $status === 'success' => 'Déjà tranché par un rappel concurrent.',
             default => 'Règlement refusé par l\'opérateur.',
         }, $event->internalReference);
     }

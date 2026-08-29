@@ -125,6 +125,15 @@ Un déploiement serverless sur Vercel est aussi possible (`DEPLOY-VERCEL.md`,
   `GET /cron/subscriptions-refresh`, protégé par `CRON_SECRET` (403 sans jeton, 503 sans
   secret configuré). Toute nouvelle tâche planifiée doit avoir son pendant HTTP.
 
+⚠️ **Une pièce d'identité ne va jamais sur le disque `media`.** Ce disque est public :
+ce qu'on y écrit est servi par le serveur web sans passer par Laravel, donc sans
+middleware ni Policy — un nom de fichier aléatoire n'y change rien. Les pièces d'identité
+passent par `id_documents_disk()` (privé) et ne ressortent que par
+`ProviderVerificationController::document()`, qui vérifie la Policy `viewIdDocument`.
+`deploy:check` refuse un disque public ou confondu avec `media`, et
+`tests/Feature/Provider/IdDocumentPrivacyTest.php` monte la garde. Toute nouvelle donnée
+sensible déposée par un utilisateur suit le même chemin.
+
 ⚠️ `composer.lock`, `package-lock.json` et `public/build` sont **versionnés**, contrairement
 à l'habitude Laravel. La fonction PHP déployée doit trouver `public/build/manifest.json`, et
 la reconstruction sur l'hébergeur doit produire exactement les fichiers hachés qui ont été
@@ -157,6 +166,72 @@ donne `''`, et `(int) ''` vaut zéro. En production, `SUBSCRIPTION_CYCLE_DAYS`
 vide a donné un abonnement payé couvrant zéro jour, et `HRSKILLS_BASE_URL` vide
 une URL relative qui faisait échouer chaque encaissement.
 `tests/Unit/EnvFallbackTest.php` monte la garde.
+
+⚠️ **`User::activeSubscription()` est mémoïsé le temps de la requête.** Une seule page
+de prestataire rejouait la requête jusqu'à sept fois — barre de navigation, bandeau
+d'abonnement, bouton de publication et chaque appel de `QuotaService`. Invisible sur
+SQLite, autant d'allers-retours réseau sur Supabase.
+
+Conséquence : **toute écriture sur un abonnement doit appeler
+`$user->forgetActiveSubscription()`**, ou passer par `$user->refresh()` qui le fait.
+`SubscriptionService` s'en charge sur tous ses chemins d'écriture. Dans un test qui
+traverse plusieurs requêtes simulées ou qui écrit en masse
+(`$user->subscriptions()->update(...)`), relis l'instance : en production chaque requête
+reconstruit son utilisateur depuis la session, pas un test qui en garde un seul.
+`tests/Feature/Subscription/SubscriptionMemoTest.php` monte la garde.
+
+## Analyse statique
+
+`phpstan.neon` est écrit et le CI l'exécute — mais **larastan n'est pas encore
+installé**, et c'est délibéré, pas un oubli. `phpstan/phpstan` n'est distribué
+que par un zip de l'API GitHub (aucune `source` dans ses métadonnées), et cet
+hôte est inaccessible depuis l'environnement où le dépôt a été préparé : ni
+`--prefer-source`, ni `use-github-api false` ne contournent le problème,
+puisqu'il n'y a rien d'autre à récupérer.
+
+Sans larastan, PHPStan ne sait pas ce que rend `User::create()` ni quel type a
+une colonne lue en propriété : il signale 404 « erreurs » sur ce dépôt, dont
+aucune n'est un vrai défaut. Un baseline construit dans ces conditions serait
+un mensonge figé.
+
+Depuis une machine ayant accès à GitHub, deux commandes suffisent :
+
+```bash
+composer require --dev larastan/larastan
+vendor/bin/phpstan analyse --generate-baseline --memory-limit=1G
+```
+
+`--memory-limit` n'est pas un confort : PHPStan ne lit aucune limite mémoire
+depuis `phpstan.neon`, seulement depuis la ligne de commande ou `php.ini`, et
+les 128 Mo alloués par défaut ne suffisent pas à Laravel plus larastan.
+L'analyse traverse alors tous les fichiers puis meurt en écrivant son cache,
+sur une trace d'appels qui n'a rien à voir avec le dépôt.
+
+Le passage « Analyse statique » du CI s'allume alors tout seul : il est écrit
+pour ne rien faire tant que `vendor/bin/phpstan` n'existe pas.
+
+⚠️ **Tout texte d'interface passe par `__()`, avec le français pour clé.**
+`lang/en.json` traduit ces clés ; `lang/fr/*.php` et `lang/en/*.php` portent les
+clés structurées (`ui.*`, `sms.*`, `seo.*`), employées depuis le code PHP.
+Une clé française sans entrée dans `lang/en.json` **ne casse rien** : Laravel
+rend la clé telle quelle, donc du français au milieu d'une page anglaise, sans
+la moindre erreur. `tests/Feature/TranslationCoverageTest.php` monte la garde
+dans les deux sens — pas de clé sans traduction, pas de traduction sans clé.
+
+Les trois pages légales (`resources/views/legal/`) restent volontairement en
+français seul : traduire des CGU engage juridiquement, et les documents ne sont
+pas encore relus par un juriste (`LEGAL_VALIDE`).
+
+⚠️ **`APP_URL` est un réglage de sécurité, pas seulement de confort.** Laravel
+compose ses URL absolues à partir de l'en-tête `Host` de la requête — et de
+`X-Forwarded-Host`, honoré parce que `trustProxies(at: '*')` fait confiance à
+tous les répartiteurs. C'est-à-dire à partir d'une valeur que le client choisit.
+Une demande de mot de passe oublié envoyée avec un `Host` falsifié fait donc
+partir, vers la boîte du titulaire, un lien de réinitialisation **valide qui
+pointe chez l'attaquant**. `trustHosts` (`bootstrap/app.php`) filtre les noms
+d'hôte à partir d'`APP_URL` ; un `APP_URL` vide vide la liste et éteint le
+filtrage sans rien dire, d'où le contrôle dans `deploy:check`.
+`tests/Feature/TrustedHostsTest.php` monte la garde.
 
 ⚠️ **N'écris jamais `where(..., 'like', ...)` à la main.** `like` est sensible à
 la casse sur PostgreSQL et ne l'est pas sur MySQL ni SQLite : la recherche

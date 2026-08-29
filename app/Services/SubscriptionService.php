@@ -86,7 +86,6 @@ class SubscriptionService
             'status' => Subscription::STATUS_ACTIVE,
             'starts_at' => $subscription->starts_at ?? now(),
             'ends_at' => now()->addDays(config('subscription.cycle_days')),
-            'cancelled_at' => null,
             'last_reminder_day' => null,
         ]);
 
@@ -179,6 +178,12 @@ class SubscriptionService
         if ($result->status === CollectionResult::STATUS_SUCCESS) {
             $payment->update(['status' => Payment::STATUS_SUCCESS, 'paid_at' => now()]);
             $this->recordSuccessfulPayment($payment->refresh());
+
+            // `recordSuccessfulPayment` rafraîchit le payeur qu'il a chargé
+            // par la relation ; l'instance reçue ici est celle de la requête,
+            // et c'est elle qui portera l'affichage. Sans cet oubli, elle
+            // rendrait encore l'ancien palier.
+            $provider->forgetActiveSubscription();
         } elseif ($result->status === CollectionResult::STATUS_FAILED) {
             $payment->update([
                 'status' => Payment::STATUS_FAILED,
@@ -369,7 +374,6 @@ class SubscriptionService
                 'plan_id' => $payment->plan_id ?? $subscription->plan_id,
                 'status' => Subscription::STATUS_ACTIVE,
                 'ends_at' => $from->copy()->addDays(config('subscription.cycle_days')),
-                'cancelled_at' => null,
                 'last_reminder_day' => null,
             ]);
 

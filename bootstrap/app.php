@@ -35,6 +35,29 @@ return Application::configure(basePath: dirname(__DIR__))
         // l'hébergeur font foi.
         $middleware->trustProxies(at: '*');
 
+        /*
+         * ...et parce qu'on fait confiance à tous les répartiteurs, il faut
+         * dire lesquels des noms d'hôte annoncés sont légitimes.
+         *
+         * Sans cette liste, Laravel fabrique ses URL absolues à partir de
+         * l'en-tête « Host » (ou « X-Forwarded-Host », honoré du fait de la
+         * ligne au-dessus) — c'est-à-dire à partir d'une valeur que le client
+         * choisit. Une demande de mot de passe oublié envoyée avec un Host
+         * falsifié fait donc partir, vers la boîte du titulaire, un lien de
+         * réinitialisation valide qui pointe chez l'attaquant : il suffit que
+         * la victime clique pour que le jeton lui soit livré.
+         *
+         * Laravel n'applique cette liste ni en local ni sous tests, et une
+         * liste vide ne restreint rien : un APP_URL sans hôte revient au
+         * comportement d'avant plutôt que de fermer le site. C'est pour ça que
+         * `deploy:check` contrôle APP_URL séparément.
+         */
+        $middleware->trustHosts(at: fn () => array_filter([
+            // Les déploiements de prévisualisation portent un nom tiré au sort
+            // à chaque poussée : ils ne peuvent pas être nommés un par un.
+            is_serverless() ? '^(.+\\.)?vercel\\.app$' : null,
+        ]), subdomains: true);
+
         $middleware->appendToGroup('web', EnsureAccountIsActive::class);
         $middleware->appendToGroup('web', SetLocale::class);
     })

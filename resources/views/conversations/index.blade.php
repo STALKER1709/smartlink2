@@ -1,21 +1,21 @@
-<x-app-layout>
+<x-app-layout :titre="__('Messages')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Messages" subtitle="Gérez vos conversations en cours" />
+        <x-page-header :title="__('Messages')" :subtitle="__('Gérez vos conversations en cours')" />
     </x-slot>
 
     <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-6">
         <form action="{{ route('conversations.index') }}" method="GET"
               class="mb-6 flex w-full items-center rounded-lg border border-outline-variant bg-surface-container px-4 py-3 transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary md:rounded-full md:py-2">
             <span class="material-symbols-outlined mr-3 text-on-surface-variant" aria-hidden="true">search</span>
-            <label for="q" class="sr-only">Rechercher une conversation</label>
+            <label for="q" class="sr-only">{{ __("Rechercher une conversation") }}</label>
             <input type="text" id="q" name="q" value="{{ $terme }}"
-                   placeholder="Rechercher une conversation…"
+                   placeholder="{{ __('Rechercher une conversation…') }}"
                    class="w-full border-none bg-transparent p-0 font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:ring-0">
         </form>
 
         @if ($conversations->isEmpty())
-            <x-empty-state :title="$terme !== '' ? 'Aucune conversation ne correspond à « '.$terme.' ».' : 'Aucune conversation pour le moment.'"
-                           :description="$terme !== '' ? 'Essayez le nom du prestataire ou le titre du service.' : 'Une conversation s\'ouvre dès qu\'une demande est acceptée.'" />
+            <x-empty-state :title="$terme !== '' ? __('Aucune conversation ne correspond à « :terme ».', ['terme' => $terme]) : __('Aucune conversation pour le moment.')"
+                           :description="$terme !== '' ? __('Essayez le nom du prestataire ou le titre du service.') : __('Une conversation s\'ouvre dès qu\'une demande est acceptée.')" />
         @else
             {{-- La rangée non lue se teinte de vert clair et porte son heure en
                  vert : c'est ce qui distingue, d'un balayage, le fil qui
@@ -69,7 +69,7 @@
                                     'text-on-surface-variant' => $nonLus === 0,
                                 ])>
                                     @if ($dernier)
-                                        @if ($dernier->sender_id === Auth::id())<span class="text-on-surface-variant">Vous : </span>@endif{{ $dernier->body }}
+                                        @if ($dernier->sender_id === Auth::id())<span class="text-on-surface-variant">{{ __("Vous :") }} </span>@endif{{ $dernier->body }}
                                     @else
                                         Aucun message échangé.
                                     @endif

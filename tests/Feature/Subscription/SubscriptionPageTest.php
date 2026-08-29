@@ -39,6 +39,10 @@ class SubscriptionPageTest extends TestCase
             'ends_at' => now()->subDay(),
         ]);
 
+        // Écriture en masse, hors de l'instance : elle porte encore
+        // l'abonnement d'avant.
+        $provider->refresh();
+
         $this->actingAs($provider)
             ->get(route('provider.subscription.show'))
             ->assertOk()

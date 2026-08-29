@@ -37,12 +37,98 @@ class DeploymentCheckService
             ...$this->databaseChecks(),
             ...$this->databaseTransportChecks(),
             ...$this->mediaChecks(),
+            ...$this->idDocumentChecks(),
             ...$this->queueChecks(),
             ...$this->scheduleChecks(),
             ...$this->assetChecks(),
             ...$this->externalServiceChecks(),
             ...$this->subscriptionChecks(),
+            ...$this->observabilityChecks(),
+            ...$this->legalChecks(),
         ];
+    }
+
+    /**
+     * Ce qui prévient quand quelque chose casse.
+     *
+     * Sans destination d'alerte, une erreur de production n'est vue que par
+     * celui qui la subit : les journaux sont là, mais personne ne les lit
+     * d'eux-mêmes, et sur un hébergement serverless ils sont purgés au bout de
+     * quelques jours. Un avertissement, pas un blocage — l'application marche
+     * sans, elle est simplement muette sur ses propres pannes.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function observabilityChecks(): array
+    {
+        if (! app()->isProduction()) {
+            return [];
+        }
+
+        $canaux = (string) config('logging.default') === 'stack'
+            ? array_map(trim(...), explode(',', (string) env_or('LOG_STACK', 'single')))
+            : [(string) config('logging.default')];
+
+        // Un canal qui écrit dans un fichier de l'arborescence ne survit pas
+        // au déploiement suivant sur un hébergement serverless.
+        $ephemere = is_serverless() && array_intersect($canaux, ['single', 'daily']) !== [];
+
+        if ($ephemere) {
+            return [$this->warning(
+                'Journaux',
+                'Les journaux vont dans un fichier du projet, effacé à chaque déploiement. Sur cet hébergement, LOG_CHANNEL=stderr.',
+            )];
+        }
+
+        $alerte = array_intersect($canaux, ['slack', 'papertrail']) !== [];
+
+        if (! $alerte && (string) config('logging.channels.slack.url') === '') {
+            return [$this->warning(
+                'Alertes',
+                "Aucune destination d'alerte : une erreur de production ne sera vue que par celui qui la subit. LOG_STACK=stderr,slack avec LOG_SLACK_WEBHOOK_URL suffit, sans dépendance à ajouter.",
+            )];
+        }
+
+        return [$this->ok('Alertes', 'Les erreurs critiques sont poussées vers une destination d\'alerte.')];
+    }
+
+    /**
+     * Les mentions légales de l'éditeur.
+     *
+     * Elles figurent sur les statuts de la société : personne ne peut les
+     * deviner, et l'application démarre parfaitement sans. Elles se remarquent
+     * donc le jour où quelqu'un les cherche — un client mécontent, ou un
+     * contrôle. Un avertissement, pas un blocage : c'est une exposition
+     * juridique, pas une panne technique.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function legalChecks(): array
+    {
+        if (! app()->environment('production')) {
+            return [];
+        }
+
+        $manquantes = array_keys(array_filter(
+            (array) config('legal.editeur'),
+            fn ($valeur) => blank($valeur),
+        ));
+
+        if ($manquantes !== []) {
+            return [$this->warning(
+                'Mentions légales',
+                'Renseignements manquants ('.implode(', ', $manquantes).') : les pages légales affichent un bandeau d’avertissement à la place. Variables LEGAL_* de l\'environnement.',
+            )];
+        }
+
+        if (! config('legal.valide_juridiquement')) {
+            return [$this->warning(
+                'Mentions légales',
+                "Complètes, mais LEGAL_VALIDE n'est pas posé : les pages portent la mention « document non validé juridiquement », visible du public.",
+            )];
+        }
+
+        return [$this->ok('Mentions légales', 'Identité de l\'éditeur complète et documents relus.')];
     }
 
     /**
@@ -75,9 +161,17 @@ class DeploymentCheckService
                 ? $this->error('APP_DEBUG', 'Activé en production : les traces d\'erreur exposent la configuration.')
                 : $this->ok('APP_DEBUG', 'Désactivé en production.');
 
+            /*
+             * APP_URL ne sert pas qu'à composer des liens : c'est de lui que
+             * `trustHosts` tire la liste des noms d'hôte légitimes
+             * (bootstrap/app.php). Vide ou mal formé, la liste se vide, le
+             * filtrage s'éteint sans rien dire, et un « Host » falsifié
+             * redevient capable de détourner un lien de réinitialisation de
+             * mot de passe.
+             */
             $checks[] = str_starts_with((string) config('app.url'), 'https://')
                 ? $this->ok('APP_URL', (string) config('app.url'))
-                : $this->error('APP_URL', 'Doit être en https:// en production : les liens des e-mails et des SMS en dépendent.');
+                : $this->error('APP_URL', "Doit être en https:// en production : les liens des e-mails et des SMS en dépendent, et c'est de lui que vient la liste des noms d'hôte de confiance.");
         }
 
         if (is_serverless()) {
@@ -222,6 +316,49 @@ class DeploymentCheckService
     }
 
     /**
+     * Les pièces d'identité doivent rester hors de portée d'une URL.
+     *
+     * Ce contrôle existe parce que la faute est invisible : un disque public
+     * sert les fichiers sans passer par Laravel, donc sans Policy, et rien
+     * dans l'application ne signale l'erreur. Elle ne se voit qu'en essayant
+     * l'URL — ce que personne ne fait.
+     *
+     * @return array<int, array{name: string, status: string, message: string}>
+     */
+    private function idDocumentChecks(): array
+    {
+        $disk = id_documents_disk();
+        $config = config("filesystems.disks.{$disk}");
+
+        if ($config === null) {
+            return [$this->error('ID_DOCUMENTS_DISK', "Disque « {$disk} » inconnu dans config/filesystems.php.")];
+        }
+
+        if ($disk === media_disk()) {
+            return [$this->error(
+                'ID_DOCUMENTS_DISK',
+                "Les pièces d'identité partagent le disque des images (« {$disk} ») : elles seraient servies par leur URL, sans authentification.",
+            )];
+        }
+
+        if (($config['visibility'] ?? null) === 'public') {
+            return [$this->error(
+                'ID_DOCUMENTS_DISK',
+                "Disque « {$disk} » en visibilité publique : les pièces d'identité seraient joignables par leur URL, sans authentification.",
+            )];
+        }
+
+        if (($config['driver'] ?? null) === 'local' && is_serverless()) {
+            return [$this->error(
+                'ID_DOCUMENTS_DISK',
+                "Disque « {$disk} » local sur un hébergement éphémère : les pièces déposées disparaîtront au déploiement suivant et la vérification des prestataires s'arrêtera.",
+            )];
+        }
+
+        return [$this->ok('ID_DOCUMENTS_DISK', "Disque « {$disk} » privé ({$config['driver']}).")];
+    }
+
+    /**
      * @return array<int, array{name: string, status: string, message: string}>
      */
     private function queueChecks(): array
@@ -305,7 +442,58 @@ class DeploymentCheckService
                 : $this->ok('IA', 'Pilote claude configuré.'))
             : $this->warning('IA', "Pilote « {$ai} » : réponses par règles, aucun coût.");
 
+        $checks[] = $this->mailCheck();
+
         return $checks;
+    }
+
+    /**
+     * L'expédition d'e-mails, dont dépend la seule voie de récupération d'un
+     * compte.
+     *
+     * Les notifications métier passent par les SMS et la base — c'est le bon
+     * choix ici. Il ne reste qu'un usage de l'e-mail, la réinitialisation de
+     * mot de passe, mais celui-là est vital : sans lui, un utilisateur qui perd
+     * son mot de passe perd son compte.
+     *
+     * Le défaut de Laravel est `log`, qui écrit le message dans un fichier au
+     * lieu de l'envoyer. Rien ne casse, aucune erreur n'apparaît, le
+     * formulaire affiche « lien envoyé » — et personne ne reçoit jamais rien.
+     *
+     * @return array{name: string, status: string, message: string}
+     */
+    private function mailCheck(): array
+    {
+        $mailer = (string) config('mail.default');
+
+        if (in_array($mailer, ['log', 'array', 'null'], true)) {
+            /*
+             * Hors production, écrire les messages dans un fichier est le bon
+             * réglage : le signaler comme bloquant ferait sortir `deploy:check`
+             * en échec sur toutes les machines de développement, et on
+             * apprendrait vite à ne plus lire sa sortie.
+             */
+            $message = "Pilote « {$mailer} » : aucun e-mail ne part réellement. La réinitialisation de mot de passe affichera « lien envoyé » sans que personne ne reçoive rien.";
+
+            return app()->environment('production')
+                ? $this->error('MAIL_MAILER', $message)
+                : $this->warning('MAIL_MAILER', $message.' Normal hors production.');
+        }
+
+        if ($mailer === 'smtp' && (string) config('mail.mailers.smtp.host') === '') {
+            return $this->error('MAIL_MAILER', 'Pilote smtp sans MAIL_HOST : chaque envoi échouera.');
+        }
+
+        $from = (string) config('mail.from.address');
+
+        if ($from === '' || str_ends_with($from, '@example.com')) {
+            return $this->warning(
+                'MAIL_FROM_ADDRESS',
+                "Adresse d'expédition « {$from} » : les messages partiront d'une adresse qui n'existe pas, et seront classés en indésirables.",
+            );
+        }
+
+        return $this->ok('MAIL_MAILER', "Pilote « {$mailer} », expéditeur {$from}.");
     }
 
     /**

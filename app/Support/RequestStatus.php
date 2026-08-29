@@ -3,7 +3,7 @@
 namespace App\Support;
 
 /**
- * Les libellés français des statuts d'une demande.
+ * Les libellés des statuts d'une demande.
  *
  * La même table était recopiée dans quatre fichiers — la pastille de statut,
  * le filtre de la liste des demandes, le tableau de bord d'administration — et
@@ -30,20 +30,36 @@ final class RequestStatus
     public const CANCELLED = 'cancelled';
 
     /**
+     * @return list<string>
+     */
+    public static function all(): array
+    {
+        return [
+            self::DRAFT,
+            self::SENT,
+            self::VIEWED,
+            self::ACCEPTED,
+            self::REFUSED,
+            self::IN_PROGRESS,
+            self::COMPLETED,
+            self::CANCELLED,
+        ];
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function labels(): array
     {
-        return [
-            self::DRAFT => 'Brouillon',
-            self::SENT => 'Envoyée',
-            self::VIEWED => 'Vue',
-            self::ACCEPTED => 'Acceptée',
-            self::REFUSED => 'Refusée',
-            self::IN_PROGRESS => 'En cours',
-            self::COMPLETED => 'Terminée',
-            self::CANCELLED => 'Annulée',
-        ];
+        /*
+         * Les libellés passent par les traductions : ce sont les mots que lit
+         * le client sur sa demande, et la bascule de langue de la barre de
+         * navigation ne vaut rien si la pastille de statut reste en français.
+         */
+        return array_combine(
+            self::all(),
+            array_map(fn (string $statut) => __('ui.status.'.$statut), self::all()),
+        );
     }
 
     /**

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :titre="__('Mon profil prestataire')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.provider.my_profile')" />
     </x-slot>
@@ -13,15 +13,15 @@
                 @method('PUT')
 
                 <div>
-                    <x-input-label for="business_name" value="Nom de l'entreprise / activité" />
+                    <x-input-label for="business_name" :value="__('Nom de l\'entreprise / activité')" />
                     <x-text-input id="business_name" name="business_name" type="text" class="mt-1 block w-full" :value="old('business_name', $providerProfile->business_name)" required />
                     <x-input-error :messages="$errors->get('business_name')" class="mt-2" />
                 </div>
 
                 <div class="mt-4">
-                    <x-input-label for="category_id" value="Catégorie principale" />
+                    <x-input-label for="category_id" :value="__('Catégorie principale')" />
                     <select id="category_id" name="category_id" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
-                        <option value="">Choisir une catégorie</option>
+                        <option value="">{{ __("Choisir une catégorie") }}</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}" @selected(old('category_id', $providerProfile->category_id) == $category->id)>{{ $category->name }}</option>
                         @endforeach
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <x-input-label for="description" value="Description (facultatif)" />
+                    <x-input-label for="description" :value="__('Description (facultatif)')" />
                     <textarea id="description" name="description" rows="4" maxlength="2000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">{{ old('description', $providerProfile->description) }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
                 </div>
@@ -100,7 +100,7 @@
                          confirme d'abord que le repère est posé ; les
                          coordonnées suivent, à qui elles servent. --}}
                     <p class="mt-1 text-xs text-on-surface-variant">
-                        Repère placé · <span class="font-label-numeric" x-text="`${lat}, ${lng}`"></span>
+                        {{ __("Repère placé ·") }} <span class="font-label-numeric" x-text="`${lat}, ${lng}`"></span>
                     </p>
                 </div>
 
@@ -111,33 +111,38 @@
 
                     @if ($providerProfile->id_card_path)
                         <div class="mb-3 flex items-center gap-3">
-                            @php $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION); @endphp
+                            @php
+                                $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION);
+                                // Passe par la route contrôlée : la pièce n'est
+                                // plus joignable par une URL publique.
+                                $document = route('provider-profiles.id-document', $providerProfile);
+                            @endphp
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <img src="{{ media_url($providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
+                                <img src="{{ $document }}" alt="{{ __('Votre pièce d\'identité déposée') }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
                             @else
-                                <a href="{{ media_url($providerProfile->id_card_path) }}" target="_blank" class="text-primary text-sm hover:underline">Voir le document</a>
+                                <a href="{{ $document }}" target="_blank" rel="noopener" class="text-primary text-sm hover:underline">{{ __("Voir le document") }}</a>
                             @endif
                             @if ($providerProfile->id_card_verified)
-                                <span class="inline-flex items-center rounded-full bg-secondary-container/40 px-2.5 py-0.5 text-xs font-medium text-on-secondary-container">Vérifié</span>
+                                <span class="inline-flex items-center rounded-full bg-secondary-container/40 px-2.5 py-0.5 text-xs font-medium text-on-secondary-container">{{ __("Vérifié") }}</span>
                             @else
-                                <span class="inline-flex items-center rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-xs font-medium text-tertiary">En attente de vérification</span>
+                                <span class="inline-flex items-center rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-xs font-medium text-tertiary">{{ __("En attente de vérification") }}</span>
                             @endif
                         </div>
                     @endif
 
-                    <x-file-input name="id_card" accept="image/*,.pdf" label="Déposer ma pièce"
-                                  hint="Photo de la CNI ou du passeport, ou PDF." class="mt-2" />
+                    <x-file-input name="id_card" accept="image/*,.pdf" :label="__('Déposer ma pièce')"
+                                  :hint="__('Photo de la CNI ou du passeport, ou PDF.')" class="mt-2" />
                     <x-input-error :messages="$errors->get('id_card')" class="mt-2" />
                 </div>
 
                 <div class="mt-6 border-t border-outline-variant pt-5">
-                    <h3 class="font-medium text-on-surface">Où et comment vous joindre</h3>
-                    <p class="mt-1 text-xs text-on-surface-variant">Ces informations paraissent sur votre fiche publique.</p>
+                    <h3 class="font-medium text-on-surface">{{ __("Où et comment vous joindre") }}</h3>
+                    <p class="mt-1 text-xs text-on-surface-variant">{{ __("Ces informations paraissent sur votre fiche publique.") }}</p>
                 </div>
 
                 <!-- Service areas -->
                 <div class="mt-4" x-data="{ areas: @js(old('service_areas', $providerProfile->service_areas ?: [''])) }">
-                    <x-input-label value="Zones d'intervention (facultatif)" />
+                    <x-input-label :value="__('Zones d\'intervention (facultatif)')" />
                     <template x-for="(area, index) in areas" :key="index">
                         <div class="flex gap-2 mt-2">
                             <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
@@ -145,14 +150,14 @@
                         </div>
                     </template>
                     <button type="button" @click="areas.push('')" class="mt-2 text-sm text-primary hover:text-primary-container">
-                        + Ajouter une zone
+                        {{ __("+ Ajouter une zone") }}
                     </button>
                     <x-input-error :messages="$errors->get('service_areas')" class="mt-2" />
                 </div>
 
                 <!-- Contact methods -->
                 <div class="mt-4" x-data="{ contacts: @js(old('contact_methods', $providerProfile->contact_methods ?: [''])) }">
-                    <x-input-label value="Moyens de contact (facultatif)" />
+                    <x-input-label :value="__('Moyens de contact (facultatif)')" />
                     <template x-for="(contact, index) in contacts" :key="index">
                         <div class="flex gap-2 mt-2">
                             <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
@@ -160,14 +165,14 @@
                         </div>
                     </template>
                     <button type="button" @click="contacts.push('')" class="mt-2 text-sm text-primary hover:text-primary-container">
-                        + Ajouter un contact
+                        {{ __("+ Ajouter un contact") }}
                     </button>
                     <x-input-error :messages="$errors->get('contact_methods')" class="mt-2" />
                 </div>
 
                 <!-- Opening hours -->
                 <div class="mt-4">
-                    <p class="block font-medium text-sm text-on-surface-variant mb-2">Horaires d'ouverture (facultatif)</p>
+                    <p class="block font-medium text-sm text-on-surface-variant mb-2">{{ __("Horaires d'ouverture (facultatif)") }}</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @foreach (['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'] as $day)
                             <div class="flex items-center gap-2">
@@ -187,12 +192,14 @@
 
                 <!-- Logo -->
                 <div class="mt-6 border-t border-outline-variant pt-5">
-                    <x-input-label value="Logo (facultatif)" />
+                    <x-input-label :value="__('Logo (facultatif)')" />
                     <div class="mt-1 flex items-center gap-4">
                         @if ($providerProfile->logo_path)
-                            <img src="{{ media_url($providerProfile->logo_path) }}" class="h-16 w-16 rounded-full object-cover">
+                            <img src="{{ media_url($providerProfile->logo_path) }}"
+                                 alt="{{ __('Logo actuel de :nom', ['nom' => $providerProfile->business_name]) }}"
+                                 class="h-16 w-16 rounded-full object-cover">
                         @endif
-                        <x-file-input name="logo" accept="image/*" label="Choisir un logo" />
+                        <x-file-input name="logo" accept="image/*" :label="__('Choisir un logo')" />
                     </div>
                     <x-input-error :messages="$errors->get('logo')" class="mt-2" />
                 </div>

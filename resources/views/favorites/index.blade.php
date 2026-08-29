@@ -1,6 +1,6 @@
-<x-app-layout>
+<x-app-layout :titre="__('Mes favoris')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Favoris" subtitle="Vos prestataires de confiance sauvegardés." />
+        <x-page-header :title="__('Favoris')" :subtitle="__('Vos prestataires de confiance sauvegardés.')" />
     </x-slot>
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
@@ -16,14 +16,14 @@
                  il n'y a rien d'autre à regarder. --}}
             <div class="flex flex-col items-center justify-center py-16 text-center">
                 <span class="material-symbols-outlined mb-4 text-6xl text-outline-variant" aria-hidden="true">heart_broken</span>
-                <h2 class="mb-2 font-headline-md text-headline-md text-on-surface">Vous n'avez pas encore de favoris.</h2>
+                <h2 class="mb-2 font-headline-md text-headline-md text-on-surface">{{ __("Vous n'avez pas encore de favoris.") }}</h2>
                 <p class="mx-auto max-w-md font-body-md text-body-md text-on-surface-variant">
-                    Explorez les prestataires et appuyez sur le cœur pour les ajouter à cette liste.
+                    {{ __("Explorez les prestataires et appuyez sur le cœur pour les ajouter à cette liste.") }}
                 </p>
                 <a href="{{ route('providers.index') }}"
                    class="mt-6 flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-all duration-100 hover:bg-primary-container active:scale-95">
                     <span class="material-symbols-outlined" aria-hidden="true">search</span>
-                    Trouver un prestataire
+                    {{ __("Trouver un prestataire") }}
                 </a>
             </div>
         @else
@@ -57,12 +57,12 @@
                             @if ($profil->rating_count)
                                 <x-star-rating :rating="$profil->rating_avg" :count="$profil->rating_count" compact />
                             @else
-                                <span class="text-xs text-on-surface-variant">Pas encore d'avis</span>
+                                <span class="text-xs text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
                             @endif
 
                             <a href="{{ route('requests.create', ['provider_id' => $profil->user_id]) }}"
                                class="shrink-0 font-button-text text-button-text text-primary hover:text-primary-container">
-                                Contacter
+                                {{ __("Contacter") }}
                             </a>
                         </div>
                     </div>

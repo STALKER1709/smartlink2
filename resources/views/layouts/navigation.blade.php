@@ -162,9 +162,9 @@
 
         <div class="flex gap-2 border-t border-outline-variant px-4 py-3">
             <a href="{{ route('locale.switch', 'fr') }}"
-               class="rounded-full px-3 py-1.5 text-sm font-medium {{ $locale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">Français</a>
+               class="rounded-full px-3 py-1.5 text-sm font-medium {{ $locale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">{{ __("Français") }}</a>
             <a href="{{ route('locale.switch', 'en') }}"
-               class="rounded-full px-3 py-1.5 text-sm font-medium {{ $locale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">English</a>
+               class="rounded-full px-3 py-1.5 text-sm font-medium {{ $locale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">{{ __("English") }}</a>
         </div>
     </div>
 </nav>

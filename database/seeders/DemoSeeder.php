@@ -181,7 +181,6 @@ class DemoSeeder extends Seeder
                 'status' => $statut,
                 'starts_at' => $debut,
                 'ends_at' => $fin,
-                'cancelled_at' => null,
                 'last_reminder_day' => null,
             ],
         );

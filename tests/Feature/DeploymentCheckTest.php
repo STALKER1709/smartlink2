@@ -29,6 +29,15 @@ class DeploymentCheckTest extends TestCase
         // ce que le contrôle signale. Ces tests portent sur autre chose : on
         // part donc d'une installation complète.
         Plan::factory()->create();
+
+        // La suite tourne avec MAIL_MAILER=array, qui est précisément une des
+        // configurations que le contrôle refuse. Les tests qui ne portent pas
+        // sur l'e-mail partent donc d'un expéditeur plausible.
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => 'smtp.hebergeur.invalid',
+            'mail.from.address' => 'contact@smartlink.cm',
+        ]);
     }
 
     private function statusOf(string $name): ?string
@@ -45,6 +54,22 @@ class DeploymentCheckTest extends TestCase
     private function pretendServerless(): void
     {
         putenv('VERCEL=1');
+    }
+
+    /**
+     * Les contrôles de supervision ne portent que sur la production : en local,
+     * des journaux dans un fichier et aucune alerte sont le bon réglage.
+     */
+    private function identiteLegaleComplete(): void
+    {
+        $cles = array_keys((array) config('legal.editeur'));
+
+        config(['legal.editeur' => array_combine($cles, array_map(fn (string $c) => 'valeur '.$c, $cles))]);
+    }
+
+    private function pretendProduction(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
     }
 
     protected function tearDown(): void
@@ -225,6 +250,10 @@ class DeploymentCheckTest extends TestCase
         config([
             'filesystems.media' => 's3',
             'filesystems.disks.s3.url' => 'https://cdn.example.com',
+            // Les pièces d'identité ont leur propre seau, fermé : un disque
+            // local les perdrait au déploiement suivant, et la vérification
+            // des prestataires s'arrêterait sans erreur visible.
+            'filesystems.id_documents' => 's3_id_documents',
             'queue.default' => 'sync',
             'cron.secret' => 'un-secret',
             'logging.default' => 'stderr',
@@ -236,6 +265,28 @@ class DeploymentCheckTest extends TestCase
         $checks = app(DeploymentCheckService::class)->run();
 
         $this->assertFalse(app(DeploymentCheckService::class)->hasErrors($checks));
+    }
+
+    /**
+     * Le disque des pièces d'identité ne doit jamais être celui des images :
+     * ce dernier est public, donc servi sans passer par Laravel.
+     */
+    public function test_id_documents_sharing_the_public_media_disk_is_an_error(): void
+    {
+        config([
+            'filesystems.media' => 'public',
+            'filesystems.id_documents' => 'public',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('ID_DOCUMENTS_DISK'));
+    }
+
+    public function test_a_local_id_documents_disk_is_an_error_on_a_serverless_host(): void
+    {
+        $this->pretendServerless();
+        config(['filesystems.id_documents' => 'id_documents']);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('ID_DOCUMENTS_DISK'));
     }
 
     public function test_the_health_route_refuses_a_call_without_the_secret(): void
@@ -275,5 +326,154 @@ class DeploymentCheckTest extends TestCase
         $this->getJson(route('cron.health'), ['Authorization' => 'Bearer un-secret'])
             ->assertStatus(500)
             ->assertJson(['status' => 'failed', 'serverless' => true]);
+    }
+
+    /**
+     * Le défaut de Laravel écrit les messages dans un fichier au lieu de les
+     * envoyer. Rien ne casse, le formulaire affiche « lien envoyé », et
+     * l'utilisateur qui a perdu son mot de passe ne reçoit jamais rien : c'est
+     * la seule voie de récupération d'un compte.
+     */
+    public function test_a_mailer_that_sends_nothing_is_an_error_in_production(): void
+    {
+        $this->pretendProduction();
+
+        foreach (['log', 'array', 'null'] as $pilote) {
+            config(['mail.default' => $pilote]);
+
+            $this->assertSame(
+                DeploymentCheckService::ERROR,
+                $this->statusOf('MAIL_MAILER'),
+                "Le pilote « {$pilote} » n'envoie rien et doit bloquer en production.",
+            );
+        }
+    }
+
+    /**
+     * Hors production, écrire les messages dans un fichier est le bon réglage.
+     * Le signaler comme bloquant ferait sortir `deploy:check` en échec sur
+     * toutes les machines de développement — et on apprendrait vite à ne plus
+     * lire sa sortie.
+     */
+    public function test_the_same_mailer_is_only_a_warning_outside_production(): void
+    {
+        config(['mail.default' => 'log']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('MAIL_MAILER'));
+    }
+
+    public function test_an_smtp_mailer_without_a_host_is_an_error(): void
+    {
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => '',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('MAIL_MAILER'));
+    }
+
+    /**
+     * L'adresse d'exemple livrée dans .env.example : les messages partent, mais
+     * d'un domaine qui n'appartient à personne — ils finissent en indésirables.
+     */
+    public function test_the_example_sender_address_is_flagged(): void
+    {
+        config(['mail.from.address' => 'hello@example.com']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('MAIL_FROM_ADDRESS'));
+    }
+
+    public function test_a_real_smtp_configuration_passes(): void
+    {
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('MAIL_MAILER'));
+    }
+
+    public function test_no_alert_destination_is_flagged_in_production(): void
+    {
+        $this->pretendProduction();
+        config(['logging.default' => 'stderr', 'logging.channels.slack.url' => null]);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Alertes'));
+    }
+
+    public function test_an_alert_destination_passes(): void
+    {
+        $this->pretendProduction();
+        config([
+            'logging.default' => 'stderr',
+            'logging.channels.slack.url' => 'https://hooks.slack.invalid/services/…',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('Alertes'));
+    }
+
+    /**
+     * Sur Vercel, un journal écrit dans l'arborescence disparaît au
+     * déploiement suivant — et il n'y a alors plus aucune trace des pannes.
+     */
+    public function test_a_file_log_channel_is_flagged_on_a_serverless_host(): void
+    {
+        $this->pretendProduction();
+        $this->pretendServerless();
+        config(['logging.default' => 'daily']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Journaux'));
+    }
+
+    public function test_the_observability_checks_stay_silent_outside_production(): void
+    {
+        config(['logging.default' => 'single', 'logging.channels.slack.url' => null]);
+
+        $this->assertNull($this->statusOf('Alertes'));
+        $this->assertNull($this->statusOf('Journaux'));
+    }
+
+    /**
+     * Les mentions légales figurent sur les statuts de la société : personne
+     * ne peut les deviner, et l'application démarre parfaitement sans. Sans ce
+     * contrôle, leur absence ne se remarque que le jour où quelqu'un les
+     * cherche.
+     */
+    public function test_missing_legal_details_are_flagged_in_production(): void
+    {
+        $this->pretendProduction();
+        config(['legal.editeur.rccm' => '', 'legal.editeur.siege' => null]);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Mentions légales'));
+    }
+
+    /**
+     * Le piège que ce contrôle double : le bandeau de la page ne s'affichait
+     * que si *toutes* les mentions manquaient. Ici, une seule manque.
+     */
+    public function test_a_single_missing_detail_is_enough_to_flag(): void
+    {
+        $this->pretendProduction();
+        $this->identiteLegaleComplete();
+        config(['legal.editeur.niu' => '']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Mentions légales'));
+    }
+
+    public function test_complete_and_reviewed_legal_details_pass(): void
+    {
+        $this->pretendProduction();
+        $this->identiteLegaleComplete();
+        config(['legal.valide_juridiquement' => true]);
+
+        $this->assertSame(DeploymentCheckService::OK, $this->statusOf('Mentions légales'));
+    }
+
+    /**
+     * Complètes mais non relues : les pages portent une mention visible du
+     * public, qui doit se voir aussi dans le contrôle.
+     */
+    public function test_unreviewed_documents_are_still_flagged(): void
+    {
+        $this->pretendProduction();
+        $this->identiteLegaleComplete();
+        config(['legal.valide_juridiquement' => false]);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('Mentions légales'));
     }
 }

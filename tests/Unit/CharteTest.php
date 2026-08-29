@@ -39,6 +39,13 @@ class CharteTest extends TestCase
         'couleur-brute' => [
             'provider/subscription/checkout.blade.php',
             'providers/show.blade.php',
+            // La page hors-ligne est servie par le service worker sans réseau :
+            // aucune feuille de style ne l'accompagne, ses couleurs sont donc
+            // écrites en clair. Ce sont celles de la palette.
+            'hors-ligne.blade.php',
+            // `theme-color` est une balise meta : elle prend une couleur, pas
+            // une classe.
+            'partials/pwa-head.blade.php',
         ],
     ];
 

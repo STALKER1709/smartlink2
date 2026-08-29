@@ -10,26 +10,35 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id', 'plan_id', 'status', 'starts_at', 'ends_at', 'cancelled_at', 'last_reminder_day'])]
+#[Fillable(['user_id', 'plan_id', 'status', 'starts_at', 'ends_at', 'last_reminder_day'])]
 class Subscription extends Model
 {
     /** @use HasFactory<SubscriptionFactory> */
     use HasFactory;
 
+    /*
+     * Trois états, et trois seulement. Un quatrième — « cancelled » — a
+     * longtemps figuré ici avec sa colonne `cancelled_at`, sans qu'aucun
+     * chemin du code n'y mène : ni action du prestataire, ni tâche planifiée.
+     * Résilier consiste à laisser l'abonnement arriver à échéance.
+     *
+     * Il a été retiré plutôt que laissé en place : une constante déclarée
+     * laisse croire à une capacité qui n'existe pas, et `cancelled_at` ne
+     * recevait jamais qu'un `null`. Le jour où la résiliation explicite sera
+     * une vraie fonctionnalité, elle reviendra avec son chemin d'écriture et
+     * ses tests.
+     */
     public const STATUS_TRIALING = 'trialing';
 
     public const STATUS_ACTIVE = 'active';
 
     public const STATUS_EXPIRED = 'expired';
 
-    public const STATUS_CANCELLED = 'cancelled';
-
     protected function casts(): array
     {
         return [
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
-            'cancelled_at' => 'datetime',
             'last_reminder_day' => 'integer',
         ];
     }

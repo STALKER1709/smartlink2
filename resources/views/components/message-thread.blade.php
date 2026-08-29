@@ -70,7 +70,7 @@
             </div>
         @empty
             <p class="py-6 text-center text-sm text-on-surface-variant">
-                Aucun message pour le moment. Écrivez le premier.
+                {{ __("Aucun message pour le moment. Écrivez le premier.") }}
             </p>
         @endforelse
     </div>
@@ -82,21 +82,21 @@
           ])>
         @csrf
         <div class="flex min-h-[48px] flex-1 items-end overflow-hidden rounded-xl border border-outline-variant bg-surface-container-low transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
-            <label for="body-{{ $conversation->id }}" class="sr-only">Votre message</label>
+            <label for="body-{{ $conversation->id }}" class="sr-only">{{ __("Votre message") }}</label>
             <textarea
                 id="body-{{ $conversation->id }}"
                 name="body"
                 rows="1"
                 required
                 maxlength="5000"
-                placeholder="Tapez votre message…"
+                placeholder="{{ __('Tapez votre message…') }}"
                 oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
                 class="max-h-32 w-full resize-none border-none bg-transparent px-4 py-3 font-body-md text-on-surface placeholder:text-on-surface-variant focus:ring-0"
             ></textarea>
         </div>
         <button type="submit"
                 class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary-container"
-                aria-label="Envoyer">
+                aria-label="{{ __('Envoyer') }}">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">send</span>
         </button>
     </form>

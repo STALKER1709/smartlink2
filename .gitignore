@@ -5,11 +5,20 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+/.claude
 /.codex
 /.cursor/
 /.idea
 /.nova
 /.phpunit.cache
+
+# La base SQLite de développement. database/.gitignore couvre « *.sqlite* »,
+# mais .env.example proposait DB_DATABASE=smartlink : basculer DB_CONNECTION
+# sur sqlite sans toucher à cette ligne posait une base sans extension à la
+# racine, qui échappait au filtre. Elle a fini versionnée, et se salissait
+# ensuite à chaque test lancé en local.
+/smartlink
+
 /.vscode
 /.zed
 /auth.json

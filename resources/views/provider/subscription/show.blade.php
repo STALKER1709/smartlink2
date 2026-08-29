@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :titre="__('Mon abonnement')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.nav.subscription')" />
     </x-slot>

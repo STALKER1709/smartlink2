@@ -86,12 +86,14 @@ class SubscribeFlowTest extends TestCase
         $this->assertSame('ref_pending', $payment->provider_reference);
 
         // Le palier ne change qu'au règlement effectif.
-        $this->assertSame($this->pro->id, $this->provider->activeSubscription()->plan_id);
+        $this->assertSame($this->pro->id, $this->provider->refresh()->activeSubscription()->plan_id);
 
         // Le statut relu chez le fournisseur fait foi.
         $this->postSignedWebhook('ref_pending', $payment->internal_reference);
 
-        $this->assertSame($this->essential->id, $this->provider->activeSubscription()->plan_id);
+        // Le rappel est une autre requête : en production elle reconstruit son
+        // propre utilisateur. Ici l'instance du test traverse les deux.
+        $this->assertSame($this->essential->id, $this->provider->refresh()->activeSubscription()->plan_id);
     }
 
     public function test_a_refused_collection_reports_the_failure_without_charging_the_plan(): void

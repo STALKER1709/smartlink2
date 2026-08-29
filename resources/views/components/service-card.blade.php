@@ -27,7 +27,7 @@
 
         @unless ($service->is_available)
             <span class="absolute inset-x-0 bottom-0 bg-inverse-surface/85 px-1 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wide text-inverse-on-surface">
-                Indisponible
+                {{ __("Indisponible") }}
             </span>
         @endunless
     </div>
@@ -49,7 +49,7 @@
         <p class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-on-surface-variant">
             <span class="line-clamp-1">{{ $profile?->business_name ?? $service->provider?->name }}</span>
             @if ($profile?->is_verified)
-                <span class="material-symbols-outlined shrink-0 text-base text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="Prestataire vérifié">verified</span>
+                <span class="material-symbols-outlined shrink-0 text-base text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="{{ __('Prestataire vérifié') }}">verified</span>
             @endif
             @if ($service->city)
                 <span class="whitespace-nowrap"><span aria-hidden="true" class="text-outline">·</span>
@@ -65,7 +65,7 @@
                         <span class="font-body-md text-sm text-on-surface-variant">/ {{ $service->price_unit }}</span>
                     @endif
                 @else
-                    <span class="font-body-md text-sm text-on-surface-variant">Prix à convenir</span>
+                    <span class="font-body-md text-sm text-on-surface-variant">{{ __("Prix à convenir") }}</span>
                 @endif
             </span>
 

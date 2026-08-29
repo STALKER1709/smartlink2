@@ -15,14 +15,4 @@ class OtpCode extends Model
             'used_at' => 'datetime',
         ];
     }
-
-    public function isExpired(): bool
-    {
-        return $this->expires_at->isPast();
-    }
-
-    public function isUsed(): bool
-    {
-        return $this->used_at !== null;
-    }
 }

@@ -1,11 +1,11 @@
-<x-app-layout>
+<x-app-layout :titre="__('Mes demandes')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Demandes" :subtitle="$requests->total().' '.Str::plural('demande', $requests->total())">
+        <x-page-header :title="__('Demandes')" :subtitle="$requests->total().' '.Str::plural('demande', $requests->total())">
             @if (Auth::user()->isClient())
                 <x-slot name="action">
                     <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container">
                         <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
-                        Nouvelle demande
+                        {{ __("Nouvelle demande") }}
                     </a>
                 </x-slot>
             @endif
@@ -31,7 +31,7 @@
                        'border border-transparent bg-primary-container text-on-primary-container' => ! request('status'),
                        'border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low' => request('status'),
                    ])>
-                    Toutes
+                    {{ __("Toutes") }}
                     <span class="font-label-numeric">{{ array_sum($comptes) }}</span>
                 </a>
                 @foreach ($statuts as $valeur => $label)
@@ -49,9 +49,9 @@
         @endif
 
         @if ($requests->isEmpty())
-            <x-empty-state title="Aucune demande pour le moment."
-                           description="Les demandes que vous envoyez — et celles que vous recevez — s'affichent ici."
-                           :action-label="Auth::user()->isClient() ? 'Parcourir les services' : null"
+            <x-empty-state :title="__('Aucune demande pour le moment.')"
+                           :description="__('Les demandes que vous envoyez — et celles que vous recevez — s\'affichent ici.')"
+                           :action-label="Auth::user()->isClient() ? __('Parcourir les services') : null"
                            :action-href="Auth::user()->isClient() ? route('services.index') : null" />
         @else
             {{-- La carte de demande des maquettes : qui, quel métier, dans quel
@@ -74,7 +74,7 @@
                        class="group relative flex flex-col rounded-xl border border-outline-variant bg-surface p-4 transition-colors hover:bg-surface-container-lowest">
                         @if (($serviceRequest->unread_count ?? 0) > 0)
                             <span class="absolute right-4 top-4 h-3 w-3 rounded-full bg-error"
-                                  role="img" aria-label="Nouveau message"></span>
+                                  role="img" aria-label="{{ __('Nouveau message') }}"></span>
                         @endif
 
                         <div class="mb-3 flex items-center gap-3">

@@ -36,6 +36,8 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\WebManifestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,6 +92,22 @@ Route::get('/conditions-generales', [LegalController::class, 'terms'])->name('le
 Route::get('/mentions-legales', [LegalController::class, 'notice'])->name('legal.notice');
 Route::get('/confidentialite', [LegalController::class, 'privacy'])->name('legal.privacy');
 
+/*
+ * Plan du site et fichier des robots. Servis par l'application et non déposés
+ * en fichiers statiques : la directive « Sitemap » veut une URL absolue, que
+ * seul `APP_URL` connaît, et le plan doit refléter les fiches réellement
+ * ouvertes au public à l'instant où le robot passe.
+ */
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+/*
+ * Installation sur l'écran d'accueil. La page hors-ligne n'est jamais atteinte
+ * par un lien : c'est le service worker qui la sert quand le réseau manque.
+ */
+Route::get('/manifest.json', WebManifestController::class)->name('manifest');
+Route::view('/hors-ligne', 'hors-ligne')->name('offline');
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -133,6 +151,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])
         ->middleware('throttle:10,1')
         ->name('phone.verify.check');
+
+    /*
+     * Seule sortie des pièces d'identité, qui vivent sur un disque privé.
+     *
+     * Volontairement hors du groupe « role:admin » : le prestataire doit
+     * pouvoir relire le document qu'il a lui-même déposé. C'est la Policy
+     * `viewIdDocument` qui tranche, pas la place de la route.
+     */
+    Route::get('/prestataires/{providerProfile}/piece-identite',
+        [ProviderVerificationController::class, 'document'])
+        ->name('provider-profiles.id-document');
 });
 
 /*

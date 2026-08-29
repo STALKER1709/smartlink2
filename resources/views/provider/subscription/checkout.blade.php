@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :titre="__('Régler l\'abonnement')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.subscription.checkout_title', ['plan' => $plan->name()])" :back="route('provider.subscription.show')" back-label="Mon abonnement" />
     </x-slot>
@@ -20,7 +20,7 @@
             </div>
 
             <div class="mt-2 flex items-center justify-between border-t border-outline-variant pt-4">
-                <span class="font-body-lg text-body-lg text-on-surface">Total à payer</span>
+                <span class="font-body-lg text-body-lg text-on-surface">{{ __("Total à payer") }}</span>
                 <span class="font-label-numeric text-xl text-primary">{{ $plan->formattedPrice() }}</span>
             </div>
         </section>

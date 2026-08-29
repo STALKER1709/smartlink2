@@ -227,12 +227,13 @@ clair pour une sélection.
 
 ## Components
 
-> **Les maquettes Stitch (`design/stitch-imports`) font foi pour la mise en
-> page des écrans.** Elles portent la même palette et la même typographie que
-> ce document. Là où une maquette n'a pas été éprouvée à 390 px — un titre et
-> son lien côte à côte, un bouton qui comprime un libellé —, la règle de
-> repli reste celle énoncée ici : l'élément secondaire passe sous le
-> principal.
+> **Ce document fait foi pour la mise en page des écrans.** Les maquettes
+> Google Stitch qui ont servi à la refonte ont été retirées du dépôt une fois
+> l'intégration faite et vérifiée à l'écran ; l'historique Git les conserve.
+> Elles n'avaient de toute façon pas été éprouvées à 390 px : là où une
+> maquette laissait un titre et son lien côte à côte, ou un bouton comprimer
+> son libellé, la règle appliquée est celle énoncée ici — l'élément secondaire
+> passe sous le principal.
 
 - **Rangée de prestataire** — même régime que la rangée de service : métier en
   capitales, nom, ville et nombre de services, note. C'était une carte bordée

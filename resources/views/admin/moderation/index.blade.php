@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :titre="__('Modération')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.moderation.title')" />
     </x-slot>
@@ -14,7 +14,7 @@
             {{-- Le titre et la description disaient la même phrase deux fois.
                  La description dit maintenant ce qui se passera. --}}
             <x-empty-state :title="__('ui.moderation.empty')"
-                           description="Les services et les avis sont examinés à la publication ; ceux que l'examen retient viendront ici." />
+                           :description="__('Les services et les avis sont examinés à la publication ; ceux que l\'examen retient viendront ici.')" />
         @else
             {{-- Chaque signalement était une carte bordée posée sur du gris,
                  quinze fois de suite : aucun n'attirait l'œil plus que le
@@ -63,7 +63,7 @@
 
                             <p class="font-headline-md text-body-lg text-on-surface">
                                 @if ($content === null)
-                                    <span class="text-on-surface-variant">— supprimé —</span>
+                                    <span class="text-on-surface-variant">{{ __("— supprimé —") }}</span>
                                 @elseif ($isService)
                                     {{ $content->title }}
                                 @else

@@ -16,7 +16,7 @@
             {{ $compact ? ($compactLabel ?? $label) : $label }}
         </a>
     @else
-        <p class="text-center text-sm text-on-surface-variant">Seuls les clients peuvent envoyer une demande.</p>
+        <p class="text-center text-sm text-on-surface-variant">{{ __("Seuls les clients peuvent envoyer une demande.") }}</p>
     @endcan
 @else
     {{-- Le visiteur vise la demande, pas la connexion : le bouton porte donc
@@ -31,8 +31,8 @@
 
     @unless ($compact)
         <p class="mt-2 text-center text-xs text-on-surface-variant">
-            Connexion ou création de compte à l'étape suivante.
-            <span class="font-semibold text-primary">Gratuit pour les clients.</span>
+            {{ __("Connexion ou création de compte à l'étape suivante.") }}
+            <span class="font-semibold text-primary">{{ __("Gratuit pour les clients.") }}</span>
         </p>
     @endunless
 @endauth

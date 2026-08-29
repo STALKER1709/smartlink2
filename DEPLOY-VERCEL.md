@@ -105,13 +105,26 @@ Le mot de passe est haché automatiquement par le modèle.
 
 ### 2.2 Le stockage Supabase
 
-Le même projet Supabase porte les photos de profil, logos, images de services
-et pièces d'identité. Rien d'autre à ouvrir.
+Le même projet Supabase porte les fichiers déposés. Il faut **deux seaux**, et
+la distinction n'est pas cosmétique.
 
 1. **Storage → New bucket** : nommez-le `smartlink` et cochez **Public bucket**.
-   Les images s'affichent dans des balises `<img>` : un bucket privé les rendrait
-   toutes cassées.
-2. **Project Settings → Storage → S3 access keys → New access key** : notez la
+   Il porte les photos de profil, logos et images de services. Ces images
+   s'affichent dans des balises `<img>` : un bucket privé les rendrait toutes
+   cassées.
+2. **Storage → New bucket** : nommez-le `smartlink-id-documents` et laissez-le
+   **privé** (ne cochez pas « Public bucket »).
+
+   Il porte les pièces d'identité déposées pour la vérification. Un seau public
+   les servirait par leur URL, sans authentification : un nom de fichier
+   aléatoire n'est pas un contrôle d'accès, et une URL qui fuit une fois
+   (capture d'écran, en-tête `Referer`, journal d'un intermédiaire) ouvre le
+   document définitivement. Ces fichiers ne sortent que par une route de
+   l'application qui vérifie qui demande.
+
+   `php artisan deploy:check` refuse le déploiement si ce seau est public ou
+   confondu avec le premier.
+3. **Project Settings → Storage → S3 access keys → New access key** : notez la
    clé et le secret, ils ne sont montrés qu'une fois.
 
 Les trois valeurs qui en découlent, `<ref>` étant la référence du projet :
@@ -162,7 +175,34 @@ L'URL à déclarer chez HR-Skills est indiquée au §6.
 Pour une première mise en ligne de démonstration, `PAYMENT_PROVIDER=mock`
 n'appelle aucune API et ne demande aucun compte.
 
-### 2.4 Une clé Anthropic (facultatif)
+### 2.4 Un relais d'e-mail transactionnel
+
+SmartLink notifie par SMS et dans l'application ; l'e-mail ne sert qu'à une
+chose, mais elle est vitale : **la réinitialisation du mot de passe**. C'est la
+seule voie de récupération d'un compte. Sans relais, un prestataire qui oublie
+son mot de passe perd son compte et l'abonnement qu'il a payé.
+
+Le défaut de Laravel est `MAIL_MAILER=log`, qui écrit le message dans un fichier
+au lieu de l'envoyer — et sur Vercel ce fichier n'existe même pas. Rien
+n'échoue, aucune erreur n'apparaît, le formulaire affiche « lien envoyé », et
+personne ne reçoit jamais rien. C'est la panne la plus discrète de cette liste :
+elle ne se voit que le jour où quelqu'un a vraiment besoin du lien.
+
+N'importe quel relais transactionnel convient (Resend, Brevo, Postmark,
+Mailgun…). Deux points à ne pas rater :
+
+- `MAIL_FROM_ADDRESS` doit être sur **un domaine que vous possédez** et que vous
+  avez authentifié chez le relais (SPF/DKIM). Une adresse en `example.com`, ou
+  un domaine non signé, part en indésirables sans qu'aucun journal ne le dise.
+- Ces envois sont synchrones sur Vercel (file en `sync`) : le formulaire attend
+  la réponse du relais. Préférez l'API HTTP du fournisseur au SMTP quand elle
+  est proposée, ou un port `587` en TLS — un `465` bloqué ferait expirer la
+  requête.
+
+`php artisan deploy:check` refuse un pilote qui n'envoie rien et signale une
+adresse d'expédition restée à l'exemple.
+
+### 2.5 Une clé Anthropic (facultatif)
 
 `AI_DRIVER=rule` ne demande ni compte ni réseau et ne coûte rien : l'assistant
 répond par règles. `AI_DRIVER=claude` avec `ANTHROPIC_API_KEY` active les
@@ -216,6 +256,11 @@ AWS_SECRET_ACCESS_KEY=…
 AWS_DEFAULT_REGION=eu-west-3
 AWS_BUCKET=smartlink
 AWS_ENDPOINT=https://<ref-projet>.supabase.co/storage/v1/s3
+
+# Indispensable : les pièces d'identité vont dans le seau privé, jamais dans
+# celui des images. Sans ces deux lignes, elles seraient servies par leur URL.
+ID_DOCUMENTS_DISK=s3_id_documents
+AWS_ID_DOCUMENTS_BUCKET=smartlink-id-documents
 AWS_URL=https://<ref-projet>.supabase.co/storage/v1/object/public/smartlink
 AWS_USE_PATH_STYLE_ENDPOINT=true
 AWS_VISIBILITY=private        # Supabase ne gère pas les ACL par objet
@@ -223,6 +268,18 @@ AWS_VISIBILITY=private        # Supabase ne gère pas les ACL par objet
 # Protège la route appelée par Vercel Cron. Vercel envoie automatiquement
 # « Authorization: Bearer <CRON_SECRET> » dès que cette variable existe.
 CRON_SECRET=…                 # openssl rand -hex 32
+
+# Indispensable : le défaut « log » écrit le message dans un fichier au lieu
+# de l'envoyer. C'est la seule voie de récupération d'un compte — sans un vrai
+# relais, le mot de passe oublié annonce « lien envoyé » sans rien envoyer.
+MAIL_MAILER=smtp
+MAIL_HOST=…                   # relais transactionnel (Resend, Brevo, Postmark…)
+MAIL_PORT=587
+MAIL_USERNAME=…
+MAIL_PASSWORD=…
+MAIL_SCHEME=tls
+MAIL_FROM_ADDRESS=contact@votre-domaine.cm   # un domaine que vous possédez
+MAIL_FROM_NAME=SmartLink
 
 PAYMENT_PROVIDER=hrskills
 HRSKILLS_CLE_A=hrsk_pk_live_…
@@ -236,7 +293,7 @@ Ne cochez pas *Automatically expose System Environment Variables* pour y
 chercher `APP_KEY` : générez-la vous-même et collez-la. Sans `APP_KEY`, aucune
 session ne fonctionne.
 
-**Les six lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
+**Les dix lignes dont l'oubli ne produit aucune erreur visible.** Ce sont
 celles que `deploy:check` et `/cron/health` contrôlent nommément, parce que
 l'application démarre parfaitement sans elles :
 
@@ -244,10 +301,19 @@ l'application démarre parfaitement sans elles :
 |---|---|
 | `QUEUE_CONNECTION=sync` | La modération des annonces et des avis ne s'exécute jamais |
 | `MEDIA_DISK=s3` | Chaque image déposée disparaît au déploiement suivant |
+| `ID_DOCUMENTS_DISK=s3_id_documents` | Les pièces d'identité sont servies par leur URL, sans authentification |
 | `AWS_VISIBILITY=private` | Chaque dépôt d'image échoue chez Supabase |
 | `CRON_SECRET` | Aucun abonnement n'expire, aucune relance n'est envoyée |
 | `DB_SSLMODE=require` | La connexion à la base peut passer en clair |
 | `HRSKILLS_WEBHOOK_SECRET` | Aucun abonnement n'est jamais crédité |
+| `MAIL_MAILER=smtp` | Le mot de passe oublié annonce « lien envoyé » sans rien envoyer |
+| `APP_URL` en `https://` | Le filtrage des noms d'hôte s'éteint : un lien de mot de passe oublié devient détournable |
+| `LEGAL_*` | Les pages légales affichent publiquement « identité de l'éditeur non renseignée » |
+
+**Après un déploiement sur une base qui a déjà reçu des dépôts**, lancez une
+fois `php artisan id-documents:secure` (ou `--dry-run` d'abord) : le code
+n'écrit plus jamais sur le disque public, mais les pièces déposées avant ce
+changement y restent joignables tant qu'elles n'ont pas été déplacées.
 
 ---
 
@@ -365,7 +431,80 @@ un abonnement réglé.
 
 ---
 
-## 7. Limites connues de cet hébergement
+## 7. Sauvegardes et supervision
+
+Ces deux points ne se voient pas tant que tout va bien. C'est pour ça qu'ils
+finissent oubliés — et qu'ils se paient très cher le jour où on en a besoin.
+
+### Ce qu'il faut sauvegarder, et ce qui l'est déjà
+
+L'hébergement ne sauvegarde **rien** : le code est dans Git, tout le reste vit
+chez des tiers, et chacun a sa propre politique.
+
+| Donnée | Où elle vit | Ce qui la protège |
+|---|---|---|
+| Le schéma et les données | PostgreSQL Supabase | Les sauvegardes de Supabase, **selon la formule** — à vérifier dans *Database → Backups* |
+| Les images déposées | Seau S3/Supabase Storage | Rien par défaut |
+| Les pièces d'identité | Seau privé | Rien par défaut |
+| Le code et `public/build` | Git | Le dépôt |
+| Les journaux | Sortie d'erreur Vercel | Purgés au bout de quelques jours |
+
+Deux conséquences à ne pas manquer.
+
+**La rétention Supabase dépend de la formule, et le plan gratuit n'en offre
+aucune.** Ouvrez *Database → Backups* et regardez ce qui s'y trouve
+réellement : c'est la seule réponse fiable. En attendant, une copie hors
+plateforme depuis votre machine, `.env` pointé sur la production :
+
+```bash
+pg_dump "$DATABASE_URL" --format=custom --file=smartlink-$(date +%F).dump
+```
+
+Une sauvegarde jamais restaurée n'est pas une sauvegarde. Vérifiez-en une :
+
+```bash
+createdb smartlink_essai
+pg_restore --dbname=smartlink_essai smartlink-2026-01-01.dump
+```
+
+**Les seaux ne sont pas sauvegardés par la base.** Ils vivent à côté : une
+restauration de la base rendrait les lignes qui pointent vers des images, pas
+les images. Le seau des pièces d'identité mérite le même soin, avec une
+précaution en plus — sa copie est une copie de pièces d'identité, elle se
+chiffre et ne se dépose pas n'importe où.
+
+### Être prévenu quand quelque chose casse
+
+Aucune erreur de production n'est signalée par défaut. Elle part sur la sortie
+d'erreur, Vercel la garde quelques jours, et personne ne la lit : le seul à
+l'avoir vue est le visiteur qui l'a subie, et il ne reviendra pas.
+
+Le plus simple ne coûte aucune dépendance — Laravel sait déjà pousser vers un
+webhook Slack :
+
+```dotenv
+LOG_CHANNEL=stack
+LOG_STACK=stderr,slack
+LOG_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/…
+LOG_LEVEL=error
+```
+
+`deploy:check` signale l'absence de destination d'alerte en production.
+
+Un service de suivi d'erreurs (Sentry, Bugsnag, Flare) apporte en plus la pile
+d'appels, le regroupement des occurrences et la requête fautive. Il demande
+d'ajouter un paquet Composer, donc un déploiement — c'est le pas d'après, pas
+un préalable.
+
+Et le contrôle qui répond depuis l'intérieur de la production reste
+`/cron/health` : branché sur un surveillant externe qui l'appelle chaque heure
+(UptimeRobot, Better Stack, la surveillance de votre hébergeur), il prévient
+d'une panne de base, d'un seau mal réglé ou d'une migration oubliée avant que
+quiconque ne s'en aperçoive.
+
+---
+
+## 8. Limites connues de cet hébergement
 
 - **Démarrage à froid.** Une requête sur une instance neuve recompile les vues
   Blade dans `/tmp` : comptez une seconde de plus. Les suivantes sont rapides.

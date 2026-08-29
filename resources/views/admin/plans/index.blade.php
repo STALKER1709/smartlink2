@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :titre="__('Paliers d\'abonnement')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('ui.admin_plans.title')" />
     </x-slot>
