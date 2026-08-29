@@ -467,10 +467,17 @@ class DeploymentCheckService
         $mailer = (string) config('mail.default');
 
         if (in_array($mailer, ['log', 'array', 'null'], true)) {
-            return $this->error(
-                'MAIL_MAILER',
-                "Pilote « {$mailer} » : aucun e-mail ne part réellement. La réinitialisation de mot de passe affichera « lien envoyé » sans que personne ne reçoive rien.",
-            );
+            /*
+             * Hors production, écrire les messages dans un fichier est le bon
+             * réglage : le signaler comme bloquant ferait sortir `deploy:check`
+             * en échec sur toutes les machines de développement, et on
+             * apprendrait vite à ne plus lire sa sortie.
+             */
+            $message = "Pilote « {$mailer} » : aucun e-mail ne part réellement. La réinitialisation de mot de passe affichera « lien envoyé » sans que personne ne reçoive rien.";
+
+            return app()->environment('production')
+                ? $this->error('MAIL_MAILER', $message)
+                : $this->warning('MAIL_MAILER', $message.' Normal hors production.');
         }
 
         if ($mailer === 'smtp' && (string) config('mail.mailers.smtp.host') === '') {

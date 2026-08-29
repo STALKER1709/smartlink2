@@ -334,17 +334,32 @@ class DeploymentCheckTest extends TestCase
      * l'utilisateur qui a perdu son mot de passe ne reçoit jamais rien : c'est
      * la seule voie de récupération d'un compte.
      */
-    public function test_a_mailer_that_sends_nothing_is_an_error(): void
+    public function test_a_mailer_that_sends_nothing_is_an_error_in_production(): void
     {
+        $this->pretendProduction();
+
         foreach (['log', 'array', 'null'] as $pilote) {
             config(['mail.default' => $pilote]);
 
             $this->assertSame(
                 DeploymentCheckService::ERROR,
                 $this->statusOf('MAIL_MAILER'),
-                "Le pilote « {$pilote} » n'envoie rien et doit être signalé.",
+                "Le pilote « {$pilote} » n'envoie rien et doit bloquer en production.",
             );
         }
+    }
+
+    /**
+     * Hors production, écrire les messages dans un fichier est le bon réglage.
+     * Le signaler comme bloquant ferait sortir `deploy:check` en échec sur
+     * toutes les machines de développement — et on apprendrait vite à ne plus
+     * lire sa sortie.
+     */
+    public function test_the_same_mailer_is_only_a_warning_outside_production(): void
+    {
+        config(['mail.default' => 'log']);
+
+        $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('MAIL_MAILER'));
     }
 
     public function test_an_smtp_mailer_without_a_host_is_an_error(): void
