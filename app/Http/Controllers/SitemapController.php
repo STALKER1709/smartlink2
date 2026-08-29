@@ -6,6 +6,7 @@ use App\Models\ProviderProfile;
 use App\Models\Service;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Le plan du site et le fichier des robots.
@@ -27,7 +28,45 @@ class SitemapController extends Controller
      */
     private const MAX_PAR_TYPE = 10000;
 
+    /**
+     * Une heure de mémoire.
+     *
+     * La page est publique, sans authentification, et son coût croît avec le
+     * catalogue : deux requêtes qui balaient les services et les profils, puis
+     * une chaîne construite en mémoire, à chaque passage. Un robot poli passe
+     * une fois par jour ; n'importe qui d'autre peut la marteler, et c'est la
+     * base qui paie.
+     *
+     * Une heure ne coûte rien en référencement — les moteurs reviennent sur
+     * plusieurs jours, pas à la minute.
+     */
+    private const DUREE_DU_CACHE_EN_MINUTES = 60;
+
     public function index(): Response
+    {
+        /*
+         * La clé porte la racine du site : `trustHosts` accepte plusieurs noms
+         * légitimes — le domaine et, sur Vercel, l'adresse de déploiement — et
+         * le plan contient des URL absolues. Une clé unique servirait à l'un
+         * le plan de l'autre.
+         */
+        $xml = Cache::remember(
+            'sitemap:'.sha1(url('/')),
+            now()->addMinutes(self::DUREE_DU_CACHE_EN_MINUTES),
+            fn (): string => $this->render($this->urls()),
+        );
+
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8',
+            // Le même répit pour les intermédiaires que pour nous.
+            'Cache-Control' => 'public, max-age='.(self::DUREE_DU_CACHE_EN_MINUTES * 60),
+        ]);
+    }
+
+    /**
+     * @return list<array{loc: string, lastmod: Carbon|null}>
+     */
+    private function urls(): array
     {
         $urls = [];
 
@@ -77,9 +116,7 @@ class SitemapController extends Controller
             ];
         }
 
-        return response($this->render($urls), 200, [
-            'Content-Type' => 'application/xml; charset=UTF-8',
-        ]);
+        return $urls;
     }
 
     /**

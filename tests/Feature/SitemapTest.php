@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /**
@@ -101,6 +102,47 @@ class SitemapTest extends TestCase
         $this->get('/sitemap.xml')
             ->assertDontSee(route('providers.show', $profile), false)
             ->assertDontSee(route('services.show', $service), false);
+    }
+
+    /**
+     * La page est publique et sans authentification, et son coût croît avec le
+     * catalogue. Sans mémoire, n'importe qui peut la marteler et c'est la base
+     * qui paie.
+     */
+    public function test_it_is_built_once_and_then_served_from_memory(): void
+    {
+        $this->serviceDeProfil(listed: true);
+
+        $this->get('/sitemap.xml')->assertOk();
+
+        DB::enableQueryLog();
+        $this->get('/sitemap.xml')->assertOk();
+        $requetes = DB::getQueryLog();
+        DB::disableQueryLog();
+
+        $balayages = array_filter(
+            $requetes,
+            fn (array $r) => str_contains($r['query'], 'from "services"')
+                || str_contains($r['query'], 'from "provider_profiles"'),
+        );
+
+        $this->assertSame([], $balayages, 'Le second passage ne doit plus interroger le catalogue.');
+    }
+
+    /**
+     * `trustHosts` accepte plusieurs noms légitimes — le domaine et, sur
+     * Vercel, l'adresse de déploiement. Le plan contient des URL absolues :
+     * une clé de cache unique servirait à l'un le plan de l'autre, et les
+     * moteurs recevraient un plan pointant hors du domaine exploré.
+     */
+    public function test_each_host_gets_its_own_sitemap(): void
+    {
+        $premier = $this->get('http://smartlink.test/sitemap.xml')->getContent();
+        $second = $this->get('http://apercu.smartlink.test/sitemap.xml')->getContent();
+
+        $this->assertStringContainsString('http://smartlink.test/', $premier);
+        $this->assertStringContainsString('http://apercu.smartlink.test/', $second);
+        $this->assertStringNotContainsString('apercu.smartlink.test', $premier);
     }
 
     public function test_the_robots_file_points_at_the_sitemap(): void
