@@ -121,9 +121,17 @@ class DeploymentCheckService
                 ? $this->error('APP_DEBUG', 'Activé en production : les traces d\'erreur exposent la configuration.')
                 : $this->ok('APP_DEBUG', 'Désactivé en production.');
 
+            /*
+             * APP_URL ne sert pas qu'à composer des liens : c'est de lui que
+             * `trustHosts` tire la liste des noms d'hôte légitimes
+             * (bootstrap/app.php). Vide ou mal formé, la liste se vide, le
+             * filtrage s'éteint sans rien dire, et un « Host » falsifié
+             * redevient capable de détourner un lien de réinitialisation de
+             * mot de passe.
+             */
             $checks[] = str_starts_with((string) config('app.url'), 'https://')
                 ? $this->ok('APP_URL', (string) config('app.url'))
-                : $this->error('APP_URL', 'Doit être en https:// en production : les liens des e-mails et des SMS en dépendent.');
+                : $this->error('APP_URL', "Doit être en https:// en production : les liens des e-mails et des SMS en dépendent, et c'est de lui que vient la liste des noms d'hôte de confiance.");
         }
 
         if (is_serverless()) {

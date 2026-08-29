@@ -180,6 +180,17 @@ traverse plusieurs requêtes simulées ou qui écrit en masse
 reconstruit son utilisateur depuis la session, pas un test qui en garde un seul.
 `tests/Feature/Subscription/SubscriptionMemoTest.php` monte la garde.
 
+⚠️ **`APP_URL` est un réglage de sécurité, pas seulement de confort.** Laravel
+compose ses URL absolues à partir de l'en-tête `Host` de la requête — et de
+`X-Forwarded-Host`, honoré parce que `trustProxies(at: '*')` fait confiance à
+tous les répartiteurs. C'est-à-dire à partir d'une valeur que le client choisit.
+Une demande de mot de passe oublié envoyée avec un `Host` falsifié fait donc
+partir, vers la boîte du titulaire, un lien de réinitialisation **valide qui
+pointe chez l'attaquant**. `trustHosts` (`bootstrap/app.php`) filtre les noms
+d'hôte à partir d'`APP_URL` ; un `APP_URL` vide vide la liste et éteint le
+filtrage sans rien dire, d'où le contrôle dans `deploy:check`.
+`tests/Feature/TrustedHostsTest.php` monte la garde.
+
 ⚠️ **N'écris jamais `where(..., 'like', ...)` à la main.** `like` est sensible à
 la casse sur PostgreSQL et ne l'est pas sur MySQL ni SQLite : la recherche
 renvoyait une page vide à qui tapait en minuscules, sans erreur nulle part et
