@@ -66,8 +66,13 @@ jobs:
           POSTGRES_DB: smartlink_test
         ports:
           - 5432:5432
+        # `pg_isready` sans `-U` interroge la base au nom de l'utilisateur
+        # système, qui est `root` dans ce conteneur — et `root` n'existe pas
+        # comme rôle PostgreSQL. Le contrôle de santé échouait donc en boucle
+        # (« FATAL: role "root" does not exist », toutes les dix secondes) et le
+        # travail mourait en attendant un service qui, lui, était prêt.
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres -d smartlink_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
