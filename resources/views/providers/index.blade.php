@@ -1,7 +1,7 @@
 <x-app-layout :titre="__('seo.providers_index')" :description="__('seo.providers_index_description')">
     <x-slot name="header">
-        <x-page-header title="Annuaire des prestataires"
-                       subtitle="Trouvez les meilleurs professionnels au Cameroun." />
+        <x-page-header :title="__('Annuaire des prestataires')"
+                       :subtitle="__('Trouvez les meilleurs professionnels au Cameroun.')" />
     </x-slot>
 
     @php
@@ -17,7 +17,7 @@
 
         <form action="{{ route('providers.index') }}" method="GET">
             <div class="flex flex-col gap-2 rounded-2xl border border-outline-variant bg-surface-container-lowest p-2 shadow-sm sm:flex-row sm:items-center">
-                <label for="term" class="sr-only">Rechercher un prestataire</label>
+                <label for="term" class="sr-only">{{ __("Rechercher un prestataire") }}</label>
                 <div class="flex flex-1 items-center gap-2 px-3">
                     <span class="material-symbols-outlined text-on-surface-variant">search</span>
                     <input
@@ -25,13 +25,13 @@
                         id="term"
                         name="term"
                         value="{{ request('term') }}"
-                        placeholder="Nom d'entreprise, métier…"
+                        placeholder="{{ __('Nom d\'entreprise, métier…') }}"
                         class="w-full border-0 bg-transparent py-2.5 text-on-surface placeholder:text-on-surface-variant/70 focus:ring-0"
                     >
                 </div>
 
                 <select name="category_id" class="rounded-xl border-outline-variant text-sm focus:border-primary focus:ring-primary sm:w-48">
-                    <option value="">Toutes les catégories</option>
+                    <option value="">{{ __("Toutes les catégories") }}</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
                     @endforeach
@@ -41,12 +41,12 @@
                     type="text"
                     name="city"
                     value="{{ request('city') }}"
-                    placeholder="Ville"
+                    placeholder="{{ __('Ville') }}"
                     class="rounded-xl border-outline-variant text-sm focus:border-primary focus:ring-primary sm:w-40"
                 >
 
                 <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
-                    Chercher
+                    {{ __("Chercher") }}
                 </button>
             </div>
 
@@ -54,7 +54,7 @@
                 <input type="checkbox" name="verified_only" value="1" @checked(request('verified_only'))
                        onchange="this.form.submit()"
                        class="rounded border-outline-variant text-primary focus:ring-primary">
-                Prestataires vérifiés uniquement
+                {{ __("Prestataires vérifiés uniquement") }}
             </label>
         </form>
 
@@ -81,8 +81,8 @@
                 :title="request('term')
                     ? 'Aucun prestataire ne correspond à « '.request('term').' ».'
                     : 'Aucun prestataire ne correspond à cette recherche.'"
-                description="Essayez une autre ville, élargissez la catégorie, ou décochez « vérifiés uniquement »."
-                action-label="Voir tout l'annuaire"
+                :description="__('Essayez une autre ville, élargissez la catégorie, ou décochez « vérifiés uniquement ».')"
+                :action-label="__('Voir tout l\'annuaire')"
                 :action-href="route('providers.index')"
             />
         @else

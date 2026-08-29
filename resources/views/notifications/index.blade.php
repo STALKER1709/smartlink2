@@ -12,15 +12,15 @@
     ];
 @endphp
 
-<x-app-layout titre="Notifications" :indexable="false">
+<x-app-layout :titre="__('Notifications')" :indexable="false">
     <x-slot name="header">
-        <x-page-header title="Notifications" :subtitle="$nonLues > 0 ? $nonLues.' non '.Str::plural('lue', $nonLues) : null">
+        <x-page-header :title="__('Notifications')" :subtitle="$nonLues > 0 ? $nonLues.' non '.Str::plural('lue', $nonLues) : null">
             @if ($nonLues > 0)
                 <x-slot name="action">
                     <form action="{{ route('notifications.read-all') }}" method="POST">
                         @csrf
                         <button type="submit" class="cursor-pointer border-none bg-transparent p-0 font-button-text text-button-text text-primary transition-opacity hover:text-primary-container active:opacity-80">
-                            Tout marquer comme lu
+                            {{ __("Tout marquer comme lu") }}
                         </button>
                     </form>
                 </x-slot>
@@ -30,8 +30,8 @@
 
     <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-6">
         @if ($notifications->isEmpty())
-            <x-empty-state title="Aucune notification pour le moment."
-                           description="Les réponses de vos prestataires et les changements de statut de vos demandes arrivent ici." />
+            <x-empty-state :title="__('Aucune notification pour le moment.')"
+                           :description="__('Les réponses de vos prestataires et les changements de statut de vos demandes arrivent ici.')" />
         @else
             <div class="flex flex-col gap-3">
                 @foreach ($notifications as $notification)
@@ -68,7 +68,7 @@
                         ])>
                         @unless ($lue)
                             <span class="absolute left-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-primary"
-                                  role="img" aria-label="Non lue"></span>
+                                  role="img" aria-label="{{ __('Non lue') }}"></span>
                         @endunless
 
                         <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full {{ $pastille }}">
@@ -88,7 +88,7 @@
                                     <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="text-xs font-medium text-primary hover:text-primary-container">
-                                            Marquer comme lu
+                                            {{ __("Marquer comme lu") }}
                                         </button>
                                     </form>
                                 @endunless

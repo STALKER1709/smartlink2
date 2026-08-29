@@ -68,8 +68,8 @@
 
                 @if ($providerProfile->is_verified)
                     <span class="absolute -bottom-1 -right-1 flex items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest p-1"
-                          title="Pièce d'identité contrôlée par notre équipe">
-                        <span class="material-symbols-outlined text-2xl text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="Prestataire vérifié">verified</span>
+                          title="{{ __('Pièce d\'identité contrôlée par notre équipe') }}">
+                        <span class="material-symbols-outlined text-2xl text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="{{ __('Prestataire vérifié') }}">verified</span>
                     </span>
                 @endif
             </div>
@@ -101,7 +101,7 @@
                     @if ($providerProfile->rating_count)
                         <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
                     @else
-                        <span class="text-sm text-on-surface-variant">Pas encore d'avis</span>
+                        <span class="text-sm text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
                     @endif
                     <span aria-hidden="true" class="text-outline">·</span>
                     <span class="font-label-numeric text-label-numeric text-on-surface-variant">
@@ -115,7 +115,7 @@
                     @if ($providerProfile->is_verified)
                         <span class="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
                             <span class="material-symbols-outlined text-sm" aria-hidden="true">workspace_premium</span>
-                            Prestataire vérifié
+                            {{ __("Prestataire vérifié") }}
                         </span>
                     @endif
                     <x-promoted-badge :profile="$providerProfile" taille="md" />
@@ -134,7 +134,7 @@
                 <div class="sm:w-72">
                     @include('partials.request-action', [
                         'href' => route('requests.create', ['provider_id' => $providerProfile->user_id]),
-                        'label' => 'Envoyer une demande',
+                        'label' => __('Envoyer une demande'),
                         'icon' => 'mail',
                     ])
                 </div>
@@ -143,14 +143,14 @@
                     <a href="{{ $providerProfile->whatsappUrl() }}" target="_blank" rel="noopener"
                        class="inline-flex items-center justify-center gap-2 rounded-full border border-primary bg-surface-container-lowest px-4 py-3 font-button-text font-semibold text-primary transition-colors hover:bg-surface-container-low sm:w-72">
                         <svg class="h-4 w-4 fill-current text-[#25D366]" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                        WhatsApp
+                        {{ __("WhatsApp") }}
                     </a>
                 @endif
             </div>
 
             <p class="flex items-start gap-2 text-left text-xs leading-relaxed text-on-surface-variant sm:text-center">
                 <span class="material-symbols-outlined text-base text-primary" aria-hidden="true">shield</span>
-                SmartLink ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.
+                {{ __("SmartLink ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.") }}
             </p>
         </section>
 
@@ -165,7 +165,7 @@
                     <div>
                         <h2 class="mb-3 flex items-center gap-2 font-headline-md text-headline-md text-on-surface">
                             <span class="material-symbols-outlined text-primary" aria-hidden="true">info</span>
-                            À propos
+                            {{ __("À propos") }}
                         </h2>
                         <p class="prose-measure whitespace-pre-line leading-relaxed text-on-surface-variant">{{ $providerProfile->description }}</p>
                     </div>
@@ -177,7 +177,7 @@
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
                                     <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">schedule</span>
-                                    Horaires
+                                    {{ __("Horaires") }}
                                 </h3>
                                 <ul class="space-y-1 text-on-surface-variant">
                                     {{-- La clé est celle de la base et pouvait
@@ -201,7 +201,7 @@
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
                                     <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">map</span>
-                                    Zones d'intervention
+                                    {{ __("Zones d'intervention") }}
                                 </h3>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($providerProfile->service_areas as $area)
@@ -215,7 +215,7 @@
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
                                     <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">call</span>
-                                    Contact
+                                    {{ __("Contact") }}
                                 </h3>
                                 <ul class="space-y-1 text-on-surface-variant">
                                     {{-- Deux formes coexistent en base : une
@@ -250,7 +250,7 @@
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
                                     <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">location_on</span>
-                                    Adresse
+                                    {{ __("Adresse") }}
                                 </h3>
                                 <p class="text-on-surface-variant">{{ $adresse }}</p>
                             </div>
@@ -267,11 +267,11 @@
         <section>
             <h2 class="mb-4 flex items-center gap-2 font-headline-lg text-headline-lg text-on-surface">
                 <span class="material-symbols-outlined text-primary" aria-hidden="true">home_repair_service</span>
-                Ses services
+                {{ __("Ses services") }}
             </h2>
 
             @if ($services->isEmpty())
-                <x-empty-state title="Ce prestataire n'a pas encore publié de service." />
+                <x-empty-state :title="__('Ce prestataire n\'a pas encore publié de service.')" />
             @else
                 {{--
                     Une grille de vignettes, et non la rangée de liste
@@ -290,7 +290,7 @@
                                     <h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary">{{ $service->title }}</h3>
                                     @unless ($service->is_available)
                                         <span class="shrink-0 rounded-full bg-surface-container px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-on-surface-variant">
-                                            Indisponible
+                                            {{ __("Indisponible") }}
                                         </span>
                                     @endunless
                                 </div>
@@ -308,7 +308,7 @@
                                             <span class="font-body-md text-sm font-normal text-on-surface-variant">/ {{ $service->price_unit }}</span>
                                         @endif
                                     @else
-                                        <span class="font-body-md text-sm font-normal text-on-surface-variant">Prix à convenir</span>
+                                        <span class="font-body-md text-sm font-normal text-on-surface-variant">{{ __("Prix à convenir") }}</span>
                                     @endif
                                 </span>
                                 <span class="material-symbols-outlined text-primary" aria-hidden="true">arrow_forward</span>
@@ -325,7 +325,7 @@
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h2 class="flex items-center gap-2 font-headline-lg text-headline-lg text-on-surface">
                     <span class="material-symbols-outlined text-primary" aria-hidden="true">reviews</span>
-                    Avis clients
+                    {{ __("Avis clients") }}
                 </h2>
                 @if ($providerProfile->rating_count)
                     <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" />
@@ -333,8 +333,8 @@
             </div>
 
             @if ($reviews->isEmpty())
-                <x-empty-state title="Aucun avis pour le moment."
-                               description="Les avis sont laissés par les clients après une prestation terminée." />
+                <x-empty-state :title="__('Aucun avis pour le moment.')"
+                               :description="__('Les avis sont laissés par les clients après une prestation terminée.')" />
             @else
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     @foreach ($reviews as $review)
@@ -360,7 +360,7 @@
         <div class="mx-auto max-w-container">
             @include('partials.request-action', [
                 'href' => route('requests.create', ['provider_id' => $providerProfile->user_id]),
-                'label' => 'Envoyer une demande',
+                'label' => __('Envoyer une demande'),
                 'compactLabel' => 'Envoyer une demande',
                 'compact' => true,
             ])
