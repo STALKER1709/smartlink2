@@ -55,7 +55,7 @@ class LegalPagesTest extends TestCase
     {
         config()->set('legal.editeur', array_fill_keys(array_keys(config('legal.editeur')), null));
 
-        $this->get(route('legal.notice'))->assertSee('Identité de l\'éditeur non renseignée', false);
+        $this->get(route('legal.notice'))->assertSee('Identité de l\'éditeur non renseignée');
     }
 
     public function test_a_filled_identity_replaces_the_warning(): void
@@ -65,7 +65,7 @@ class LegalPagesTest extends TestCase
 
         $this->get(route('legal.notice'))
             ->assertSee('SmartLink SARL')
-            ->assertDontSee('Identité de l\'éditeur non renseignée', false);
+            ->assertDontSee('Identité de l\'éditeur non renseignée');
     }
 
     /**
@@ -80,7 +80,7 @@ class LegalPagesTest extends TestCase
         config()->set('legal.editeur.siege', '');
 
         $this->get(route('legal.notice'))
-            ->assertSee('Identité de l\'éditeur non renseignée', false);
+            ->assertSee('Identité de l\'éditeur non renseignée');
     }
 
     /**

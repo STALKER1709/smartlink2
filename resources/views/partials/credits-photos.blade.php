@@ -35,7 +35,6 @@
     </ul>
 @else
     <p class="mt-4">
-        Les illustrations de métier affichées aujourd'hui sont dessinées pour SmartLink et lui
-        appartiennent. Aucune photographie de tiers n'est employée.
+        {{ __("Les illustrations de métier affichées aujourd'hui sont dessinées pour SmartLink et lui appartiennent. Aucune photographie de tiers n'est employée.") }}
     </p>
 @endif

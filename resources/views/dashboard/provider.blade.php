@@ -10,7 +10,7 @@
         && $servicesCount >= $plan->max_services;
 @endphp
 
-<x-app-layout titre="Tableau de bord" :indexable="false">
+<x-app-layout :titre="__('Tableau de bord')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
                        subtitle="Voici le résumé de votre activité.">
@@ -29,12 +29,12 @@
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined" aria-hidden="true">info</span>
                     <span class="font-body-md text-body-md font-semibold">
-                        Essai gratuit — <span class="font-label-numeric">{{ $joursRestants }}</span> {{ Str::plural('jour', $joursRestants) }} {{ Str::plural('restant', $joursRestants) }}
+                        {{ __("Essai gratuit —") }} <span class="font-label-numeric">{{ $joursRestants }}</span> {{ Str::plural('jour', $joursRestants) }} {{ Str::plural('restant', $joursRestants) }}
                     </span>
                 </div>
                 <a href="{{ route('provider.subscription.show') }}"
                    class="self-end rounded-full bg-tertiary px-6 py-2 font-button-text text-button-text text-on-tertiary transition-all hover:opacity-90 active:scale-95 md:self-auto">
-                    Souscrire
+                    {{ __("Souscrire") }}
                 </a>
             </div>
         @endif
@@ -42,15 +42,15 @@
         <x-stat-grid>
             <x-stat-tile variant="stacked" icon="mail" tone="secondary"
                          :value="$requestsThisMonth"
-                         label="Demandes reçues"
+                         :label="__('Demandes reçues')"
                          hint="ce mois-ci"
                          :href="route('requests.index')" />
             <x-stat-tile variant="stacked" icon="pending_actions" tone="tertiary"
-                         :value="$pendingCount" label="Demandes en attente"
+                         :value="$pendingCount" :label="__('Demandes en attente')"
                          :hint="$remainingRequests === null ? 'Lecture sans limite' : $remainingRequests.' lisibles ce mois'"
                          :href="route('requests.index', ['status' => 'sent'])" />
             <x-stat-tile variant="stacked" icon="handyman" tone="secondary"
-                         :value="$counts['in_progress'] ?? 0" label="Prestations en cours"
+                         :value="$counts['in_progress'] ?? 0" :label="__('Prestations en cours')"
                          :href="route('requests.index', ['status' => 'in_progress'])" />
             <x-stat-tile variant="stacked" icon="star" tone="tertiary"
                          :value="$profile?->rating_count ? number_format((float) $profile->rating_avg, 1, ',', ' ') : '—'"
@@ -64,7 +64,7 @@
                  prestataire répète le plus, et il demandait deux navigations. --}}
             <section class="flex flex-col gap-4 md:col-span-8">
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                    <h3 class="font-headline-md text-headline-md text-on-background">Demandes à traiter</h3>
+                    <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Demandes à traiter") }}</h3>
                     @if ($pendingRequests->isNotEmpty())
                         <span class="rounded-full bg-error-container px-2 py-1 font-label-numeric text-label-numeric text-on-error-container">{{ $pendingCount }}</span>
                     @endif
@@ -100,30 +100,30 @@
                                   onsubmit="return confirm('Refuser cette demande ?');">
                                 @csrf
                                 <button type="submit" class="w-full rounded-full border border-outline px-4 py-2 font-button-text text-button-text text-on-surface-variant transition-colors hover:bg-surface-container-low">
-                                    Refuser
+                                    {{ __("Refuser") }}
                                 </button>
                             </form>
                             <form action="{{ route('requests.accept', $demande) }}" method="POST" class="flex-1 md:flex-none">
                                 @csrf
                                 <button type="submit" class="w-full rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
-                                    Accepter
+                                    {{ __("Accepter") }}
                                 </button>
                             </form>
                         </div>
                     </article>
                 @empty
-                    <x-empty-state title="Aucune demande en attente."
-                                   description="Les demandes qui vous parviennent s'affichent ici, avec de quoi les accepter ou les refuser." />
+                    <x-empty-state :title="__('Aucune demande en attente.')"
+                                   :description="__('Les demandes qui vous parviennent s\'affichent ici, avec de quoi les accepter ou les refuser.')" />
                 @endforelse
             </section>
 
             <section class="flex flex-col gap-4 md:col-span-4">
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                    <h3 class="font-headline-md text-headline-md text-on-background">Vos services</h3>
+                    <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Vos services") }}</h3>
                     @if ($masques > 0)
                         <span class="font-label-numeric text-label-numeric text-tertiary">{{ $masques }} masqué{{ $masques > 1 ? 's' : '' }}</span>
                     @elseif ($auPlafond)
-                        <span class="font-label-numeric text-label-numeric text-tertiary">Plafond atteint</span>
+                        <span class="font-label-numeric text-label-numeric text-tertiary">{{ __("Plafond atteint") }}</span>
                     @endif
                 </div>
 
@@ -148,11 +148,11 @@
                         <span class="material-symbols-outlined shrink-0 text-outline transition-colors group-hover:text-primary" aria-hidden="true">chevron_right</span>
                     </a>
                 @empty
-                    <p class="text-sm text-on-surface-variant">Vous n'avez pas encore publié de service.</p>
+                    <p class="text-sm text-on-surface-variant">{{ __("Vous n'avez pas encore publié de service.") }}</p>
                 @endforelse
 
                 <a href="{{ route('provider.services.index') }}" class="mt-2 flex items-center gap-1 font-button-text text-button-text text-primary hover:underline">
-                    Gérer mes services
+                    {{ __("Gérer mes services") }}
                     <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
                 </a>
             </section>

@@ -39,7 +39,7 @@
                 @if ($etape < $total)
                     <a href="{{ route('onboarding.show', $etape + 1) }}"
                        class="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-colors duration-100 hover:bg-primary-container active:scale-95">
-                        Suivant
+                        {{ __("Suivant") }}
                         <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                     </a>
                 @else
@@ -47,7 +47,7 @@
                         @csrf
                         <button type="submit"
                                 class="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-colors duration-100 hover:bg-primary-container active:scale-95">
-                            Commencer
+                            {{ __("Commencer") }}
                             <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                         </button>
                     </form>

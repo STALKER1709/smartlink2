@@ -2,7 +2,7 @@
     $prenom = Str::of(auth()->user()->name)->trim()->explode(' ')->first();
 @endphp
 
-<x-app-layout titre="Tableau de bord" :indexable="false">
+<x-app-layout :titre="__('Tableau de bord')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Bonjour, :prenom', ['prenom' => $prenom]).' 👋'"
                        subtitle="Aperçu de vos activités." />
@@ -13,16 +13,16 @@
              est clos, ce qui attend une lecture, et ce que vous avez laissé
              derrière vous. --}}
         <x-stat-grid>
-            <x-stat-tile label="En cours" icon="pending_actions" tone="secondary"
+            <x-stat-tile :label="__('En cours')" icon="pending_actions" tone="secondary"
                          :value="($counts['accepted'] ?? 0) + ($counts['in_progress'] ?? 0)"
                          :href="route('requests.index', ['status' => 'in_progress'])" />
-            <x-stat-tile label="Terminées" icon="check_circle" tone="primary"
+            <x-stat-tile :label="__('Terminées')" icon="check_circle" tone="primary"
                          :value="$counts['completed'] ?? 0"
                          :href="route('requests.index', ['status' => 'completed'])" />
-            <x-stat-tile label="Messages" icon="mail" tone="error"
+            <x-stat-tile :label="__('Messages')" icon="mail" tone="error"
                          :value="$unreadMessages"
                          :href="route('conversations.index')" />
-            <x-stat-tile label="Avis laissés" icon="star" tone="tertiary"
+            <x-stat-tile :label="__('Avis laissés')" icon="star" tone="tertiary"
                          :value="$reviewsLeft" />
         </x-stat-grid>
 
@@ -31,7 +31,7 @@
              seulement à la page publique. --}}
         <section class="flex flex-col items-center gap-6 rounded-xl border border-outline-variant bg-surface-container-low p-6 md:flex-row">
             <form action="{{ route('services.index') }}" method="GET" class="w-full flex-1">
-                <h2 class="font-headline-md text-headline-md text-on-surface">Reprendre une recherche</h2>
+                <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Reprendre une recherche") }}</h2>
                 <div class="relative mt-4 w-full">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" aria-hidden="true">search</span>
                     <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
@@ -40,7 +40,7 @@
                         id="q"
                         name="q"
                         maxlength="300"
-                        placeholder="Plombier, Électricien, Ménage…"
+                        placeholder="{{ __('Plombier, Électricien, Ménage…') }}"
                         class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest py-3 pl-12 pr-4 font-body-md text-body-md text-on-surface outline-none transition-colors placeholder:text-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary"
                     >
                 </div>
@@ -49,11 +49,11 @@
             <div class="hidden h-20 w-px bg-outline-variant md:block"></div>
 
             <div class="flex w-full flex-col items-start md:w-auto md:items-center">
-                <p class="mb-3 hidden font-body-md text-body-md text-on-surface-variant md:block">Besoin d'un nouveau service ?</p>
+                <p class="mb-3 hidden font-body-md text-body-md text-on-surface-variant md:block">{{ __("Besoin d'un nouveau service ?") }}</p>
                 <a href="{{ route('services.index') }}"
                    class="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container md:w-auto">
                     <span class="material-symbols-outlined" aria-hidden="true">search</span>
-                    Trouver un prestataire
+                    {{ __("Trouver un prestataire") }}
                 </a>
             </div>
         </section>
@@ -62,13 +62,13 @@
             {{-- Côte à côte comme sur la maquette dès que la place le permet ;
                  en dessous sur un écran de 390 px, où « Vos demandes
                  récentes » à 28 px prend déjà toute la largeur. --}}
-            <x-section-header title="Vos demandes récentes" :href="route('requests.index')" class="mb-6" />
+            <x-section-header :title="__('Vos demandes récentes')" :href="route('requests.index')" class="mb-6" />
 
             @if ($requests->isEmpty())
                 <x-empty-state
-                    title="Vous n'avez pas encore envoyé de demande."
-                    description="Trouvez un prestataire près de chez vous et décrivez-lui votre besoin."
-                    action-label="Explorer les services"
+                    :title="__('Vous n\'avez pas encore envoyé de demande.')"
+                    :description="__('Trouvez un prestataire près de chez vous et décrivez-lui votre besoin.')"
+                    :action-label="__('Explorer les services')"
                     :action-href="route('services.index')"
                 />
             @else
@@ -77,10 +77,10 @@
                          `md` : sur un téléphone, chaque champ porte déjà son
                          sens par sa place et sa forme. --}}
                     <div class="hidden grid-cols-12 gap-4 border-b border-outline-variant bg-surface-container-low p-4 font-label-numeric text-label-numeric uppercase text-on-surface-variant md:grid">
-                        <div class="col-span-3">Prestataire</div>
-                        <div class="col-span-4">Service</div>
-                        <div class="col-span-2">Date</div>
-                        <div class="col-span-3 text-right">Statut</div>
+                        <div class="col-span-3">{{ __("Prestataire") }}</div>
+                        <div class="col-span-4">{{ __("Service") }}</div>
+                        <div class="col-span-2">{{ __("Date") }}</div>
+                        <div class="col-span-3 text-right">{{ __("Statut") }}</div>
                     </div>
 
                     <div class="divide-y divide-outline-variant">

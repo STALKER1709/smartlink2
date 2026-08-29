@@ -30,18 +30,18 @@
 
                 <a href="{{ route('home') }}" class="mx-auto mt-6 flex items-center gap-1 text-sm text-on-surface-variant hover:text-on-surface">
                     <span class="material-symbols-outlined text-base">arrow_back</span>
-                    Retour à l'accueil
+                    {{ __("Retour à l'accueil") }}
                 </a>
 
                 {{-- Les écrans d'authentification n'ont pas de pied de page :
                      ces liens y seraient introuvables autrement, alors que
                      c'est précisément là qu'on s'engage. --}}
                 <p class="mx-auto mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs text-on-surface-variant">
-                    <a href="{{ route('legal.terms') }}" class="hover:text-primary">Conditions générales</a>
+                    <a href="{{ route('legal.terms') }}" class="hover:text-primary">{{ __("Conditions générales") }}</a>
                     <span aria-hidden="true">·</span>
-                    <a href="{{ route('legal.privacy') }}" class="hover:text-primary">Confidentialité</a>
+                    <a href="{{ route('legal.privacy') }}" class="hover:text-primary">{{ __("Confidentialité") }}</a>
                     <span aria-hidden="true">·</span>
-                    <a href="{{ route('legal.notice') }}" class="hover:text-primary">Mentions légales</a>
+                    <a href="{{ route('legal.notice') }}" class="hover:text-primary">{{ __("Mentions légales") }}</a>
                 </p>
             </div>
         </div>

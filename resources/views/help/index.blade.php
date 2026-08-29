@@ -38,16 +38,16 @@
 
 <x-app-layout :titre="__('seo.help')" :description="__('seo.help_description')">
     <x-slot name="header">
-        <x-page-header title="Centre d'aide" />
+        <x-page-header :title="__('Centre d\'aide')" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
         <div class="max-w-2xl">
             <h1 class="mb-4 font-headline-xl text-[32px] font-extrabold leading-[40px] tracking-tight text-primary md:text-[40px] md:leading-[48px]">
-                Comment pouvons-nous vous aider ?
+                {{ __("Comment pouvons-nous vous aider ?") }}
             </h1>
             <p class="mb-8 font-body-lg text-body-lg text-on-surface-variant">
-                Trouvez des réponses rapides à vos questions, ou demandez à l'assistant SmartLink.
+                {{ __("Trouvez des réponses rapides à vos questions, ou demandez à l'assistant SmartLink.") }}
             </p>
 
             {{-- La recherche filtre les questions sur place, sans recharger :
@@ -62,9 +62,9 @@
                 });
             })">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" aria-hidden="true">search</span>
-                <label for="faq-search" class="sr-only">Rechercher de l'aide</label>
+                <label for="faq-search" class="sr-only">{{ __("Rechercher de l'aide") }}</label>
                 <input id="faq-search" type="search" x-model="q"
-                       placeholder="Rechercher de l'aide (ex : paiements, compte…)"
+                       placeholder="{{ __('Rechercher de l\'aide (ex : paiements, compte…)') }}"
                        class="w-full rounded-xl border border-outline-variant bg-surface py-4 pl-12 pr-4 font-body-md text-body-md text-on-surface shadow-sm transition-all placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary-container/20">
             </div>
         </div>
@@ -93,9 +93,9 @@
         </div>
 
         <div class="mt-10 bg-secondary-container/20 border border-outline-variant rounded-xl p-6">
-            <h2 class="font-headline-md text-headline-md text-primary mb-2">Besoin d'une assistance personnalisée ?</h2>
+            <h2 class="font-headline-md text-headline-md text-primary mb-2">{{ __("Besoin d'une assistance personnalisée ?") }}</h2>
             <p class="text-sm text-on-surface-variant">
-                Utilisez l'assistant SmartLink (icône en bas à droite de l'écran) pour poser directement votre question.
+                {{ __("Utilisez l'assistant SmartLink (icône en bas à droite de l'écran) pour poser directement votre question.") }}
             </p>
         </div>
     </div>

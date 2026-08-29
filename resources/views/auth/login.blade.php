@@ -1,6 +1,6 @@
 <x-guest-layout :titre="__('seo.login')" :indexable="false">
-    <h1 class="font-headline-lg text-2xl font-bold text-on-surface">Content de vous revoir</h1>
-    <p class="mt-1 text-sm text-on-surface-variant">Connectez-vous pour retrouver vos demandes et vos messages.</p>
+    <h1 class="font-headline-lg text-2xl font-bold text-on-surface">{{ __("Content de vous revoir") }}</h1>
+    <p class="mt-1 text-sm text-on-surface-variant">{{ __("Connectez-vous pour retrouver vos demandes et vos messages.") }}</p>
 
     <x-auth-session-status class="mt-4" :status="session('status')" />
 
@@ -37,7 +37,7 @@
     </form>
 
     <p class="mt-6 border-t border-outline-variant pt-5 text-center text-sm text-on-surface-variant">
-        Pas encore de compte ?
-        <a href="{{ route('register') }}" class="font-semibold text-primary hover:text-primary-container hover:underline">Créer un compte</a>
+        {{ __("Pas encore de compte ?") }}
+        <a href="{{ route('register') }}" class="font-semibold text-primary hover:text-primary-container hover:underline">{{ __("Créer un compte") }}</a>
     </p>
 </x-guest-layout>
