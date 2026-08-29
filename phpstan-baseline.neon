@@ -1,0 +1,511 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$provider of method App\\Services\\QuotaService\:\:refreshListing\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/PlanController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Admin/ProviderVerificationController.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Model\:\:update\(\) expects array\<model property of App\\Models\\ServiceCategory, mixed\>, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/ServiceCategoryController.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ServiceCategory\>\:\:create\(\) expects array\<model property of App\\Models\\ServiceCategory, mixed\>, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/ServiceCategoryController.php
+
+		-
+			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$photo_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Client/ProfileController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:active\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id_card_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Provider/ProfileController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$logo_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Provider/ProfileController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$rating_avg\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Provider/ReviewController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$rating_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Provider/ReviewController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>rating_avg" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Provider/ReviewController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>rating_count" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Provider/ReviewController.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Model\:\:update\(\) expects array\<model property of App\\Models\\Service, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Provider/ServiceController.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Relations\\HasOneOrMany\<Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\>\:\:create\(\) expects array\<model property of Illuminate\\Database\\Eloquent\\Model, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Provider/ServiceController.php
+
+		-
+			message: '#^Parameter \#1 \$service of method App\\Http\\Controllers\\Provider\\ServiceController\:\:storeImages\(\) expects App\\Models\\Service, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Provider/ServiceController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:name\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Provider/TransactionController.php
+
+		-
+			message: '#^Match arm comparison between ''cancelled'' and ''cancelled'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Provider/TransactionController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:reviewsReceived\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/ProviderController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:services\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/ProviderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$providerProfile\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ReviewController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:reviewsReceived\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/ReviewController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SitemapController\:\:urls\(\) should return list\<array\{loc\: string, lastmod\: Illuminate\\Support\\Carbon\|null\}\> but returns non\-empty\-list\<array\{loc\: string, lastmod\: Carbon\\Carbon\|null\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>locale" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Middleware/SetLocale.php
+
+		-
+			message: '#^Ternary operator condition is always false\.$#'
+			identifier: ternary.alwaysFalse
+			count: 1
+			path: app/Http/Requests/Auth/LoginRequest.php
+
+		-
+			message: '#^Method App\\Models\\Conversation\:\:otherParticipant\(\) should return App\\Models\\User but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Conversation.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:listed\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Service.php
+
+		-
+			message: '#^Cannot call method isFuture\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Subscription.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Subscription.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Subscription.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Subscription.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:usable\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:currentPlan\(\) should return App\\Models\\Plan\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Notifications/RequestStatusChangedNotification.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id_card_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AccountDeletionService.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<array\{role\: ''assistant''\|''user'', content\: string\}\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Services/Ai/ConversationHistory.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Http\\Request\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/AuditLogService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/NotificationService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Services/NotificationService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:otherParticipant\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/NotificationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$rating_avg\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ProviderStatisticsService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$rating_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ProviderStatisticsService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:active\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/ProviderStatisticsService.php
+
+		-
+			message: '#^Method App\\Services\\ProviderStatisticsService\:\:topServices\(\) should return Illuminate\\Support\\Collection\<int, array\{title\: string, requests\: int\}\> but returns Illuminate\\Support\\Collection\<int, array\{title\: string, requests\: int\<0, max\>\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/ProviderStatisticsService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>rating_avg" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/ProviderStatisticsService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>rating_count" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/ProviderStatisticsService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/QuotaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_listed\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/QuotaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_promoted\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/QuotaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$requests_read_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/QuotaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$requests_read_period\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/QuotaService.php
+
+		-
+			message: '#^Called ''slice'' on Laravel collection, but could have been retrieved as a query\.$#'
+			identifier: larastan.noUnnecessaryCollectionCall
+			count: 1
+			path: app/Services/QuotaService.php
+
+		-
+			message: '#^Parameter \#1 \$provider of method App\\Services\\QuotaService\:\:refreshListing\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/QuotaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ends_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$internal_reference\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plan_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:recordSuccessfulPayment\(\) should return App\\Models\\Subscription but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:requestPayment\(\) should return array\{payment\: App\\Models\\Payment, status\: string\} but returns array\{payment\: Illuminate\\Database\\Eloquent\\Model, status\: string\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:subscriptionFor\(\) should return App\\Models\\Subscription but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: mixed, Closure\(App\\Models\\Payment\)\: bool given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Parameter \#1 \$payment of method App\\Services\\SubscriptionService\:\:recordSuccessfulPayment\(\) expects App\\Models\\Payment, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Parameter \#1 \$provider of method App\\Services\\QuotaService\:\:refreshListing\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Services\\AuditLogService\:\:log\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Parameter \#2 \$thresholds of method App\\Services\\SubscriptionService\:\:remindOne\(\) expects Illuminate\\Support\\Collection\<int, int\>, Illuminate\\Support\\Collection\<int, int\<1, max\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 2
+			path: app/Support/helpers.php
+
+		-
+			message: '#^Return type \(array\<string, mixed\>\) of method Database\\Factories\\UserFactory\:\:definition\(\) should be compatible with return type \(array\<model property of App\\Models\\User, mixed\>\) of method Illuminate\\Database\\Eloquent\\Factories\\Factory\<App\\Models\\User\>\:\:definition\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: database/factories/UserFactory.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: database/seeders/DemoSeeder.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:visible\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: database/seeders/DemoSeeder.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 1
+			path: database/seeders/DemoSeeder.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Console\\Command\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 11
+			path: database/seeders/DemoSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$providerProfile\.$#'
+			identifier: property.notFound
+			count: 1
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:reviewsReceived\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Parameter \#2 \$actor of method App\\Services\\RequestService\:\:cancel\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Parameter \#2 \$provider of method App\\Services\\RequestService\:\:accept\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Parameter \#2 \$provider of method App\\Services\\RequestService\:\:complete\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Parameter \#2 \$provider of method App\\Services\\RequestService\:\:markViewed\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Parameter \#2 \$provider of method App\\Services\\RequestService\:\:refuse\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Parameter \#2 \$provider of method App\\Services\\RequestService\:\:start\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: database/seeders/RequestSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$category_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: database/seeders/ServiceSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$city\.$#'
+			identifier: property.notFound
+			count: 1
+			path: database/seeders/ServiceSeeder.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: database/seeders/UserSeeder.php
