@@ -18,7 +18,7 @@
      et leur titre est déjà celui du document. --}}
 <x-app-layout :titre="$title" :description="$description ?? $intro">
     <x-slot name="header">
-        <x-page-header :title="$title" :subtitle="'Dernière révision : '.config('legal.derniere_revision')" />
+        <x-page-header :title="$title" :subtitle="__('Dernière révision : :date', ['date' => config('legal.derniere_revision')])" />
     </x-slot>
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
@@ -63,9 +63,7 @@
                     <div class="mt-4 rounded-xl border border-error/30 bg-error-container/40 p-4">
                         <p class="font-semibold text-on-error-container">{{ __("Identité de l'éditeur non renseignée") }}</p>
                         <p class="mt-1 text-sm text-on-error-container/90">
-                            {{ __("Raison sociale, RCCM, siège social et contact sont à poser dans les variables") }}
-                            <span class="font-label-numeric">LEGAL_*</span> de l'environnement. Ces informations
-                            figurent sur vos statuts : elles ne peuvent pas être devinées.
+                            {!! __('Raison sociale, RCCM, siège social et contact sont à poser dans les variables <span class="font-label-numeric">LEGAL_*</span> de l\'environnement. Ces informations figurent sur vos statuts : elles ne peuvent pas être devinées.') !!}
                         </p>
                     </div>
                 @endif

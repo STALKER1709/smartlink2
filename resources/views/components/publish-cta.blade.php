@@ -34,9 +34,12 @@
         @unless ($compact)
             <p class="text-xs text-on-surface-variant">
                 @if ($plafond !== null)
-                    Vous publiez déjà <span class="font-label-numeric">{{ $plafond }}</span> {{ Str::plural('service', $plafond) }}, le maximum de votre palier.
+                    {!! __('Vous publiez déjà <span class="font-label-numeric">:nombre</span> :services, le maximum de votre palier.', [
+                        'nombre' => $plafond,
+                        'services' => trans_choice('service|services', $plafond),
+                    ]) !!}
                 @else
-                    Votre abonnement ne permet plus de publier.
+                    {{ __('Votre abonnement ne permet plus de publier.') }}
                 @endif
             </p>
         @endunless

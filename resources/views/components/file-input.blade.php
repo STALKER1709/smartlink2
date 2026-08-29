@@ -2,7 +2,9 @@
     'name',
     'accept' => null,
     'multiple' => false,
-    'label' => 'Choisir un fichier',
+    // Le défaut se résout dans le corps, pas ici : un @props est évalué avant
+    // que la locale ne soit posée pour la vue.
+    'label' => null,
     'hint' => 'Aucun fichier choisi',
 ])
 
@@ -20,7 +22,7 @@
 <div x-data="{ noms: [] }" {{ $attributes->only('class') }}>
     <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-2 font-button-text text-sm font-semibold text-primary transition-colors hover:bg-surface-container-low focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
         <span class="material-symbols-outlined text-base" aria-hidden="true">upload</span>
-        {{ $label }}
+        {{ $label ?? __('Choisir un fichier') }}
         <input
             type="file"
             name="{{ $multiple ? $name.'[]' : $name }}"

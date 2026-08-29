@@ -5,7 +5,7 @@
 <x-app-layout :titre="__('Tableau de bord')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Bonjour, :prenom', ['prenom' => $prenom]).' 👋'"
-                       subtitle="Aperçu de vos activités." />
+                       :subtitle="__('Aperçu de vos activités.')" />
     </x-slot>
 
     <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 md:px-margin-desktop">

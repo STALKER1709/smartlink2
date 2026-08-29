@@ -51,7 +51,7 @@
         @if ($requests->isEmpty())
             <x-empty-state :title="__('Aucune demande pour le moment.')"
                            :description="__('Les demandes que vous envoyez — et celles que vous recevez — s\'affichent ici.')"
-                           :action-label="Auth::user()->isClient() ? 'Parcourir les services' : null"
+                           :action-label="Auth::user()->isClient() ? __('Parcourir les services') : null"
                            :action-href="Auth::user()->isClient() ? route('services.index') : null" />
         @else
             {{-- La carte de demande des maquettes : qui, quel métier, dans quel

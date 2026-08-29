@@ -1,36 +1,36 @@
 @php
     $faqs = [
         'compte' => [
-            'label' => 'Compte & Profil',
+            'label' => __('Compte & Profil'),
             'icon' => 'account_circle',
             'items' => [
-                ['q' => 'Comment créer un compte ?', 'a' => "Cliquez sur « S'inscrire », choisissez si vous êtes client ou prestataire, puis renseignez vos informations. Un profil est créé automatiquement selon votre rôle."],
-                ['q' => 'Comment modifier mes informations ?', 'a' => 'Rendez-vous dans « Paramètres du compte » (ou « Mon profil client / prestataire ») depuis le menu en haut à droite.'],
+                ['q' => __('Comment créer un compte ?'), 'a' => __("Cliquez sur « S'inscrire », choisissez si vous êtes client ou prestataire, puis renseignez vos informations. Un profil est créé automatiquement selon votre rôle.")],
+                ['q' => __('Comment modifier mes informations ?'), 'a' => __('Rendez-vous dans « Paramètres du compte » (ou « Mon profil client / prestataire ») depuis le menu en haut à droite.')],
             ],
         ],
         'demandes' => [
-            'label' => 'Services & Demandes',
+            'label' => __('Services & Demandes'),
             'icon' => 'assignment',
             'items' => [
-                ['q' => 'Comment trouver un prestataire ?', 'a' => 'Parcourez les services ou les prestataires depuis le menu, filtrez par catégorie, ville ou mot-clé, puis consultez les profils vérifiés.'],
-                ['q' => 'Comment envoyer une demande ?', 'a' => "Depuis la fiche d'un service ou d'un prestataire, cliquez sur « Faire une demande », décrivez votre besoin et envoyez. Vous pouvez suivre son statut dans « Mes demandes »."],
-                ['q' => 'Que se passe-t-il une fois la demande acceptée ?', 'a' => 'Une conversation s\'ouvre automatiquement avec le prestataire pour échanger les détails, avant que la prestation ne démarre puis se termine.'],
+                ['q' => __('Comment trouver un prestataire ?'), 'a' => __('Parcourez les services ou les prestataires depuis le menu, filtrez par catégorie, ville ou mot-clé, puis consultez les profils vérifiés.')],
+                ['q' => __('Comment envoyer une demande ?'), 'a' => __("Depuis la fiche d'un service ou d'un prestataire, cliquez sur « Faire une demande », décrivez votre besoin et envoyez. Vous pouvez suivre son statut dans « Mes demandes ».")],
+                ['q' => __('Que se passe-t-il une fois la demande acceptée ?'), 'a' => __('Une conversation s\'ouvre automatiquement avec le prestataire pour échanger les détails, avant que la prestation ne démarre puis se termine.')],
             ],
         ],
         'paiement' => [
-            'label' => 'Paiement',
+            'label' => __('Paiement'),
             'icon' => 'payments',
             'items' => [
-                ['q' => 'SmartLink prend-il une commission ?', 'a' => "Non. SmartLink ne prélève absolument rien sur vos échanges avec un prestataire : ce n'est pas une place de marché, seulement un outil de mise en relation."],
-                ['q' => "Comment se passe le règlement d'un service ?", 'a' => 'Le règlement se négocie et s\'effectue directement entre le client et le prestataire, en dehors de la plateforme. Les prix affichés sont indicatifs.'],
+                ['q' => __('SmartLink prend-il une commission ?'), 'a' => __("Non. SmartLink ne prélève absolument rien sur vos échanges avec un prestataire : ce n'est pas une place de marché, seulement un outil de mise en relation.")],
+                ['q' => __("Comment se passe le règlement d'un service ?"), 'a' => __('Le règlement se négocie et s\'effectue directement entre le client et le prestataire, en dehors de la plateforme. Les prix affichés sont indicatifs.')],
             ],
         ],
         'securite' => [
-            'label' => 'Confiance & Sécurité',
+            'label' => __('Confiance & Sécurité'),
             'icon' => 'shield',
             'items' => [
-                ['q' => 'Que signifie « Prestataire vérifié » ?', 'a' => "Un badge de vérification indique qu'un administrateur a validé la pièce d'identité du prestataire."],
-                ['q' => 'Comment laisser un avis ?', 'a' => "Une fois une demande marquée « Terminée », vous pouvez noter la prestation et laisser un commentaire depuis la page de la demande."],
+                ['q' => __('Que signifie « Prestataire vérifié » ?'), 'a' => __("Un badge de vérification indique qu'un administrateur a validé la pièce d'identité du prestataire.")],
+                ['q' => __('Comment laisser un avis ?'), 'a' => __("Une fois une demande marquée « Terminée », vous pouvez noter la prestation et laisser un commentaire depuis la page de la demande.")],
             ],
         ],
     ];

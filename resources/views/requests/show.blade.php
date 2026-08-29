@@ -128,8 +128,8 @@
                                         <input type="radio" id="rating-{{ $i }}" name="rating" value="{{ $i }}" required class="peer sr-only">
                                         <label for="rating-{{ $i }}"
                                                class="cursor-pointer rounded-full p-1 text-outline-variant transition-colors hover:text-tertiary-container peer-checked:text-tertiary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary"
-                                               title="{{ $i }} étoile{{ $i > 1 ? 's' : '' }}">
-                                            <span class="sr-only">{{ $i }} étoile{{ $i > 1 ? 's' : '' }}</span>
+                                               title="{{ trans_choice(':count étoile|:count étoiles', $i) }}">
+                                            <span class="sr-only">{{ trans_choice(':count étoile|:count étoiles', $i) }}</span>
                                             <span class="material-symbols-outlined block text-[30px]" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
                                         </label>
                                     @endfor

@@ -204,6 +204,18 @@ vendor/bin/phpstan analyse --generate-baseline
 Le passage « Analyse statique » du CI s'allume alors tout seul : il est écrit
 pour ne rien faire tant que `vendor/bin/phpstan` n'existe pas.
 
+⚠️ **Tout texte d'interface passe par `__()`, avec le français pour clé.**
+`lang/en.json` traduit ces clés ; `lang/fr/*.php` et `lang/en/*.php` portent les
+clés structurées (`ui.*`, `sms.*`, `seo.*`), employées depuis le code PHP.
+Une clé française sans entrée dans `lang/en.json` **ne casse rien** : Laravel
+rend la clé telle quelle, donc du français au milieu d'une page anglaise, sans
+la moindre erreur. `tests/Feature/TranslationCoverageTest.php` monte la garde
+dans les deux sens — pas de clé sans traduction, pas de traduction sans clé.
+
+Les trois pages légales (`resources/views/legal/`) restent volontairement en
+français seul : traduire des CGU engage juridiquement, et les documents ne sont
+pas encore relus par un juriste (`LEGAL_VALIDE`).
+
 ⚠️ **`APP_URL` est un réglage de sécurité, pas seulement de confort.** Laravel
 compose ses URL absolues à partir de l'en-tête `Host` de la requête — et de
 `X-Forwarded-Host`, honoré parce que `trustProxies(at: '*')` fait confiance à

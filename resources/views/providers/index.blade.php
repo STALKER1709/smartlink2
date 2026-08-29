@@ -9,7 +9,7 @@
             'term' => request('term'),
             'category_id' => $categories->firstWhere('id', request('category_id'))?->name,
             'city' => request('city'),
-            'verified_only' => request('verified_only') ? 'Vérifiés uniquement' : null,
+            'verified_only' => request('verified_only') ? __('Vérifiés uniquement') : null,
         ])->filter();
     @endphp
 

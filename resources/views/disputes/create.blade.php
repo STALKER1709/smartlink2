@@ -45,7 +45,7 @@
                               placeholder="{{ __('Expliquez en détail le problème rencontré…') }}"
                               class="w-full resize-none rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 font-body-md text-on-surface transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary">{{ old('description') }}</textarea>
                     <p class="mt-2 text-right font-label-numeric text-sm text-on-surface-variant">
-                        <span x-text="500 - restant">0</span> / 500 caractères
+                        <span x-text="500 - restant">0</span> {{ __('/ 500 caractères') }}
                     </p>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
                 </div>

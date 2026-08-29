@@ -17,7 +17,7 @@
 
         <footer class="fixed bottom-0 z-10 flex w-full flex-col items-center justify-between gap-6 border-t border-outline-variant bg-surface-container px-margin-mobile py-6 md:flex-row">
             <div class="flex w-full justify-center gap-2 md:order-2 md:w-auto" role="img"
-                 aria-label="Étape {{ $etape }} sur {{ $total }}">
+                 aria-label="{{ __('Étape :etape sur :total', ['etape' => $etape, 'total' => $total]) }}">
                 @for ($i = 1; $i <= $total; $i++)
                     <span @class([
                         'h-2 rounded-full transition-all duration-300',

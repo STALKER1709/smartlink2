@@ -17,12 +17,14 @@
         ]);
 
     $reputation = $providerProfile->rating_count > 0
-        ? number_format((float) $providerProfile->rating_avg, 1, ',', ' ').'/5 sur '
-            .$providerProfile->rating_count.' '.Str::plural('avis', $providerProfile->rating_count)
+        ? __(':note/5 sur :nombre', [
+            'note' => number_format((float) $providerProfile->rating_avg, 1, ',', ' '),
+            'nombre' => trans_choice(':count avis|:count avis', $providerProfile->rating_count),
+        ])
         : null;
 
     $descriptionSeo = implode(' · ', array_filter([
-        $providerProfile->is_verified ? 'Prestataire vérifié' : null,
+        $providerProfile->is_verified ? __('Prestataire vérifié') : null,
         $reputation,
         Str::limit($providerProfile->description, 110),
     ])) ?: __('seo.default_description');

@@ -1,7 +1,7 @@
 <x-app-layout :titre="__('Vérifications prestataires')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Vérifications prestataires')"
-                       :subtitle="$pending->total().' '.Str::plural('pièce', $pending->total()).' en attente'" />
+                       :subtitle="trans_choice(':count pièce en attente|:count pièces en attente', $pending->total())" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">

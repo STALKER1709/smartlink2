@@ -196,7 +196,7 @@
                     <div class="mt-1 flex items-center gap-4">
                         @if ($providerProfile->logo_path)
                             <img src="{{ media_url($providerProfile->logo_path) }}"
-                                 alt="Logo actuel de {{ $providerProfile->business_name }}"
+                                 alt="{{ __('Logo actuel de :nom', ['nom' => $providerProfile->business_name]) }}"
                                  class="h-16 w-16 rounded-full object-cover">
                         @endif
                         <x-file-input name="logo" accept="image/*" :label="__('Choisir un logo')" />

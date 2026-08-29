@@ -83,7 +83,7 @@
                                  orphelin en bout de ligne à 390 px. --}}
                             @if ($payment->internal_reference || $payment->phone)
                                 <p class="mt-1 font-label-numeric text-xs text-on-surface-variant">
-                                    @if ($payment->internal_reference)Réf. {{ $payment->internal_reference }}@endif
+                                    @if ($payment->internal_reference){{ __('Réf.') }} {{ $payment->internal_reference }}@endif
                                     @if ($payment->internal_reference && $payment->phone) · @endif
                                     {{ $payment->phone }}
                                 </p>

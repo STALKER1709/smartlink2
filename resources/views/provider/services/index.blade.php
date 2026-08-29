@@ -11,9 +11,9 @@
                     <span class="material-symbols-outlined text-[20px]" aria-hidden="true">inventory_2</span>
                     <span>
                         <span class="font-label-numeric">{{ $services->total() }}</span>
-                        {{ Str::plural('service', $services->total()) }} publié{{ $services->total() > 1 ? 's' : '' }}
+                        {{ trans_choice('service publié|services publiés', $services->total()) }}
                         @if ($plafond !== null)
-                            sur <span class="font-label-numeric">{{ $plafond }}</span> autorisé{{ $plafond > 1 ? 's' : '' }}
+                            {{ __('sur') }} <span class="font-label-numeric">{{ $plafond }}</span> {{ trans_choice('autorisé|autorisés', $plafond) }}
                         @endif
                     </span>
                 </span>

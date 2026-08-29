@@ -88,9 +88,9 @@
              l'engagement se prend. --}}
         <p class="text-center text-xs leading-relaxed text-on-surface-variant">
             {{ __("En créant un compte, vous acceptez les") }}
-            <a href="{{ route('legal.terms') }}" class="font-semibold text-primary hover:underline">conditions générales</a>
-            et la
-            <a href="{{ route('legal.privacy') }}" class="font-semibold text-primary hover:underline">politique de confidentialité</a>.
+            <a href="{{ route('legal.terms') }}" class="font-semibold text-primary hover:underline">{{ __('conditions générales') }}</a>
+            {{ __('et la') }}
+            <a href="{{ route('legal.privacy') }}" class="font-semibold text-primary hover:underline">{{ __('politique de confidentialité') }}</a>.
         </p>
     </form>
 

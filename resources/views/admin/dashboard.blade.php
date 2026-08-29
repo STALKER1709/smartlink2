@@ -5,7 +5,7 @@
 <x-app-layout :titre="__('Administration')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Vue d\'ensemble')"
-                       :subtitle="'Supervision de la plateforme au '.now()->translatedFormat('j F Y')" />
+                       :subtitle="__('Supervision de la plateforme au :date', ['date' => now()->translatedFormat('j F Y')])" />
     </x-slot>
 
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">

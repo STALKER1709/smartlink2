@@ -1,7 +1,7 @@
 <x-app-layout :titre="__('Mes avis')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Mes avis')"
-                       :subtitle="$ratingCount > 0 ? $ratingCount.' '.Str::plural('avis reçu', $ratingCount) : null" />
+                       :subtitle="$ratingCount > 0 ? trans_choice(':count avis reçu|:count avis reçus', $ratingCount) : null" />
     </x-slot>
 
     <div class="mx-auto max-w-container px-margin-mobile py-6 md:px-margin-desktop">

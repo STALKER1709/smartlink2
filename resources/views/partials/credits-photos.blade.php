@@ -28,7 +28,7 @@
                 @endif
                 @if (! empty($photo['source']))
                     <a href="{{ $photo['source'] }}" target="_blank" rel="noopener noreferrer"
-                       class="font-semibold text-primary">voir la source</a>
+                       class="font-semibold text-primary">{{ __('voir la source') }}</a>
                 @endif
             </li>
         @endforeach

@@ -55,9 +55,9 @@
                                 {{ $dispute->request?->service?->title ?? 'Demande directe' }}
                             </p>
                             <p class="mt-1 text-sm text-on-surface-variant">
-                                Déposé par {{ $dispute->reporter?->name }}
+                                {{ __('Déposé par :nom', ['nom' => $dispute->reporter?->name]) }}
                                 @if ($dispute->request)
-                                    · <a href="{{ route('requests.show', $dispute->request) }}" class="text-primary hover:text-primary-container">voir la demande</a>
+                                    · <a href="{{ route('requests.show', $dispute->request) }}" class="text-primary hover:text-primary-container">{{ __('voir la demande') }}</a>
                                 @endif
                             </p>
 

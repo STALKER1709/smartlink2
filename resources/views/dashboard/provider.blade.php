@@ -13,7 +13,7 @@
 <x-app-layout :titre="__('Tableau de bord')" :indexable="false">
     <x-slot name="header">
         <x-page-header :title="__('Bonjour :prenom', ['prenom' => Str::of(auth()->user()->name)->trim()->explode(' ')->first()])"
-                       subtitle="Voici le résumé de votre activité.">
+                       :subtitle="__('Voici le résumé de votre activité.')">
             <x-slot name="action">
                 <x-publish-cta compact />
             </x-slot>
@@ -121,7 +121,7 @@
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
                     <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Vos services") }}</h3>
                     @if ($masques > 0)
-                        <span class="font-label-numeric text-label-numeric text-tertiary">{{ $masques }} masqué{{ $masques > 1 ? 's' : '' }}</span>
+                        <span class="font-label-numeric text-label-numeric text-tertiary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
                     @elseif ($auPlafond)
                         <span class="font-label-numeric text-label-numeric text-tertiary">{{ __("Plafond atteint") }}</span>
                     @endif

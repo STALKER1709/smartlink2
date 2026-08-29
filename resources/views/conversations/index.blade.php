@@ -14,8 +14,8 @@
         </form>
 
         @if ($conversations->isEmpty())
-            <x-empty-state :title="$terme !== '' ? 'Aucune conversation ne correspond à « '.$terme.' ».' : 'Aucune conversation pour le moment.'"
-                           :description="$terme !== '' ? 'Essayez le nom du prestataire ou le titre du service.' : 'Une conversation s\'ouvre dès qu\'une demande est acceptée.'" />
+            <x-empty-state :title="$terme !== '' ? __('Aucune conversation ne correspond à « :terme ».', ['terme' => $terme]) : __('Aucune conversation pour le moment.')"
+                           :description="$terme !== '' ? __('Essayez le nom du prestataire ou le titre du service.') : __('Une conversation s\'ouvre dès qu\'une demande est acceptée.')" />
         @else
             {{-- La rangée non lue se teinte de vert clair et porte son heure en
                  vert : c'est ce qui distingue, d'un balayage, le fil qui
