@@ -180,24 +180,44 @@ traverse plusieurs requêtes simulées ou qui écrit en masse
 reconstruit son utilisateur depuis la session, pas un test qui en garde un seul.
 `tests/Feature/Subscription/SubscriptionMemoTest.php` monte la garde.
 
+## La version de PHP est verrouillée, et ce n'est pas décoratif
+
+`composer.json` déclare `"php": "^8.3"` et le CI tourne sur **8.3**. Mais
+Composer résout les dépendances contre le PHP de *la machine qui lance la
+commande* : un `composer update` passé depuis un poste en 8.4 verrouille des
+paquets qui exigent 8.4 — ici Symfony 8.1, qui demande `php >=8.4.1`.
+
+Rien ne prévient. Les tests passent sur le poste, la revue ne voit qu'un
+`composer.lock` qui a bougé, et le CI meurt à `composer install` sur ses quatre
+passages à la fois, bien avant d'exécuter le moindre test. C'est arrivé.
+
+`config.platform.php` est donc figé à `8.3.0` dans `composer.json` : Composer
+résout désormais pour la version la plus basse que le projet accepte, quel que
+soit le PHP du poste. **Ne retire pas ce réglage**, et si tu montes le plancher
+de PHP, monte-le aux trois endroits — `require.php`, `config.platform.php` et
+`php-version` dans `.github/workflows/ci.yml`.
+
 ## Analyse statique
 
-`phpstan.neon` est écrit et le CI l'exécute — mais **larastan n'est pas encore
-installé**, et c'est délibéré, pas un oubli. `phpstan/phpstan` n'est distribué
-que par un zip de l'API GitHub (aucune `source` dans ses métadonnées), et cet
-hôte est inaccessible depuis l'environnement où le dépôt a été préparé : ni
-`--prefer-source`, ni `use-github-api false` ne contournent le problème,
-puisqu'il n'y a rien d'autre à récupérer.
+`phpstan.neon` est écrit, larastan est dans `composer.json` et
+`phpstan-baseline.neon` fige les 85 erreurs existantes : **le CI exécute donc
+réellement l'analyse**, sur `app`, `database` et `routes`.
+
+⚠️ Le paquet ne s'installe pas depuis tous les environnements. `phpstan/phpstan`
+n'est distribué que par un zip de l'API GitHub (aucune `source` dans ses
+métadonnées) ; là où cet hôte est fermé, `composer install` échoue sur lui et
+`vendor/bin/phpstan` reste absent. On ne peut alors pas vérifier son code avant
+de pousser — c'est le CI qui tranche. Ne conclus pas de cette absence que
+l'analyse est désactivée.
 
 Sans larastan, PHPStan ne sait pas ce que rend `User::create()` ni quel type a
 une colonne lue en propriété : il signale 404 « erreurs » sur ce dépôt, dont
 aucune n'est un vrai défaut. Un baseline construit dans ces conditions serait
 un mensonge figé.
 
-Depuis une machine ayant accès à GitHub, deux commandes suffisent :
+Depuis une machine ayant accès à GitHub, pour régénérer le baseline :
 
 ```bash
-composer require --dev larastan/larastan
 vendor/bin/phpstan analyse --generate-baseline --memory-limit=1G
 ```
 
@@ -207,8 +227,9 @@ les 128 Mo alloués par défaut ne suffisent pas à Laravel plus larastan.
 L'analyse traverse alors tous les fichiers puis meurt en écrivant son cache,
 sur une trace d'appels qui n'a rien à voir avec le dépôt.
 
-Le passage « Analyse statique » du CI s'allume alors tout seul : il est écrit
-pour ne rien faire tant que `vendor/bin/phpstan` n'existe pas.
+Le passage « Analyse statique » du CI ne s'exécute que si `vendor/bin/phpstan`
+existe. Il est présent depuis que larastan est entré dans `composer.json` ; le
+garde reste utile pour les environnements qui ne peuvent pas l'installer.
 
 ⚠️ **Tout texte d'interface passe par `__()`, avec le français pour clé.**
 `lang/en.json` traduit ces clés ; `lang/fr/*.php` et `lang/en/*.php` portent les
