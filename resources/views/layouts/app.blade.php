@@ -34,7 +34,20 @@
             {{ __('Aller au contenu') }}
         </a>
 
-        <div class="min-h-screen bg-surface">
+        {{-- Deux mises en page, selon qu'on est chez soi ou en visite.
+
+             Un visiteur connecté a une colonne latérale à partir de `xl`,
+             comme dans la maquette Stitch — elle porte vingt de ses
+             vingt-six écrans. Un visiteur de passage garde la barre haute :
+             il n'a pas de destinations à lui, et une colonne vide ne
+             servirait qu'à rétrécir la page. --}}
+        @php($colonne = auth()->check())
+
+        <div @class(['min-h-screen bg-surface', 'xl:pl-64' => $colonne])>
+            @if ($colonne)
+                @include('layouts.side-nav')
+            @endif
+
             @include('layouts.navigation')
 
             <!-- Page Heading -->

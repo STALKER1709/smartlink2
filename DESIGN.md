@@ -273,11 +273,24 @@ après.
 - **Deux formes de navigation, une par plage de largeur.** Barre d'onglets basse
   sous 768 px (`md:hidden`), cinq entrées au maximum — le contenu réserve `4.75rem`
   en bas pour ne pas passer dessous. Barre horizontale au-dessus.
-- **Pas de tiroir latéral de bureau.** Il a existé, à partir de 1 280 px, et il a été
-  retiré. La raison de son seuil vaut d'être gardée : un tiroir fixé rétrécit le
-  contenu sans que les requêtes de média le sachent — elles mesurent la fenêtre, pas
-  la place qui reste. À 1 024 px, `lg:grid-cols-6` s'appliquait à 704 px de large et
-  « Prestataires » se lisait « Prestatair… ».
+- **Une colonne latérale de bureau pour les visiteurs connectés**, à partir de
+  `xl` (1 280 px), reprise de la maquette Stitch — elle porte vingt de ses
+  vingt-six écrans. La barre haute disparaît alors : les mêmes destinations
+  à deux endroits, c'est ce que ces règles refusent partout ailleurs.
+
+  **Le seuil n'est pas une préférence, il est mesuré.** La maquette la pose à
+  `md` (768 px), ce qui laisserait 512 px de contenu sur une tablette.
+  Essayée à `lg` (1 024 px), elle en laissait 768 — et la page débordait de
+  29 px, mesure prise dans le navigateur. C'est le défaut qu'un premier
+  tiroir avait déjà révélé : une requête de média mesure la **fenêtre**, pas
+  la place qui reste. À 1 024 px de fenêtre, les classes `lg:` du contenu
+  croient disposer de 1 024 px quand elles en ont 768 ; c'est ainsi que
+  `lg:grid-cols-6` s'appliquait à 704 px et que « Prestataires » se lisait
+  « Prestatair… ».
+
+  À `xl`, il reste exactement 1 024 px — la largeur que les classes `lg:`
+  attendent. Toute colonne fixée ajoutée ailleurs se vérifie de la même
+  façon : au débordement mesuré, pas à l'œil.
 - **Une seule table de destinations** (`App\Support\NavigationLinks`), lue par les
   deux formes : `principaux()` pour la boucle quotidienne du rôle, `secondaires()`
   pour le menu du compte, `compte()` pour l'onglet de profil. Recopiée, elle dérive au

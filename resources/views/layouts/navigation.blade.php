@@ -22,7 +22,13 @@
     $nonLues = $utilisateur?->unreadNotifications()->count() ?? 0;
 @endphp
 
-<nav x-data="{ open: false }" class="border-b border-outline-variant bg-surface-container-lowest">
+{{-- La barre haute disparaît quand la colonne latérale porte les mêmes
+     destinations : les répéter à deux endroits, c'est ce que la charte
+     refuse, et la colonne n'existe qu'à partir de `xl`. --}}
+<nav x-data="{ open: false }" @class([
+    'border-b border-outline-variant bg-surface-container-lowest',
+    'xl:hidden' => auth()->check(),
+])>
     <div class="mx-auto max-w-container px-margin-mobile md:px-margin-tablet lg:px-margin-desktop">
         <div class="flex h-16 justify-between gap-4">
             <div class="flex min-w-0 flex-1">

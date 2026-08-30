@@ -164,6 +164,14 @@ class SyncIcons extends Command
             preg_match_all('/\bicon=(?:"|\x27)([a-z0-9_]+)(?:"|\x27)/', $contenu, $m);
             $noms = array_merge($noms, $m[1]);
 
+            // Une ligature écrite dans un tableau PHP de la vue, puis passée
+            // au composant par `:name`, reste invisible aux deux motifs
+            // ci-dessus. C'est ainsi que `add_circle` s'est affiché en
+            // toutes lettres dans le bouton de la colonne latérale : le
+            // symptôme exact que ce mécanisme sert à éviter.
+            preg_match_all('/\x27icone?\x27\s*=>\s*\x27([a-z0-9_]+)\x27/', $contenu, $m);
+            $noms = array_merge($noms, $m[1]);
+
             // Le composant de catégorie tient sa propre table de correspondance :
             // ces ligatures n'apparaissent nulle part ailleurs dans le balisage.
             if ($fichier->getFilename() === 'category-icon.blade.php') {
