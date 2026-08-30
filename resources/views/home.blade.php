@@ -56,23 +56,12 @@
                              métier se lit toujours au même dessin. --}}
                         @php($photo = image_categorie($category->name))
 
-                        <div @class(['relative w-full', 'h-24 bg-surface-container-high' => (bool) $photo])>
-                            @if ($photo)
-                                <img src="{{ $photo['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"
-                                     @if ($photo['credit']) title="Photo : {{ $photo['credit'] }}" @endif
-                                     class="h-full w-full object-cover" onerror="this.remove()">
-                            @endif
+                        <div class="relative h-24 w-full overflow-hidden">
+                            <x-category-scene :name="$category->name" class="absolute inset-0" />
 
-                            <span @class([
-                                'flex h-12 w-12 items-center justify-center rounded-full bg-surface-container-high text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary',
-                                'absolute -bottom-6 left-1/2 -translate-x-1/2 border-2 border-surface-container-lowest' => (bool) $photo,
-                                'mx-auto mt-6' => ! $photo,
-                            ])>
-                                <x-category-icon :icon="$category->icon" class="text-2xl" />
-                            </span>
                         </div>
 
-                        <div @class(['flex flex-1 flex-col justify-center gap-1 px-4 pb-6', 'pt-8' => (bool) $photo, 'pt-3' => ! $photo])>
+                        <div class="flex flex-1 flex-col justify-center gap-1 px-4 pb-6 pt-8">
                             <span class="font-medium leading-tight text-on-background">{{ $category->name }}</span>
                             <span class="font-label-numeric text-label-sm text-on-surface-variant">
                                 {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}

@@ -24,9 +24,11 @@
     savoir de quelle page de SmartLink part la requête.
 --}}
 <div {{ $attributes->merge(['class' => 'relative h-full w-full']) }}>
-    <div class="absolute inset-0 flex items-center justify-center">
-        <x-category-icon :icon="$service->category?->icon" class="{{ $size }} text-primary/30" />
-    </div>
+    {{-- La couche du dessous : une scène dessinée, jamais un rectangle vide.
+         C'était un pictogramme à 30 % d'opacité au milieu d'un aplat gris —
+         ce qu'on voyait sur toute la page d'accueil dès qu'une photo
+         manquait, c'est-à-dire tout le temps. --}}
+    <x-category-scene :name="$service->category?->name" class="absolute inset-0" />
 
     @if ($photoMetier)
         <img src="{{ $photoMetier['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"

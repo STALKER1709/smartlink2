@@ -106,6 +106,24 @@
  * page construite d'une page assemblée, et c'est la partie qu'on oublie le
  * plus sûrement parce qu'on ne la dessine pas soi-même.
  */
+/*
+ * Les couleurs des vignettes de métier.
+ *
+ * Un SVG en ligne ne lit pas les classes de Tailwind pour ses `fill` : il lui
+ * faut des valeurs. Les passer par des propriétés personnalisées garde la
+ * palette à une seule source — changer le vert ici change les trente et une
+ * scènes, comme il change tout le reste.
+ */
+:root {
+    --scene-ciel-haut: #eef7f2;
+    --scene-ciel-bas: #dcefe6;
+    --scene-soleil: #feb637;   /* secondary-container */
+    --scene-sol: #cfe6da;
+    --scene-horizon: #a4ffdd;  /* on-primary-container */
+    --scene-trait: #005f48;    /* primary */
+    --scene-feuille: #007a5e;  /* primary-container */
+}
+
 @layer base {
     ::selection {
         background-color: #feb637; /* secondary-container */
