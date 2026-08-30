@@ -5,17 +5,21 @@ namespace App\Console\Commands;
 use App\Support\NavigationLinks;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 /**
- * Régénère la liste des icônes demandées à Google Fonts.
+ * Régénère la liste des icônes, et le fichier de police qui la sert.
  *
  * La police complète pèse 1,1 Mo pour une cinquantaine d'icônes utilisées. On
- * ne demande donc que le sous-ensemble — mais un sous-ensemble se périme dès
+ * n'en sert donc qu'un sous-ensemble — mais un sous-ensemble se périme dès
  * qu'une vue ajoute une icône, et le symptôme est discret : le nom de la
  * ligature s'affiche en toutes lettres à la place du dessin.
  *
- * Cette commande relit les vues et réécrit config/icons.php.
- * `tests/Feature/IconSubsetTest.php` échoue si les deux divergent.
+ * Depuis que la police est hébergée par nous, le fichier `.woff2` fait partie
+ * de ce qui se périme. La commande le retélécharge donc elle-même et écrit à
+ * côté la liste sur laquelle il a été construit ; `IconSubsetTest` compare
+ * cette liste à la configuration. Sans ce manifeste, une icône ajoutée
+ * passerait les tests et s'afficherait en toutes lettres en production.
  *
  * ⚠️ Une ligature construite dynamiquement — `{{ $icone }}` dans une boucle —
  * reste invisible à l'analyse. Écris le nom en clair dans le balisage, ou
@@ -25,7 +29,12 @@ class SyncIcons extends Command
 {
     protected $signature = 'icons:sync {--check : Échoue si la liste est périmée, sans rien réécrire}';
 
-    protected $description = 'Régénère la liste des icônes Material Symbols utilisées par les vues';
+    protected $description = 'Régénère la liste des icônes Material Symbols et le fichier de police qui les sert';
+
+    /** Google sert un woff2 à un navigateur, et un ttf à tout le reste. */
+    private const AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
+
+    private const RAPPEL = 'relancer depuis une machine ayant accès à fonts.googleapis.com, sans quoi les nouvelles icônes s\'afficheront en toutes lettres.';
 
     public function handle(): int
     {
@@ -35,7 +44,10 @@ class SyncIcons extends Command
         if ($used === $configured) {
             $this->info(count($used).' icônes, liste à jour.');
 
-            return self::SUCCESS;
+            // La liste peut être à jour et le fichier de police périmé : c'est
+            // même le cas le plus probable, puisque l'un se régénère à la main
+            // et l'autre pas. On vérifie le manifeste avant de sortir.
+            return $this->policeAJour($used) ? self::SUCCESS : $this->telechargerPolice($used);
         }
 
         $manquantes = array_diff($used, $configured);
@@ -57,6 +69,61 @@ class SyncIcons extends Command
 
         File::put(config_path('icons.php'), self::render($used));
         $this->info(count($used).' icônes écrites dans config/icons.php.');
+
+        return $this->telechargerPolice($used);
+    }
+
+    /**
+     * Le fichier de police sert-il exactement la liste demandée ?
+     *
+     * @param  array<int, string>  $icones
+     */
+    private function policeAJour(array $icones): bool
+    {
+        $manifeste = public_path('fonts/material-symbols-subset.json');
+
+        return File::exists($manifeste)
+            && File::exists(public_path('fonts/material-symbols-subset.woff2'))
+            && json_decode((string) File::get($manifeste), true) === $icones;
+    }
+
+    /**
+     * Récupère le sous-ensemble de police et note la liste qui l'a produit.
+     *
+     * Seul l'axe `FILL` est demandé : `wght` et `GRAD` ne sont employés nulle
+     * part, et l'axe optique `opsz` coûtait 14,7 Ko pour une correction de
+     * graisse qu'un écran de milieu de gamme ne rend pas.
+     *
+     * @param  array<int, string>  $icones
+     */
+    private function telechargerPolice(array $icones): int
+    {
+        $css = Http::withHeaders(['User-Agent' => self::AGENT])
+            ->get('https://fonts.googleapis.com/css2', [
+                'family' => 'Material Symbols Outlined:FILL@0..1',
+                'icon_names' => implode(',', $icones),
+                'display' => 'block',
+            ]);
+
+        if (! $css->successful() || ! preg_match('~url\((https://[^)]+)\)~', $css->body(), $m)) {
+            $this->warn('Police non retéléchargée : '.self::RAPPEL);
+
+            return self::SUCCESS;
+        }
+
+        $woff2 = Http::withHeaders(['User-Agent' => self::AGENT])->get($m[1]);
+
+        if (! $woff2->successful()) {
+            $this->warn('Police non retéléchargée : '.self::RAPPEL);
+
+            return self::SUCCESS;
+        }
+
+        File::put(public_path('fonts/material-symbols-subset.woff2'), $woff2->body());
+        File::put(public_path('fonts/material-symbols-subset.json'),
+            json_encode($icones, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+
+        $this->info(sprintf('Police régénérée : %.1f Ko.', strlen($woff2->body()) / 1024));
 
         return self::SUCCESS;
     }

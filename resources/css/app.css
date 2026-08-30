@@ -1,3 +1,97 @@
+/*
+ * Les polices, servies par nous.
+ *
+ * Elles venaient de Google Fonts : une requête tierce bloquante sur chaque
+ * page, une résolution DNS et une connexion de plus avant le premier
+ * caractère, et l'adresse IP de chaque visiteur envoyée à Google — ce que la
+ * justice allemande a jugé contraire au RGPD en 2022 (LG München I,
+ * 3 O 17493/20).
+ *
+ * Trois décisions de poids, pour une audience sur Android de milieu de gamme
+ * en 3G :
+ *
+ * 1. **Polices variables.** Un fichier couvre toute la plage de graisses.
+ *    240 Ko de fichiers statiques deviennent 107 Ko.
+ * 2. **`latin` et `latin-ext` seulement.** Google en sert sept ; le
+ *    cyrillique, le grec et le vietnamien seraient téléchargés pour rien.
+ *    `unicode-range` laisse le navigateur ne prendre que ce qu'il lit — une
+ *    page sans œ ne charge jamais `latin-ext`.
+ * 3. **Icônes réduites au seul axe FILL.** L'axe optique `opsz` coûtait
+ *    14,7 Ko de plus, pour une correction de graisse qu'aucun de ces écrans
+ *    ne rendra. `wght` et `GRAD` n'étaient employés nulle part.
+ *
+ * Première visite française : 121 Ko de polices, contre 92 Ko pour les seules
+ * icônes avant ce choix.
+ *
+ * Pour mettre à jour : `php artisan icons:sync` régénère la liste des
+ * ligatures, puis retélécharger le sous-ensemble depuis fonts.googleapis.com.
+ */
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('/fonts/inter-400-600-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('/fonts/inter-400-600-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/jetbrains-mono-500-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/jetbrains-mono-500-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    font-style: normal;
+    font-weight: 600 700;
+    font-display: swap;
+    src: url('/fonts/lexend-600-700-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    font-style: normal;
+    font-weight: 600 700;
+    font-display: swap;
+    src: url('/fonts/lexend-600-700-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 400;
+    /* `block` et non `swap` : sans lui, le navigateur affiche le nom de la
+       ligature — « location_on », « arrow_forward » — tant que la police
+       n'est pas arrivée. */
+    font-display: block;
+    src: url('/fonts/material-symbols-subset.woff2') format('woff2');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -99,33 +193,42 @@
  * lourde. Il suit désormais la taille.
  */
 .material-symbols-outlined {
+    /* C'est la feuille de Google qui posait cette ligne. En la retirant, on
+       retirait le seul endroit qui liait la classe à la police — et les
+       ligatures s'affichaient en toutes lettres, exactement le symptôme que
+       tout le mécanisme de sous-ensemble sert à éviter. */
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
     --icon-fill: 0;
-    --icon-wght: 400;
-    --icon-grad: 0;
-    --icon-opsz: 24;
-    font-variation-settings: 'FILL' var(--icon-fill), 'wght' var(--icon-wght),
-        'GRAD' var(--icon-grad), 'opsz' var(--icon-opsz);
+    font-variation-settings: 'FILL' var(--icon-fill);
     /* Une ligature d'icône ne se sélectionne pas : sans cela, un glisser sur
        une carte surligne « location_on » au milieu du texte. */
     user-select: none;
-    /* L'icône s'aligne sur la ligne de base du texte qu'elle accompagne au lieu
-       de flotter au-dessus : c'est ce qui la fait lire comme un mot de la
-       phrase et non comme une vignette posée à côté. */
+    /* L'icône s'aligne sur la ligne de base du texte qu'elle accompagne au
+       lieu de flotter au-dessus. */
     line-height: 1;
     flex-shrink: 0;
 }
 
 .icon-filled { --icon-fill: 1; }
-.icon-bold { --icon-wght: 600; }
 
-/* Les six tailles, chacune avec l'`opsz` qui lui correspond. */
-.icon-xs { font-size: 16px; --icon-opsz: 20; }
-.icon-sm { font-size: 18px; --icon-opsz: 20; }
-.icon-md { font-size: 20px; --icon-opsz: 20; }
-.icon-lg { font-size: 24px; --icon-opsz: 24; }
-.icon-xl { font-size: 32px; --icon-opsz: 40; }
-.icon-2xl { font-size: 40px; --icon-opsz: 40; }
-.icon-3xl { font-size: 48px; --icon-opsz: 48; }
+/* Les six tailles. L'axe optique qui les accompagnait a été retiré avec le
+   sous-ensemble qui le portait : il coûtait 14,7 Ko pour une correction de
+   graisse qu'un écran de milieu de gamme ne rend pas. */
+.icon-xs { font-size: 16px; }
+.icon-sm { font-size: 18px; }
+.icon-md { font-size: 20px; }
+.icon-lg { font-size: 24px; }
+.icon-xl { font-size: 32px; }
+.icon-2xl { font-size: 40px; }
+.icon-3xl { font-size: 48px; }
 
 /*
  * La longueur de ligne du corps de texte. Au-delà d'environ 70 caractères,

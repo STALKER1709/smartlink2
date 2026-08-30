@@ -11,14 +11,17 @@
                :indexable="$indexable" />
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
-        @include('partials.icon-font')
 
         @include('partials.pwa-head')
 
-        <!-- Scripts -->
+        <!-- Scripts -->        {{-- Les deux fichiers que toute page française lit, demandés avant que
+             le navigateur ne découvre la feuille qui les réclame. Le
+             `crossorigin` est obligatoire même en même origine : une police
+             se récupère en mode anonyme, et sans lui le préchargement est
+             ignoré puis refait. --}}
+        <link rel="preload" href="/fonts/inter-400-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/lexend-600-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-on-surface antialiased">

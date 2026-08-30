@@ -29,13 +29,39 @@ class IconSubsetTest extends TestCase
             'Icônes demandées sans être utilisées : poids inutile. Lancer php artisan icons:sync.');
     }
 
-    public function test_the_layouts_share_one_list(): void
+    /**
+     * Depuis que la police est hébergée par nous, c'est le fichier `.woff2`
+     * qui se périme — et lui, aucune configuration ne le trahit. La commande
+     * écrit donc à côté la liste sur laquelle il a été construit.
+     *
+     * Sans ce contrôle, une icône ajoutée passerait les deux tests ci-dessus,
+     * la liste de configuration étant à jour, et s'afficherait en toutes
+     * lettres en production.
+     */
+    public function test_the_font_file_matches_the_configured_list(): void
+    {
+        $manifeste = public_path('fonts/material-symbols-subset.json');
+
+        $this->assertFileExists($manifeste,
+            'Le manifeste du sous-ensemble manque. Lancer php artisan icons:sync.');
+
+        $servies = json_decode((string) file_get_contents($manifeste), true);
+
+        $this->assertSame(config('icons.names', []), $servies,
+            'Le fichier de police ne sert pas la liste configurée : les icônes ajoutées '
+            .'depuis s\'afficheront en toutes lettres. Lancer php artisan icons:sync '
+            .'depuis une machine ayant accès à fonts.googleapis.com.');
+    }
+
+    public function test_no_layout_calls_google_fonts(): void
     {
         foreach (['app', 'guest'] as $gabarit) {
             $contenu = file_get_contents(resource_path("views/layouts/{$gabarit}.blade.php"));
 
-            $this->assertStringContainsString("@include('partials.icon-font')", $contenu,
-                "Le gabarit {$gabarit} doit inclure la liste partagée plutôt que la recopier.");
+            // Une requête tierce bloquante sur chaque page, et l'adresse IP de
+            // chaque visiteur envoyée à Google.
+            $this->assertStringNotContainsString('fonts.googleapis.com', $contenu,
+                "Le gabarit {$gabarit} sert ses polices lui-même : voir resources/css/app.css.");
         }
     }
 }
