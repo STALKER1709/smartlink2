@@ -36,15 +36,26 @@
 <{{ $tag }}
     @if ($href) href="{{ $href }}" @endif
     @class([
-        'flex flex-col justify-between rounded-xl border p-4',
+        'group relative flex flex-col justify-between overflow-hidden rounded-xl border p-4',
         // Le compteur qui doit alerter prend le fond de l'erreur : c'est la
         // seule tuile des maquettes qui sorte du blanc.
         'border-error/20 bg-error-container text-on-error-container' => $alert,
-        'border-outline-variant bg-surface-container-lowest' => ! $alert,
+        'border-outline-variant bg-surface-container-lowest shadow-elevation-1' => ! $alert,
         'transition-colors hover:border-primary/50 hover:shadow-elevation-2' => (bool) $href,
     ])
     {{ $attributes->except('class') }}
 >
+    {{-- L'arc de couleur en coin : la signature des cartes de la maquette.
+         À 5 % il ne se lit pas comme un aplat mais comme une lumière — et
+         c'est ce qui distingue une carte dessinée d'une boîte bordée. Il est
+         décoratif, donc `aria-hidden`, et il ne bouge pas au survol : la
+         charte refuse qu'un élément se déplace sous le curseur. --}}
+    @unless ($alert)
+        <span aria-hidden="true"
+              class="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-bl-full bg-primary/5 transition-colors group-hover:bg-primary/10"></span>
+    @endunless
+
+    <span class="relative">
     @if ($variant === 'stacked')
         @if ($icon)
             <x-icon :name="$icon" class="{{ $teinte }}" />
@@ -88,4 +99,5 @@
             ])>{{ $hint }}</span>
         @endif
     @endif
+    </span>
 </{{ $tag }}>
