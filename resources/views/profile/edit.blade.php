@@ -12,7 +12,7 @@
         coordonnées et perdrait sa saisie, sans rien qui le lui dise. Chaque
         carte garde donc son propre bouton, au pied de son formulaire.
     --}}
-    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @include('profile.partials.update-profile-information-form')
         @include('profile.partials.update-password-form')
         @include('profile.partials.delete-user-form')

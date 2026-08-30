@@ -4,7 +4,7 @@
                        :subtitle="__('Aperçu de vos performances sur les :days derniers jours.', ['days' => $stats['period_days']])" />
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8 space-y-6">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8 space-y-6">
 
         @if ($stats['requests_total'] === 0)
             <p class="text-on-surface-variant">{{ __('ui.stats.no_data') }}</p>
@@ -21,12 +21,12 @@
                 ] as [$icone, $libelle, $valeur, $indice, $tendance])
                     <div class="flex flex-col items-start justify-between gap-4 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-4 transition-colors hover:border-primary hover:shadow-elevation-2 md:p-6">
                         <span class="rounded-full bg-surface-container-high p-2">
-                            <span class="material-symbols-outlined text-on-surface-variant" aria-hidden="true">{{ $icone }}</span>
+                            <x-icon :name="$icone" class="text-on-surface-variant" />
                         </span>
 
                         <div>
                             <p class="mb-1 font-body-md text-body-md text-on-surface-variant">{{ $libelle }}</p>
-                            <p class="font-label-numeric text-display-lg text-on-background">{{ $valeur }}</p>
+                            <p class="font-label-numeric text-headline-lg text-on-background">{{ $valeur }}</p>
                             <p class="mt-1 text-label-sm text-on-surface-variant">{{ $indice }}</p>
                         </div>
 
@@ -36,7 +36,7 @@
                                 'bg-primary-container/15 text-primary' => $tendance >= 0,
                                 'bg-error-container/30 text-error' => $tendance < 0,
                             ])>
-                                <span class="material-symbols-outlined text-[14px]" aria-hidden="true">{{ $tendance >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                                <x-icon :name="$tendance >= 0 ? 'trending_up' : 'trending_down'" size="xs" />
                                 <span class="font-label-numeric text-label-sm">{{ $tendance > 0 ? '+' : '' }}{{ $tendance }} %</span>
                             </span>
                         @endif

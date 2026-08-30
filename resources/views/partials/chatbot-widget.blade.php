@@ -56,8 +56,8 @@
         class="flex h-14 w-14 items-center justify-center rounded-full border border-outline-variant bg-primary-container text-on-primary transition-colors hover:bg-primary focus:outline-none"
         aria-label="{{ __('ui.assistant.title') }}"
     >
-        <span x-show="! open" class="material-symbols-outlined" style="font-size: 28px;">chat</span>
-        <span x-show="open" x-cloak class="material-symbols-outlined" style="font-size: 24px;">close</span>
+        <x-icon name="chat" x-show="! open"   style="font-size: 28px;" />
+        <x-icon name="close" x-show="open" x-cloak   style="font-size: 24px;" />
     </button>
 
     <!-- Chat Panel -->
@@ -70,7 +70,7 @@
     >
         <div class="flex items-center gap-3 bg-primary-container px-4 py-3 text-on-primary">
             <div class="flex size-9 shrink-0 items-center justify-center bg-on-primary/20 rounded-full">
-                <span class="material-symbols-outlined text-lg">smart_toy</span>
+                <x-icon name="smart_toy" size="lg" />
             </div>
             <div>
                 <h3 class="font-headline-sm text-headline-sm leading-tight">{{ __('ui.assistant.title') }}</h3>
@@ -115,7 +115,7 @@
                 :disabled="sending || ! message.trim()"
                 class="inline-flex items-center justify-center rounded-full bg-primary px-3 py-2 text-on-primary hover:bg-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">send</span>
+                <x-icon name="send" size="lg" filled />
             </button>
         </form>
     </div>

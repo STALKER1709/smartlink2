@@ -17,9 +17,10 @@
     </div>
 
     @if ($href)
-        <a href="{{ $href }}" class="flex shrink-0 items-center gap-1 text-label-md font-semibold text-primary hover:text-primary-container">
+        <a href="{{ $href }}"
+           class="group -mx-3 inline-flex min-h-11 shrink-0 items-center gap-1 rounded-full px-3 text-label-md font-semibold text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container">
             {{ $linkLabel }}
-            <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
+            <x-icon name="arrow_forward" size="sm" class="transition-transform duration-150 group-hover:translate-x-0.5" />
         </a>
     @endif
 </div>

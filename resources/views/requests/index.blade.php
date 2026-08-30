@@ -4,7 +4,7 @@
             @if (Auth::user()->isClient())
                 <x-slot name="action">
                     <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                        <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
+                        <x-icon name="add" />
                         {{ __("Nouvelle demande") }}
                     </a>
                 </x-slot>
@@ -12,7 +12,7 @@
         </x-page-header>
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         @php
             $statuts = collect(\App\Support\RequestStatus::labels())
                 ->filter(fn ($label, $valeur) => ($comptes[$valeur] ?? 0) > 0);
@@ -107,7 +107,7 @@
                             <span class="font-label-numeric text-label-numeric text-on-surface-variant">
                                 {{ $serviceRequest->created_at->translatedFormat('d M, H:i') }}
                             </span>
-                            <span class="material-symbols-outlined text-on-surface-variant transition-transform group-hover:translate-x-0.5" aria-hidden="true">chevron_right</span>
+                            <x-icon name="chevron_right" class="text-on-surface-variant transition-transform group-hover:translate-x-0.5" />
                         </div>
                     </a>
                 @endforeach

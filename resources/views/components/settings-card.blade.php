@@ -14,7 +14,7 @@
     <div class="border-b px-5 py-4 sm:px-6 sm:py-5 {{ $danger ? 'border-error/30' : 'border-outline-variant' }}">
         <h2 class="flex items-center gap-2 font-headline-md text-headline-md text-on-surface">
             @if ($icon)
-                <span class="material-symbols-outlined {{ $danger ? 'text-error' : 'text-primary' }}" aria-hidden="true">{{ $icon }}</span>
+                <x-icon :name="$icon" class="{{ $danger ? 'text-error' : 'text-primary' }}" />
             @endif
             {{ $title }}
         </h2>

@@ -9,8 +9,8 @@
          de métiers du bandeau disparaissent au profit de la grille juste
          dessous, qui disait déjà la même chose vingt lignes plus bas. --}}
     <section class="border-b border-outline-variant bg-surface-container-low">
-        <div class="mx-auto max-w-container px-margin-mobile py-12 text-center md:px-margin-desktop md:py-16">
-            <h1 class="font-display-lg text-display-lg text-on-background">
+        <div class="mx-auto max-w-container px-margin-mobile py-12 text-center md:px-margin-tablet lg:px-margin-desktop md:py-16">
+            <h1 class="font-display-lg text-headline-lg sm:text-display-lg text-on-background">
                 {!! __('Un artisan de confiance,<br class="hidden sm:inline"> près de chez vous') !!}
             </h1>
             <p class="mx-auto mt-4 max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
@@ -38,7 +38,7 @@
          rangées et repoussait les prestataires d'un demi-écran, sur une page
          qui en fait déjà plus de cinq mille pixels. --}}
     @if ($categories->isNotEmpty())
-        <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
+        <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
             <x-section-header :title="__('Catégories populaires')" :href="route('services.index')" :link-label="__('Tous les services')" />
 
             <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -100,7 +100,7 @@
          de 4,8 n'en est pas un. --}}
     @if ($featuredProviders->isNotEmpty())
         <section class="bg-surface-container-low">
-            <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
+            <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
                 <x-section-header :title="__('Prestataires vérifiés')"
                                   :subtitle="__('Pièce d\'identité contrôlée par notre équipe.')"
                                   :href="route('providers.index', ['verified_only' => 1])"
@@ -135,7 +135,7 @@
 
                                     @if ($providerProfile->city)
                                         <p class="mt-1 flex items-center gap-1 text-label-md text-on-surface-variant">
-                                            <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
+                                            <x-icon name="location_on" />
                                             {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
                                         </p>
                                     @endif
@@ -176,7 +176,7 @@
                                 @if (auth()->guest() || auth()->user()->can('create', \App\Models\ServiceRequest::class))
                                     <a href="{{ route('requests.create', ['provider_id' => $providerProfile->user_id]) }}"
                                        class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text font-semibold text-on-primary transition-colors hover:bg-primary-container">
-                                        <span class="material-symbols-outlined text-[20px]" aria-hidden="true">mail</span>
+                                        <x-icon name="mail" />
                                         Contacter
                                     </a>
                                 @else
@@ -194,7 +194,7 @@
     @endif
 
     {{-- ══ Services récents ══ --}}
-    <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
+    <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
         <x-section-header :title="__('Derniers services publiés')" :href="route('services.index')" />
 
         @if ($recentServices->isEmpty())
@@ -211,7 +211,7 @@
     {{-- ══ Comment ça marche ══ Le modèle du produit n'est évident pour personne :
          le client ne paie rien ici, et le règlement se convient de gré à gré. --}}
     <section class="border-b border-outline-variant bg-surface-container-low">
-        <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-desktop">
+        <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
             <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">{{ __('Comment ça marche') }}</h2>
 
             <ol class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -223,7 +223,7 @@
                     <li class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-6">
                         <div class="flex items-center gap-3">
                             <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container/20 text-primary">
-                                <span class="material-symbols-outlined">{{ $icon }}</span>
+                                <x-icon :name="$icon" />
                             </span>
                             <span class="font-label-numeric text-label-numeric text-on-surface-variant">0{{ $index + 1 }}</span>
                         </div>
@@ -255,7 +255,7 @@
                 <div class="absolute inset-0 bg-inverse-surface/75" aria-hidden="true"></div>
             @endif
 
-            <div class="relative mx-auto max-w-container px-margin-mobile py-14 text-center md:px-margin-desktop">
+            <div class="relative mx-auto max-w-container px-margin-mobile py-14 text-center md:px-margin-tablet lg:px-margin-desktop">
                 <h2 class="font-headline-lg text-headline-lg text-inverse-on-surface">{{ __('Vous êtes prestataire de services ?') }}</h2>
                 <p class="mx-auto mt-3 max-w-xl font-body-md text-body-md text-inverse-on-surface/80">
                     {{ __('Publiez vos services, recevez des demandes, développez votre clientèle.') }}
@@ -263,7 +263,7 @@
                 </p>
                 <a href="{{ route('register') }}" class="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
                     {{ __('Créer un compte prestataire') }}
-                    <span class="material-symbols-outlined text-base">arrow_forward</span>
+                    <x-icon name="arrow_forward" />
                 </a>
             </div>
         </section>

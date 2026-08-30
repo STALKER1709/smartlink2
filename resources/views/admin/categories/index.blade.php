@@ -5,14 +5,14 @@
             <x-slot name="action">
                 <a href="{{ route('admin.categories.create') }}"
                    class="flex items-center gap-2 rounded-lg bg-primary px-[24px] py-3 font-button-text text-button-text text-on-primary shadow-elevation-1 transition-colors hover:bg-primary-container">
-                    <span class="material-symbols-outlined" aria-hidden="true">add</span>
+                    <x-icon name="add" />
                     {{ __("Ajouter une catégorie") }}
                 </a>
             </x-slot>
         </x-page-header>
     </x-slot>
 
-    <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @if (session('status'))
             <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}

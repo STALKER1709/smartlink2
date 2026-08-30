@@ -3,7 +3,7 @@
         <x-page-header :title="__('Mes signalements')" :subtitle="__('Ce que vous avez déclaré, et ce qui en a été décidé.')" />
     </x-slot>
 
-    <div class="mx-auto w-full max-w-3xl px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto w-full max-w-3xl px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @if ($disputes->isEmpty())
             <x-empty-state :title="__('Aucun signalement.')"
                            :description="__('Si une prestation se passe mal, vous pouvez la signaler depuis la fiche de la demande.')" />

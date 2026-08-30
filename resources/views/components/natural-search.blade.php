@@ -19,7 +19,7 @@
         <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
 
         <div class="flex flex-1 items-center gap-2 px-3">
-            <span class="material-symbols-outlined text-on-surface-variant" aria-hidden="true">search</span>
+            <x-icon name="search" class="text-on-surface-variant" />
             {{-- `text-left` explicite : le bloc du hero est centré et le champ
                  en héritait — le curseur démarrait au milieu et le texte
                  poussait des deux côtés à mesure qu'on écrivait. --}}

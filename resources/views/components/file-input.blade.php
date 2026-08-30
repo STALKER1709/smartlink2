@@ -21,7 +21,7 @@
 --}}
 <div x-data="{ noms: [] }" {{ $attributes->only('class') }}>
     <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-2 font-button-text text-label-md font-semibold text-primary transition-colors hover:bg-surface-container-low focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-        <span class="material-symbols-outlined text-base" aria-hidden="true">upload</span>
+        <x-icon name="upload" />
         {{ $label ?? __('Choisir un fichier') }}
         <input
             type="file"

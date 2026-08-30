@@ -3,7 +3,7 @@
         <x-page-header :title="__('ui.subscription.checkout_title', ['plan' => $plan->name()])" :back="route('provider.subscription.show')" back-label="Mon abonnement" />
     </x-slot>
 
-    <div class="mx-auto flex w-full max-w-md flex-col gap-8 px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto flex w-full max-w-md flex-col gap-8 px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         {{-- La carte de récapitulatif des maquettes : ce qu'on achète, pour
              combien de temps, et le total détaché par un filet. --}}
         <section class="flex flex-col gap-4 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-6">
@@ -15,7 +15,7 @@
                     </p>
                 </div>
                 <span class="shrink-0 rounded-full bg-primary-container/15 p-2 text-primary">
-                    <span class="material-symbols-outlined" aria-hidden="true">verified</span>
+                    <x-icon name="verified" />
                 </span>
             </div>
 
@@ -47,7 +47,7 @@
                                        class="sr-only peer">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-label-sm {{ $meta[1] }}">{{ $meta[2] }}</div>
                                 <span class="text-label-md font-medium text-on-surface text-center">{{ __($meta[0]) }}</span>
-                                <span class="material-symbols-outlined absolute top-2 right-2 text-primary text-lg opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                <x-icon name="check_circle" size="lg" filled class="absolute top-2 right-2 text-primary opacity-0 peer-checked:opacity-100 transition-opacity" />
                             </label>
                         @endforeach
                     </div>

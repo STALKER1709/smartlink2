@@ -3,7 +3,7 @@
         <x-page-header :title="__('Favoris')" :subtitle="__('Vos prestataires de confiance sauvegardés.')" />
     </x-slot>
 
-    <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @if (session('status'))
             <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
@@ -15,14 +15,14 @@
                  sortie. C'est le seul écran où une grande icône se justifie —
                  il n'y a rien d'autre à regarder. --}}
             <div class="flex flex-col items-center justify-center py-16 text-center">
-                <span class="material-symbols-outlined mb-4 text-6xl text-outline-variant" aria-hidden="true">heart_broken</span>
+                <x-icon name="heart_broken" size="3xl" class="mb-4 text-outline-variant" />
                 <h2 class="mb-2 font-headline-md text-headline-md text-on-surface">{{ __("Vous n'avez pas encore de favoris.") }}</h2>
                 <p class="mx-auto max-w-md font-body-md text-body-md text-on-surface-variant">
                     {{ __("Explorez les prestataires et appuyez sur le cœur pour les ajouter à cette liste.") }}
                 </p>
                 <a href="{{ route('providers.index') }}"
                    class="mt-6 flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-all duration-100 hover:bg-primary-container active:scale-95">
-                    <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                    <x-icon name="search" />
                     {{ __("Trouver un prestataire") }}
                 </a>
             </div>

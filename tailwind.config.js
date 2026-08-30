@@ -143,6 +143,10 @@ export default {
                 // sans le moindre palier : sur un 390 px, 128 px de marges ne
                 // laissent que 262 px de contenu. Le téléphone garde ses 16 px.
                 'margin-mobile': '16px',
+                // Le palier qui manquait. Sans lui, la marge de bureau
+                // s'appliquait dès 768 px : mesure faite, le pied de page à
+                // trois colonnes débordait alors de 38 px.
+                'margin-tablet': '32px',
                 'margin-desktop': '64px',
             },
 

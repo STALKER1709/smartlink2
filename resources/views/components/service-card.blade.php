@@ -49,7 +49,7 @@
         <p class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-label-md text-on-surface-variant">
             <span class="line-clamp-1">{{ $profile?->business_name ?? $service->provider?->name }}</span>
             @if ($profile?->is_verified)
-                <span class="material-symbols-outlined shrink-0 text-base text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="{{ __('Prestataire vérifié') }}">verified</span>
+                <x-icon name="verified" filled label="{{ __('Prestataire vérifié') }}" class="shrink-0 text-primary" />
             @endif
             @if ($service->city)
                 <span class="whitespace-nowrap"><span aria-hidden="true" class="text-outline">·</span>

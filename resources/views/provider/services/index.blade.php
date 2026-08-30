@@ -8,7 +8,7 @@
         <x-page-header :title="__('Mes services')">
             <x-slot name="subtitle">
                 <span class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[20px]" aria-hidden="true">inventory_2</span>
+                    <x-icon name="inventory_2" />
                     <span>
                         <span class="font-label-numeric">{{ $services->total() }}</span>
                         {{ trans_choice('service publié|services publiés', $services->total()) }}
@@ -24,7 +24,7 @@
         </x-page-header>
     </x-slot>
 
-    <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @if (session('status'))
             <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
@@ -68,7 +68,7 @@
 
                             <div class="flex flex-wrap items-center gap-3 text-on-surface-variant">
                                 <span class="flex items-center gap-1.5 rounded-lg border border-outline-variant bg-surface-container-low px-3 py-1.5">
-                                    <span class="material-symbols-outlined text-[18px] text-primary" aria-hidden="true">forum</span>
+                                    <x-icon name="forum" size="sm" class="text-primary" />
                                     <span class="font-label-numeric text-label-numeric font-bold text-on-surface">{{ $service->requests_count ?? 0 }}</span>
                                     <span class="font-label-md text-label-md">{{ Str::plural('demande', $service->requests_count ?? 0) }}</span>
                                 </span>

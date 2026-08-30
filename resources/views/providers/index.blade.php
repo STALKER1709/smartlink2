@@ -13,13 +13,13 @@
         ])->filter();
     @endphp
 
-    <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
 
         <form action="{{ route('providers.index') }}" method="GET">
             <div class="flex flex-col gap-2 rounded-xl border border-outline-variant bg-surface-container-lowest p-2 shadow-elevation-1 sm:flex-row sm:items-center">
                 <label for="term" class="sr-only">{{ __("Rechercher un prestataire") }}</label>
                 <div class="flex flex-1 items-center gap-2 px-3">
-                    <span class="material-symbols-outlined text-on-surface-variant">search</span>
+                    <x-icon name="search" class="text-on-surface-variant" />
                     <input
                         type="text"
                         id="term"
@@ -69,7 +69,7 @@
                         <a href="{{ route('providers.index', collect(request()->query())->except($cle)->all()) }}"
                            class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-label-sm font-medium text-on-surface hover:border-primary/50 hover:shadow-elevation-2">
                             {{ $valeur }}
-                            <span class="material-symbols-outlined text-sm text-on-surface-variant">close</span>
+                            <x-icon name="close" size="sm" class="text-on-surface-variant" />
                         </a>
                     @endforeach
                 </div>

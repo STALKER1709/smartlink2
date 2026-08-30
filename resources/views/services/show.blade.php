@@ -37,18 +37,18 @@
             : null;
     @endphp
 
-    <div class="mx-auto max-w-container px-margin-mobile py-6 pb-28 md:px-margin-desktop md:py-8 lg:pb-8">
+    <div class="mx-auto max-w-container px-margin-mobile py-6 pb-28 md:px-margin-tablet lg:px-margin-desktop md:py-8 lg:pb-8">
         <a href="{{ route('services.index') }}" class="mb-4 inline-flex items-center gap-1 text-label-md text-on-surface-variant hover:text-primary sm:hidden">
-            <span class="material-symbols-outlined text-base">arrow_back</span>
+            <x-icon name="arrow_back" />
             {{ __("Tous les services") }}
         </a>
 
         <nav class="mb-4 hidden items-center gap-1 text-label-md text-on-surface-variant sm:flex">
             <a href="{{ route('services.index') }}" class="hover:text-primary">{{ __("Services") }}</a>
-            <span class="material-symbols-outlined text-base">chevron_right</span>
+            <x-icon name="chevron_right" />
             @if ($service->category)
                 <a href="{{ route('services.index', ['category_id' => $service->category_id]) }}" class="hover:text-primary">{{ $service->category->name }}</a>
-                <span class="material-symbols-outlined text-base">chevron_right</span>
+                <x-icon name="chevron_right" />
             @endif
             <span class="truncate text-on-surface">{{ $service->title }}</span>
         </nav>
@@ -90,7 +90,7 @@
 
                     @if ($service->city)
                         <p class="mt-2 flex items-center gap-1 text-label-md text-on-surface-variant">
-                            <span class="material-symbols-outlined text-base">location_on</span>
+                            <x-icon name="location_on" />
                             {{-- « location » est une adresse libre : quand le
                                  prestataire y a simplement retapé son quartier,
                                  l'afficher donnait « Douala, Bonamoussadi ·
@@ -102,7 +102,7 @@
 
                     @if ($service->availability_note)
                         <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant shadow-elevation-1 bg-tertiary-container/15 px-4 py-3 text-label-md text-on-surface">
-                            <span class="material-symbols-outlined text-base text-tertiary">schedule</span>
+                            <x-icon name="schedule" class="text-tertiary" />
                             {{ $service->availability_note }}
                         </p>
                     @endif
@@ -144,7 +144,7 @@
                 </div>
 
                 <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-low px-4 py-3 text-label-sm leading-relaxed text-on-surface-variant">
-                    <span class="material-symbols-outlined text-base text-primary">shield</span>
+                    <x-icon name="shield" class="text-primary" />
                     {{ __("SmartLink ne prend aucune commission et ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.") }}
                 </p>
             </aside>

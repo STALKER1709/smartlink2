@@ -20,14 +20,14 @@
         </x-page-header>
     </x-slot>
 
-    <div class="mx-auto flex max-w-container flex-col gap-8 px-margin-mobile py-gutter md:px-margin-desktop">
+    <div class="mx-auto flex max-w-container flex-col gap-8 px-margin-mobile py-gutter md:px-margin-tablet lg:px-margin-desktop">
         {{-- Le bandeau d'essai est permanent dans les maquettes, et non réservé
              aux sept derniers jours : c'est pendant l'essai qu'un prestataire
              décide s'il paiera. --}}
         @if ($subscription?->isTrial())
             <div class="flex w-full flex-col items-start justify-between gap-4 rounded-lg border border-tertiary-fixed-dim bg-tertiary-fixed p-4 text-on-tertiary-fixed md:flex-row md:items-center">
                 <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined" aria-hidden="true">info</span>
+                    <x-icon name="info" />
                     <span class="font-body-md text-body-md font-semibold">
                         {{ __("Essai gratuit —") }} <span class="font-label-numeric">{{ $joursRestants }}</span> {{ Str::plural('jour', $joursRestants) }} {{ Str::plural('restant', $joursRestants) }}
                     </span>
@@ -86,7 +86,7 @@
                                 </p>
                                 <div class="mt-1 flex flex-wrap items-center gap-1 text-label-md text-on-surface-variant">
                                     @if ($demande->preferred_date)
-                                        <span class="material-symbols-outlined text-[16px]" aria-hidden="true">schedule</span>
+                                        <x-icon name="schedule" size="xs" />
                                         <span class="font-label-numeric">{{ $demande->preferred_date->translatedFormat('j F') }}</span>
                                         <span class="mx-1 text-outline-variant" aria-hidden="true">•</span>
                                     @endif
@@ -145,7 +145,7 @@
                                 </span>
                             </div>
                         </div>
-                        <span class="material-symbols-outlined shrink-0 text-outline transition-colors group-hover:text-primary" aria-hidden="true">chevron_right</span>
+                        <x-icon name="chevron_right" class="shrink-0 text-outline transition-colors group-hover:text-primary" />
                     </a>
                 @empty
                     <p class="text-label-md text-on-surface-variant">{{ __("Vous n'avez pas encore publié de service.") }}</p>
@@ -153,7 +153,7 @@
 
                 <a href="{{ route('provider.services.index') }}" class="mt-2 flex items-center gap-1 font-button-text text-button-text text-primary hover:underline">
                     {{ __("Gérer mes services") }}
-                    <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
+                    <x-icon name="arrow_forward" />
                 </a>
             </section>
         </div>

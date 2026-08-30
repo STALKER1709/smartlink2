@@ -282,8 +282,24 @@ après.
   deux formes : `principaux()` pour la boucle quotidienne du rôle, `secondaires()`
   pour le menu du compte, `compte()` pour l'onglet de profil. Recopiée, elle dérive au
   premier écran ajouté d'un seul côté.
-- **Zones tactiles** : 16 px de rembourrage interne minimum, 56 px de hauteur de ligne
-  dans les listes.
+- **Zones tactiles : 44 px de côté, mesurés dans le navigateur.** Pas « du
+  rembourrage » — la hauteur rendue. Un audit à quatre largeurs a relevé des
+  liens de pied de page à **16 px**, un bouton de menu à 36, un sélecteur de
+  langue à 28, une pagination à 38 et « Se connecter » à 20 dans une barre qui
+  apparaît dès la tablette, donc sous le doigt. Aucun de ces chiffres ne se
+  devine en lisant la classe : `py-2` sur un corps de 14 donne 36.
+
+  Deux exemptions, et seulement deux. Un **lien en ligne dans une phrase** —
+  WCAG 2.2 (2.5.8) l'exclut explicitement, l'agrandir casserait le paragraphe.
+  Et un **lien d'évitement**, qui mesure 1×1 tant qu'il n'a pas le focus.
+- **Un lien d'évitement** en tête du gabarit, vers `#contenu`. C'est le premier
+  geste d'un visiteur au clavier, et le seul qui lui épargne de traverser la
+  barre entière à chaque page.
+- **Trois paliers de marge**, pas deux : 16 px, puis 32 à `md`, puis 64 à `lg`.
+  La charte amont ne décrit que le bureau et pose 64 px ; appliqués dès 768 px,
+  il ne restait que 640 px utiles et le pied de page à trois colonnes débordait
+  de 38 px. Un pied de page en rangée attend `lg`, pas `md` : une tablette n'a
+  pas la place d'un bloc de marque de 384 px plus trois colonnes.
 
 ## Elevation & Depth
 
@@ -418,6 +434,27 @@ s'épaissit et verdit au focus, rien de plus. Treize d'entre eux traînaient un
 - **Barre d'onglets basse** — icône dans une pastille verte quand l'onglet est actif,
   libellé court dessous. Les libellés diffèrent de ceux de la barre large : « Accueil »
   et non « Tableau de bord ».
+- **Icône** (`x-icon`) — une seule façon de l'écrire. Une ligature Material
+  Symbols est du *texte* : sans attribut, un lecteur d'écran annonce
+  « plumbing », « arrow_forward », « star ». Trente icônes du dépôt étaient
+  dans ce cas. Le composant est `aria-hidden` par défaut — une icône ne dit
+  rien de plus que le libellé qu'elle accompagne — et `label` la rend
+  annonçable quand elle porte seule l'information.
+
+  Six tailles nommées, pas treize écrites à la main, et chacune accorde l'axe
+  **`opsz`** de la police : il épaissit le trait aux petites tailles et
+  l'affine aux grandes, pour que la densité optique reste constante. Il était
+  figé à 24 quelle que soit la taille rendue.
+
+  Le remplissage passe par une classe, jamais par un `style=` en ligne :
+  `font-variation-settings` ne se compose pas, une seconde déclaration remet
+  les trois autres axes à leur valeur par défaut sans le dire. Vingt et une
+  icônes le faisaient.
+- **Pagination** — elle portait le bleu et les gris de Tailwind, seule zone de
+  l'application à n'appartenir à aucun jeton, et présente sur toutes les
+  listes. Sur téléphone elle ne montre pas douze numéros : deux gestes et le
+  rang courant entre les deux — le gabarit d'origine cachait les numéros mais
+  laissait deux boutons étirés, sans dire où l'on était.
 - **Illustrations de couverture** — quatorze motifs par métier, produits à partir de
   cette palette et posés dans une **scène** : ciel avec sa lumière basse, ligne
   d'horizon, sol, feuillages au premier plan, silhouette au travail. Seuls, les

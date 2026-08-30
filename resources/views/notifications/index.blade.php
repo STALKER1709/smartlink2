@@ -28,7 +28,7 @@
         </x-page-header>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-6">
+    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-6">
         @if ($notifications->isEmpty())
             <x-empty-state :title="__('Aucune notification pour le moment.')"
                            :description="__('Les réponses de vos prestataires et les changements de statut de vos demandes arrivent ici.')" />
@@ -72,7 +72,7 @@
                         @endunless
 
                         <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full {{ $pastille }}">
-                            <span class="material-symbols-outlined" aria-hidden="true">{{ $icone }}</span>
+                            <x-icon :name="$icone" />
                         </span>
 
                         <div class="min-w-0 flex-grow">

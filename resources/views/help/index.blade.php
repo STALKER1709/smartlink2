@@ -41,7 +41,7 @@
         <x-page-header :title="__('Centre d\'aide')" />
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         <div class="max-w-2xl">
             <h1 class="mb-4 font-headline-lg text-headline-lg text-primary md:font-display-lg md:text-display-lg">
                 {{ __("Comment pouvons-nous vous aider ?") }}
@@ -61,7 +61,7 @@
                     sec.hidden = ! sec.querySelector('[data-faq]:not([hidden])');
                 });
             })">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" aria-hidden="true">search</span>
+                <x-icon name="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
                 <label for="faq-search" class="sr-only">{{ __("Rechercher de l'aide") }}</label>
                 <input id="faq-search" type="search" x-model="q"
                        placeholder="{{ __('Rechercher de l\'aide (ex : paiements, compte…)') }}"
@@ -82,7 +82,7 @@
                             <details class="group p-5" data-faq="{{ Str::lower($item['q'].' '.$item['a']) }}">
                                 <summary class="flex items-center justify-between gap-3 cursor-pointer font-medium text-on-surface list-none">
                                     {{ $item['q'] }}
-                                    <span class="material-symbols-outlined text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
+                                    <x-icon name="expand_more" class="text-on-surface-variant transition-transform group-open:rotate-180" />
                                 </summary>
                                 <p class="mt-3 text-label-md text-on-surface-variant">{{ $item['a'] }}</p>
                             </details>

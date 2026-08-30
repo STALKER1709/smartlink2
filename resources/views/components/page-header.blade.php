@@ -7,7 +7,7 @@
     <div class="min-w-0">
         @if ($back)
             <a href="{{ $back }}" class="mb-1 inline-flex items-center gap-1 text-label-md text-on-surface-variant hover:text-primary">
-                <span class="material-symbols-outlined text-base">arrow_back</span>
+                <x-icon name="arrow_back" />
                 {{ $backLabel }}
             </a>
         @endif

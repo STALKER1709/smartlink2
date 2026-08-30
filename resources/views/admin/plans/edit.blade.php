@@ -3,7 +3,7 @@
         <x-page-header :title="__('ui.admin_plans.title') }} — {{ $plan->name()" :back="route('admin.plans.index')" back-label="Formules" />
     </x-slot>
 
-    <div class="max-w-xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         <form action="{{ route('admin.plans.update', $plan) }}" method="POST" class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6 space-y-5">
             @csrf
             @method('PUT')

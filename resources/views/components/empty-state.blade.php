@@ -26,7 +26,7 @@
     @if ($actionLabel && $actionHref)
         <a href="{{ $actionHref }}" class="mt-5 inline-flex items-center gap-2 font-button-text font-semibold text-primary hover:text-primary-container">
             {{ $actionLabel }}
-            <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-0.5" aria-hidden="true">arrow_forward</span>
+            <x-icon name="arrow_forward" class="transition-transform group-hover:translate-x-0.5" />
         </a>
     @endif
 

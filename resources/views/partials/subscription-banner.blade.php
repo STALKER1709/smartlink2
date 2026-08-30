@@ -8,7 +8,7 @@
 
         @if (! $subscription)
             <div class="bg-error-container border-b border-outline-variant">
-                <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-3 flex flex-wrap items-center justify-between gap-3">
                     <div class="text-label-md text-on-error-container">
                         <p class="font-semibold">{{ __('ui.subscription.expired') }}</p>
                         <p>{{ __('ui.subscription.expired_hint') }}</p>
@@ -20,7 +20,7 @@
             </div>
         @elseif ($subscription->daysRemaining() <= 7)
             <div class="bg-tertiary-container/15 border-b border-outline-variant">
-                <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-3 flex flex-wrap items-center justify-between gap-3">
                     <p class="text-label-md font-medium text-tertiary">
                         {{ $subscription->isTrial()
                             ? __('ui.subscription.trial_active', ['days' => $subscription->daysRemaining()])
@@ -33,7 +33,7 @@
             </div>
         @elseif ($remaining !== null && $remaining === 0)
             <div class="bg-tertiary-container/15 border-b border-outline-variant">
-                <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-3 flex flex-wrap items-center justify-between gap-3">
                     <div class="text-label-md text-tertiary">
                         <p class="font-semibold">{{ __('ui.subscription.quota_reached', ['count' => $subscription->plan->max_monthly_requests]) }}</p>
                         <p>{{ __('ui.subscription.quota_hidden') }}</p>

@@ -3,7 +3,7 @@
         <x-page-header :title="__('Gérer les services')" />
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         @if (session('status'))
             <div class="mb-4 rounded-md bg-primary-container/15 border border-outline-variant px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}

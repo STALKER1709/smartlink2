@@ -19,7 +19,7 @@
     <body class="font-sans text-on-surface antialiased">
         <div class="flex min-h-screen flex-col bg-surface-container-low">
             <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10">
-                <a href="{{ route('home') }}" class="mx-auto flex items-center gap-2.5 text-primary">
+                <a href="{{ route('home') }}" class="inline-flex min-h-11 items-center mx-auto flex items-center gap-2.5 text-primary">
                     <x-application-logo class="h-9 w-9" />
                     <span class="font-headline-md text-headline-md font-extrabold tracking-tight text-on-surface">SmartLink</span>
                 </a>
@@ -28,21 +28,24 @@
                     {{ $slot }}
                 </div>
 
-                <a href="{{ route('home') }}" class="mx-auto mt-6 flex items-center gap-1 text-label-md text-on-surface-variant hover:text-on-surface">
-                    <span class="material-symbols-outlined text-base">arrow_back</span>
+                <a href="{{ route('home') }}"
+                   class="group mx-auto mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-label-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface">
+                    <x-icon name="arrow_back" size="sm" class="transition-transform duration-150 group-hover:-translate-x-0.5" />
                     {{ __("Retour à l'accueil") }}
                 </a>
 
                 {{-- Les écrans d'authentification n'ont pas de pied de page :
                      ces liens y seraient introuvables autrement, alors que
                      c'est précisément là qu'on s'engage. --}}
-                <p class="mx-auto mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 text-label-sm text-on-surface-variant">
-                    <a href="{{ route('legal.terms') }}" class="hover:text-primary">{{ __("Conditions générales") }}</a>
-                    <span aria-hidden="true">·</span>
-                    <a href="{{ route('legal.privacy') }}" class="hover:text-primary">{{ __("Confidentialité") }}</a>
-                    <span aria-hidden="true">·</span>
-                    <a href="{{ route('legal.notice') }}" class="hover:text-primary">{{ __("Mentions légales") }}</a>
-                </p>
+                {{-- Les trois liens faisaient 16 px de haut, mesure prise dans le
+                     navigateur : la hauteur de leur texte, sans rien autour. Les
+                     séparateurs « · » disparaissent avec — ils ne servaient qu'à
+                     écarter des cibles trop serrées. --}}
+                <nav class="mx-auto mt-1 flex flex-wrap justify-center gap-x-1 text-label-sm text-on-surface-variant">
+                    <a href="{{ route('legal.terms') }}" class="inline-flex min-h-11 items-center rounded px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Conditions générales") }}</a>
+                    <a href="{{ route('legal.privacy') }}" class="inline-flex min-h-11 items-center rounded px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Confidentialité") }}</a>
+                    <a href="{{ route('legal.notice') }}" class="inline-flex min-h-11 items-center rounded px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Mentions légales") }}</a>
+                </nav>
             </div>
         </div>
     </body>

@@ -37,7 +37,7 @@
         <h3 class="mt-1 flex items-start gap-1.5 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
             <span class="line-clamp-2">{{ $providerProfile->business_name }}</span>
             @if ($providerProfile->is_verified)
-                <span class="material-symbols-outlined mt-0.5 shrink-0 text-lg text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="{{ __('Prestataire vérifié') }}">verified</span>
+                <x-icon name="verified" size="lg" filled label="{{ __('Prestataire vérifié') }}" class="mt-0.5 shrink-0 text-primary" />
             @endif
         </h3>
 

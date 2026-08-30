@@ -6,7 +6,7 @@
     {{-- Leaflet CSS --}}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
             <form action="{{ route('provider.profile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf

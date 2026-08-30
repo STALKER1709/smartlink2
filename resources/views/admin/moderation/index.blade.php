@@ -3,7 +3,7 @@
         <x-page-header :title="__('ui.moderation.title')" />
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         {{-- Le filet vert à gauche de l'intention : la modération signale,
              elle ne supprime pas, et cette phrase porte tout l'écran. --}}
         <p class="prose-measure mb-10 border-l-4 border-primary pl-4 font-body-lg text-body-lg text-on-surface-variant">
@@ -53,7 +53,7 @@
                                         @foreach ($categories as $category)
                                             @php $cle = 'ui.moderation.categories.'.$category; @endphp
                                             <span class="flex items-center gap-1 rounded-full bg-error-container px-3 py-1 font-label-numeric text-label-sm text-on-error-container">
-                                                <span class="material-symbols-outlined text-[14px]" aria-hidden="true">warning</span>
+                                                <x-icon name="warning" size="xs" />
                                                 {{ Lang::has($cle) ? __($cle) : $category }}
                                             </span>
                                         @endforeach

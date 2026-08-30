@@ -13,7 +13,7 @@
         {{ $attributes->merge(['class' => 'inline-flex items-center gap-1 rounded-full bg-secondary-container/25 font-semibold text-on-secondary-container '.$gabarit]) }}
         title="{{ __('ui.plans.promoted_hint') }}"
     >
-        <span class="material-symbols-outlined {{ $taille === 'md' ? 'text-sm' : 'text-xs' }}" style="font-variation-settings: 'FILL' 1;">star</span>
+        <x-icon name="star" :size="$taille === 'md' ? 'sm' : 'xs'" filled />
         {{ __('ui.plans.promoted_badge') }}
     </span>
 @endif

@@ -8,7 +8,7 @@
                        :subtitle="__('Aperçu de vos activités.')" />
     </x-slot>
 
-    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         {{-- Quatre chiffres, quatre pictogrammes : ce qui est en cours, ce qui
              est clos, ce qui attend une lecture, et ce que vous avez laissé
              derrière vous. --}}
@@ -33,7 +33,7 @@
             <form action="{{ route('services.index') }}" method="GET" class="w-full flex-1">
                 <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Reprendre une recherche") }}</h2>
                 <div class="relative mt-4 w-full">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" aria-hidden="true">search</span>
+                    <x-icon name="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" />
                     <label for="q" class="sr-only">{{ __('ui.search.natural_label') }}</label>
                     <input
                         type="text"
@@ -52,7 +52,7 @@
                 <p class="mb-3 hidden font-body-md text-body-md text-on-surface-variant md:block">{{ __("Besoin d'un nouveau service ?") }}</p>
                 <a href="{{ route('services.index') }}"
                    class="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container md:w-auto">
-                    <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                    <x-icon name="search" />
                     {{ __("Trouver un prestataire") }}
                 </a>
             </div>

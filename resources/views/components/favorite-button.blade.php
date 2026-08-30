@@ -28,8 +28,8 @@
             class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-lowest/90 text-on-surface-variant shadow-elevation-1 transition-colors hover:text-error focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary {{ $contour ? 'border border-outline-variant' : '' }}"
             aria-label="{{ $enFavori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}"
             title="{{ $enFavori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-        <span class="material-symbols-outlined {{ $enFavori ? 'text-error' : '' }}"
-              @if ($enFavori) style="font-variation-settings: 'FILL' 1;" @endif
-              aria-hidden="true">favorite</span>
+        {{-- Le cœur se remplit quand il est actif : c'est le seul signal, le
+             bouton n'a pas de libellé. --}}
+        <x-icon name="favorite" :filled="$enFavori" class="{{ $enFavori ? 'text-error' : '' }}" />
     </button>
 </form>

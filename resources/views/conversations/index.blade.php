@@ -3,10 +3,10 @@
         <x-page-header :title="__('Messages')" :subtitle="__('Gérez vos conversations en cours')" />
     </x-slot>
 
-    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-6">
+    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-6">
         <form action="{{ route('conversations.index') }}" method="GET"
               class="mb-6 flex w-full items-center rounded-lg border border-outline-variant bg-surface-container px-4 py-3 transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary md:rounded-full md:py-2">
-            <span class="material-symbols-outlined mr-3 text-on-surface-variant" aria-hidden="true">search</span>
+            <x-icon name="search" class="mr-3 text-on-surface-variant" />
             <label for="q" class="sr-only">{{ __("Rechercher une conversation") }}</label>
             <input type="text" id="q" name="q" value="{{ $terme }}"
                    placeholder="{{ __('Rechercher une conversation…') }}"

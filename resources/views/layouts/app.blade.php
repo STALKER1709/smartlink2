@@ -22,13 +22,22 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-on-surface antialiased">
+        {{-- Le premier geste d'un visiteur au clavier, et le seul qui lui
+             évite de traverser la barre entière à chaque page. Invisible tant
+             qu'il n'a pas le focus, il se pose alors par-dessus tout le
+             reste : sans `z-`, la barre collante passait devant lui. --}}
+        <a href="#contenu"
+           class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-lg focus:bg-primary focus:px-4 focus:font-label-md focus:text-label-md focus:text-on-primary focus:shadow-overlay">
+            {{ __('Aller au contenu') }}
+        </a>
+
         <div class="min-h-screen bg-surface">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-surface-container-lowest border-b border-outline-variant">
-                    <div class="max-w-container mx-auto py-6 px-margin-mobile md:px-margin-desktop">
+                    <div class="max-w-container mx-auto py-6 px-margin-mobile md:px-margin-tablet lg:px-margin-desktop">
                         {{ $header }}
                     </div>
                 </header>
@@ -41,7 +50,7 @@
             <!-- Page Content -->
             {{-- La marge basse dégage la barre d'onglets, qui est fixée : sans
                  elle, le dernier bloc de chaque page passe dessous. --}}
-            <main class="pb-[4.75rem] md:pb-0">
+            <main id="contenu" tabindex="-1" class="pb-[4.75rem] md:pb-0">
                 {{ $slot }}
             </main>
 

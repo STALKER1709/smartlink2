@@ -14,7 +14,7 @@
                 <x-slot name="action">
                     <a href="{{ route('provider.transactions.export') }}"
                        class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container md:w-auto">
-                        <span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+                        <x-icon name="download" />
                         {{ __("Exporter (CSV)") }}
                     </a>
                 </x-slot>
@@ -22,7 +22,7 @@
         </x-page-header>
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         {{-- Les maquettes posent « Gains ce mois » et « En attente » en tête :
              deux chiffres d'une place de marché qui encaisse pour le
              prestataire. SmartLink ne voit jamais un franc de la prestation.
@@ -37,7 +37,7 @@
                 <div class="flex h-[120px] flex-col justify-between rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-4">
                     <div class="flex items-center justify-between gap-2 text-on-surface-variant">
                         <span class="text-label-md">{{ $libelle }}</span>
-                        <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icone }}</span>
+                        <x-icon :name="$icone" class="{{ $teinte }}" />
                     </div>
                     <div class="font-label-numeric text-headline-lg text-on-background">
                         {{ number_format($montant, 0, ',', ' ') }} FCFA

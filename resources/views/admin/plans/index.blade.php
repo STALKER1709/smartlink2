@@ -3,7 +3,7 @@
         <x-page-header :title="__('ui.admin_plans.title')" />
     </x-slot>
 
-    <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         <p class="prose-measure mb-6 text-body-md text-on-surface-variant">{{ __('ui.admin_plans.intro') }}</p>
 
         <x-list-panel>

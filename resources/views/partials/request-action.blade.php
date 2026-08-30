@@ -12,7 +12,7 @@
 @auth
     @can('create', \App\Models\ServiceRequest::class)
         <a href="{{ $href }}" class="{{ $classes }}">
-            @if ($icon)<span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ $icon }}</span>@endif
+            @if ($icon)<x-icon :name="$icon" />@endif
             {{ $compact ? ($compactLabel ?? $label) : $label }}
         </a>
     @else
@@ -25,7 +25,7 @@
          Auparavant ce bouton menait droit à /login, et le service qu'il
          s'apprêtait à demander était perdu en route. --}}
     <a href="{{ $href }}" class="{{ $classes }}">
-        @if ($icon)<span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ $icon }}</span>@endif
+        @if ($icon)<x-icon :name="$icon" />@endif
         {{ $compact ? ($compactLabel ?? $label) : $label }}
     </a>
 

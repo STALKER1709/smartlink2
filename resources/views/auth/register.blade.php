@@ -18,9 +18,7 @@
                     :class="role === 'client' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40 hover:shadow-elevation-2'"
                 >
                     <input type="radio" name="role" value="client" x-model="role" class="sr-only">
-                    <span class="material-symbols-outlined mb-2 text-3xl"
-                          :class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'"
-                          style="font-variation-settings: 'FILL' 1;" aria-hidden="true">person_search</span>
+                    <x-icon name="person_search" size="2xl" filled class="mb-2" x-bind:class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'" />
                     <span class="font-body-md text-label-md font-semibold md:text-body-md"
                           :class="role === 'client' ? 'text-primary' : 'text-on-surface'">{{ __("Je cherche un prestataire") }}</span>
                 </label>
@@ -30,9 +28,7 @@
                     :class="role === 'provider' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40 hover:shadow-elevation-2'"
                 >
                     <input type="radio" name="role" value="provider" x-model="role" class="sr-only">
-                    <span class="material-symbols-outlined mb-2 text-3xl"
-                          :class="role === 'provider' ? 'text-primary' : 'text-on-surface-variant'"
-                          aria-hidden="true">handyman</span>
+                    <x-icon name="handyman" size="2xl" class="mb-2" x-bind:class="role === 'provider' ? 'text-primary' : 'text-on-surface-variant'" />
                     <span class="font-body-md text-label-md font-semibold md:text-body-md"
                           :class="role === 'provider' ? 'text-primary' : 'text-on-surface'">{{ __("Je propose mes services") }}</span>
                 </label>
@@ -96,6 +92,6 @@
 
     <p class="mt-6 border-t border-outline-variant pt-5 text-center text-label-md text-on-surface-variant">
         {{ __('Already registered?') }}
-        <a href="{{ route('login') }}" class="font-semibold text-primary hover:text-primary-container hover:underline">{{ __('Log in') }}</a>
+        <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center rounded px-2 font-semibold text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container">{{ __('Log in') }}</a>
     </p>
 </x-guest-layout>

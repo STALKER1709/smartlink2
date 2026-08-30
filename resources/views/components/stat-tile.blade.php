@@ -47,7 +47,7 @@
 >
     @if ($variant === 'stacked')
         @if ($icon)
-            <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icon }}</span>
+            <x-icon :name="$icon" class="{{ $teinte }}" />
         @endif
         {{-- Le chiffre en vert et en chasse fixe, le libellé en dessous :
              c'est la disposition du tableau de bord prestataire. --}}
@@ -61,7 +61,7 @@
     @else
         <div class="mb-2 flex items-start justify-between gap-2">
             @if ($icon)
-                <span class="material-symbols-outlined {{ $teinte }}" aria-hidden="true">{{ $icon }}</span>
+                <x-icon :name="$icon" class="{{ $teinte }}" />
             @endif
             <span class="min-w-0 text-right font-label-numeric text-label-numeric text-on-surface-variant">{{ $label }}</span>
         </div>
@@ -75,7 +75,7 @@
              précédente ne permet pas de comparer. --}}
         @if ($trend !== null)
             <span @class(['mt-1 flex items-center gap-1', 'text-primary' => $trend >= 0, 'text-error' => $trend < 0])>
-                <span class="material-symbols-outlined text-[16px]" aria-hidden="true">{{ $trend >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                <x-icon :name="$trend >= 0 ? 'trending_up' : 'trending_down'" size="xs" />
                 <span class="font-label-numeric text-label-sm">{{ $trend > 0 ? '+' : '' }}{{ $trend }} %</span>
             </span>
         @endif

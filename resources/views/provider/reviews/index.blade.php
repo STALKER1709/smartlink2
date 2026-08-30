@@ -4,12 +4,12 @@
                        :subtitle="$ratingCount > 0 ? trans_choice(':count avis reçu|:count avis reçus', $ratingCount) : null" />
     </x-slot>
 
-    <div class="mx-auto max-w-container px-margin-mobile py-6 md:px-margin-desktop">
+    <div class="mx-auto max-w-container px-margin-mobile py-6 md:px-margin-tablet lg:px-margin-desktop">
         {{-- La note d'ensemble et sa répartition, côte à côte : un tiers pour
              le chiffre, deux tiers pour les barres. --}}
         <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
             <div class="flex flex-col items-center justify-center rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-6 text-center md:col-span-1">
-                <span class="mb-2 font-display-lg text-display-lg text-primary">{{ number_format((float) $ratingAvg, 1, ',', ' ') }}</span>
+                <span class="mb-2 font-display-lg text-headline-lg text-primary sm:text-display-lg">{{ number_format((float) $ratingAvg, 1, ',', ' ') }}</span>
                 <x-star-rating :rating="$ratingAvg" :afficher-note="false" class="mb-2" />
                 <p class="font-body-md text-on-surface-variant">
                     @if ($ratingCount > 0)
@@ -26,7 +26,7 @@
                         @php $part = (int) round($count / max($ratingCount, 1) * 100); @endphp
                         <div class="flex items-center gap-3">
                             <span class="w-4 text-right font-label-numeric text-on-surface">{{ $rating }}</span>
-                            <span class="material-symbols-outlined text-sm text-secondary-container" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
+                            <x-icon name="star" size="sm" filled class="text-secondary-container" />
                             <div class="h-2 flex-grow overflow-hidden rounded-full bg-surface-variant">
                                 <div class="h-full bg-primary" style="width: {{ $count > 0 ? max($part, 2) : 0 }}%"></div>
                             </div>

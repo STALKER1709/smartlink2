@@ -21,7 +21,7 @@
         ])->filter();
     @endphp
 
-    <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto max-w-container space-y-5 px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
 
         {{-- Recherche en langage naturel : l'entrée principale --}}
         <x-natural-search :value="request('q')" />
@@ -50,13 +50,13 @@
                  @if ($actifs->isNotEmpty() && $services->isNotEmpty()) open @endif>
             <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-on-surface">
                 <span class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-on-surface-variant">tune</span>
+                    <x-icon name="tune" class="text-on-surface-variant" />
                     {{ __('ui.search.or_filter') }}
                     @if ($actifs->isNotEmpty())
                         <span class="rounded-full bg-primary px-2 py-0.5 font-label-numeric text-label-sm text-on-primary">{{ $actifs->count() }}</span>
                     @endif
                 </span>
-                <span class="material-symbols-outlined text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
+                <x-icon name="expand_more" class="text-on-surface-variant transition-transform group-open:rotate-180" />
             </summary>
 
             <form action="{{ route('services.index') }}" method="GET" class="grid grid-cols-1 gap-3 border-t border-outline-variant p-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -115,7 +115,7 @@
                         <a href="{{ route('services.index', collect(request()->query())->except($cle)->all()) }}"
                            class="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1 text-label-sm font-medium text-on-surface hover:border-primary/50 hover:shadow-elevation-2">
                             {{ $valeur }}
-                            <span class="material-symbols-outlined text-sm text-on-surface-variant">close</span>
+                            <x-icon name="close" size="sm" class="text-on-surface-variant" />
                         </a>
                     @endforeach
                 </div>

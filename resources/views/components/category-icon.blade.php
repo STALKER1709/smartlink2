@@ -35,4 +35,4 @@
     ];
 @endphp
 
-<span {{ $attributes->merge(['class' => 'material-symbols-outlined']) }}>{{ $map[$icon] ?? 'handyman' }}</span>
+<x-icon :name="$map[$icon] ?? 'handyman'" {{ $attributes }} />

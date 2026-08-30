@@ -41,7 +41,7 @@
                     <a href="{{ $lienPhoto }}"
                        class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface-container-lowest bg-primary text-on-primary transition-colors hover:bg-primary-container"
                        aria-label="{{ __('Change photo') }}" title="{{ __('Change photo') }}">
-                        <span class="material-symbols-outlined text-[18px]" aria-hidden="true">edit</span>
+                        <x-icon name="edit" size="sm" />
                     </a>
                 @endif
             </div>

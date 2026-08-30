@@ -8,7 +8,7 @@
                        :subtitle="__('Supervision de la plateforme au :date', ['date' => now()->translatedFormat('j F Y')])" />
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         {{-- Chaque compteur mène là où l'on agit dessus. « Comptes suspendus »
              et « Demandes » n'ont pas d'écran filtré dédié : ils restent
              muets plutôt que de promettre un lien qui n'existe pas. --}}

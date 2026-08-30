@@ -295,4 +295,34 @@ class CharteTest extends TestCase
         $this->assertSame([], $fautifs,
             'Chasse fixe et police de texte sur la même ligne : '.implode(', ', $fautifs));
     }
+
+    public function test_icons_go_through_their_component(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            if ($vue === 'components/icon.blade.php') {
+                continue;
+            }
+
+            $contenu = $this->contenuSansCommentaires($vue);
+
+            // Une ligature Material Symbols posée à la main est du texte que
+            // rien n'annonce et que rien ne dimensionne : trente icônes du
+            // dépôt n'avaient aucun attribut ARIA, et treize corps différents
+            // circulaient pour la même famille d'objets.
+            if (str_contains($contenu, 'material-symbols-outlined')) {
+                $fautifs[] = $vue.' (span brut)';
+            }
+
+            // `font-variation-settings` en attribut `style` remet au passage
+            // les trois autres axes à leur valeur par défaut, sans le dire.
+            if (str_contains($contenu, 'font-variation-settings')) {
+                $fautifs[] = $vue.' (axe en style en ligne)';
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Icône hors du composant : '.implode(', ', $fautifs));
+    }
 }

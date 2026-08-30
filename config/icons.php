@@ -29,6 +29,7 @@ return [
         'check',
         'check_circle',
         'checkroom',
+        'chevron_left',
         'chevron_right',
         'close',
         'computer',

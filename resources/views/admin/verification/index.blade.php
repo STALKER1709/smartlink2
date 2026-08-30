@@ -4,7 +4,7 @@
                        :subtitle="trans_choice(':count pièce en attente|:count pièces en attente', $pending->total())" />
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         @if ($pending->isEmpty())
             <x-empty-state :title="__('Aucune vérification en attente.')"
                            :description="__('Les pièces d\'identité déposées par les prestataires arrivent ici.')" />
@@ -60,7 +60,7 @@
                             @else
                                 <a href="{{ $document }}" target="_blank" rel="noopener"
                                    class="flex h-28 items-center justify-center gap-2 rounded-lg border border-outline-variant bg-surface-container text-label-md font-medium text-primary transition-colors hover:border-primary hover:shadow-elevation-2">
-                                    <span class="material-symbols-outlined text-base" aria-hidden="true">description</span>
+                                    <x-icon name="description" />
                                     {{ __("Ouvrir le PDF") }}
                                 </a>
                             @endif

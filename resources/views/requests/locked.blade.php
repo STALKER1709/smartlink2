@@ -6,10 +6,10 @@
     {{-- L'écran de plafond des maquettes : un seul bloc centré, la pastille,
          la phrase qui nomme le plafond, ce qui se passe, ce qui attend, et
          deux sorties. --}}
-    <div class="mx-auto flex w-full max-w-[440px] px-margin-mobile py-12 md:px-margin-desktop">
+    <div class="mx-auto flex w-full max-w-[440px] px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
         <article class="flex w-full flex-col items-center rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-6 text-center md:p-8">
             <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-surface-container-high text-primary">
-                <span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">pause_circle</span>
+                <x-icon name="pause_circle" size="2xl" filled />
             </div>
 
             <h1 class="mb-4 font-headline-md text-headline-md text-on-surface">
@@ -21,7 +21,7 @@
             </p>
 
             <div class="mb-8 flex w-full items-start gap-3 rounded-lg border border-outline-variant bg-surface-container p-4">
-                <span class="material-symbols-outlined mt-0.5 text-primary" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">info</span>
+                <x-icon name="info" filled class="mt-0.5 text-primary" />
                 <p class="flex-1 text-left font-body-md text-body-md text-on-surface-variant">
                     {{ __("Cette demande vous attend : elle reste lisible dès que votre plafond se renouvelle, le premier jour du mois prochain.") }}
                 </p>

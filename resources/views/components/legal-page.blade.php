@@ -21,7 +21,7 @@
         <x-page-header :title="$title" :subtitle="__('Dernière révision : :date', ['date' => config('legal.derniere_revision')])" />
     </x-slot>
 
-    <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-desktop">
+    <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         <div class="lg:flex lg:items-start lg:gap-12">
 
             {{-- Sommaire : un document légal se consulte par section, il ne se
@@ -50,7 +50,7 @@
                          là où on le lit, pas dans un dépôt Git. --}}
                     <div class="rounded-xl border border-tertiary/30 bg-tertiary-container/10 p-4">
                         <p class="flex gap-2 font-semibold text-tertiary">
-                            <span class="material-symbols-outlined shrink-0" aria-hidden="true">shield</span>
+                            <x-icon name="shield" class="shrink-0" />
                             {{ __("Document non validé juridiquement") }}
                         </p>
                         <p class="mt-1 text-label-md text-on-surface-variant">

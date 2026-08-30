@@ -79,6 +79,14 @@ class SyncIcons extends Command
         foreach (File::allFiles(resource_path('views')) as $fichier) {
             $contenu = $fichier->getContents();
 
+            // Les icônes passent toutes par `<x-icon name="…" />` : c'est là
+            // que se trouve la ligature depuis que le composant existe. Le
+            // motif précédent, qui lisait le contenu d'un `<span>` porteur de
+            // la classe, ne trouve plus rien — il est conservé pour une vue
+            // qui reviendrait à la forme brute, où il servirait de filet.
+            preg_match_all('/<x-icon\b[^>]*?\bname="([a-z0-9_]+)"/', $contenu, $m);
+            $noms = array_merge($noms, $m[1]);
+
             preg_match_all('/material-symbols-outlined[^>]*>\s*([a-z0-9_]+)\s*</', $contenu, $m);
             $noms = array_merge($noms, $m[1]);
 

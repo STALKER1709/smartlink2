@@ -16,7 +16,7 @@
                 {{-- La date porte son pictogramme, comme dans la maquette : sur
                      une fiche, c'est le repère qu'on cherche en premier. --}}
                 <span class="flex items-center gap-2 text-on-surface-variant">
-                    <span class="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_today</span>
+                    <x-icon name="calendar_today" />
                     <span class="font-label-numeric">{{ $serviceRequest->created_at->translatedFormat('j F Y \à H\hi') }}</span>
                     <span aria-hidden="true" class="text-outline">·</span>
                     <span class="font-label-numeric">n° {{ $serviceRequest->id }}</span>
@@ -28,7 +28,7 @@
         </x-page-header>
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-6">
                 {{-- La carte d'interlocuteur : qui est en face, son métier,
@@ -83,7 +83,7 @@
                 @if ($serviceRequest->message)
                     <div class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-low p-4 md:p-6">
                         <h3 class="mb-2 flex items-center gap-2 font-button-text text-button-text text-on-surface">
-                            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
+                            <x-icon name="description" />
                             {{ __("Message initial") }}
                         </h3>
                         <p class="italic text-on-surface-variant">« {{ $serviceRequest->message }} »</p>
@@ -130,7 +130,7 @@
                                                class="cursor-pointer rounded-full p-1 text-outline-variant transition-colors hover:text-tertiary-container peer-checked:text-tertiary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary"
                                                title="{{ trans_choice(':count étoile|:count étoiles', $i) }}">
                                             <span class="sr-only">{{ trans_choice(':count étoile|:count étoiles', $i) }}</span>
-                                            <span class="material-symbols-outlined block text-[30px]" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
+                                            <x-icon name="star" size="xl" filled class="block" />
                                         </label>
                                     @endfor
                                 </div>
@@ -190,7 +190,7 @@
                 @can('create', [\App\Models\Dispute::class, $serviceRequest])
                     <a href="{{ route('disputes.create', $serviceRequest) }}"
                        class="inline-flex items-center gap-2 text-label-md font-medium text-on-surface-variant transition-colors hover:text-error">
-                        <span class="material-symbols-outlined text-base" aria-hidden="true">flag</span>
+                        <x-icon name="flag" />
                         {{ __("Signaler un problème sur cette demande") }}
                     </a>
                 @endcan

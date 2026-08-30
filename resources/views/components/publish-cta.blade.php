@@ -21,14 +21,14 @@
 @can('create', \App\Models\Service::class)
     <a href="{{ route('provider.services.create') }}"
        {{ $attributes->merge(['class' => 'inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container']) }}>
-        <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
+        <x-icon name="add" />
         {{ __("Publier un service") }}
     </a>
 @else
     <div class="flex flex-col items-start gap-1">
         <a href="{{ route('provider.subscription.show') }}"
            {{ $attributes->merge(['class' => 'inline-flex items-center gap-1.5 rounded-full border border-tertiary px-4 py-2 font-button-text text-label-md font-semibold text-tertiary transition-colors hover:bg-tertiary-container/20']) }}>
-            <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_upward</span>
+            <x-icon name="arrow_upward" />
             {{ __("Augmenter mon plafond") }}
         </a>
         @unless ($compact)

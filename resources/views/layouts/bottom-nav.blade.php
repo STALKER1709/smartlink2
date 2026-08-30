@@ -29,8 +29,7 @@
                     'bg-primary-container/15 text-primary' => $actif,
                     'text-on-surface-variant' => ! $actif,
                 ])>
-                    <span class="material-symbols-outlined text-[22px]"
-                          @if ($actif) style="font-variation-settings: 'FILL' 1;" @endif>{{ $onglet['icone'] }}</span>
+                    <x-icon :name="$onglet['icone']" size="lg" filled @if ($actif) @endif />
                 </span>
                 <span @class([
                     'font-label-sm text-label-sm leading-tight',
@@ -49,8 +48,7 @@
                 'bg-primary-container/15 text-primary' => $compteActif,
                 'text-on-surface-variant' => ! $compteActif,
             ])>
-                <span class="material-symbols-outlined text-[22px]"
-                      @if ($compteActif) style="font-variation-settings: 'FILL' 1;" @endif>{{ $compte['icone'] }}</span>
+                <x-icon :name="$compte['icone']" size="lg" filled @if ($compteActif) @endif />
             </span>
             <span @class([
                 'font-label-sm text-label-sm leading-tight',

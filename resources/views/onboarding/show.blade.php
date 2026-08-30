@@ -2,15 +2,15 @@
     {{-- L'accueil ne porte ni barre de navigation ni pied de page : il se
          traverse, il ne se parcourt pas. --}}
     <div class="flex min-h-screen flex-col">
-        <main class="mx-auto flex w-full max-w-container flex-1 flex-col items-center justify-center px-margin-mobile pb-40 md:px-margin-desktop">
+        <main class="mx-auto flex w-full max-w-container flex-1 flex-col items-center justify-center px-margin-mobile pb-40 md:px-margin-tablet lg:px-margin-desktop">
             <div class="relative mb-8 aspect-square w-full max-w-[320px] overflow-hidden rounded-xl border border-outline-variant bg-surface-container-high shadow-elevation-1 md:max-w-[480px]">
                 <div class="flex h-full w-full items-center justify-center">
-                    <span class="material-symbols-outlined text-[120px] text-primary/40" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">{{ $contenu['icone'] }}</span>
+                    <x-icon :name="$contenu['icone']" size="3xl" filled class="text-primary/40" />
                 </div>
             </div>
 
             <div class="max-w-[400px] text-center">
-                <h1 class="mb-4 font-display-lg text-display-lg text-primary">{{ $contenu['titre'] }}</h1>
+                <h1 class="mb-4 font-display-lg text-headline-lg sm:text-display-lg text-primary">{{ $contenu['titre'] }}</h1>
                 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ $contenu['texte'] }}</p>
             </div>
         </main>
@@ -40,7 +40,7 @@
                     <a href="{{ route('onboarding.show', $etape + 1) }}"
                        class="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-colors duration-100 hover:bg-primary-container active:scale-95">
                         {{ __("Suivant") }}
-                        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                        <x-icon name="arrow_forward" />
                     </a>
                 @else
                     <form action="{{ route('onboarding.finish') }}" method="POST">
@@ -48,7 +48,7 @@
                         <button type="submit"
                                 class="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-colors duration-100 hover:bg-primary-container active:scale-95">
                             {{ __("Commencer") }}
-                            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                            <x-icon name="arrow_forward" />
                         </button>
                     </form>
                 @endif

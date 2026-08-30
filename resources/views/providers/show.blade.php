@@ -47,7 +47,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     @endif
 
-    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 pb-28 md:px-margin-desktop lg:pb-8">
+    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 pb-28 md:px-margin-tablet lg:px-margin-desktop lg:pb-8">
         {{--
             L'identité au centre, comme la maquette : portrait, nom, métier,
             note, gages de confiance, puis les deux actions. La fiche était
@@ -71,13 +71,13 @@
                 @if ($providerProfile->is_verified)
                     <span class="absolute -bottom-1 -right-1 flex items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest p-1"
                           title="{{ __('Pièce d\'identité contrôlée par notre équipe') }}">
-                        <span class="material-symbols-outlined text-2xl text-primary" style="font-variation-settings: 'FILL' 1;" role="img" aria-label="{{ __('Prestataire vérifié') }}">verified</span>
+                        <x-icon name="verified" size="xl" filled label="{{ __('Prestataire vérifié') }}" class="text-primary" />
                     </span>
                 @endif
             </div>
 
             <div class="space-y-2">
-                <h1 class="font-display-lg text-display-lg text-on-surface">{{ $providerProfile->business_name }}</h1>
+                <h1 class="font-display-lg text-headline-lg sm:text-display-lg text-on-surface">{{ $providerProfile->business_name }}</h1>
 
                 <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-on-surface-variant">
                     @if ($providerProfile->category)
@@ -93,7 +93,7 @@
 
                     @if ($providerProfile->city)
                         <span class="inline-flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-lg" aria-hidden="true">location_on</span>
+                            <x-icon name="location_on" size="lg" />
                             {{ $providerProfile->city }}
                         </span>
                     @endif
@@ -116,7 +116,7 @@
                 <div class="flex flex-wrap justify-center gap-2">
                     @if ($providerProfile->is_verified)
                         <span class="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-label-md font-semibold text-primary">
-                            <span class="material-symbols-outlined text-sm" aria-hidden="true">workspace_premium</span>
+                            <x-icon name="workspace_premium" size="sm" />
                             {{ __("Prestataire vérifié") }}
                         </span>
                     @endif
@@ -151,7 +151,7 @@
             </div>
 
             <p class="flex items-start gap-2 text-left text-label-sm leading-relaxed text-on-surface-variant sm:text-center">
-                <span class="material-symbols-outlined text-base text-primary" aria-hidden="true">shield</span>
+                <x-icon name="shield" class="text-primary" />
                 {{ __("SmartLink ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.") }}
             </p>
         </section>
@@ -166,7 +166,7 @@
                 @if ($providerProfile->description)
                     <div>
                         <h2 class="mb-3 flex items-center gap-2 font-headline-md text-headline-md text-on-surface">
-                            <span class="material-symbols-outlined text-primary" aria-hidden="true">info</span>
+                            <x-icon name="info" class="text-primary" />
                             {{ __("À propos") }}
                         </h2>
                         <p class="prose-measure whitespace-pre-line leading-relaxed text-on-surface-variant">{{ $providerProfile->description }}</p>
@@ -178,7 +178,7 @@
                         @if (! empty($providerProfile->opening_hours))
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
-                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">schedule</span>
+                                    <x-icon name="schedule" class="text-on-surface-variant" />
                                     {{ __("Horaires") }}
                                 </h3>
                                 <ul class="space-y-1 text-on-surface-variant">
@@ -202,7 +202,7 @@
                         @if (! empty($providerProfile->service_areas))
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
-                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">map</span>
+                                    <x-icon name="map" class="text-on-surface-variant" />
                                     {{ __("Zones d'intervention") }}
                                 </h3>
                                 <div class="flex flex-wrap gap-2">
@@ -216,7 +216,7 @@
                         @if (! empty($providerProfile->contact_methods))
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
-                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">call</span>
+                                    <x-icon name="call" class="text-on-surface-variant" />
                                     {{ __("Contact") }}
                                 </h3>
                                 <ul class="space-y-1 text-on-surface-variant">
@@ -251,7 +251,7 @@
                         @if ($adresse)
                             <div>
                                 <h3 class="mb-2 flex items-center gap-2 font-button-text font-semibold text-on-surface">
-                                    <span class="material-symbols-outlined text-base text-on-surface-variant" aria-hidden="true">location_on</span>
+                                    <x-icon name="location_on" class="text-on-surface-variant" />
                                     {{ __("Adresse") }}
                                 </h3>
                                 <p class="text-on-surface-variant">{{ $adresse }}</p>
@@ -268,7 +268,7 @@
 
         <section>
             <h2 class="mb-4 flex items-center gap-2 font-headline-lg text-headline-lg text-on-surface">
-                <span class="material-symbols-outlined text-primary" aria-hidden="true">home_repair_service</span>
+                <x-icon name="home_repair_service" class="text-primary" />
                 {{ __("Ses services") }}
             </h2>
 
@@ -313,7 +313,7 @@
                                         <span class="font-body-md text-label-md font-normal text-on-surface-variant">{{ __("Prix à convenir") }}</span>
                                     @endif
                                 </span>
-                                <span class="material-symbols-outlined text-primary" aria-hidden="true">arrow_forward</span>
+                                <x-icon name="arrow_forward" class="text-primary" />
                             </div>
                         </a>
                     @endforeach
@@ -326,7 +326,7 @@
         <section>
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h2 class="flex items-center gap-2 font-headline-lg text-headline-lg text-on-surface">
-                    <span class="material-symbols-outlined text-primary" aria-hidden="true">reviews</span>
+                    <x-icon name="reviews" class="text-primary" />
                     {{ __("Avis clients") }}
                 </h2>
                 @if ($providerProfile->rating_count)

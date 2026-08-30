@@ -31,7 +31,7 @@
                             @endforeach
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-on-surface-variant">
-                            <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+                            <x-icon name="expand_more" />
                         </div>
                     </div>
                     <x-input-error :messages="$errors->get('reason')" class="mt-2" />
@@ -66,7 +66,7 @@
                     {{-- L'avertissement avant le bouton, pas après : il doit
                          être lu pendant qu'on peut encore renoncer. --}}
                     <div class="mb-6 flex items-start gap-3 rounded-lg border border-error-container bg-error-container/20 p-4">
-                        <span class="material-symbols-outlined mt-0.5 text-error" aria-hidden="true">info</span>
+                        <x-icon name="info" class="mt-0.5 text-error" />
                         <p class="font-body-md text-label-md text-on-surface">
                             {{ __("Les fausses déclarations peuvent entraîner la suspension de votre compte. Assurez-vous que toutes les informations fournies sont exactes.") }}
                         </p>
@@ -80,7 +80,7 @@
                         <button type="submit"
                                 class="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container sm:w-auto">
                             {{ __("Soumettre le signalement") }}
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">send</span>
+                            <x-icon name="send" size="sm" filled />
                         </button>
                     </div>
                 </div>

@@ -31,7 +31,7 @@
          une étoile pleine et la note suffisent à porter l'information. --}}
     <span {{ $attributes->merge(['class' => 'inline-flex items-center gap-1']) }}
           role="img" aria-label="{{ $annonce }}">
-        <span class="material-symbols-outlined text-[16px] {{ $jaune }}" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
+        <x-icon name="star" size="xs" filled class="{{ $jaune }}" />
         <span class="font-label-numeric text-label-numeric text-on-surface">{{ $note }}</span>
         @if (! is_null($count))
             <span class="text-label-sm text-on-surface-variant">({{ $count }})</span>
@@ -42,7 +42,7 @@
           role="img" aria-label="{{ $annonce }}">
         <span class="flex {{ $jaune }}" aria-hidden="true">
             @for ($i = 1; $i <= 5; $i++)
-                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' {{ $i <= $pleines ? 1 : 0 }};">star</span>
+                <x-icon name="star" size="sm" />
             @endfor
         </span>
         {{-- `afficherNote` à faux quand la note est déjà écrite à côté :
