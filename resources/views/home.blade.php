@@ -2,29 +2,92 @@
      promesse et le pays. --}}
 <x-app-layout :description="__('seo.default_description')">
     {{-- ══ Hero ══
-         La maquette pose le titre et la recherche sur le fond de page, sans
-         le bandeau vert qui les portait. Deux gains : la recherche — notre
-         différence, et le seul contrôle de l'écran — cesse d'être un objet
-         blanc posé sur une couleur pour redevenir un champ, et les pastilles
-         de métiers du bandeau disparaissent au profit de la grille juste
-         dessous, qui disait déjà la même chose vingt lignes plus bas. --}}
+         Deux colonnes à partir de `lg`, comme la maquette : le texte et la
+         recherche à gauche, une illustration à droite. Empilé en dessous —
+         la maquette, elle, ne prévoit rien sous `md` et pose 64 px de marge
+         partout, ce qui ne laisserait que 262 px de contenu sur un
+         téléphone.
+
+         La maquette met une photographie à droite. On met les vignettes de
+         métier : elles sont dessinées, donc sans question de droits, elles
+         ne pèsent aucune requête, et elles montrent ce que la plateforme
+         propose au lieu d'illustrer une idée. --}}
     <section class="border-b border-outline-variant bg-surface-container-low">
-        <div class="mx-auto max-w-container px-margin-mobile py-12 text-center md:px-margin-tablet lg:px-margin-desktop md:py-16">
-            <h1 class="font-display-lg text-headline-lg sm:text-display-lg text-on-background">
-                {!! __('Un artisan de confiance,<br class="hidden sm:inline"> près de chez vous') !!}
-            </h1>
-            <p class="mx-auto mt-4 max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
-                {{ __('Plombiers, électriciens, coiffeuses, répétiteurs — décrivez votre besoin, nous trouvons le prestataire.') }}
-                <strong class="font-semibold text-primary">{{ __('Gratuit pour les clients.') }}</strong>
-            </p>
+        <div class="mx-auto grid max-w-container items-center gap-10 px-margin-mobile py-12 md:px-margin-tablet md:py-16 lg:grid-cols-2 lg:gap-16 lg:px-margin-desktop lg:py-20">
 
-            <x-natural-search class="mx-auto mt-8 max-w-2xl" />
+            <div class="text-center lg:text-left">
+                {{-- La pastille dit le territoire avant que le titre ne dise
+                     le service : c'est ce qui distingue SmartLink d'un
+                     annuaire mondial. --}}
+                <span class="inline-flex items-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant">
+                    <x-icon name="verified" size="xs" filled class="text-primary" />
+                    {{ __('Le réseau de confiance au Cameroun') }}
+                </span>
 
-            @if ($providerCount > 0)
-                <p class="mt-6 font-label-md text-label-md text-on-surface-variant">
-                    {{ trans_choice(':count prestataire|:count prestataires', $providerCount) }}
-                    · {{ trans_choice(':count service en ligne|:count services en ligne', $serviceCount) }}
+                {{-- Un seul mot en vert. Deux en feraient une alternance, et
+                     l'accent ne se poserait plus nulle part. --}}
+                <h1 class="mt-5 font-display-lg text-headline-lg text-on-background sm:text-display-lg">
+                    {!! __('Un artisan de <span class="text-primary">confiance</span>,<br class="hidden sm:inline"> près de chez vous') !!}
+                </h1>
+
+                <p class="mx-auto mt-4 max-w-xl font-body-lg text-body-lg text-on-surface-variant lg:mx-0">
+                    {{ __('Plombiers, électriciens, coiffeuses, répétiteurs — décrivez votre besoin, nous trouvons le prestataire.') }}
+                    <strong class="font-semibold text-primary">{{ __('Gratuit pour les clients.') }}</strong>
                 </p>
+
+                <x-natural-search class="mt-8" />
+
+                @if ($categories->isNotEmpty())
+                    {{-- Les recherches courantes, en toutes lettres : elles
+                         montrent ce qu'on peut taper, ce que le champ vide
+                         n'apprend à personne. --}}
+                    <p class="mt-5 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 font-label-sm text-label-sm text-on-surface-variant lg:justify-start">
+                        <span class="mr-1">{{ __('Recherches courantes :') }}</span>
+                        @foreach ($categories->sortBy(fn ($c) => mb_strlen($c->name))->take(3) as $courante)
+                            <a href="{{ route('services.index', ['category' => $courante->slug]) }}"
+                               class="inline-flex min-h-11 items-center rounded px-2 font-medium text-primary underline decoration-outline-variant underline-offset-4 transition-colors hover:bg-primary-container/10 hover:decoration-primary">{{ $courante->name }}</a>
+                        @endforeach
+                    </p>
+                @endif
+
+                @if ($providerCount > 0)
+                    <p class="mt-4 font-label-md text-label-md text-on-surface-variant">
+                        {{ trans_choice(':count prestataire|:count prestataires', $providerCount) }}
+                        · {{ trans_choice(':count service en ligne|:count services en ligne', $serviceCount) }}
+                    </p>
+                @endif
+            </div>
+
+            {{-- La colonne d'illustration. Cachée sous `lg` : sur un
+                 téléphone, elle repousserait la recherche — le seul contrôle
+                 de l'écran — sous la ligne de flottaison. --}}
+            @if ($categories->count() >= 3)
+                <div class="relative hidden lg:block" aria-hidden="true">
+                    <div class="grid grid-cols-2 gap-4">
+                        @foreach ($categories->take(3) as $index => $vitrine)
+                            <div @class([
+                                'overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1',
+                                'col-span-2 h-56' => $index === 0,
+                                'h-40' => $index > 0,
+                            ])>
+                                <x-category-scene :name="$vitrine->name" class="h-full w-full" />
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Le repère de confiance, posé sur l'illustration : c'est
+                         la promesse que la plateforme tient, et elle se lit
+                         mieux sur une image que dans un paragraphe. --}}
+                    <div class="absolute -bottom-6 -left-4 flex items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 py-3 shadow-elevation-2">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-container">
+                            <x-icon name="verified_user" filled class="text-on-secondary-container" />
+                        </span>
+                        <span>
+                            <span class="block font-label-md text-label-md text-on-surface">{{ __('Pièce d\'identité contrôlée') }}</span>
+                            <span class="block font-label-sm text-label-sm text-on-surface-variant">{{ __('par notre équipe, un par un') }}</span>
+                        </span>
+                    </div>
+                </div>
             @endif
         </div>
     </section>

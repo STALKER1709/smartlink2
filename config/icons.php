@@ -90,6 +90,7 @@ return [
         'tv',
         'upload',
         'verified',
+        'verified_user',
         'warning',
         'water_drop',
         'workspace_premium',
