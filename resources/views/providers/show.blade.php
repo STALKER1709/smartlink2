@@ -273,7 +273,7 @@
             </h2>
 
             @if ($services->isEmpty())
-                <x-empty-state :title="__('Ce prestataire n\'a pas encore publié de service.')" />
+                <x-empty-state compact :title="__('Ce prestataire n\'a pas encore publié de service.')" />
             @else
                 {{--
                     Une grille de vignettes, et non la rangée de liste
@@ -335,7 +335,7 @@
             </div>
 
             @if ($reviews->isEmpty())
-                <x-empty-state :title="__('Aucun avis pour le moment.')"
+                <x-empty-state compact :title="__('Aucun avis pour le moment.')"
                                :description="__('Les avis sont laissés par les clients après une prestation terminée.')" />
             @else
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">

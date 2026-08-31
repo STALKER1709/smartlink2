@@ -18,7 +18,7 @@
      et leur titre est déjà celui du document. --}}
 <x-app-layout :titre="$title" :description="$description ?? $intro">
     <x-slot name="header">
-        <x-page-header :title="$title" :subtitle="__('Dernière révision : :date', ['date' => config('legal.derniere_revision')])" />
+        <x-page-header heading="h1" :title="$title" :subtitle="__('Dernière révision : :date', ['date' => config('legal.derniere_revision')])" />
     </x-slot>
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">

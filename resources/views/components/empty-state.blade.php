@@ -3,6 +3,7 @@
     'description' => null,
     'actionLabel' => null,
     'actionHref' => null,
+    'compact' => false,
 ])
 
 {{--
@@ -15,12 +16,21 @@
     adressée au visiteur, pas un panneau d'absence. L'icône n'a pas seulement
     cessé d'être affichée : la propriété a disparu, pour qu'aucun appel ne
     croie encore la fournir.
+
+    `compact` pour un bloc posé sous un titre de section : à la taille pleine,
+    « Aucun avis pour le moment. » s'affichait au même palier que le « Avis
+    clients » qui le surmonte, et se lisait comme un second titre, plus gros
+    que le premier.
 --}}
-<div {{ $attributes->merge(['class' => 'max-w-xl py-10']) }}>
-    <p class="font-headline-lg text-headline-lg text-on-surface">{{ $title }}</p>
+<div {{ $attributes->merge(['class' => 'max-w-xl '.($compact ? 'py-6' : 'py-10')]) }}>
+    <p @class([
+        'text-on-surface',
+        'font-headline-sm text-headline-sm' => $compact,
+        'font-headline-lg text-headline-lg' => ! $compact,
+    ])>{{ $title }}</p>
 
     @if ($description)
-        <p class="mt-2 text-body-lg text-on-surface-variant">{{ $description }}</p>
+        <p @class(['mt-2 text-on-surface-variant', 'text-body-md' => $compact, 'text-body-lg' => ! $compact])>{{ $description }}</p>
     @endif
 
     @if ($actionLabel && $actionHref)
