@@ -3,10 +3,10 @@
         <x-page-header :title="__('Demandes')" :subtitle="$requests->total().' '.Str::plural('demande', $requests->total())">
             @if (Auth::user()->isClient())
                 <x-slot name="action">
-                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <x-primary-button :href="route('services.index')">
                         <x-icon name="add" />
                         {{ __("Nouvelle demande") }}
-                    </a>
+                    </x-primary-button>
                 </x-slot>
             @endif
         </x-page-header>

@@ -20,11 +20,10 @@
                 <p class="mx-auto max-w-md font-body-md text-body-md text-on-surface-variant">
                     {{ __("Explorez les prestataires et appuyez sur le cœur pour les ajouter à cette liste.") }}
                 </p>
-                <a href="{{ route('providers.index') }}"
-                   class="mt-6 flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-button-text text-button-text text-on-primary transition-all duration-100 hover:bg-primary-container active:scale-95">
+                <x-primary-button :href="route('providers.index')" class="mt-6">
                     <x-icon name="search" />
                     {{ __("Trouver un prestataire") }}
-                </a>
+                </x-primary-button>
             </div>
         @else
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

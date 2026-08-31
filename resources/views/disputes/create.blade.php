@@ -77,11 +77,10 @@
                            class="w-full rounded-full border border-primary px-6 py-3 text-center font-button-text text-button-text text-primary transition-colors hover:bg-surface-container-low sm:w-auto">
                             {{ __("Annuler") }}
                         </a>
-                        <button type="submit"
-                                class="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container sm:w-auto">
+                        <x-primary-button class="w-full sm:w-auto">
                             {{ __("Soumettre le signalement") }}
                             <x-icon name="send" size="sm" filled />
-                        </button>
+                        </x-primary-button>
                     </div>
                 </div>
             </form>

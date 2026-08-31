@@ -50,11 +50,10 @@
 
             <div class="flex w-full flex-col items-start md:w-auto md:items-center">
                 <p class="mb-3 hidden font-body-md text-body-md text-on-surface-variant md:block">{{ __("Besoin d'un nouveau service ?") }}</p>
-                <a href="{{ route('services.index') }}"
-                   class="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container md:w-auto">
+                <x-primary-button :href="route('services.index')" class="w-full md:w-auto">
                     <x-icon name="search" />
                     {{ __("Trouver un prestataire") }}
-                </a>
+                </x-primary-button>
             </div>
         </section>
 

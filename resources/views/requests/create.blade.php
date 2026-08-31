@@ -46,12 +46,12 @@
                     {{ __("Une demande part toujours vers un prestataire précis. Choisissez d'abord le service qui vous intéresse, ou le prestataire à qui vous voulez écrire — le formulaire s'ouvrira avec son nom déjà rempli.") }}
                 </p>
                 <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                    <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <x-primary-button :href="route('services.index')">
                         {{ __("Parcourir les services") }}
-                    </a>
-                    <a href="{{ route('providers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-5 py-2.5 font-button-text text-label-md font-semibold text-primary transition-colors hover:bg-primary-container/10">
+                    </x-primary-button>
+                    <x-secondary-button :href="route('providers.index')">
                         {{ __("Parcourir les prestataires") }}
-                    </a>
+                    </x-secondary-button>
                 </div>
             @else
             <form action="{{ route('requests.store') }}" method="POST" class="space-y-4">

@@ -97,9 +97,9 @@
                      atteignable au pouce et son libellé se lit à gauche d'elle. --}}
                 <div class="flex flex-col-reverse items-stretch gap-2 sm:col-span-2 sm:flex-row sm:justify-end lg:col-span-3">
                     <a href="{{ route('services.index') }}" class="px-3 py-2 text-center text-label-md text-on-surface-variant hover:text-on-surface">{{ __("Réinitialiser") }}</a>
-                    <button type="submit" class="rounded-full bg-primary px-5 py-3 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container sm:py-2">
+                    <x-primary-button>
                         {{ __("Filtrer") }}
-                    </button>
+                    </x-primary-button>
                 </div>
             </form>
         </details>

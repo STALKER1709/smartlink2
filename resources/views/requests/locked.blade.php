@@ -28,10 +28,9 @@
             </div>
 
             <div class="mt-auto flex w-full flex-col gap-4">
-                <a href="{{ route('provider.subscription.show') }}"
-                   class="flex w-full items-center justify-center rounded-full bg-primary px-8 py-[14px] font-button-text text-button-text text-on-primary transition-transform active:scale-[0.98]">
+                <x-primary-button :href="route('provider.subscription.show')" class="w-full">
                     {{ __('ui.subscription.see_plans') }}
-                </a>
+                </x-primary-button>
                 <a href="{{ route('requests.index') }}"
                    class="flex w-full items-center justify-center rounded-full border border-primary bg-surface px-8 py-[14px] font-button-text text-button-text text-primary transition-colors active:bg-surface-container-low">
                     {{ __('ui.subscription.back_to_requests') }}
