@@ -61,7 +61,7 @@
                             <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="text-label-md font-medium text-tertiary hover:opacity-80">
+                                <button type="submit" class="text-label-md font-medium text-secondary hover:opacity-80">
                                     {{ $service->status === \App\Models\Service::STATUS_ACTIVE ? 'Désactiver' : 'Activer' }}
                                 </button>
                             </form>

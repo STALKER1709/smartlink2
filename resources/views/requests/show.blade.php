@@ -127,7 +127,7 @@
                                     @for ($i = 5; $i >= 1; $i--)
                                         <input type="radio" id="rating-{{ $i }}" name="rating" value="{{ $i }}" required class="peer sr-only">
                                         <label for="rating-{{ $i }}"
-                                               class="cursor-pointer rounded-full p-1 text-outline-variant transition-colors hover:text-tertiary-container peer-checked:text-tertiary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary"
+                                               class="cursor-pointer rounded-full p-1 text-outline-variant transition-colors hover:text-secondary-container peer-checked:text-secondary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary"
                                                title="{{ trans_choice(':count étoile|:count étoiles', $i) }}">
                                             <span class="sr-only">{{ trans_choice(':count étoile|:count étoiles', $i) }}</span>
                                             <x-icon name="star" size="xl" filled class="block" />

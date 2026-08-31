@@ -10,21 +10,31 @@
         'suspended' => 'Suspendu',
     ];
 
-    // Chaque statut porte sa propre couleur : sur la liste des demandes, la
-    // pastille doit dire d'un coup d'œil ce qui attend une réponse, ce qui est
-    // engagé et ce qui est clos. Regrouper « Envoyée », « Vue », « Acceptée »
-    // et « Terminée » sous une même teinte vide la pastille de son sens — le
-    // libellé seul ne se lit pas en balayant une liste.
+    /*
+     * Chaque statut porte sa propre couleur : sur la liste des demandes, la
+     * pastille doit dire d'un coup d'œil ce qui attend une réponse, ce qui est
+     * engagé et ce qui est clos. Regrouper « Envoyée », « Vue », « Acceptée »
+     * et « Terminée » sous une même teinte vide la pastille de son sens — le
+     * libellé seul ne se lit pas en balayant une liste.
+     *
+     * Trois familles, et une seule teinte par famille à deux intensités : le
+     * jaune pour ce qui attend, le vert pour ce qui avance, le rouge pour ce
+     * qui a échoué. La table employait auparavant le `tertiary`, qui portait
+     * l'ambre avant la bascule sur la charte du drapeau et porte le rouge
+     * depuis — « Envoyée » se retrouvait en #ffdad7 quand « Refusée » était en
+     * #ffdad6, soit la même pastille à un point près, et « En cours »
+     * s'affichait en rouge plein.
+     */
     $colors = [
-        // En attente d'une action du prestataire : teinte chaude, distincte
-        // de tous les verts.
+        // Ce qui attend une action du prestataire. « Envoyée » crie, « Vue »
+        // murmure : la demande est arrivée, elle attend toujours.
         'draft' => 'bg-surface-container-high text-on-surface-variant',
-        'sent' => 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-        'viewed' => 'bg-primary-container/20 text-primary',
+        'sent' => 'bg-secondary-container text-on-secondary-container',
+        'viewed' => 'bg-secondary-fixed text-on-secondary-fixed-variant',
 
-        // Engagé.
-        'accepted' => 'bg-secondary-fixed-dim text-on-secondary-fixed-variant',
-        'in_progress' => 'bg-tertiary-container text-on-tertiary-container',
+        // Engagé : le vert monte avec l'avancement.
+        'accepted' => 'bg-primary-container/20 text-primary',
+        'in_progress' => 'bg-primary-container/40 text-primary',
 
         // Clos.
         'completed' => 'bg-primary-container text-on-primary-container',

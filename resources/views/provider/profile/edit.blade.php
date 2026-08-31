@@ -125,7 +125,7 @@
                             @if ($providerProfile->id_card_verified)
                                 <span class="inline-flex items-center rounded-full bg-primary-container/20 px-2.5 py-0.5 text-label-sm font-medium text-primary">{{ __("Vérifié") }}</span>
                             @else
-                                <span class="inline-flex items-center rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-label-sm font-medium text-tertiary">{{ __("En attente de vérification") }}</span>
+                                <span class="inline-flex items-center rounded-full bg-secondary-container/25 px-2.5 py-0.5 text-label-sm font-medium text-on-secondary-container">{{ __("En attente de vérification") }}</span>
                             @endif
                         </div>
                     @endif

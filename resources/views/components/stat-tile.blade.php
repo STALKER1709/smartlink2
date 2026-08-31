@@ -14,9 +14,10 @@
 @php
     $tag = $href ? 'a' : 'div';
     $tons = [
+        // Pas de `tertiary` : voir DESIGN.md — le troisième rouge de la
+        // charte ne dit rien qu'`error` ne dise déjà, et le dit en moins net.
         'primary' => 'text-primary',
         'secondary' => 'text-secondary',
-        'tertiary' => 'text-tertiary',
         'error' => 'text-error',
     ];
     $teinte = $tons[$tone] ?? $tons['secondary'];

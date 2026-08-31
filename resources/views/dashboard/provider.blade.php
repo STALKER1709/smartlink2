@@ -25,7 +25,7 @@
              aux sept derniers jours : c'est pendant l'essai qu'un prestataire
              décide s'il paiera. --}}
         @if ($subscription?->isTrial())
-            <div class="flex w-full flex-col items-start justify-between gap-4 rounded-lg border border-tertiary-fixed-dim bg-tertiary-fixed p-4 text-on-tertiary-fixed md:flex-row md:items-center">
+            <div class="flex w-full flex-col items-start justify-between gap-4 rounded-lg border border-secondary-fixed-dim bg-secondary-fixed p-4 text-on-secondary-fixed md:flex-row md:items-center">
                 <div class="flex items-center gap-3">
                     <x-icon name="info" />
                     <span class="font-body-md text-body-md font-semibold">
@@ -33,7 +33,7 @@
                     </span>
                 </div>
                 <a href="{{ route('provider.subscription.show') }}"
-                   class="self-end rounded-full bg-tertiary px-6 py-2 font-button-text text-button-text text-on-tertiary transition-all hover:opacity-90 active:scale-95 md:self-auto">
+                   class="self-end rounded-full bg-secondary px-6 py-2 font-button-text text-button-text text-on-secondary transition-all hover:opacity-90 active:scale-95 md:self-auto">
                     {{ __("Souscrire") }}
                 </a>
             </div>
@@ -45,14 +45,14 @@
                          :label="__('Demandes reçues')"
                          hint="ce mois-ci"
                          :href="route('requests.index')" />
-            <x-stat-tile variant="stacked" icon="pending_actions" tone="tertiary"
+            <x-stat-tile variant="stacked" icon="pending_actions" tone="secondary"
                          :value="$pendingCount" :label="__('Demandes en attente')"
                          :hint="$remainingRequests === null ? 'Lecture sans limite' : $remainingRequests.' lisibles ce mois'"
                          :href="route('requests.index', ['status' => 'sent'])" />
             <x-stat-tile variant="stacked" icon="handyman" tone="secondary"
                          :value="$counts['in_progress'] ?? 0" :label="__('Prestations en cours')"
                          :href="route('requests.index', ['status' => 'in_progress'])" />
-            <x-stat-tile variant="stacked" icon="star" tone="tertiary"
+            <x-stat-tile variant="stacked" icon="star" tone="secondary"
                          :value="$profile?->rating_count ? number_format((float) $profile->rating_avg, 1, ',', ' ') : '—'"
                          label="Note moyenne"
                          :hint="$profile?->rating_count ? $profile->rating_count.' '.Str::plural('avis', $profile->rating_count) : 'Pas encore d\'avis'"
@@ -66,7 +66,10 @@
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
                     <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Demandes à traiter") }}</h3>
                     @if ($pendingRequests->isNotEmpty())
-                        <span class="rounded-full bg-error-container px-2 py-1 font-label-numeric text-label-numeric text-on-error-container">{{ $pendingCount }}</span>
+                        {{-- Le compteur des demandes à traiter est une attente, pas une
+                             panne : il prend le jaune, comme les pastilles de la
+                             liste qu'il annonce. --}}
+                        <span class="rounded-full bg-secondary-container px-2 py-1 font-label-numeric text-label-numeric text-on-secondary-container">{{ $pendingCount }}</span>
                     @endif
                 </div>
 
@@ -121,9 +124,9 @@
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
                     <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Vos services") }}</h3>
                     @if ($masques > 0)
-                        <span class="font-label-md text-label-md text-tertiary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
+                        <span class="font-label-md text-label-md text-secondary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
                     @elseif ($auPlafond)
-                        <span class="font-label-md text-label-md text-tertiary">{{ __("Plafond atteint") }}</span>
+                        <span class="font-label-md text-label-md text-secondary">{{ __("Plafond atteint") }}</span>
                     @endif
                 </div>
 

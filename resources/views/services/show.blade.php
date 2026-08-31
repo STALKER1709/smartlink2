@@ -123,8 +123,8 @@
                 </div>
 
                 @if ($service->availability_note)
-                    <p class="flex items-start gap-2 rounded-xl border border-outline-variant bg-tertiary-container/15 px-4 py-3 font-body-md text-body-md text-on-surface shadow-elevation-1">
-                        <x-icon name="schedule" class="shrink-0 text-tertiary" />
+                    <p class="flex items-start gap-2 rounded-xl border border-outline-variant bg-secondary-container/20 px-4 py-3 font-body-md text-body-md text-on-surface shadow-elevation-1">
+                        <x-icon name="schedule" class="shrink-0 text-secondary" />
                         {{ $service->availability_note }}
                     </p>
                 @endif

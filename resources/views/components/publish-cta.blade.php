@@ -27,7 +27,7 @@
 @else
     <div class="flex flex-col items-start gap-1">
         <a href="{{ route('provider.subscription.show') }}"
-           {{ $attributes->merge(['class' => 'inline-flex items-center gap-1.5 rounded-full border border-tertiary px-4 py-2 font-button-text text-label-md font-semibold text-tertiary transition-colors hover:bg-tertiary-container/20']) }}>
+           {{ $attributes->merge(['class' => 'inline-flex items-center gap-1.5 rounded-full border border-secondary px-4 py-2 font-button-text text-label-md font-semibold text-secondary transition-colors hover:bg-secondary-container/20']) }}>
             <x-icon name="arrow_upward" />
             {{ __("Augmenter mon plafond") }}
         </a>

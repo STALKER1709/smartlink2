@@ -48,8 +48,8 @@
                 @unless ($valide)
                     {{-- Un document juridique qui n'a pas été relu doit le dire
                          là où on le lit, pas dans un dépôt Git. --}}
-                    <div class="rounded-xl border border-tertiary/30 bg-tertiary-container/10 p-4">
-                        <p class="flex gap-2 font-semibold text-tertiary">
+                    <div class="rounded-xl border border-secondary/40 bg-secondary-container/15 p-4">
+                        <p class="flex gap-2 font-semibold text-secondary">
                             <x-icon name="shield" class="shrink-0" />
                             {{ __("Document non validé juridiquement") }}
                         </p>

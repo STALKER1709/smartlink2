@@ -7,7 +7,7 @@
     $apparences = [
         'request.status_changed' => ['check_circle', 'bg-primary text-on-primary'],
         'request.new' => ['assignment', 'bg-primary text-on-primary'],
-        'message.new' => ['chat', 'bg-tertiary-container text-on-tertiary'],
+        'message.new' => ['chat', 'bg-secondary text-on-secondary'],
         'review.new' => ['star', 'bg-secondary-container/30 text-on-secondary-container'],
     ];
 @endphp

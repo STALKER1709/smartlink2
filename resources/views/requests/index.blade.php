@@ -82,7 +82,7 @@
                                 @if ($logo)
                                     <img src="{{ media_url($logo) }}" alt="" loading="lazy" class="h-full w-full object-cover" onerror="this.remove()">
                                 @else
-                                    <div class="flex h-full w-full items-center justify-center bg-tertiary-container font-headline-md font-bold text-on-tertiary">
+                                    <div class="flex h-full w-full items-center justify-center bg-surface-container-high font-headline-md font-bold text-on-surface-variant">
                                         {{ $nom ? Str::upper(Str::substr($nom, 0, 2)) : '—' }}
                                     </div>
                                 @endif

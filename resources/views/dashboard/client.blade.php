@@ -22,7 +22,7 @@
             <x-stat-tile :label="__('Messages')" icon="mail" tone="error"
                          :value="$unreadMessages"
                          :href="route('conversations.index')" />
-            <x-stat-tile :label="__('Avis laissés')" icon="star" tone="tertiary"
+            <x-stat-tile :label="__('Avis laissés')" icon="star" tone="secondary"
                          :value="$reviewsLeft" />
         </x-stat-grid>
 

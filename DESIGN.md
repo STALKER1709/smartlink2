@@ -203,14 +203,50 @@ Les trois couleurs du drapeau, et chacune a un emploi, un seul.
   abonnement qui expire portaient jusqu'ici la même couleur ambre, faute d'en
   avoir deux. Le texte posé dessus est `on-secondary-container #6e4900` — un
   brun foncé, parce que du blanc sur ce jaune ne se lit pas.
-- **Rouge `tertiary-container #d41829`** : alertes critiques et statuts urgents.
-  Il ne décore jamais, et il ne se dispute pas l'écran avec `error` — celui-ci
-  reste réservé aux erreurs de formulaire et aux actions destructives.
+- **Rouge `error #ba1a1a`** : ce qui est cassé, refusé, suspendu ou
+  irréversible — et rien d'autre. C'est le seul rouge de l'interface.
 - **Surfaces** : le fond de page `#f9f9fc` porte les contrôles, les cartes
   reposent sur du blanc. Cette différence d'un ton, doublée d'une ombre légère,
   sépare ce sur quoi on agit de ce qu'on lit.
 
 Le jaune et le rouge ne paraissent jamais ensemble comme accents concurrents.
+
+### Trois rôles, et un jeton qui n'en a aucun
+
+Chaque couleur répond à une question, et à une seule :
+
+| Jeton | Question |
+|---|---|
+| `primary` — vert | Est-ce l'action ? A-t-elle abouti ? |
+| `secondary` — jaune | Faut-il y revenir ? — ce qui attend, ce qui approche de son terme, ce qui est mis en avant, et la note. |
+| `error` — rouge | Est-ce cassé, refusé, ou irréversible ? |
+
+**`tertiary` n'habille rien, et c'est une décision.** Le schéma amont donne à la
+troisième couleur du drapeau le nom d'un rôle qu'elle n'a pas : c'est un rouge,
+`#aa001a`, à dix points de l'`error` `#ba1a1a`. Deux rouges pour un seul
+travail, dont aucun écran ne distingue l'un de l'autre.
+
+Le jeton portait l'ambre avant la bascule sur la charte du drapeau, et tout ce
+qui devait attirer l'attention sans alarmer s'en était servi — quinze emplois.
+Après la bascule, ces quinze-là disaient panne là où ils disaient échéance, et
+personne ne l'a vu parce que rien n'avait changé dans le code :
+
+- « Envoyée » portait `#ffdad7` quand « Refusée » portait `#ffdad6` : la même
+  pastille à un point de teinte près, sur la liste où l'on cherche justement
+  ce qui attend une réponse ;
+- « En cours » s'affichait en rouge plein ;
+- le bandeau d'essai gratuit s'ouvrait sur un rose d'alerte ;
+- les étoiles du formulaire d'avis étaient rouges, quand celles qui affichent
+  la même note ailleurs sont jaunes.
+
+Le jeton reste dans la table : il appartient au schéma amont, et un schéma
+troué se désynchronise du premier écran qu'on y réimportera. C'est son emploi
+qui est refusé, pas son existence — `CharteTest` monte la garde.
+
+**La pastille de statut suit de là.** Trois familles, une teinte par famille, et
+l'intensité pour l'avancement : jaune plein pour « Envoyée », jaune pâle pour
+« Vue », puis le vert qui monte d'« Acceptée » à « Terminée ». Le rouge est
+réservé à « Refusée » et « Suspendu ».
 
 
 ## Typography

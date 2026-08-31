@@ -325,6 +325,43 @@ class CharteTest extends TestCase
             'Couleur hors palette, sans jeton : '.implode(', ', $fautifs));
     }
 
+    /**
+     * Le troisième rouge de la charte n'habille rien.
+     *
+     * La palette du drapeau donne trois couleurs de marque, que le schéma
+     * amont nomme `primary`, `secondary` et `tertiary`. Les deux premières ont
+     * un rôle : le vert pour l'action, le jaune pour l'attente. La troisième
+     * est un rouge — `#aa001a`, à dix points de l'`error` `#ba1a1a`. Deux
+     * rouges pour un seul travail, dont l'un ne se distingue de l'autre sur
+     * aucun écran.
+     *
+     * Elle portait l'ambre avant la bascule, et tout ce qui devait « attirer
+     * l'attention sans alarmer » s'en était servi. Après la bascule, ces
+     * quinze emplois disaient panne là où ils disaient échéance : « Envoyée »
+     * et « Refusée » portaient la même pastille à un point de teinte près,
+     * « En cours » s'affichait en rouge plein, le bandeau d'essai gratuit
+     * s'ouvrait sur un rose d'alerte, et les étoiles du formulaire d'avis
+     * étaient rouges quand celles qui affichent la même note sont jaunes.
+     *
+     * Le jeton reste dans la table : il appartient au schéma amont, et un
+     * schéma troué se désynchronise du premier écran qu'on y réimportera.
+     * C'est son emploi qui est refusé, pas son existence.
+     */
+    public function test_the_third_red_is_not_used(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            if (preg_match('/\b(bg|text|border|from|to|via|ring|divide)-(on-)?tertiary/', $this->contenuSansCommentaires($vue), $m)) {
+                $fautifs[] = $vue.' ('.$m[0].')';
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Le jeton `tertiary` n\'habille rien : le jaune pour l\'attente, l\'`error` pour la panne — '
+            .implode(', ', $fautifs));
+    }
+
     public function test_headings_stay_inside_the_four_steps(): void
     {
         $fautifs = [];

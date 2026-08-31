@@ -43,7 +43,7 @@
                              rien publier. C'est pourtant sur cet écran que la
                              réponse se trouve. --}}
                         @if ($auPlafond)
-                            <p class="mt-0.5 text-label-sm font-medium text-tertiary">{{ __('ui.subscription.cap_reached') }}</p>
+                            <p class="mt-0.5 text-label-sm font-medium text-secondary">{{ __('ui.subscription.cap_reached') }}</p>
                         @endif
                     </div>
                     <div>

@@ -1,7 +1,7 @@
 @php
     $statusMeta = [
         \App\Models\Payment::STATUS_SUCCESS => ['label' => __('Réglé'), 'class' => 'bg-primary-container/20 text-primary'],
-        \App\Models\Payment::STATUS_PENDING => ['label' => __('En attente'), 'class' => 'bg-tertiary-container/20 text-tertiary'],
+        \App\Models\Payment::STATUS_PENDING => ['label' => __('En attente'), 'class' => 'bg-secondary-container/25 text-on-secondary-container'],
         \App\Models\Payment::STATUS_FAILED => ['label' => __('Échec'), 'class' => 'bg-error-container text-on-error-container'],
         \App\Models\Payment::STATUS_CANCELLED => ['label' => __('Annulé'), 'class' => 'bg-surface-container-high text-on-surface-variant'],
     ];
@@ -34,7 +34,7 @@
                  s'affiche alors en toutes lettres. --}}
             @foreach ([
                 ['libelle' => 'Réglé cette année', 'montant' => $regleCetteAnnee, 'icone' => 'trending_up', 'teinte' => 'text-primary'],
-                ['libelle' => 'En attente', 'montant' => $enAttente, 'icone' => 'pending', 'teinte' => 'text-tertiary'],
+                ['libelle' => 'En attente', 'montant' => $enAttente, 'icone' => 'pending', 'teinte' => 'text-secondary'],
                 ['libelle' => 'Total versé à SmartLink', 'montant' => $totalVerse, 'icone' => 'receipt_long', 'teinte' => 'text-on-surface-variant'],
             ] as $tuile)
                 @php

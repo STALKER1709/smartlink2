@@ -17,7 +17,7 @@
                             </span>
                             <span @class([
                                 'rounded-full px-3 py-1 font-label-sm text-label-sm',
-                                'bg-tertiary-container/30 text-tertiary' => $dispute->isOpen(),
+                                'bg-secondary-container/30 text-on-secondary-container' => $dispute->isOpen(),
                                 'bg-primary-container/20 text-primary' => $dispute->status === \App\Models\Dispute::STATUS_RESOLVED,
                                 'bg-surface-container-high text-on-surface-variant' => $dispute->status === \App\Models\Dispute::STATUS_REJECTED,
                             ])>{{ \App\Models\Dispute::statuses()[$dispute->status] ?? $dispute->status }}</span>
