@@ -74,7 +74,7 @@
                     <p class="mt-2 text-label-md text-on-surface">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="rounded-md text-label-md text-on-surface-variant underline hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                        <button form="send-verification" class="rounded-full text-label-md text-on-surface-variant underline hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>

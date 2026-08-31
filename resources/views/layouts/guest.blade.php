@@ -44,9 +44,9 @@
                      séparateurs « · » disparaissent avec — ils ne servaient qu'à
                      écarter des cibles trop serrées. --}}
                 <nav class="mx-auto mt-1 flex flex-wrap justify-center gap-x-1 text-label-sm text-on-surface-variant">
-                    <a href="{{ route('legal.terms') }}" class="inline-flex min-h-11 items-center rounded px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Conditions générales") }}</a>
-                    <a href="{{ route('legal.privacy') }}" class="inline-flex min-h-11 items-center rounded px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Confidentialité") }}</a>
-                    <a href="{{ route('legal.notice') }}" class="inline-flex min-h-11 items-center rounded px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Mentions légales") }}</a>
+                    <a href="{{ route('legal.terms') }}" class="inline-flex min-h-11 items-center rounded-full px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Conditions générales") }}</a>
+                    <a href="{{ route('legal.privacy') }}" class="inline-flex min-h-11 items-center rounded-full px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Confidentialité") }}</a>
+                    <a href="{{ route('legal.notice') }}" class="inline-flex min-h-11 items-center rounded-full px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Mentions légales") }}</a>
                 </nav>
             </div>
         </div>

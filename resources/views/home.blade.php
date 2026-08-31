@@ -45,7 +45,7 @@
                         <span class="mr-1">{{ __('Recherches courantes :') }}</span>
                         @foreach ($categories->sortBy(fn ($c) => mb_strlen($c->name))->take(3) as $courante)
                             <a href="{{ route('services.index', ['category' => $courante->slug]) }}"
-                               class="inline-flex min-h-11 items-center rounded px-2 font-medium text-primary underline decoration-outline-variant underline-offset-4 transition-colors hover:bg-primary-container/10 hover:decoration-primary">{{ $courante->name }}</a>
+                               class="inline-flex min-h-11 items-center rounded-full px-2 font-medium text-primary underline decoration-outline-variant underline-offset-4 transition-colors hover:bg-primary-container/10 hover:decoration-primary">{{ $courante->name }}</a>
                         @endforeach
                     </p>
                 @endif

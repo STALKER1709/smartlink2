@@ -14,7 +14,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
+            <div class="mb-4 rounded-xl border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif
@@ -55,7 +55,7 @@
                         <div class="flex flex-col gap-3 px-4 py-4 transition-colors hover:bg-surface-container-low md:grid md:grid-cols-12 md:items-center md:gap-4 md:px-6">
                             <div class="min-w-0 md:col-span-5">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="shrink-0 rounded-md bg-surface-container-high p-1.5 text-primary">
+                                    <span class="shrink-0 rounded-full bg-surface-container-high p-1.5 text-primary">
                                         <x-category-icon :icon="$category->icon" class="text-base" />
                                     </span>
                                     <p class="font-medium text-on-surface">{{ $category->name }}</p>

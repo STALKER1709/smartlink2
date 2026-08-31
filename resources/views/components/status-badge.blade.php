@@ -45,7 +45,7 @@
      demandes. --}}
 @php
     $forme = $variant === 'caps'
-        ? 'rounded-sm px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider'
+        ? 'rounded-full px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider'
         : 'rounded-full px-3 py-1 font-button-text text-label-sm font-semibold';
 @endphp
 

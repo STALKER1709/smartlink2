@@ -17,7 +17,7 @@
             <div class="flex items-baseline justify-between gap-2">
                 <x-input-label for="password" :value="__('Password')" />
                 @if (Route::has('password.request'))
-                    <a class="-mr-2 inline-flex min-h-11 items-center rounded px-2 text-label-md text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container" href="{{ route('password.request') }}">
+                    <a class="-mr-2 inline-flex min-h-11 items-center rounded-full px-2 text-label-md text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container" href="{{ route('password.request') }}">
                         {{ __('Forgot your password?') }}
                     </a>
                 @endif
@@ -38,6 +38,6 @@
 
     <p class="mt-6 border-t border-outline-variant pt-5 text-center text-label-md text-on-surface-variant">
         {{ __("Pas encore de compte ?") }}
-        <a href="{{ route('register') }}" class="inline-flex min-h-11 items-center rounded px-2 font-semibold text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container">{{ __("Créer un compte") }}</a>
+        <a href="{{ route('register') }}" class="inline-flex min-h-11 items-center rounded-full px-2 font-semibold text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container">{{ __("Créer un compte") }}</a>
     </p>
 </x-guest-layout>

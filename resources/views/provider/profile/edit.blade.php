@@ -62,7 +62,7 @@
                 {{-- WhatsApp --}}
                 <div class="mt-4">
                     <x-input-label for="whatsapp" :value="__('ui.provider.whatsapp')" />
-                    <div class="mt-1 flex rounded-md">
+                    <div class="mt-1 flex rounded-xl">
                         <span class="inline-flex items-center rounded-l-md border border-r-0 border-outline-variant bg-surface-container-low px-3 text-label-md text-on-surface-variant">+237</span>
                         <x-text-input id="whatsapp" name="whatsapp" type="tel" class="block flex-1 rounded-none rounded-r-md" :value="old('whatsapp', $providerProfile->whatsapp)" placeholder="6XXXXXXXX" maxlength="20" />
                     </div>
@@ -93,7 +93,7 @@
                 }">
                     <x-input-label :value="__('ui.provider.location_map')" />
                     <p class="text-label-sm text-on-surface-variant mb-2">{{ __('ui.provider.location_hint') }}</p>
-                    <div id="provider-map" class="w-full h-56 rounded-md border border-outline-variant z-0"></div>
+                    <div id="provider-map" class="w-full h-56 rounded-xl border border-outline-variant z-0"></div>
                     <input type="hidden" name="latitude" :value="lat">
                     <input type="hidden" name="longitude" :value="lng">
                     {{-- « 3.848, 11.502 » nu ne dit rien à personne. La ligne
@@ -118,7 +118,7 @@
                                 $document = route('provider-profiles.id-document', $providerProfile);
                             @endphp
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <img src="{{ $document }}" alt="{{ __('Votre pièce d\'identité déposée') }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
+                                <img src="{{ $document }}" alt="{{ __('Votre pièce d\'identité déposée') }}" class="h-20 w-32 object-cover rounded-lg border border-outline-variant">
                             @else
                                 <a href="{{ $document }}" target="_blank" rel="noopener" class="text-primary text-label-md hover:underline">{{ __("Voir le document") }}</a>
                             @endif

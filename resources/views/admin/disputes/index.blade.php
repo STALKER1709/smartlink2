@@ -5,7 +5,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
+            <div class="mb-4 rounded-xl border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif
@@ -43,7 +43,7 @@
                         <div class="p-6">
                             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
+                                    <span class="rounded-full bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
                                         {{ \App\Models\Dispute::reasonLabel($dispute->reason) }}
                                     </span>
                                     <span class="font-label-numeric text-label-md text-on-surface-variant">{{ $dispute->created_at->translatedFormat('d M, H:i') }}</span>

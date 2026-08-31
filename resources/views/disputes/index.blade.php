@@ -12,7 +12,7 @@
                 @foreach ($disputes as $dispute)
                     <article class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-4">
                         <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-                            <span class="rounded bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
+                            <span class="rounded-full bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
                                 {{ \App\Models\Dispute::reasonLabel($dispute->reason) }}
                             </span>
                             <span @class([

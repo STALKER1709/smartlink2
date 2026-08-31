@@ -180,7 +180,7 @@
                     <label class="relative block cursor-pointer">
                         <img src="{{ media_url($image->path) }}"
                              alt="{{ __('Photo :numero du service', ['numero' => $loop->iteration]) }}"
-                             class="h-20 w-full object-cover rounded-md">
+                             class="h-20 w-full object-cover rounded-lg">
                         <span class="absolute top-1 right-1 bg-surface-container-lowest/90 rounded-full p-1">
                             <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded border-outline-variant text-primary focus:ring-primary">
                         </span>

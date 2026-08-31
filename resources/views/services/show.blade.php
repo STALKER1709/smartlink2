@@ -71,7 +71,7 @@
                     @if ($service->images->count() > 1)
                         <div class="grid grid-cols-4 gap-1 p-1 sm:grid-cols-6">
                             @foreach ($service->images->skip(1) as $image)
-                                <img src="{{ media_url($image->path) }}" alt="" loading="lazy" class="aspect-square w-full rounded object-cover">
+                                <img src="{{ media_url($image->path) }}" alt="" loading="lazy" class="aspect-square w-full rounded-lg object-cover">
                             @endforeach
                         </div>
                     @endif

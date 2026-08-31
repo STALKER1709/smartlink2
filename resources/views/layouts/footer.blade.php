@@ -25,9 +25,9 @@
                 <div>
                     <p class="font-headline-sm text-headline-sm text-on-surface">{{ __('Découvrir') }}</p>
                     <ul class="mt-1 text-label-md">
-                        <li><a href="{{ route('services.index') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Services') }}</a></li>
-                        <li><a href="{{ route('providers.index') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Prestataires') }}</a></li>
-                        <li><a href="{{ route('help.index') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Aide') }}</a></li>
+                        <li><a href="{{ route('services.index') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Services') }}</a></li>
+                        <li><a href="{{ route('providers.index') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Prestataires') }}</a></li>
+                        <li><a href="{{ route('help.index') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Aide') }}</a></li>
                     </ul>
                 </div>
 
@@ -35,20 +35,20 @@
                     <p class="font-headline-sm text-headline-sm text-on-surface">{{ __('Prestataires') }}</p>
                     <ul class="mt-1 text-label-md">
                         @guest
-                            <li><a href="{{ route('register') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Créer un compte') }}</a></li>
+                            <li><a href="{{ route('register') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Créer un compte') }}</a></li>
                         @else
-                            <li><a href="{{ route('dashboard') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Tableau de bord') }}</a></li>
+                            <li><a href="{{ route('dashboard') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Tableau de bord') }}</a></li>
                         @endguest
-                        <li><a href="{{ route('help.index') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Comment ça marche') }}</a></li>
+                        <li><a href="{{ route('help.index') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Comment ça marche') }}</a></li>
                     </ul>
                 </div>
 
                 <div class="col-span-2 sm:col-span-1">
                     <p class="font-headline-sm text-headline-sm text-on-surface">{{ __('Informations') }}</p>
                     <ul class="mt-1 text-label-md">
-                        <li><a href="{{ route('legal.terms') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Conditions générales') }}</a></li>
-                        <li><a href="{{ route('legal.privacy') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Confidentialité') }}</a></li>
-                        <li><a href="{{ route('legal.notice') }}" class="-mx-2 flex min-h-11 items-center rounded px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Mentions légales') }}</a></li>
+                        <li><a href="{{ route('legal.terms') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Conditions générales') }}</a></li>
+                        <li><a href="{{ route('legal.privacy') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Confidentialité') }}</a></li>
+                        <li><a href="{{ route('legal.notice') }}" class="-mx-2 flex min-h-11 items-center rounded-full px-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary">{{ __('Mentions légales') }}</a></li>
                     </ul>
                 </div>
             </div>

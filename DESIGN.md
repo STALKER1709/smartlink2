@@ -348,10 +348,15 @@ s'épaissit et verdit au focus, rien de plus. Treize d'entre eux traînaient un
   cliquables lisibles sans couleur supplémentaire.
 - **Vignettes d'illustration** : `rounded-lg`, carrées dans les rangées de liste.
 - **Rangées de liste** : aucun rayon. Un filet les sépare, rien ne les encadre.
-- **Une seule exception au 12 px** : les bulles de conversation, en
-  `rounded-2xl` (16 px). Une bulle n'est pas une carte — c'est la forme qui la
-  distingue du reste de la page. Partout ailleurs, `rounded-2xl` sur un
-  conteneur est une dérive : `CharteTest` la refuse.
+- **Cases à cocher** : `rounded` (4 px). Une case fait 16 px de côté ; lui
+  donner les 12 px des conteneurs la rendrait ronde, et une case ronde se lit
+  comme un bouton radio — c'est-à-dire comme un choix exclusif. La forme dit
+  ici le comportement, elle ne décore pas.
+- **Deux exceptions au 12 px, et seulement deux** : les bulles de conversation,
+  en `rounded-2xl` (16 px) — une bulle n'est pas une carte, c'est la forme qui
+  la distingue du reste de la page — et les cases à cocher ci-dessus. Partout
+  ailleurs, `rounded`, `rounded-sm`, `rounded-md` et `rounded-2xl` sont des
+  dérives : `CharteTest` les refuse.
 
 
 ## Components

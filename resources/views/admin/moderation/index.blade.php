@@ -42,7 +42,7 @@
                         <div class="p-6">
                             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                                 <div class="flex items-center gap-2">
-                                    <span class="rounded bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
+                                    <span class="rounded-full bg-surface-container-high px-2 py-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface">
                                         {{ $isService ? __('ui.moderation.service') : __('ui.moderation.review') }}
                                     </span>
                                     <span class="font-label-numeric text-label-md text-on-surface-variant">{{ $report->created_at->translatedFormat('d M, H:i') }}</span>

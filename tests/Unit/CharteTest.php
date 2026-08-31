@@ -118,6 +118,47 @@ class CharteTest extends TestCase
             'Rayon hors charte (12 px pour un conteneur) : '.implode(', ', $fautifs));
     }
 
+    /**
+     * Les rayons intermédiaires, qui n'appartiennent à aucun rôle.
+     *
+     * La charte n'en connaît que trois : 12 px pour ce qui encadre, la pilule
+     * pour ce qui s'actionne, 8 px pour une vignette. `rounded`, `rounded-sm`
+     * et `rounded-md` ne disent rien de ce qu'ils arrondissent — ils étaient
+     * quarante-trois, répartis sur vingt-quatre vues, et faisaient cinq
+     * arrondis différents pour des éléments de même rôle.
+     *
+     * Une case à cocher garde `rounded` : elle fait 16 px de côté, et les
+     * 12 px des conteneurs la rendraient ronde, donc lisible comme un bouton
+     * radio — un choix exclusif au lieu d'un choix multiple.
+     */
+    public function test_radii_say_what_they_round(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            $lignes = explode("\n", $this->contenuSansCommentaires($vue));
+
+            foreach ($lignes as $numero => $ligne) {
+                if (! preg_match('/\brounded(-sm|-md)?(?![-a-zA-Z0-9])/', $ligne, $m)) {
+                    continue;
+                }
+
+                // La balise d'une case à cocher s'ouvre souvent quelques
+                // lignes plus haut : on regarde la fenêtre, pas la ligne.
+                $fenetre = implode(' ', array_slice($lignes, max(0, $numero - 4), 5));
+
+                if (str_contains($fenetre, 'type="checkbox"')) {
+                    continue;
+                }
+
+                $fautifs[] = $vue.':'.($numero + 1).' ('.$m[0].')';
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Rayon sans rôle — 12 px encadre, la pilule s\'actionne, 8 px illustre : '.implode(', ', $fautifs));
+    }
+
     public function test_depth_goes_through_the_three_elevation_steps(): void
     {
         $fautifs = [];

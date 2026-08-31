@@ -92,6 +92,6 @@
 
     <p class="mt-6 border-t border-outline-variant pt-5 text-center text-label-md text-on-surface-variant">
         {{ __('Already registered?') }}
-        <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center rounded px-2 font-semibold text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container">{{ __('Log in') }}</a>
+        <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center rounded-full px-2 font-semibold text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container">{{ __('Log in') }}</a>
     </p>
 </x-guest-layout>

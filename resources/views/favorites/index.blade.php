@@ -5,7 +5,7 @@
 
     <div class="mx-auto w-full max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
         @if (session('status'))
-            <div class="mb-4 rounded-md border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
+            <div class="mb-4 rounded-xl border border-outline-variant bg-primary-container/15 px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif

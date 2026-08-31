@@ -131,7 +131,7 @@
                     <a href="{{ route('provider.services.edit', $service) }}"
                        class="group flex items-center justify-between rounded-lg border border-outline-variant bg-surface p-3 transition-colors hover:bg-surface-container-low">
                         <div class="flex min-w-0 items-center gap-3">
-                            <span class="shrink-0 rounded-md bg-surface-container-high p-2 text-primary">
+                            <span class="shrink-0 rounded-full bg-surface-container-high p-2 text-primary">
                                 <x-category-icon :icon="$service->category?->icon" />
                             </span>
                             <div class="min-w-0">

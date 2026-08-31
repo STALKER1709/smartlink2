@@ -32,7 +32,7 @@
 
                         @if ($tendance !== null)
                             <span @class([
-                                'flex items-center gap-1 rounded px-2 py-1',
+                                'flex items-center gap-1 rounded-full px-2 py-1',
                                 'bg-primary-container/15 text-primary' => $tendance >= 0,
                                 'bg-error-container/30 text-error' => $tendance < 0,
                             ])>
