@@ -71,7 +71,7 @@
                     <div class="filtres-corps border-t border-outline-variant p-4 lg:border-t-0">
                         <div class="mb-4 hidden items-center justify-between border-b border-outline-variant pb-3 lg:flex">
                             <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Filtres') }}</h2>
-                            <a href="{{ route('services.index') }}" class="font-label-sm text-label-sm text-primary hover:underline">{{ __("Réinitialiser") }}</a>
+                            <a href="{{ route('services.index') }}" class="-mr-2 inline-flex min-h-11 items-center rounded-lg px-2 font-label-sm text-label-sm text-primary hover:underline">{{ __("Réinitialiser") }}</a>
                         </div>
 
                         <form id="filtres" action="{{ route('services.index') }}" method="GET" class="space-y-4">

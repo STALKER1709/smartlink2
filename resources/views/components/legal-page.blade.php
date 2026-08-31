@@ -34,7 +34,7 @@
                     <ol class="mt-3 space-y-2">
                         @foreach ($sections as $ancre => $libelle)
                             <li>
-                                <a href="#{{ $ancre }}" class="flex gap-2 text-label-md text-on-surface-variant hover:text-primary">
+                                <a href="#{{ $ancre }}" class="-mx-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-label-md text-on-surface-variant hover:bg-surface-container hover:text-primary">
                                     <span class="font-label-numeric text-label-sm text-outline">{{ $loop->iteration }}</span>
                                     <span>{{ $libelle }}</span>
                                 </a>

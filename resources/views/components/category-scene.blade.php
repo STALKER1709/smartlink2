@@ -56,18 +56,16 @@
     /*
      * Le soleil vit dans une fenêtre étroite, et ce n'est pas un caprice.
      *
-     * `slice` recadre la scène sur le centre : une vignette large en montre la
-     * bande 57–343, une vignette étroite (la carte couchée du téléphone)
-     * seulement 152–248. Un soleil posé ailleurs finit coupé par un bord — on
-     * y voyait un croissant orange sous le cœur des favoris, et un éclat sur
-     * la tranche des vignettes de téléphone.
+     * `slice` recadre la scène sur son centre, et le cadrage dépend du format
+     * de la vignette : une carte de service en montre la bande 57–343, la
+     * vignette carrée de l'annuaire seulement 100–300. Un soleil posé hors de
+     * la plus étroite finit coupé net par un bord.
      *
-     * Entre 264 et 332, il est donc entier sur les cartes debout et absent
-     * des vignettes couchées, où il n'y avait de toute façon pas de place.
-     * En hauteur il passe sous la rangée des pastilles et reste au-dessus de
-     * l'horizon.
+     * En hauteur il passe sous la rangée des pastilles — posé plus haut, le
+     * cœur des favoris lui découpait un croissant, qu'on prenait pour un
+     * défaut de rendu — et il reste au-dessus de l'horizon.
      */
-    $soleilX = 292 + ($graine % 12);
+    $soleilX = 240 + ($graine % 30);
     $soleilY = 84 + (intdiv($graine, 7) % 12);
     $feuilleX = 6 + (intdiv($graine, 13) % 20); // ancré en bas à gauche
     $horizon = 148 + (intdiv($graine, 31) % 8);
@@ -88,7 +86,7 @@
     <rect width="400" height="200" fill="url(#ciel-{{ $motif }}-{{ $graine % 997 }})" />
 
     {{-- Le soleil bas, dans le jaune de la palette. --}}
-    <circle cx="{{ $soleilX }}" cy="{{ $soleilY }}" r="28" fill="var(--scene-soleil)" opacity="0.85" />
+    <circle cx="{{ $soleilX }}" cy="{{ $soleilY }}" r="26" fill="var(--scene-soleil)" opacity="0.85" />
 
     {{-- Le sol, et la ligne d'horizon qui le pose. --}}
     <path d="M0 {{ $horizon }} H400 V200 H0 Z" fill="var(--scene-sol)" />

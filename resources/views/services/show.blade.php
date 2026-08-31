@@ -53,19 +53,64 @@
             <span class="truncate text-on-surface">{{ $service->title }}</span>
         </nav>
 
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div class="lg:col-span-2">
+        {{-- L'en-tête de page, au-dessus des deux colonnes comme dans la
+             maquette : titre, puis la ligne qui dit où, combien d'avis, et ce
+             que coûte la mise en relation. Il était auparavant sous la
+             galerie, dans la colonne de gauche — le visiteur découvrait donc
+             cinq cents pixels de photo avant de savoir ce qu'il regardait. --}}
+        <header class="flex flex-col gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                @if ($service->category)
+                    <a href="{{ route('services.index', ['category_id' => $service->category_id]) }}"
+                       class="rounded-full bg-primary-container/20 px-3 py-1 font-label-sm text-label-sm font-semibold text-primary hover:bg-primary-container/30">{{ $service->category->name }}</a>
+                @endif
+                <x-status-badge :status="$service->is_available ? 'active' : 'inactive'" />
+                <x-promoted-badge :profile="$profile" />
+            </div>
+
+            <h1 class="font-display-lg text-headline-lg text-on-surface md:text-display-lg">{{ $service->title }}</h1>
+
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 font-label-md text-label-md text-on-surface-variant">
+                @if ($service->city)
+                    <span class="flex items-center gap-1">
+                        <x-icon name="location_on" size="sm" />
+                        {{-- « location » est une adresse libre : quand le
+                             prestataire y a simplement retapé son quartier,
+                             l'afficher donnait « Douala, Bonamoussadi ·
+                             Bonamoussadi ». --}}
+                        {{ $service->city }}@if ($service->quarter), {{ $service->quarter }}@endif
+                        @if ($service->location && $service->location !== $service->quarter) · {{ $service->location }} @endif
+                    </span>
+                @endif
+
+                @if ($profile?->rating_count)
+                    <x-star-rating :rating="$profile->rating_avg" :count="$profile->rating_count" compact />
+                @endif
+
+                {{-- La maquette place ici un badge « paiement sécurisé ». Aucun
+                     paiement ne passe par SmartLink : la garantie qu'on peut
+                     réellement afficher est celle-là. --}}
+                <span class="flex items-center gap-1 text-primary">
+                    <x-icon name="verified_user" size="sm" />
+                    {{ __("Aucune commission") }}
+                </span>
+            </div>
+        </header>
+
+        <div class="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+            <div class="flex flex-col gap-6 lg:col-span-8">
                 {{-- Une image maîtresse plutôt qu'une mosaïque : c'est elle qui
-                     donne envie, les autres ne sont que des compléments. --}}
-                <div class="overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest">
-                    <div class="aspect-[16/9] bg-surface-container-high">
-                        @if ($service->images->isNotEmpty())
-                            <img src="{{ media_url($service->images->first()->path) }}" alt="{{ $service->title }}" class="h-full w-full object-cover">
-                        @else
-                            <div class="flex h-full w-full items-center justify-center">
-                                <x-category-icon :icon="$service->category?->icon" class="text-6xl text-primary/30" />
-                            </div>
-                        @endif
+                     donne envie, les autres ne sont que des compléments.
+
+                     Elle passe par `x-service-thumb`, qui empile la scène
+                     dessinée, la photo du métier et celle du prestataire, et
+                     retire chaque couche qui échoue. Écrite en `<img>` seule,
+                     elle laissait le rectangle cassé du navigateur dès qu'un
+                     fichier manquait, et un pictogramme pâle sur un aplat gris
+                     quand le prestataire n'avait rien déposé. --}}
+                <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-elevation-1">
+                    <div class="relative aspect-[16/9] bg-surface-container-high">
+                        <x-service-thumb :service="$service" />
                     </div>
 
                     @if ($service->images->count() > 1)
@@ -77,74 +122,85 @@
                     @endif
                 </div>
 
-                <div class="mt-6">
-                    <div class="flex flex-wrap items-center gap-2">
-                        @if ($service->category)
-                            <span class="rounded-full bg-primary-container/20 px-3 py-1 text-label-sm font-semibold text-primary">{{ $service->category->name }}</span>
-                        @endif
-                        <x-status-badge :status="$service->is_available ? 'active' : 'inactive'" />
-                        <x-promoted-badge :profile="$profile" />
-                    </div>
+                @if ($service->availability_note)
+                    <p class="flex items-start gap-2 rounded-xl border border-outline-variant bg-tertiary-container/15 px-4 py-3 font-body-md text-body-md text-on-surface shadow-elevation-1">
+                        <x-icon name="schedule" class="shrink-0 text-tertiary" />
+                        {{ $service->availability_note }}
+                    </p>
+                @endif
 
-                    <h1 class="mt-3 font-headline-lg text-headline-lg text-on-surface">{{ $service->title }}</h1>
-
-                    @if ($service->city)
-                        <p class="mt-2 flex items-center gap-1 text-label-md text-on-surface-variant">
-                            <x-icon name="location_on" />
-                            {{-- « location » est une adresse libre : quand le
-                                 prestataire y a simplement retapé son quartier,
-                                 l'afficher donnait « Douala, Bonamoussadi ·
-                                 Bonamoussadi ». --}}
-                            {{ $service->city }}@if ($service->quarter), {{ $service->quarter }}@endif
-                            @if ($service->location && $service->location !== $service->quarter) · {{ $service->location }} @endif
-                        </p>
-                    @endif
-
-                    @if ($service->availability_note)
-                        <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant shadow-elevation-1 bg-tertiary-container/15 px-4 py-3 text-label-md text-on-surface">
-                            <x-icon name="schedule" class="text-tertiary" />
-                            {{ $service->availability_note }}
-                        </p>
-                    @endif
-
-                    <h2 class="mt-8 font-headline-md text-headline-md text-on-surface">{{ __("Description") }}</h2>
-                    <p class="prose-measure mt-3 whitespace-pre-line leading-relaxed text-on-surface">{{ $service->description }}</p>
-                </div>
-
+                <section class="rounded-xl border border-outline-variant bg-surface-container-lowest p-5 shadow-elevation-1 md:p-8">
+                    <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("À propos de ce service") }}</h2>
+                    <p class="prose-measure mt-4 whitespace-pre-line font-body-md text-body-lg leading-relaxed text-on-surface-variant">{{ $service->description }}</p>
+                </section>
             </div>
 
-            {{-- Colonne d'action, collante au défilement sur grand écran. --}}
-            <aside class="lg:sticky lg:top-6 lg:self-start">
-                <div class="hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-5 lg:block">
-                    <div class="font-label-numeric text-headline-md text-on-surface">
-                        @if ($prix)
-                            {{ $prix }}
-                            @if ($service->price_unit)
-                                <span class="font-body-md text-body-md text-on-surface-variant">/ {{ $service->price_unit }}</span>
+            {{-- Colonne d'action, collante au défilement sur grand écran. Le
+                 prestataire et le prix tiennent dans une seule carte, comme
+                 dans la maquette : c'est la même décision — qui, et combien. --}}
+            <aside class="flex flex-col gap-4 lg:sticky lg:top-24 lg:col-span-4 lg:self-start">
+                <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-5 shadow-elevation-1">
+                    <div class="flex items-center gap-4 border-b border-outline-variant pb-4">
+                        <span class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-surface-container-lowest bg-surface-container-high shadow-elevation-1">
+                            @if ($profile->logo_path)
+                                <img src="{{ media_url($profile->logo_path) }}" alt="" loading="lazy" class="h-full w-full object-cover" onerror="this.remove()">
+                            @else
+                                <span class="font-headline-md text-headline-md font-bold text-primary">{{ Str::upper(Str::substr($profile->business_name, 0, 1)) }}</span>
                             @endif
-                        @else
-                            <span class="font-body-md text-body-md text-on-surface-variant">{{ __("Prix à convenir") }}</span>
-                        @endif
-                    </div>
-                    <p class="mt-1 text-label-sm text-on-surface-variant">{{ __("Prix indicatif — le montant se convient avec le prestataire.") }}</p>
+                        </span>
 
-                    <div class="mt-4">
-                        @include('partials.request-action', [
-                            'href' => route('requests.create', ['service_id' => $service->id]),
-                            'label' => __('Faire une demande'),
-                        ])
+                        <div class="min-w-0 flex-1">
+                            <h2 class="flex items-start gap-1 font-headline-sm text-headline-sm leading-tight text-on-surface">
+                                <a href="{{ route('providers.show', $profile) }}" class="rounded-lg hover:text-primary">{{ $profile->business_name }}</a>
+                                @if ($profile->is_verified)
+                                    <x-icon name="verified" size="sm" filled label="{{ __('Prestataire vérifié') }}" class="mt-1 shrink-0 text-primary" />
+                                @endif
+                            </h2>
+
+                            @if ($profile->category)
+                                <p class="mt-0.5 font-label-sm text-label-sm text-on-surface-variant">{{ $profile->category->name }}</p>
+                            @endif
+
+                            <div class="mt-1">
+                                @if ($profile->rating_count)
+                                    <x-star-rating :rating="$profile->rating_avg" :count="$profile->rating_count" compact />
+                                @else
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __("Pas encore d'avis") }}</span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
+
+                    {{-- Le prix ne s'affiche ici qu'à partir de `lg` : sous ce
+                         palier, la barre d'action fixée du bas le porte déjà,
+                         et le répéter poussait l'action hors de l'écran. --}}
+                    <div class="hidden pt-4 lg:block">
+                        <p class="font-label-sm text-label-sm font-semibold uppercase tracking-wide text-on-surface-variant">{{ __("Prix indicatif") }}</p>
+                        <p class="mt-1 font-label-numeric text-headline-md text-primary">
+                            @if ($prix)
+                                {{ $prix }}@if ($service->price_unit)<span class="font-label-numeric text-label-md text-on-surface-variant"> / {{ $service->price_unit }}</span>@endif
+                            @else
+                                <span class="font-body-md text-body-md text-on-surface-variant">{{ __("Prix à convenir") }}</span>
+                            @endif
+                        </p>
+                        <p class="mt-1 font-body-md text-label-sm text-on-surface-variant">{{ __("Prix indicatif — le montant se convient avec le prestataire.") }}</p>
+
+                        <div class="mt-4">
+                            @include('partials.request-action', [
+                                'href' => route('requests.create', ['service_id' => $service->id]),
+                                'label' => __('Faire une demande'),
+                            ])
+                        </div>
+                    </div>
+
+                    <a href="{{ route('providers.show', $profile) }}"
+                       class="mt-4 flex min-h-11 items-center justify-center gap-1 rounded-full border border-primary px-5 font-button-text text-label-md font-semibold text-primary transition-colors hover:bg-surface-container-low">
+                        {{ __("Voir le profil du prestataire") }}
+                    </a>
                 </div>
 
-                {{-- Une rangée seule a besoin d'un cadre : son filet du bas
-                     n'a rien à séparer, et le `[&>a]:border-0` le retire. --}}
-                <div class="mt-4 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest px-4 pb-2 [&>a]:border-0">
-                    <p class="pt-4 text-label-sm font-semibold uppercase tracking-wide text-on-surface-variant">{{ __("Le prestataire") }}</p>
-                    <x-provider-card :provider-profile="$profile" />
-                </div>
-
-                <p class="mt-4 flex items-start gap-2 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-low px-4 py-3 text-label-sm leading-relaxed text-on-surface-variant">
-                    <x-icon name="shield" class="text-primary" />
+                <p class="flex items-start gap-2 rounded-xl border border-outline-variant bg-surface-container-low px-4 py-3 font-body-md text-label-sm leading-relaxed text-on-surface-variant shadow-elevation-1">
+                    <x-icon name="shield" class="shrink-0 text-primary" />
                     {{ __("SmartLink ne prend aucune commission et ne perçoit aucun paiement : le règlement se convient directement avec le prestataire.") }}
                 </p>
             </aside>
@@ -157,8 +213,15 @@
              descend sous la grille — pleine largeur sur grand écran par la
              même occasion. --}}
         @if ($relatedServices->isNotEmpty())
-            <div class="mt-12">
-                <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Services similaires") }}</h2>
+            <div class="mt-12 border-t border-outline-variant pt-8">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Services similaires à proximité") }}</h2>
+                    <a href="{{ route('services.index', ['category_id' => $service->category_id]) }}"
+                       class="flex items-center gap-1 font-label-md text-label-md text-primary hover:underline">
+                        {{ __("Tout le métier") }}
+                        <x-icon name="chevron_right" size="sm" />
+                    </a>
+                </div>
                 <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     @foreach ($relatedServices as $related)
                         <x-service-card :service="$related" />

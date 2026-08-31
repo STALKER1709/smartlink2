@@ -36,23 +36,25 @@
     ];
 @endphp
 
+{{-- Pas de bandeau d'en-tête ici : le héros porte déjà le titre de la page.
+     Les deux ensemble donnaient « Centre d'aide » puis « Comment pouvons-nous
+     vous aider ? », deux titres pour une page qui n'en a qu'un. --}}
 <x-app-layout :titre="__('seo.help')" :description="__('seo.help_description')">
-    <x-slot name="header">
-        <x-page-header :title="__('Centre d\'aide')" />
-    </x-slot>
-
     <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
-        <div class="max-w-2xl">
-            <h1 class="mb-4 font-headline-lg text-headline-lg text-primary md:font-display-lg md:text-display-lg">
+        {{-- Le héros centré de la maquette : un panneau, un titre, une phrase,
+             une barre de recherche. Aligné à gauche sur 1 150 px, le tout
+             laissait les deux tiers de la ligne vides. --}}
+        <section class="flex flex-col items-center gap-4 rounded-xl border border-outline-variant bg-surface-container-low px-6 py-12 text-center md:py-16">
+            <h1 class="font-headline-lg text-headline-lg text-primary md:font-display-lg md:text-display-lg">
                 {{ __("Comment pouvons-nous vous aider ?") }}
             </h1>
-            <p class="mb-8 font-body-lg text-body-lg text-on-surface-variant">
+            <p class="max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
                 {{ __("Trouvez des réponses rapides à vos questions, ou demandez à l'assistant SmartLink.") }}
             </p>
 
             {{-- La recherche filtre les questions sur place, sans recharger :
                  neuf réponses ne valent pas un aller-retour au serveur. --}}
-            <div class="relative w-full max-w-xl" x-data="{ q: '' }" x-init="$watch('q', v => {
+            <div class="relative mt-2 w-full max-w-2xl" x-data="{ q: '' }" x-init="$watch('q', v => {
                 const terme = v.trim().toLowerCase();
                 document.querySelectorAll('[data-faq]').forEach(el => {
                     el.hidden = terme !== '' && ! el.dataset.faq.includes(terme);
@@ -65,15 +67,15 @@
                 <label for="faq-search" class="sr-only">{{ __("Rechercher de l'aide") }}</label>
                 <input id="faq-search" type="search" x-model="q"
                        placeholder="{{ __('Rechercher de l\'aide (ex : paiements, compte…)') }}"
-                       class="w-full rounded-xl border border-outline-variant bg-surface py-4 pl-12 pr-4 font-body-md text-body-md text-on-surface shadow-elevation-1 transition-all placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary-container/20">
+                       class="w-full rounded-full border border-outline-variant bg-surface py-4 pl-12 pr-4 font-body-md text-body-md text-on-surface shadow-elevation-1 transition-all placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary-container/20">
             </div>
-        </div>
+        </section>
 
         {{-- Un sommaire de quatre pavés menait aux quatre sections
              immédiatement en dessous, et répétait leurs titres. Neuf
              questions ne se naviguent pas : elles se lisent. --}}
 
-        <div class="mt-10 space-y-8">
+        <div class="mx-auto mt-10 max-w-3xl space-y-8">
             @foreach ($faqs as $key => $section)
                 <div id="faq-{{ $key }}" data-faq-section>
                     <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">{{ $section['label'] }}</h2>
@@ -92,7 +94,7 @@
             @endforeach
         </div>
 
-        <div class="mt-10 bg-secondary-container/20 border border-outline-variant rounded-xl p-6">
+        <div class="mx-auto mt-10 max-w-3xl rounded-xl border border-outline-variant bg-secondary-container/20 p-6">
             <h2 class="font-headline-md text-headline-md text-primary mb-2">{{ __("Besoin d'une assistance personnalisée ?") }}</h2>
             <p class="text-label-md text-on-surface-variant">
                 {{ __("Utilisez l'assistant SmartLink (icône en bas à droite de l'écran) pour poser directement votre question.") }}
