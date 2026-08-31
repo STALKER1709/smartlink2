@@ -88,10 +88,9 @@
                                                 class="rounded-full border border-outline px-4 py-2 font-button-text text-button-text text-on-surface-variant transition-colors hover:bg-surface-container-low">
                                             {{ __("Rejeter") }}
                                         </button>
-                                        <button type="submit" name="status" value="{{ \App\Models\Dispute::STATUS_RESOLVED }}"
-                                                class="rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
+                                        <x-primary-button name="status" value="{{ \App\Models\Dispute::STATUS_RESOLVED }}">
                                             {{ __("Résolu") }}
-                                        </button>
+                                        </x-primary-button>
                                     </div>
                                 </form>
                             @else

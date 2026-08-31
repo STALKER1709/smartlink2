@@ -36,9 +36,9 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-label-md font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+                <x-primary-button>
                     {{ __("Filtrer") }}
-                </button>
+                </x-primary-button>
             </div>
         </form>
 

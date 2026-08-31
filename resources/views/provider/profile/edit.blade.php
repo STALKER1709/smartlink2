@@ -205,9 +205,9 @@
                 </div>
 
                 <div class="mt-8 flex justify-end border-t border-outline-variant pt-5">
-                    <button type="submit" class="rounded-full bg-primary px-5 py-2.5 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <x-primary-button>
                         {{ __('ui.save') }}
-                    </button>
+                    </x-primary-button>
                 </div>
             </form>
         </div>

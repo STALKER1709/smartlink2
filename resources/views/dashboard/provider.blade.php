@@ -105,9 +105,9 @@
                             </form>
                             <form action="{{ route('requests.accept', $demande) }}" method="POST" class="flex-1 md:flex-none">
                                 @csrf
-                                <button type="submit" class="w-full rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
+                                <x-primary-button class="w-full">
                                     {{ __("Accepter") }}
-                                </button>
+                                </x-primary-button>
                             </form>
                         </div>
                     </article>

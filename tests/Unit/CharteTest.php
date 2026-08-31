@@ -159,6 +159,69 @@ class CharteTest extends TestCase
             'Rayon sans rôle — 12 px encadre, la pilule s\'actionne, 8 px illustre : '.implode(', ', $fautifs));
     }
 
+    /**
+     * Un bouton d'action passe par son composant.
+     *
+     * Cinquante-trois boutons primaires étaient écrits à la main, en
+     * quarante-trois formulations : px-4, px-5, px-6, px-8 ; py-2, py-2.5,
+     * py-3, py-[14px] ; `text-label-md` ici, `text-button-text` là. La cause
+     * tenait à ce que le composant ne rendait qu'un `<button>` alors que
+     * dix-sept de ces boutons étaient des liens — il rend maintenant les deux.
+     */
+    public function test_action_buttons_go_through_their_component(): void
+    {
+        // Quatre écritures à la main subsistent, et pour trois raisons
+        // différentes qu'il vaut mieux nommer que noyer :
+        $tolerees = [
+            // Géométrie propre : une pastille de navigation sans rembourrage
+            // vertical, dimensionnée par sa cible tactile de 44 px.
+            'layouts/navigation.blade.php',
+            // Le bouton de rédaction assistée porte des liaisons Alpine
+            // (`@click`, `:disabled`) : `:disabled` sur un composant Blade
+            // serait lu comme une expression PHP, et « working || ! notes… »
+            // n'en est pas une.
+            'provider/services/form.blade.php',
+            // Celui-ci n'est pas justifié, il est différé : l'accueil vient
+            // d'être refait d'après la maquette amont, et ses deux appels à
+            // l'action y ont été mesurés. Les ramener au composant demande de
+            // vérifier d'abord que la maquette ne dit pas autre chose — ses
+            // deux rembourrages diffèrent pourtant l'un de l'autre.
+            'home.blade.php',
+        ];
+
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            if (in_array($vue, $tolerees, true)) {
+                continue;
+            }
+
+            foreach (explode("\n", $this->contenuSansCommentaires($vue)) as $numero => $ligne) {
+                if (! preg_match('/class="([^"]*)"/', $ligne, $m)) {
+                    continue;
+                }
+
+                $classes = $m[1];
+
+                // La signature d'un bouton d'action : la pilule, le fond de
+                // marque, le texte qui va dessus, et la police des boutons.
+                // Une pastille de statut n'a pas la dernière ; un bouton
+                // d'icône n'a pas la troisième.
+                $signature = str_contains($classes, 'rounded-full')
+                    && str_contains($classes, 'bg-primary')
+                    && str_contains($classes, 'text-on-primary')
+                    && str_contains($classes, 'font-button-text');
+
+                if ($signature) {
+                    $fautifs[] = $vue.':'.($numero + 1);
+                }
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Bouton d\'action écrit à la main plutôt que par x-primary-button : '.implode(', ', $fautifs));
+    }
+
     public function test_depth_goes_through_the_three_elevation_steps(): void
     {
         $fautifs = [];

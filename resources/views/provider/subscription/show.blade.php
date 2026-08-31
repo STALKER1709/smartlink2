@@ -120,8 +120,7 @@
                             {{ __('ui.subscription.free_later_hint', ['days' => $subscription->daysRemaining()]) }}
                         </p>
                     @else
-                        <a href="{{ route('provider.subscription.checkout', $plan) }}"
-                           class="mt-6 block rounded-full bg-primary px-4 py-2.5 text-center text-label-md font-button-text font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                        <x-primary-button :href="route('provider.subscription.checkout', $plan)" class="mt-6 w-full">
                             {{-- « Renouveler » n'a pas de sens pour un palier gratuit :
                                  il se reconduit seul et rien n'est à régler. --}}
                             @if ($plan->isFree())
@@ -131,7 +130,7 @@
                             @else
                                 {{ __('ui.subscription.choose_plan') }}
                             @endif
-                        </a>
+                        </x-primary-button>
                     @endif
                 </div>
             @endforeach

@@ -11,9 +11,9 @@
                 @include('provider.services.form', ['service' => null, 'categories' => $categories])
 
                 <div class="mt-6 flex justify-end">
-                    <button type="submit" class="rounded-full bg-primary px-4 py-2 text-label-md font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+                    <x-primary-button>
                         {{ __("Publier le service") }}
-                    </button>
+                    </x-primary-button>
                 </div>
             </form>
         </div>
