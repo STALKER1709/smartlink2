@@ -170,8 +170,8 @@ class CharteTest extends TestCase
      */
     public function test_action_buttons_go_through_their_component(): void
     {
-        // Quatre écritures à la main subsistent, et pour trois raisons
-        // différentes qu'il vaut mieux nommer que noyer :
+        // Deux écritures à la main subsistent, chacune pour une raison
+        // qu'il vaut mieux nommer que noyer :
         $tolerees = [
             // Géométrie propre : une pastille de navigation sans rembourrage
             // vertical, dimensionnée par sa cible tactile de 44 px.
@@ -181,12 +181,6 @@ class CharteTest extends TestCase
             // serait lu comme une expression PHP, et « working || ! notes… »
             // n'en est pas une.
             'provider/services/form.blade.php',
-            // Celui-ci n'est pas justifié, il est différé : l'accueil vient
-            // d'être refait d'après la maquette amont, et ses deux appels à
-            // l'action y ont été mesurés. Les ramener au composant demande de
-            // vérifier d'abord que la maquette ne dit pas autre chose — ses
-            // deux rembourrages diffèrent pourtant l'un de l'autre.
-            'home.blade.php',
         ];
 
         $fautifs = [];

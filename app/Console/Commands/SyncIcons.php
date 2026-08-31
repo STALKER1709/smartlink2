@@ -169,6 +169,13 @@ class SyncIcons extends Command
             // ci-dessus. C'est ainsi que `add_circle` s'est affiché en
             // toutes lettres dans le bouton de la colonne latérale : le
             // symptôme exact que ce mécanisme sert à éviter.
+            //
+            // D'où la convention, qui n'est pas cosmétique : dans une vue, une
+            // icône se nomme, elle ne se pose pas en première position d'un
+            // tableau. `['handshake', $titre, $texte]` a échappé à ce motif, et
+            // « HANDSHAKE » s'est écrit en toutes lettres sur l'accueil —
+            // pendant que `IconSubsetTest` restait vert, puisqu'une icône que
+            // ce scan ne voit pas ne peut pas lui manquer.
             preg_match_all('/\x27icone?\x27\s*=>\s*\x27([a-z0-9_]+)\x27/', $contenu, $m);
             $noms = array_merge($noms, $m[1]);
 

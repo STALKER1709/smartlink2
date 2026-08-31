@@ -226,11 +226,11 @@
                                      page leur répétait six fois la même
                                      phrase grise. --}}
                                 @if (auth()->guest() || auth()->user()->can('create', \App\Models\ServiceRequest::class))
-                                    <a href="{{ route('requests.create', ['provider_id' => $providerProfile->user_id]) }}"
-                                       class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-button-text font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                                    <x-primary-button :href="route('requests.create', ['provider_id' => $providerProfile->user_id])"
+                                                      class="w-full">
                                         <x-icon name="mail" />
                                         Contacter
-                                    </a>
+                                    </x-primary-button>
                                 @else
                                     <a href="{{ route('providers.show', $providerProfile) }}"
                                        class="inline-flex w-full items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest px-6 py-3 font-button-text font-semibold text-on-surface transition-colors hover:border-primary/50 hover:shadow-elevation-2">
@@ -267,8 +267,11 @@
             <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">{{ __('Comment ça marche') }}</h2>
 
             <ol class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-                {{-- Des clés nommées : une ligature écrite en position dans
-                     un tableau échappe au relevé des icônes. --}}
+                {{-- L'icône est nommée, pas positionnelle : `icons:sync`
+                     reconnaît « 'icone' => '…' » et ne voit pas une valeur
+                     posée en première position d'un tableau. Une icône qu'il
+                     n'embarque pas s'affiche en toutes lettres — « HANDSHAKE »
+                     est resté écrit ainsi sur l'accueil. --}}
                 @foreach ([
                     ['icone' => 'search', 'titre' => __('Décrivez votre besoin'), 'texte' => __('Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.')],
                     ['icone' => 'forum', 'titre' => __('Comparez et contactez'), 'texte' => __('Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.')],
@@ -316,10 +319,10 @@
                     {{ __('Publiez vos services, recevez des demandes, développez votre clientèle.') }}
                     <strong class="font-semibold text-inverse-on-surface">{{ __("30 jours d'essai gratuit") }}</strong>{{ __(', sans engagement.') }}
                 </p>
-                <a href="{{ route('register') }}" class="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
+                <x-primary-button :href="route('register')" class="mt-7">
                     {{ __('Créer un compte prestataire') }}
                     <x-icon name="arrow_forward" />
-                </a>
+                </x-primary-button>
             </div>
         </section>
     @endguest
