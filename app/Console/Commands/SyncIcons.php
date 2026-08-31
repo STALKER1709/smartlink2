@@ -172,6 +172,18 @@ class SyncIcons extends Command
             preg_match_all('/\x27icone?\x27\s*=>\s*\x27([a-z0-9_]+)\x27/', $contenu, $m);
             $noms = array_merge($noms, $m[1]);
 
+            // Une ligature écrite en clair dans l'expression passée à
+            // `:name` — le plus souvent une alternative, `$actif ?
+            // 'check_circle' : 'pause_circle'`. Les deux branches sont des
+            // littéraux, mais aucune n'est un attribut : sans cette passe,
+            // celle qui ne sert qu'à un état rare s'affiche en toutes lettres
+            // le jour où cet état arrive.
+            preg_match_all('/:name="([^"]*)"/', $contenu, $expressions);
+            foreach ($expressions[1] as $expression) {
+                preg_match_all('/\x27([a-z][a-z0-9_]*)\x27/', $expression, $litteraux);
+                $noms = array_merge($noms, $litteraux[1]);
+            }
+
             // Le composant de catégorie tient sa propre table de correspondance :
             // ces ligatures n'apparaissent nulle part ailleurs dans le balisage.
             if ($fichier->getFilename() === 'category-icon.blade.php') {

@@ -117,7 +117,7 @@
                              bas : elle est le repli si l'hôte ne répond pas, et
                              elle rattache la vignette au reste du site, où le
                              métier se lit toujours au même dessin. --}}
-                        @php($photo = image_categorie($category->name))
+                        @php $photo = image_categorie($category->name); @endphp
 
                         <div class="relative h-24 w-full overflow-hidden">
                             <x-category-scene :name="$category->name" class="absolute inset-0" />
@@ -267,11 +267,14 @@
             <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">{{ __('Comment ça marche') }}</h2>
 
             <ol class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                {{-- Des clés nommées : une ligature écrite en position dans
+                     un tableau échappe au relevé des icônes. --}}
                 @foreach ([
-                    ['search', __('Décrivez votre besoin'), __('Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.')],
-                    ['forum', __('Comparez et contactez'), __('Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.')],
-                    ['handshake', __('Convenez entre vous'), __('Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission.')],
-                ] as $index => [$icon, $titre, $texte])
+                    ['icone' => 'search', 'titre' => __('Décrivez votre besoin'), 'texte' => __('Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.')],
+                    ['icone' => 'forum', 'titre' => __('Comparez et contactez'), 'texte' => __('Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.')],
+                    ['icone' => 'handshake', 'titre' => __('Convenez entre vous'), 'texte' => __('Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission.')],
+                ] as $index => $etape)
+                    @php ['icone' => $icon, 'titre' => $titre, 'texte' => $texte] = $etape; @endphp
                     <li class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-6">
                         <div class="flex items-center gap-3">
                             <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container/20 text-primary">
@@ -289,7 +292,7 @@
 
     {{-- ══ Appel aux prestataires ══ --}}
     @guest
-        @php($photoCta = image_photo(config('imagery.cta')))
+        @php $photoCta = image_photo(config('imagery.cta')); @endphp
 
         {{-- La photo passe *derrière* le fond sombre, jamais à sa place : si
              l'hôte ne répond pas, le bandeau reste exactement ce qu'il était.

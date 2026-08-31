@@ -29,11 +29,17 @@
              Les trois chiffres portent donc sur ce qui existe — les
              abonnements réglés. --}}
         <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+            {{-- Des clés nommées, et non un tuple : une ligature écrite en
+                 position dans un tableau échappe au relevé des icônes, et
+                 s'affiche alors en toutes lettres. --}}
             @foreach ([
-                ['Réglé cette année', $regleCetteAnnee, 'trending_up', 'text-primary'],
-                ['En attente', $enAttente, 'pending', 'text-tertiary'],
-                ['Total versé à SmartLink', $totalVerse, 'receipt_long', 'text-on-surface-variant'],
-            ] as [$libelle, $montant, $icone, $teinte])
+                ['libelle' => 'Réglé cette année', 'montant' => $regleCetteAnnee, 'icone' => 'trending_up', 'teinte' => 'text-primary'],
+                ['libelle' => 'En attente', 'montant' => $enAttente, 'icone' => 'pending', 'teinte' => 'text-tertiary'],
+                ['libelle' => 'Total versé à SmartLink', 'montant' => $totalVerse, 'icone' => 'receipt_long', 'teinte' => 'text-on-surface-variant'],
+            ] as $tuile)
+                @php
+                    ['libelle' => $libelle, 'montant' => $montant, 'icone' => $icone, 'teinte' => $teinte] = $tuile;
+                @endphp
                 <div class="flex h-[120px] flex-col justify-between rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-4">
                     <div class="flex items-center justify-between gap-2 text-on-surface-variant">
                         <span class="text-label-md">{{ $libelle }}</span>

@@ -88,7 +88,7 @@
                  désignent une route exacte, là où `principaux()` couvre une
                  famille (`requests.*`). C'est la route qui sert de motif. --}}
             @foreach ($secondaires as $entree)
-                @php($actif = request()->routeIs($entree['route']))
+                @php $actif = request()->routeIs($entree['route']); @endphp
                 <li>
                     <a href="{{ route($entree['route']) }}"
                        @class([$lienBase, $lienActif => $actif, $lienInerte => ! $actif])

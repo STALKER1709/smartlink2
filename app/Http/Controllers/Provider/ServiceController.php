@@ -18,15 +18,40 @@ class ServiceController extends Controller
 {
     public function index(Request $request): View
     {
-        $services = $request->user()->services()
+        $base = $request->user()->services();
+
+        /*
+         * Les trois onglets de la maquette. « Actif » n'est pas une colonne :
+         * une annonce travaille quand elle est publiée *et* disponible. Un
+         * prestataire qui décoche « disponible » le temps d'un déplacement
+         * s'attend à la retrouver en pause, pas parmi les actives.
+         */
+        $compteurs = [
+            'tous' => (clone $base)->count(),
+            'actifs' => (clone $base)->where('status', Service::STATUS_ACTIVE)->where('is_available', true)->count(),
+        ];
+        $compteurs['pause'] = $compteurs['tous'] - $compteurs['actifs'];
+
+        $statut = in_array($request->query('statut'), ['actifs', 'pause'], true)
+            ? $request->query('statut')
+            : 'tous';
+
+        $services = $base
+            ->when($statut === 'actifs', fn ($q) => $q->where('status', Service::STATUS_ACTIVE)->where('is_available', true))
+            ->when($statut === 'pause', fn ($q) => $q->where(fn ($w) => $w
+                ->where('status', '!=', Service::STATUS_ACTIVE)
+                ->orWhere('is_available', false)))
             ->with(['category', 'images'])
             // Le seul chiffre qui dise si une annonce travaille.
             ->withCount('requests')
             ->latest()
-            ->paginate(10);
+            ->paginate(12)
+            ->withQueryString();
 
         return view('provider.services.index', [
             'services' => $services,
+            'compteurs' => $compteurs,
+            'statut' => $statut,
         ]);
     }
 

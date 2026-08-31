@@ -222,6 +222,34 @@ class CharteTest extends TestCase
             'Bouton d\'action écrit à la main plutôt que par x-primary-button : '.implode(', ', $fautifs));
     }
 
+    /**
+     * Une seule écriture pour `@php`, et ce n'est pas une question de goût.
+     *
+     * Blade extrait d'abord les blocs `@php … @endphp` du fichier, avec un
+     * motif non gourmand qui part du premier `@php` rencontré. La forme
+     * courte `@php(...)` en est un : mêlée à un bloc situé plus bas, elle en
+     * devient l'ouverture, et tout ce qui les sépare est recopié tel quel dans
+     * la vue compilée — directives comprises.
+     *
+     * Rien ne le signale. Le fichier compile, la page rend, et l'erreur qui
+     * finit par sortir désigne une variable indéfinie dans une boucle qui n'a
+     * jamais été compilée. C'est arrivé sur « Mes services », où la moitié de
+     * l'écran est sortie en texte brut.
+     */
+    public function test_php_directives_keep_a_single_form(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            if (preg_match('/@php\s*\(/', $this->contenu($vue))) {
+                $fautifs[] = $vue;
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Forme courte `@php(...)` : employer `@php … @endphp` — '.implode(', ', $fautifs));
+    }
+
     public function test_depth_goes_through_the_three_elevation_steps(): void
     {
         $fautifs = [];

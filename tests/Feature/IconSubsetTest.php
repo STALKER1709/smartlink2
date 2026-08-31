@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\SyncIcons;
+use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
 
 /**
@@ -51,6 +52,34 @@ class IconSubsetTest extends TestCase
             'Le fichier de police ne sert pas la liste configurée : les icônes ajoutées '
             .'depuis s\'afficheront en toutes lettres. Lancer php artisan icons:sync '
             .'depuis une machine ayant accès à fonts.googleapis.com.');
+    }
+
+    /**
+     * Une ligature écrite en position dans un tableau est invisible au relevé.
+     *
+     * Les trois motifs du relevé cherchent un attribut — `name="…"`,
+     * `icon="…"` — ou la clé `'icone' => '…'`. Une vue qui énumère des tuples
+     * (`['done_all', 'Prestations…', …]`) puis les déstructure ne présente
+     * aucune des trois formes : l'icône disparaît du sous-ensemble, et
+     * « DONE_ALL » s'imprime en toutes lettres dans la pastille.
+     *
+     * Les deux tests ci-dessus ne le voient pas non plus : ils lisent le dépôt
+     * avec ce même relevé, et sont donc d'accord avec lui sur ce qu'ils
+     * ignorent. C'est cette règle-ci qui ferme la porte.
+     */
+    public function test_no_view_hides_an_icon_in_a_positional_tuple(): void
+    {
+        $fautives = [];
+
+        foreach (Finder::create()->files()->in(resource_path('views'))->name('*.blade.php') as $fichier) {
+            if (preg_match('/\bas\s*(?:\$\w+\s*=>\s*)?\[[^\]]*\$icone?\b/', $fichier->getContents())) {
+                $fautives[] = $fichier->getRelativePathname();
+            }
+        }
+
+        $this->assertSame([], $fautives,
+            'Icône déstructurée depuis un tuple : employer une clé nommée `\'icone\' => \'…\'` — '
+            .implode(', ', $fautives));
     }
 
     public function test_no_layout_calls_google_fonts(): void

@@ -41,7 +41,7 @@
              vingt-six écrans. Un visiteur de passage garde la barre haute :
              il n'a pas de destinations à lui, et une colonne vide ne
              servirait qu'à rétrécir la page. --}}
-        @php($colonne = auth()->check())
+        @php $colonne = auth()->check(); @endphp
 
         <div @class(['min-h-screen bg-surface', 'xl:pl-64' => $colonne])>
             @if ($colonne)
