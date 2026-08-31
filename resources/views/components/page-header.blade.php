@@ -1,4 +1,4 @@
-@props(['title', 'subtitle' => null, 'back' => null, 'backLabel' => 'Retour'])
+@props(['title', 'subtitle' => null, 'back' => null, 'backLabel' => 'Retour', 'heading' => 'h2'])
 
 {{-- En-tête de page unifié : titre à gauche, actions à droite, et un lien de
      retour quand la page est une feuille de navigation. Sur mobile les actions
@@ -16,7 +16,10 @@
         {{-- La maquette donne au titre de page le palier au-dessus de celui
              d'une carte, et un sous-titre en corps de lecture : c'est ce qui
              distingue l'en-tête d'un écran d'un simple titre de section. --}}
-        <h2 class="font-headline-lg text-headline-md text-on-surface md:text-headline-lg">{{ $title }}</h2>
+        {{-- `h1` sur les pages publiques, `h2` ailleurs : une page n'a
+             qu'un seul titre de premier niveau, et sur les écrans connectés
+             c'est le contenu qui le porte. --}}
+        <{{ $heading }} class="font-headline-lg text-headline-md text-on-surface md:text-headline-lg">{{ $title }}</{{ $heading }}>
 
         {{-- Le sous-titre accepte une chaîne ou un fragment : certaines fiches
              y placent la date avec son pictogramme, d'autres une simple

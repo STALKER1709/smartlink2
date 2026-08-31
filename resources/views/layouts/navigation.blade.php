@@ -35,11 +35,15 @@
                 <div class="flex shrink-0 items-center">
                     <a href="{{ route('home') }}" class="-ml-2 inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-primary transition-colors hover:bg-surface-container-low" aria-label="{{ __('SmartLink — accueil') }}">
                         <x-application-logo class="block h-8 w-8" />
-                        <span class="hidden font-headline-md text-headline-md text-primary sm:inline">SmartLink</span>
+                        {{-- Le mot-logo s'efface entre 768 et 1023 px, le seul palier où la
+                             barre porte à la fois les trois destinations, le sélecteur de
+                             langue et les deux actions de compte : à 768 px il manquait
+                             une trentaine de pixels, et « Aide » passait sous FR/EN. --}}
+                        <span class="hidden font-headline-md text-headline-md text-primary sm:inline md:hidden lg:inline">SmartLink</span>
                     </a>
                 </div>
 
-                <div class="hidden min-w-0 space-x-5 sm:-my-px sm:ms-8 sm:flex sm:flex-nowrap">
+                <div class="hidden min-w-0 space-x-5 md:-my-px md:ms-8 md:flex md:flex-nowrap">
                     @foreach ($liens as $lien)
                         <x-nav-link :href="route($lien['route'])" :active="request()->routeIs($lien['motif'])">
                             {{ $lien['libelle'] }}
@@ -48,7 +52,7 @@
                 </div>
             </div>
 
-            <div class="hidden shrink-0 items-center gap-2 sm:ms-6 sm:flex">
+            <div class="hidden shrink-0 items-center gap-2 md:ms-6 md:flex">
                 <div class="flex overflow-hidden rounded-full border border-outline-variant text-label-sm font-semibold">
                     <a href="{{ route('locale.switch', 'fr') }}"
                        class="inline-flex h-11 min-w-11 items-center justify-center px-3 font-label-md text-label-md transition-colors {{ $locale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">FR</a>
@@ -104,7 +108,7 @@
                 @endauth
             </div>
 
-            <div class="-me-2 flex items-center gap-1 sm:hidden">
+            <div class="-me-2 flex items-center gap-1 md:hidden">
                 @auth
                     <a href="{{ route('notifications.index') }}" class="relative inline-flex items-center rounded-full p-2 text-on-surface-variant" title="{{ __('Notifications') }}">
                         <x-icon name="notifications" style="font-size: 22px;" />
@@ -131,7 +135,7 @@
         </div>
     </div>
 
-    <div id="menu-mobile" x-show="open" x-cloak class="sm:hidden">
+    <div id="menu-mobile" x-show="open" x-cloak class="md:hidden">
         <div class="space-y-1 pb-3 pt-2">
             @foreach ($liens as $lien)
                 <x-responsive-nav-link :href="route($lien['route'])" :active="request()->routeIs($lien['motif'])">

@@ -53,8 +53,22 @@
 
     // Stable pour un nom donné : la même catégorie garde sa scène.
     $graine = crc32((string) ($seed ?? $name ?? 'smartlink'));
-    $soleilX = 320 + ($graine % 44);          // ancré en haut à droite
-    $soleilY = 34 + (intdiv($graine, 7) % 16);
+    /*
+     * Le soleil vit dans une fenêtre étroite, et ce n'est pas un caprice.
+     *
+     * `slice` recadre la scène sur le centre : une vignette large en montre la
+     * bande 57–343, une vignette étroite (la carte couchée du téléphone)
+     * seulement 152–248. Un soleil posé ailleurs finit coupé par un bord — on
+     * y voyait un croissant orange sous le cœur des favoris, et un éclat sur
+     * la tranche des vignettes de téléphone.
+     *
+     * Entre 264 et 332, il est donc entier sur les cartes debout et absent
+     * des vignettes couchées, où il n'y avait de toute façon pas de place.
+     * En hauteur il passe sous la rangée des pastilles et reste au-dessus de
+     * l'horizon.
+     */
+    $soleilX = 292 + ($graine % 12);
+    $soleilY = 84 + (intdiv($graine, 7) % 12);
     $feuilleX = 6 + (intdiv($graine, 13) % 20); // ancré en bas à gauche
     $horizon = 148 + (intdiv($graine, 31) % 8);
 @endphp
@@ -74,7 +88,7 @@
     <rect width="400" height="200" fill="url(#ciel-{{ $motif }}-{{ $graine % 997 }})" />
 
     {{-- Le soleil bas, dans le jaune de la palette. --}}
-    <circle cx="{{ $soleilX }}" cy="{{ $soleilY }}" r="34" fill="var(--scene-soleil)" opacity="0.9" />
+    <circle cx="{{ $soleilX }}" cy="{{ $soleilY }}" r="28" fill="var(--scene-soleil)" opacity="0.85" />
 
     {{-- Le sol, et la ligne d'horizon qui le pose. --}}
     <path d="M0 {{ $horizon }} H400 V200 H0 Z" fill="var(--scene-sol)" />

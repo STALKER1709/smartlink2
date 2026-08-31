@@ -379,14 +379,41 @@ s'épaissit et verdit au focus, rien de plus. Treize d'entre eux traînaient un
 - **Titre de section** (`x-section-header`) — sur mobile, le lien « Voir tout »
   passe **sous** le titre. Posé à côté, il tenait la ligne de base de la
   deuxième ligne d'un titre qui passe presque toujours à la ligne à 390 px.
-- **Rangée de service — une liste, pas une carte.** Un annuaire se parcourt de haut en
-  bas : vignette carrée à gauche, métier en capitales, titre, prestataire et lieu, prix
-  en JetBrains Mono. Les rangées se séparent par un filet et **ne portent aucune boîte**.
-  Deux colonnes seulement à partir de `lg`, et ce sont toujours des rangées.
+- **Carte de service — debout sur écran, couchée sur téléphone.** La maquette
+  compose ses trois surfaces de services — accueil, catalogue, services
+  similaires — en cartes : vignette de 192 px surmontée de la pastille du
+  métier et du cœur des favoris, puis titre, prestataire, note, et un pied
+  séparé d'un filet qui porte le lieu à gauche et le prix à droite.
 
-  Le filet appartient à la rangée, jamais au conteneur : `divide-y` de Tailwind remet
-  `border-bottom` à zéro sur tous les enfants **sauf le premier**, ce qui ne laisse qu'une
-  seule ligne visible dès qu'on passe en deux colonnes.
+  Cette carte a d'abord été une rangée de liste, et la raison en était juste :
+  répétée quinze fois avec un aplat gris en guise d'image, elle ne
+  hiérarchisait rien. Ce sont les scènes dessinées qui ont retiré l'argument —
+  chaque métier a maintenant une image à lui.
+
+  Sous `sm` elle se couche : vignette de 96 px à gauche, texte à droite. Douze
+  cartes debout font une page de 6 500 px sur un téléphone, soit quatre écrans
+  de défilement pour trois annonces. Le cœur disparaît alors — ses 48 px de
+  dégagement ramenaient la colonne de texte à 186 px, où « Douala » s'abrégeait
+  en « Dou… » — et le métier repasse en ligne de capitales au-dessus du titre,
+  faute de tenir en pastille sur 96 px.
+
+- **Catalogue — filtres à gauche, résultats à droite.** Douze colonnes : les
+  filtres dans un `<aside>` collant (4/12 à `lg`, 3/12 à `xl`), les résultats
+  dans une grille de cartes (1, puis 2 à `sm`, puis 3 à `xl`). La barre de
+  résultats porte le compte à gauche et le tri à droite.
+
+  Deux écarts sur la maquette, tous deux mesurés. La séparation arrive à `lg`
+  et non à `md` : à 768 px, une colonne de 3/12 fait 158 px, où aucun de ces
+  champs ne tient. Et le panneau reste replié derrière un `<summary>` sous
+  `lg` — un mur de champs y repousserait les résultats sous la ligne de
+  flottaison. C'est `.filtres` dans `app.css` qui neutralise ce repli sur grand
+  écran, en deux règles : les navigateurs récents masquent le contenu d'un
+  `<details>` fermé par `content-visibility` sur `::details-content`, plus par
+  `display` sur ses enfants.
+
+  Le sélecteur de tri appartient au formulaire des filtres par son attribut
+  `form`, bien qu'il soit rendu ailleurs dans la page : un second formulaire
+  perdrait les critères en cours à chaque changement de tri.
 - **Rangée de chiffres** — les colonnes se séparent par un **écart d'un pixel** sur
   le fond du conteneur, jamais par `divide-x` : dans une grille, celui-ci pose une
   bordure à gauche de tout enfant sauf le premier, ce qui met un trait contre le bord
@@ -505,11 +532,12 @@ s'épaissit et verdit au focus, rien de plus. Treize d'entre eux traînaient un
 
 **À ne pas faire**
 
-- **Faire d'une boîte le motif de mise en page.** Une carte blanche à coin arrondi,
-  bordée d'un pixel, posée sur du gris et répétée quinze fois ne hiérarchise rien : chaque
-  élément pèse exactement autant que le suivant. C'est la signature d'une interface
-  produite sans intention. Une liste séparée par des filets dit la même chose, en plus
-  dense et en plus rapide.
+- **Poser une carte autour d'un contenu qui n'a rien à montrer.** Une carte
+  blanche à coin arrondi, bordée d'un pixel et répétée quinze fois autour de
+  trois lignes de texte ne hiérarchise rien : chaque élément pèse exactement
+  autant que le suivant. La carte se mérite par son image — c'est elle qui
+  distingue une annonce de la suivante. Sans image, une liste séparée par des
+  filets dit la même chose, en plus dense et en plus rapide.
 - **Emboîter une carte dans une carte.** Jamais.
 - **Déplacer un élément au survol.** L'ombre monte d'un palier — c'est elle qui
   porte le soulèvement. Ni `scale`, ni `translate-y` : un bloc qui bouge emmène

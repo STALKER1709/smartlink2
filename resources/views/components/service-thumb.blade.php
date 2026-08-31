@@ -28,7 +28,7 @@
          C'était un pictogramme à 30 % d'opacité au milieu d'un aplat gris —
          ce qu'on voyait sur toute la page d'accueil dès qu'une photo
          manquait, c'est-à-dire tout le temps. --}}
-    <x-category-scene :name="$service->category?->name" class="absolute inset-0" />
+    <x-category-scene :name="$service->category?->name" :seed="$service->title" class="absolute inset-0" />
 
     @if ($photoMetier)
         <img src="{{ $photoMetier['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"

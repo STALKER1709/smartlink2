@@ -159,7 +159,7 @@
         @if ($relatedServices->isNotEmpty())
             <div class="mt-12">
                 <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Services similaires") }}</h2>
-                <div class="mt-2 -mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:px-0 lg:grid lg:grid-cols-2 lg:gap-x-10">
+                <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     @foreach ($relatedServices as $related)
                         <x-service-card :service="$related" />
                     @endforeach

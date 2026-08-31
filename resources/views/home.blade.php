@@ -252,7 +252,7 @@
         @if ($recentServices->isEmpty())
             <x-empty-state class="mt-6" :title="__('Aucun service disponible pour le moment.')" />
         @else
-            <div class="mt-4 -mx-margin-mobile border-t border-outline-variant bg-surface-container-lowest px-margin-mobile md:mx-0 md:rounded-xl md:border md:border-b-0 md:px-6 lg:grid lg:grid-cols-2 lg:gap-x-10">
+            <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($recentServices as $service)
                     <x-service-card :service="$service" />
                 @endforeach

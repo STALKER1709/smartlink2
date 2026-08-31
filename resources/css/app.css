@@ -326,3 +326,32 @@
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }
+
+/*
+ * Le panneau de filtres du catalogue : replié derrière un `<summary>` sur
+ * mobile, ouvert en permanence dès `lg`, où la maquette le pose en colonne
+ * collante à gauche des résultats.
+ *
+ * Le repli est donc neutralisé plutôt que dupliqué : un second balisage pour
+ * le grand écran ferait deux formulaires à tenir d'accord, et le champ
+ * « mot-clé » y existerait deux fois avec le même `id`.
+ *
+ * Deux règles et non une : les navigateurs récents ne masquent plus le contenu
+ * d'un `<details>` fermé par un `display: none` sur ses enfants mais par un
+ * `content-visibility: hidden` sur le pseudo-élément `::details-content`.
+ * Écrire l'une sans l'autre laisse la moitié du parc avec un panneau vide.
+ */
+@media (min-width: 1024px) {
+    .filtres > summary {
+        display: none;
+    }
+
+    .filtres > .filtres-corps {
+        display: block;
+    }
+
+    .filtres::details-content {
+        content-visibility: visible;
+        block-size: auto;
+    }
+}
