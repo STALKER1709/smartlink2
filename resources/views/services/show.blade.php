@@ -193,10 +193,9 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('providers.show', $profile) }}"
-                       class="mt-4 flex min-h-11 items-center justify-center gap-1 rounded-full border border-primary px-5 font-button-text text-label-md font-semibold text-primary transition-colors hover:bg-surface-container-low">
+                    <x-secondary-button :href="route('providers.show', $profile)" class="mt-4 w-full">
                         {{ __("Voir le profil du prestataire") }}
-                    </a>
+                    </x-secondary-button>
                 </div>
 
                 <p class="flex items-start gap-2 rounded-xl border border-outline-variant bg-surface-container-low px-4 py-3 font-body-md text-label-sm leading-relaxed text-on-surface-variant shadow-elevation-1">

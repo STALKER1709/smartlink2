@@ -46,9 +46,9 @@
                     class="min-h-11 rounded-xl border-outline-variant text-label-md focus:border-primary focus:ring-primary sm:w-40"
                 >
 
-                <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
+                <x-primary-button class="shrink-0">
                     {{ __("Chercher") }}
-                </button>
+                </x-primary-button>
             </div>
 
             {{-- Le panneau à bascule de la maquette : la vérification est le

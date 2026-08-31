@@ -22,7 +22,7 @@
             'available_only' => request('available_only') ? __('Disponibles uniquement') : null,
         ])->filter();
 
-        $champ = 'w-full rounded-lg border-outline-variant bg-surface font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary';
+        $champ = 'w-full rounded-xl border-outline-variant bg-surface font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary';
     @endphp
 
     <div class="mx-auto max-w-container px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
@@ -147,7 +147,7 @@
                     <div class="flex items-center gap-3">
                         <label for="sort" class="whitespace-nowrap font-label-md text-label-md text-on-surface">{{ __('Trier par :') }}</label>
                         <select id="sort" name="sort" form="filtres" onchange="this.form.submit()"
-                                class="rounded-lg border-outline-variant bg-surface-container-lowest font-body-md text-body-md text-on-surface shadow-elevation-1 focus:border-primary focus:ring-1 focus:ring-primary">
+                                class="rounded-xl border-outline-variant bg-surface-container-lowest font-body-md text-body-md text-on-surface shadow-elevation-1 focus:border-primary focus:ring-1 focus:ring-primary">
                             <option value="">{{ __("Plus récents") }}</option>
                             <option value="price_asc" @selected(request('sort') === 'price_asc')>{{ __("Prix croissant") }}</option>
                             <option value="price_desc" @selected(request('sort') === 'price_desc')>{{ __("Prix décroissant") }}</option>

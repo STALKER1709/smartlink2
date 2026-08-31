@@ -140,18 +140,16 @@
 
             <div class="flex shrink-0 flex-col gap-2 sm:flex-row lg:flex-col xl:flex-row">
                 @if ($peutDemander)
-                    <a href="{{ route('requests.create', ['provider_id' => $providerProfile->user_id]) }}"
-                       class="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container">
+                    <x-primary-button :href="route('requests.create', ['provider_id' => $providerProfile->user_id])">
                         <x-icon name="mail" size="sm" />
                         {{ __("Contacter") }}
-                    </a>
+                    </x-primary-button>
                 @endif
 
-                <a href="{{ route('providers.show', $providerProfile) }}"
-                   class="inline-flex min-h-11 items-center justify-center gap-1 rounded-lg border border-outline-variant bg-surface-container-low px-5 font-button-text text-label-md font-semibold text-on-surface transition-colors hover:border-primary/50 hover:text-primary">
+                <x-secondary-button :href="route('providers.show', $providerProfile)">
                     {{ __("Profil complet") }}
                     <x-icon name="chevron_right" size="sm" />
-                </a>
+                </x-secondary-button>
             </div>
         </div>
     </article>

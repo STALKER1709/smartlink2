@@ -34,7 +34,7 @@
              Sur 112 px de large il n'y tiendrait pas : il repasse en ligne de
              texte au-dessus du titre, à sa place d'origine dans la rangée. --}}
         @if ($service->category?->name)
-            <span class="absolute left-3 top-3 hidden rounded-lg border border-outline-variant bg-surface-container-lowest/90 px-2 py-1 font-label-sm text-label-sm font-semibold text-on-surface shadow-elevation-1 backdrop-blur sm:inline-flex">
+            <span class="absolute left-3 top-3 hidden rounded-full border border-outline-variant bg-surface-container-lowest/90 px-2 py-1 font-label-sm text-label-sm font-semibold text-on-surface shadow-elevation-1 backdrop-blur sm:inline-flex">
                 {{ $service->category->name }}
             </span>
         @endif

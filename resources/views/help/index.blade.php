@@ -67,7 +67,7 @@
                 <label for="faq-search" class="sr-only">{{ __("Rechercher de l'aide") }}</label>
                 <input id="faq-search" type="search" x-model="q"
                        placeholder="{{ __('Rechercher de l\'aide (ex : paiements, compte…)') }}"
-                       class="w-full rounded-full border border-outline-variant bg-surface py-4 pl-12 pr-4 font-body-md text-body-md text-on-surface shadow-elevation-1 transition-all placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary-container/20">
+                       class="w-full rounded-xl border border-outline-variant bg-surface py-4 pl-12 pr-4 font-body-md text-body-md text-on-surface shadow-elevation-1 transition-all placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary-container/20">
             </div>
         </section>
 

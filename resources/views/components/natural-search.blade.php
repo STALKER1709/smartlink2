@@ -34,9 +34,9 @@
             >
         </div>
 
-        <button type="submit" class="shrink-0 rounded-xl bg-primary px-6 py-3 font-button-text text-button-text text-on-primary transition-colors hover:bg-primary-container">
+        <x-primary-button class="shrink-0">
             {{ __('ui.search.natural_submit') }}
-        </button>
+        </x-primary-button>
     </div>
 
     <p class="mt-2 px-1 text-label-sm text-on-surface-variant">{{ __('ui.search.natural_hint') }}</p>
