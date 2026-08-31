@@ -11,7 +11,14 @@
      */
     $paliers = [
         4 => 'md:grid-cols-4',
-        6 => 'sm:grid-cols-3 lg:grid-cols-6',
+        /*
+         * Six de front demandent 1 280 px de *contenu*, pas de fenêtre — et
+         * une requête de média mesure la fenêtre. Sur un écran d'administration
+         * la colonne latérale en prend 256 : à `xl`, il restait 1 056 px, soit
+         * 160 px par tuile, et chacun des six libellés passait à la ligne.
+         * Trois de front jusqu'à `2xl`, six au-delà.
+         */
+        6 => 'sm:grid-cols-3 2xl:grid-cols-6',
     ];
 @endphp
 

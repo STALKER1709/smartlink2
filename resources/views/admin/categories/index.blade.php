@@ -3,11 +3,10 @@
         <x-page-header :title="__('Catégories de services')"
                        :subtitle="__('Gérez la taxonomie des services proposés sur la plateforme.')">
             <x-slot name="action">
-                <a href="{{ route('admin.categories.create') }}"
-                   class="flex items-center gap-2 rounded-lg bg-primary px-[24px] py-3 font-button-text text-button-text text-on-primary shadow-elevation-1 transition-colors hover:bg-primary-container">
-                    <x-icon name="add" />
+                <x-primary-button :href="route('admin.categories.create')">
+                    <x-icon name="add" size="sm" />
                     {{ __("Ajouter une catégorie") }}
-                </a>
+                </x-primary-button>
             </x-slot>
         </x-page-header>
     </x-slot>

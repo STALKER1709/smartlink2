@@ -34,10 +34,17 @@
                         $categories = is_array($report->categories) ? $report->categories : [];
                     @endphp
                     <article class="group relative overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest transition-colors hover:border-outline">
-                        {{-- Le liseré ambre en tête de carte : il signale sans
-                             crier, là où un fond coloré ferait de chaque
-                             signalement une alerte. --}}
-                        <div class="absolute left-0 top-0 h-1 w-full bg-tertiary-container" aria-hidden="true"></div>
+                        {{-- Le liseré en tête de carte : il signale sans crier,
+                             là où un fond coloré ferait de chaque signalement
+                             une alerte.
+
+                             Il était en `tertiary-container`, qui portait
+                             l'ambre avant la bascule sur la charte du drapeau
+                             et porte le rouge depuis : chaque carte de la file
+                             s'ouvrait donc sur un trait d'alerte, alors que
+                             l'écran dit précisément le contraire au-dessus.
+                             Le jaune de la palette tient ce rôle. --}}
+                        <div class="absolute left-0 top-0 h-1 w-full bg-secondary-container" aria-hidden="true"></div>
 
                         <div class="p-6">
                             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">

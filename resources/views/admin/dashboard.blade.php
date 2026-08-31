@@ -13,9 +13,12 @@
              et « Demandes » n'ont pas d'écran filtré dédié : ils restent
              muets plutôt que de promettre un lien qui n'existe pas. --}}
         {{-- Les six compteurs de la maquette : libellé et pictogramme sur la
-             première ligne, le chiffre en dessous, la tendance en pied. Le
-             compteur des suspensions prend le fond de l'erreur — c'est la
-             seule tuile qui sorte du blanc. --}}
+             première ligne, le chiffre en dessous, la tendance en pied.
+
+             Les libellés sont courts, et c'est une contrainte de la grille :
+             six tuiles de front font 178 px même sur un écran de 1 920 px, la
+             colonne latérale déduite. « Comptes suspendus » y passait à la
+             ligne, et trois libellés sur six s'alignaient en drapeau. --}}
         <x-stat-grid :cols="6">
             <x-stat-tile :label="__('Clients')" icon="person" tone="primary" :value="number_format($stats['clients'], 0, ',', ' ')"
                          :trend="$tendances['clients']"
@@ -23,81 +26,136 @@
             <x-stat-tile :label="__('Prestataires')" icon="handyman" tone="secondary" :value="number_format($stats['providers'], 0, ',', ' ')"
                          :trend="$tendances['providers']"
                          :href="route('admin.users.index', ['role' => \App\Models\User::ROLE_PROVIDER])" />
-            <x-stat-tile :label="__('Comptes suspendus')" icon="block" tone="error" alert
+            {{-- Le fond d'alerte ne se pose que s'il y a quelque chose à
+                 signaler : à zéro suspension, la tuile rouge faisait lever la
+                 tête pour rien, et c'est exactement le crédit qu'une alerte
+                 dépense. --}}
+            <x-stat-tile :label="__('Suspendus')" icon="block"
+                         :tone="$stats['suspended_users'] > 0 ? 'error' : 'secondary'"
+                         :alert="$stats['suspended_users'] > 0"
                          :value="number_format($stats['suspended_users'], 0, ',', ' ')" />
             <x-stat-tile :label="__('Services actifs')" icon="check_circle" tone="primary"
                          :value="number_format($stats['services_active'], 0, ',', ' ')"
                          :href="route('admin.services.index')" />
-            <x-stat-tile :label="__('Services au total')" icon="home_repair_service" tone="secondary"
+            <x-stat-tile :label="__('Services')" icon="home_repair_service" tone="secondary"
                          :value="number_format($stats['services_total'], 0, ',', ' ')"
                          :href="route('admin.services.index')" />
-            <x-stat-tile :label="__('Demandes au total')" icon="inbox" tone="secondary"
+            <x-stat-tile :label="__('Demandes')" icon="inbox" tone="secondary"
                          :value="number_format($stats['requests_total'], 0, ',', ' ')" />
         </x-stat-grid>
 
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
-                <h3 class="font-headline-md text-headline-md text-on-surface mb-3 border-b border-outline-variant pb-2">{{ __("Demandes par statut") }}</h3>
-                <ul class="space-y-2">
-                    @foreach ($statusLabels as $value => $label)
-                        <li class="flex items-center justify-between text-label-md">
-                            <span class="text-on-surface-variant">{{ $label }}</span>
-                            <span class="font-label-numeric font-medium text-on-surface">{{ $requestsByStatus[$value] ?? 0 }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+        {{-- La grille de la maquette : le tableau des chiffres à gauche, les
+             files d'attente à droite. C'était une rangée de pastilles portant
+             chacune un compteur — elle disait combien, jamais qui, et deux de
+             ses compteurs étaient comptés depuis la vue, requête comprise. --}}
+        <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div class="flex flex-col gap-6 lg:col-span-2">
+                <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation-1">
+                    <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Demandes par statut") }}</h2>
 
-            <div>
-                <div class="mb-3 flex items-center justify-between border-b border-outline-variant pb-2">
-                    <h3 class="font-headline-md text-headline-md text-on-surface">{{ __("Derniers utilisateurs inscrits") }}</h3>
-                    <a href="{{ route('admin.users.index') }}" class="text-label-md font-medium text-primary hover:text-primary-container">{{ __("Voir tout →") }}</a>
-                </div>
-                <ul class="divide-y divide-outline-variant">
-                    @foreach ($recentUsers as $user)
-                        <li class="flex items-center justify-between gap-3 py-2 text-label-md">
-                            <div class="min-w-0">
-                                <p class="font-medium text-on-surface">{{ $user->name }}</p>
-                                <p class="truncate text-on-surface-variant">{{ $user->email }}</p>
+                    @php $totalDemandes = max((int) $stats['requests_total'], 1); @endphp
+
+                    <div class="mt-4 space-y-3">
+                        @foreach ($statusLabels as $value => $label)
+                            @php
+                                $compte = $requestsByStatus[$value] ?? 0;
+                                $part = (int) round($compte / $totalDemandes * 100);
+                            @endphp
+                            <div class="flex items-center gap-3">
+                                <span class="w-28 shrink-0 font-label-md text-label-md text-on-surface-variant">{{ $label }}</span>
+                                <span class="h-2 flex-1 overflow-hidden rounded-full bg-surface-container">
+                                    <span class="block h-full rounded-full bg-primary" style="width: {{ $compte > 0 ? max($part, 2) : 0 }}%"></span>
+                                </span>
+                                <span class="w-10 shrink-0 text-right font-label-numeric text-label-md text-on-surface">{{ $compte }}</span>
                             </div>
-                            <span class="font-label-numeric shrink-0 text-label-sm text-on-surface-variant">{{ $user->created_at->format('d/m/Y') }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
+                        @endforeach
+                    </div>
+                </div>
 
-        {{-- Utilisateurs et services sont déjà atteignables depuis les
-             chiffres du haut : les répéter ici en pastilles n'ajoutait qu'une
-             seconde façon d'aller au même endroit. Ne restent que les écrans
-             qu'aucun compteur ne porte. --}}
-        <div class="mt-8 flex flex-wrap gap-3 border-t border-outline-variant pt-6">
-            <a href="{{ route('admin.categories.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                {{ __("Catégories") }}
-            </a>
-            <a href="{{ route('admin.plans.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                {{ __('ui.admin_plans.title') }}
-            </a>
-            <a href="{{ route('admin.moderation.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                {{ __('ui.moderation.title') }}
-                @if (($stats['moderation_pending'] ?? 0) > 0)
-                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-tertiary px-2 py-0.5 font-label-numeric text-label-sm font-bold text-on-tertiary">{{ $stats['moderation_pending'] }}</span>
-                @endif
-            </a>
-            <a href="{{ route('admin.disputes.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                Litiges
-                @php $litiges = \App\Models\Dispute::query()->open()->count(); @endphp
-                @if ($litiges > 0)
-                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-error px-2 py-0.5 font-label-numeric text-label-sm font-bold text-on-error">{{ $litiges }}</span>
-                @endif
-            </a>
-            <a href="{{ route('admin.verifications.index') }}" class="rounded-full bg-surface-container-lowest border border-outline-variant px-4 py-2 text-label-md font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                @php $pendingCount = \App\Models\ProviderProfile::whereNotNull('id_card_path')->where('id_card_verified', false)->count(); @endphp
-                Vérifications
-                @if ($pendingCount > 0)
-                    <span class="ml-1 inline-flex items-center justify-center rounded-full bg-error px-2 py-0.5 font-label-numeric text-label-sm font-bold text-on-error">{{ $pendingCount }}</span>
-                @endif
-            </a>
+                <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation-1">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Derniers utilisateurs inscrits") }}</h2>
+                        <a href="{{ route('admin.users.index') }}" class="font-label-md text-label-md text-primary hover:underline">{{ __("Voir tout") }}</a>
+                    </div>
+
+                    <ul class="mt-4 divide-y divide-outline-variant">
+                        @foreach ($recentUsers as $user)
+                            <li class="flex items-center justify-between gap-3 py-3">
+                                <span class="min-w-0">
+                                    <span class="block font-label-md text-label-md font-semibold text-on-surface">{{ $user->name }}</span>
+                                    <span class="block truncate font-body-md text-label-sm text-on-surface-variant">{{ $user->email }}</span>
+                                </span>
+                                <span class="shrink-0 font-label-numeric text-label-sm text-on-surface-variant">{{ $user->created_at->format('d/m/Y') }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+
+            {{-- Les trois files d'attente. Chacune dit son volume, montre ses
+                 trois premières entrées, et mène à son écran. --}}
+            <div class="flex flex-col gap-6">
+                @php
+                    $queues = [
+                        [
+                            'titre' => __('Vérifications d\'identité'),
+                            'total' => $files['verifications']['total'],
+                            'entrees' => $files['verifications']['entrees'],
+                            'lien' => route('admin.verifications.index'),
+                            'action' => __('Traiter les vérifications'),
+                            'urgent' => false,
+                        ],
+                        [
+                            'titre' => __('ui.moderation.title'),
+                            'total' => $files['moderation']['total'],
+                            'entrees' => $files['moderation']['entrees'],
+                            'lien' => route('admin.moderation.index'),
+                            'action' => __('Ouvrir la file de modération'),
+                            'urgent' => true,
+                        ],
+                        [
+                            'titre' => __('Litiges ouverts'),
+                            'total' => $files['litiges']['total'],
+                            'entrees' => $files['litiges']['entrees'],
+                            'lien' => route('admin.disputes.index'),
+                            'action' => __('Voir les litiges'),
+                            'urgent' => true,
+                        ],
+                    ];
+                @endphp
+
+                @foreach ($queues as $file)
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation-1">
+                        <div class="flex items-center justify-between gap-3">
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface">{{ $file['titre'] }}</h2>
+                            <span @class([
+                                'shrink-0 rounded-full px-2 py-1 font-label-numeric text-label-sm font-bold',
+                                'bg-error-container text-on-error-container' => $file['urgent'] && $file['total'] > 0,
+                                'bg-secondary-container text-on-secondary-container' => ! $file['urgent'] && $file['total'] > 0,
+                                'bg-surface-container-high text-on-surface-variant' => $file['total'] === 0,
+                            ])>{{ $file['total'] }}</span>
+                        </div>
+
+                        @if ($file['total'] === 0)
+                            <p class="mt-3 font-body-md text-body-md text-on-surface-variant">{{ __("Rien à traiter.") }}</p>
+                        @else
+                            <ul class="mt-4 space-y-2">
+                                @foreach ($file['entrees'] as $entree)
+                                    <li class="rounded-lg border border-outline-variant bg-surface-container-low px-3 py-2">
+                                        <p class="truncate font-label-md text-label-md text-on-surface">{{ $entree['libelle'] }}</p>
+                                        <p class="font-body-md text-label-sm text-on-surface-variant">{{ $entree['date']?->translatedFormat('j F') }}</p>
+                                    </li>
+                                @endforeach
+                            </ul>
+
+                            <a href="{{ $file['lien'] }}"
+                               class="mt-4 flex min-h-11 items-center justify-center rounded-full border border-primary px-4 font-button-text text-label-md font-semibold text-primary transition-colors hover:bg-primary-container/10">
+                                {{ $file['action'] }}
+                            </a>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
         </div>
     </div>
 </x-app-layout>
