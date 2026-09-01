@@ -98,7 +98,10 @@
                         @foreach ($stats['rating_breakdown'] as $rating => $count)
                             @php $share = (int) round($count / max($stats['rating_count'], 1) * 100); @endphp
                             <div class="flex items-center gap-3">
-                                <span class="w-12 shrink-0 font-label-numeric text-label-md text-on-surface-variant">{{ $rating }} ★</span>
+                                <span class="flex w-12 shrink-0 items-center gap-1 text-on-surface-variant">
+                                    <span class="font-label-numeric text-label-md">{{ $rating }}</span>
+                                    <x-icon name="star" size="xs" filled class="text-secondary-container" />
+                                </span>
                                 <div class="flex-1 h-2 rounded-full bg-surface-container overflow-hidden">
                                     {{-- L'or de Google (#fbbc04) traînait ici : dans un monde vert et
                                          crème, une couleur qui n'appartient à aucun jeton se voit. --}}
@@ -116,7 +119,7 @@
                 <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-elevation-1 p-5">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <h3 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.stats.top_services') }}</h3>
-                        <a href="{{ route('provider.services.index') }}" class="font-label-md text-label-md text-primary hover:underline">{{ __('Voir tout') }}</a>
+                        <a href="{{ route('provider.services.index') }}" class="inline-flex min-h-6 items-center font-label-md text-label-md text-primary hover:underline">{{ __('Voir tout') }}</a>
                     </div>
 
                     {{-- La rangée de la maquette : pastille du métier, titre,

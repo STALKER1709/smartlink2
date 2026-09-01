@@ -38,16 +38,16 @@
     @endphp
 
     <div class="mx-auto max-w-container px-margin-mobile py-6 pb-28 md:px-margin-tablet lg:px-margin-desktop md:py-8 lg:pb-8">
-        <a href="{{ route('services.index') }}" class="mb-4 inline-flex items-center gap-1 text-label-md text-on-surface-variant hover:text-primary sm:hidden">
+        <a href="{{ route('services.index') }}" class="mb-4 inline-flex min-h-6 items-center gap-1 text-label-md text-on-surface-variant hover:text-primary sm:hidden">
             <x-icon name="arrow_back" />
             {{ __("Tous les services") }}
         </a>
 
-        <nav class="mb-4 hidden items-center gap-1 text-label-md text-on-surface-variant sm:flex">
-            <a href="{{ route('services.index') }}" class="hover:text-primary">{{ __("Services") }}</a>
+        <nav class="mb-4 hidden min-h-6 items-center gap-1 text-label-md text-on-surface-variant sm:flex">
+            <a href="{{ route('services.index') }}" class="inline-flex min-h-6 items-center hover:text-primary">{{ __("Services") }}</a>
             <x-icon name="chevron_right" />
             @if ($service->category)
-                <a href="{{ route('services.index', ['category_id' => $service->category_id]) }}" class="hover:text-primary">{{ $service->category->name }}</a>
+                <a href="{{ route('services.index', ['category_id' => $service->category_id]) }}" class="inline-flex min-h-6 items-center hover:text-primary">{{ $service->category->name }}</a>
                 <x-icon name="chevron_right" />
             @endif
             <span class="truncate text-on-surface">{{ $service->title }}</span>
@@ -216,7 +216,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Services similaires à proximité") }}</h2>
                     <a href="{{ route('services.index', ['category_id' => $service->category_id]) }}"
-                       class="flex items-center gap-1 font-label-md text-label-md text-primary hover:underline">
+                       class="flex min-h-6 items-center gap-1 font-label-md text-label-md text-primary hover:underline">
                         {{ __("Tout le métier") }}
                         <x-icon name="chevron_right" size="sm" />
                     </a>

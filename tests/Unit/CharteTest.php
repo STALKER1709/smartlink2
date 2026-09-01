@@ -459,6 +459,32 @@ class CharteTest extends TestCase
             'Chasse fixe et police de texte sur la même ligne : '.implode(', ', $fautifs));
     }
 
+    /**
+     * Une étoile n'est pas un caractère.
+     *
+     * « ★ » (U+2605) écrit en clair dans une vue tombe dans la police du
+     * paragraphe qui l'accueille. Sur une ligne en chasse fixe — un prix, une
+     * note — JetBrains Mono ne le porte pas : le navigateur va en chercher un
+     * autre, d'une autre famille et d'une autre chasse, et à 390 px le glyphe
+     * finissait seul sur sa ligne, sous la note qu'il devait accompagner.
+     *
+     * La note a son composant, `x-star-rating`, et l'étoile son pictogramme.
+     */
+    public function test_stars_are_drawn_not_typed(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            if (preg_match('/[\x{2605}\x{2606}]/u', $this->contenuSansCommentaires($vue))) {
+                $fautifs[] = $vue;
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Étoile écrite en clair : employer x-star-rating ou <x-icon name="star" /> — '
+            .implode(', ', $fautifs));
+    }
+
     public function test_icons_go_through_their_component(): void
     {
         $fautifs = [];

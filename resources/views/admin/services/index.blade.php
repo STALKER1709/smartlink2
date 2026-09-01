@@ -55,20 +55,20 @@
                              « Désactiver », deux cibles voisines au pouce. Il
                              est mis à part, à l'autre bout de la rangée. --}}
                         <div class="flex shrink-0 items-center gap-4">
-                            <a href="{{ route('services.show', $service) }}" class="text-label-md font-medium text-primary hover:text-primary-container">
+                            <a href="{{ route('services.show', $service) }}" class="inline-flex min-h-6 items-center text-label-md font-medium text-primary hover:text-primary-container">
                                 {{ __("Voir") }}
                             </a>
                             <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="text-label-md font-medium text-secondary hover:opacity-80">
+                                <button type="submit" class="inline-flex min-h-6 items-center text-label-md font-medium text-secondary hover:opacity-80">
                                     {{ $service->status === \App\Models\Service::STATUS_ACTIVE ? 'Désactiver' : 'Activer' }}
                                 </button>
                             </form>
                             <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="ml-auto sm:ml-4" onsubmit="return confirm('Supprimer définitivement « {{ $service->title }} » ? Cette action est irréversible.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-label-md font-medium text-error hover:opacity-80">
+                                <button type="submit" class="inline-flex min-h-6 items-center text-label-md font-medium text-error hover:opacity-80">
                                     {{ __("Supprimer") }}
                                 </button>
                             </form>

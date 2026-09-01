@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="flex items-center justify-between gap-3">
-                    <a href="{{ route('provider.subscription.show') }}" class="text-label-md text-on-surface-variant hover:text-on-surface">
+                    <a href="{{ route('provider.subscription.show') }}" class="inline-flex min-h-6 items-center text-label-md text-on-surface-variant hover:text-on-surface">
                         {{ __('ui.cancel') }}
                     </a>
                     <x-primary-button>

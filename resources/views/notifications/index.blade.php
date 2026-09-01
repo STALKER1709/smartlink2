@@ -87,7 +87,7 @@
                                 @unless ($lue)
                                     <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-label-sm font-medium text-primary hover:text-primary-container">
+                                        <button type="submit" class="inline-flex min-h-6 items-center text-label-sm font-medium text-primary hover:text-primary-container">
                                             {{ __("Marquer comme lu") }}
                                         </button>
                                     </form>

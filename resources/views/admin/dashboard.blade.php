@@ -75,7 +75,7 @@
                 <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation-1">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <h2 class="font-headline-md text-headline-md text-on-surface">{{ __("Derniers utilisateurs inscrits") }}</h2>
-                        <a href="{{ route('admin.users.index') }}" class="font-label-md text-label-md text-primary hover:underline">{{ __("Voir tout") }}</a>
+                        <a href="{{ route('admin.users.index') }}" class="inline-flex min-h-6 items-center font-label-md text-label-md text-primary hover:underline">{{ __("Voir tout") }}</a>
                     </div>
 
                     <ul class="mt-4 divide-y divide-outline-variant">

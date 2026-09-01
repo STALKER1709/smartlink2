@@ -118,7 +118,15 @@
                                 $document = route('provider-profiles.id-document', $providerProfile);
                             @endphp
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <img src="{{ $document }}" alt="{{ __('Votre pièce d\'identité déposée') }}" class="h-20 w-32 object-cover rounded-lg border border-outline-variant">
+                                <span class="relative block">
+                                    <img src="{{ $document }}" alt="{{ __('Votre pièce d\'identité déposée') }}"
+                                         class="h-20 w-32 rounded-lg border border-outline-variant object-cover"
+                                         onerror="this.nextElementSibling.hidden = false; this.remove();">
+                                    <span hidden class="flex h-20 w-32 flex-col items-center justify-center gap-1 rounded-lg border border-outline-variant bg-surface-container px-2 text-center font-label-sm text-label-sm text-error">
+                                        <x-icon name="warning" size="sm" />
+                                        {{ __("Document introuvable") }}
+                                    </span>
+                                </span>
                             @else
                                 <a href="{{ $document }}" target="_blank" rel="noopener" class="text-primary text-label-md hover:underline">{{ __("Voir le document") }}</a>
                             @endif
@@ -146,10 +154,10 @@
                     <template x-for="(area, index) in areas" :key="index">
                         <div class="flex gap-2 mt-2">
                             <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
-                            <button type="button" @click="areas.splice(index, 1)" class="text-error text-label-md px-2">✕</button>
+                            <button type="button" @click="areas.splice(index, 1)" class="inline-flex min-h-6 items-center justify-center text-error text-label-md px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="areas.push('')" class="mt-2 text-label-md text-primary hover:text-primary-container">
+                    <button type="button" @click="areas.push('')" class="mt-2 inline-flex min-h-6 items-center text-label-md text-primary hover:text-primary-container">
                         {{ __("+ Ajouter une zone") }}
                     </button>
                     <x-input-error :messages="$errors->get('service_areas')" class="mt-2" />
@@ -161,10 +169,10 @@
                     <template x-for="(contact, index) in contacts" :key="index">
                         <div class="flex gap-2 mt-2">
                             <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
-                            <button type="button" @click="contacts.splice(index, 1)" class="text-error text-label-md px-2">✕</button>
+                            <button type="button" @click="contacts.splice(index, 1)" class="inline-flex min-h-6 items-center justify-center text-error text-label-md px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="contacts.push('')" class="mt-2 text-label-md text-primary hover:text-primary-container">
+                    <button type="button" @click="contacts.push('')" class="mt-2 inline-flex min-h-6 items-center text-label-md text-primary hover:text-primary-container">
                         {{ __("+ Ajouter un contact") }}
                     </button>
                     <x-input-error :messages="$errors->get('contact_methods')" class="mt-2" />

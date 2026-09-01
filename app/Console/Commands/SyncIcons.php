@@ -78,13 +78,33 @@ class SyncIcons extends Command
      *
      * @param  array<int, string>  $icones
      */
+    /**
+     * Le fichier de police sert-il bien la liste demandée ?
+     *
+     * Le manifeste ne suffit pas : c'est une note posée à côté du fichier, et
+     * deux sessions travaillant en parallèle l'ont déjà séparée de lui. L'une
+     * avait régénéré la police depuis sa propre liste, plus courte ; au rebase,
+     * le `.woff2` — binaire, donc sans conflit — est passé de son côté et le
+     * manifeste du mien. Les deux tests de l'époque comparaient deux fichiers
+     * texte issus du même côté : ils sont restés verts, et « more_vert » s'est
+     * imprimé en toutes lettres dans le menu de chaque service.
+     *
+     * Le manifeste porte donc aussi l'empreinte du fichier qu'il décrit.
+     */
     private function policeAJour(array $icones): bool
     {
+        $police = public_path('fonts/material-symbols-subset.woff2');
         $manifeste = public_path('fonts/material-symbols-subset.json');
 
-        return File::exists($manifeste)
-            && File::exists(public_path('fonts/material-symbols-subset.woff2'))
-            && json_decode((string) File::get($manifeste), true) === $icones;
+        if (! File::exists($manifeste) || ! File::exists($police)) {
+            return false;
+        }
+
+        $decrit = json_decode((string) File::get($manifeste), true);
+
+        return is_array($decrit)
+            && ($decrit['icones'] ?? null) === $icones
+            && ($decrit['sha256'] ?? null) === hash_file('sha256', $police);
     }
 
     /**
@@ -120,8 +140,10 @@ class SyncIcons extends Command
         }
 
         File::put(public_path('fonts/material-symbols-subset.woff2'), $woff2->body());
-        File::put(public_path('fonts/material-symbols-subset.json'),
-            json_encode($icones, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+        File::put(public_path('fonts/material-symbols-subset.json'), json_encode([
+            'icones' => $icones,
+            'sha256' => hash('sha256', $woff2->body()),
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
 
         $this->info(sprintf('Police régénérée : %.1f Ko.', strlen($woff2->body()) / 1024));
 

@@ -47,7 +47,7 @@
                 @if ($autre)
                     {{-- Le bouton passe sous la ligne quand la place manque :
                          côte à côte à 390 px, il réduisait « Soudure &
-                         ferronnerie • 4,0 ★ » à trois lignes. --}}
+                         ferronnerie • 4,0 » à trois lignes. --}}
                     <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-4">
                         <div class="flex min-w-0 flex-1 items-center gap-4">
                             <div class="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-outline-variant bg-surface-container-high">
@@ -61,11 +61,16 @@
                             </div>
                             <div class="min-w-0">
                                 <h3 class="font-headline-md text-headline-md text-on-surface">{{ $nomAutre }}</h3>
-                                <p class="font-label-numeric text-label-numeric text-on-surface-variant">
-                                    {{ $profil?->category?->name ?? ($moiClient ? 'Prestataire' : 'Client') }}
+                                {{-- La note passe par son composant. Écrite en clair,
+                                     l'étoile « ★ » tombait dans un paragraphe en chasse
+                                     fixe, police qui ne porte pas ce caractère : le
+                                     navigateur en cherchait une autre, et à 390 px le
+                                     glyphe se retrouvait seul sur sa ligne. --}}
+                                <p class="flex flex-wrap items-center gap-x-2 font-label-md text-label-md text-on-surface-variant">
+                                    <span>{{ $profil?->category?->name ?? ($moiClient ? 'Prestataire' : 'Client') }}</span>
                                     @if ($profil?->rating_count)
                                         <span aria-hidden="true">•</span>
-                                        {{ number_format((float) $profil->rating_avg, 1, ',', ' ') }} ★
+                                        <x-star-rating :rating="$profil->rating_avg" :count="$profil->rating_count" compact />
                                     @endif
                                 </p>
                             </div>
@@ -189,7 +194,7 @@
                      la demande engagée, et pas déjà un signalement ouvert. --}}
                 @can('create', [\App\Models\Dispute::class, $serviceRequest])
                     <a href="{{ route('disputes.create', $serviceRequest) }}"
-                       class="inline-flex items-center gap-2 text-label-md font-medium text-on-surface-variant transition-colors hover:text-error">
+                       class="inline-flex min-h-6 items-center gap-2 text-label-md font-medium text-on-surface-variant transition-colors hover:text-error">
                         <x-icon name="flag" />
                         {{ __("Signaler un problème sur cette demande") }}
                     </a>

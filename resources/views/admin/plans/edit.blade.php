@@ -1,6 +1,11 @@
 <x-app-layout :titre="__('Modifier le palier')" :indexable="false">
     <x-slot name="header">
-        <x-page-header :title="__('ui.admin_plans.title') }} — {{ $plan->name()" :back="route('admin.plans.index')" back-label="Formules" />
+        {{-- Le titre se compose en PHP, pas en interpolant du Blade dans un
+             attribut : « __('…') }} — {{ $plan->name() » n'est pas une
+             expression, et la page rendait une erreur 500. Aucun test ne
+             passait par cet écran. --}}
+        <x-page-header :title="__('ui.admin_plans.title').' — '.$plan->name()"
+                       :back="route('admin.plans.index')" back-label="Formules" />
     </x-slot>
 
     <div class="max-w-xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
@@ -50,7 +55,7 @@
             </div>
 
             <div class="flex items-center justify-between gap-3 border-t border-outline-variant pt-5">
-                <a href="{{ route('admin.plans.index') }}" class="text-label-md text-on-surface-variant hover:text-on-surface">
+                <a href="{{ route('admin.plans.index') }}" class="inline-flex min-h-6 items-center text-label-md text-on-surface-variant hover:text-on-surface">
                     {{ __('ui.cancel') }}
                 </a>
                 <x-primary-button>{{ __('ui.save') }}</x-primary-button>

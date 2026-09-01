@@ -46,12 +46,27 @@ class IconSubsetTest extends TestCase
         $this->assertFileExists($manifeste,
             'Le manifeste du sous-ensemble manque. Lancer php artisan icons:sync.');
 
-        $servies = json_decode((string) file_get_contents($manifeste), true);
+        $decrit = json_decode((string) file_get_contents($manifeste), true);
 
-        $this->assertSame(config('icons.names', []), $servies,
+        $this->assertSame(config('icons.names', []), $decrit['icones'] ?? null,
             'Le fichier de police ne sert pas la liste configurée : les icônes ajoutées '
             .'depuis s\'afficheront en toutes lettres. Lancer php artisan icons:sync '
             .'depuis une machine ayant accès à fonts.googleapis.com.');
+
+        /*
+         * Et le manifeste décrit-il le fichier qui est là ?
+         *
+         * Il ne l'a pas toujours fait. Deux sessions en parallèle ont séparé
+         * l'un de l'autre : l'une avait régénéré la police depuis sa propre
+         * liste, plus courte, et au rebase le `.woff2` — binaire, donc sans
+         * conflit — est passé de son côté quand le manifeste passait de
+         * l'autre. Les deux contrôles ci-dessus comparaient alors deux
+         * fichiers texte venus du même côté, et restaient verts pendant que
+         * « more_vert » s'imprimait en toutes lettres dans chaque menu.
+         */
+        $this->assertSame(hash_file('sha256', public_path('fonts/material-symbols-subset.woff2')), $decrit['sha256'] ?? null,
+            'Le manifeste ne décrit pas le fichier de police présent : il vient d\'une autre '
+            .'liste que celle qui a produit ce `.woff2`. Lancer php artisan icons:sync.');
     }
 
     /**

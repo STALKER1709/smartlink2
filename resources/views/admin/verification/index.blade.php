@@ -52,10 +52,21 @@
                                      bande centrale : on ne voyait ni le type de
                                      document ni sa photo. Elle est montrée
                                      entière, quitte à laisser du fond autour. --}}
+                                {{-- Le repli n'est pas décoratif : c'est l'écran où
+                                     l'on décide d'approuver une identité. Un fichier
+                                     absent — déplacé, perdu au passage sur S3 — n'y
+                                     laissait que le rectangle cassé du navigateur, et
+                                     rien ne distinguait « je ne vois pas la pièce »
+                                     de « la pièce est illisible ». --}}
                                 <a href="{{ $document }}" target="_blank" rel="noopener"
                                    class="block rounded-lg border border-outline-variant bg-surface-container p-1 transition-colors hover:border-primary hover:shadow-elevation-2">
                                     <img src="{{ $document }}" alt="{{ __('Pièce d\'identité déposée') }}"
-                                         class="h-28 w-full object-contain">
+                                         class="h-28 w-full object-contain"
+                                         onerror="this.nextElementSibling.hidden = false; this.remove();">
+                                    <span hidden class="flex h-28 flex-col items-center justify-center gap-1 px-2 text-center font-label-sm text-label-sm text-error">
+                                        <x-icon name="warning" />
+                                        {{ __("Document introuvable") }}
+                                    </span>
                                 </a>
                             @else
                                 <a href="{{ $document }}" target="_blank" rel="noopener"

@@ -77,14 +77,14 @@
                             @can('suspend', $user)
                                 <form action="{{ route('admin.users.suspend', $user) }}" method="POST" onsubmit="return confirm('Suspendre le compte de {{ $user->name }} ?');">
                                     @csrf
-                                    <button type="submit" class="text-label-md font-medium text-error hover:opacity-80">{{ __("Suspendre") }}</button>
+                                    <button type="submit" class="inline-flex min-h-6 items-center text-label-md font-medium text-error hover:opacity-80">{{ __("Suspendre") }}</button>
                                 </form>
                             @endcan
                             @can('reactivate', $user)
                                 @if ($user->status === \App\Models\User::STATUS_SUSPENDED)
                                     <form action="{{ route('admin.users.reactivate', $user) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-label-md font-medium text-secondary hover:opacity-80">{{ __("Réactiver") }}</button>
+                                        <button type="submit" class="inline-flex min-h-6 items-center text-label-md font-medium text-secondary hover:opacity-80">{{ __("Réactiver") }}</button>
                                     </form>
                                 @endif
                             @endcan

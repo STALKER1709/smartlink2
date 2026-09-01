@@ -78,12 +78,12 @@
                             </div>
 
                             <div class="flex items-center justify-end gap-4 md:col-span-3">
-                                <a href="{{ route('admin.categories.edit', $category) }}" class="text-label-md font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="inline-flex min-h-6 items-center text-label-md font-medium text-primary hover:text-primary-container">{{ __("Modifier") }}</a>
                                 <form action="{{ route('admin.categories.destroy', $category) }}" method="POST"
                                       onsubmit="return confirm('Supprimer « {{ $category->name }} » ? Les services qui s\'y rattachent perdront leur catégorie.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-label-md font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
+                                    <button type="submit" class="inline-flex min-h-6 items-center text-label-md font-medium text-error hover:opacity-80">{{ __("Supprimer") }}</button>
                                 </form>
                             </div>
                         </div>
