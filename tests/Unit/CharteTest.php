@@ -45,6 +45,11 @@ class CharteTest extends TestCase
             // aucune feuille de style ne l'accompagne, ses couleurs sont donc
             // écrites en clair. Ce sont celles de la palette.
             'hors-ligne.blade.php',
+            // Même raison, retournée : la page des 500 sert au moment où l'on
+            // ne sait pas ce qui est cassé. Elle ne va rien chercher ailleurs
+            // — ni feuille de style, ni session, ni base — parce que tout cela
+            // fait partie de ce qui peut manquer à ce moment-là.
+            'errors/500.blade.php',
             // `theme-color` est une balise meta : elle prend une couleur, pas
             // une classe.
             'partials/pwa-head.blade.php',
