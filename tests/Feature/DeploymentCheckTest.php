@@ -6,6 +6,7 @@ use App\Models\Plan;
 use App\Services\DeploymentCheckService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 /**
@@ -49,6 +50,17 @@ class DeploymentCheckTest extends TestCase
         }
 
         return null;
+    }
+
+    private function messageOf(string $name): string
+    {
+        foreach (app(DeploymentCheckService::class)->run() as $check) {
+            if ($check['name'] === $name) {
+                return $check['message'];
+            }
+        }
+
+        return '';
     }
 
     private function pretendServerless(): void
@@ -238,10 +250,52 @@ class DeploymentCheckTest extends TestCase
         $this->pretendServerless();
         config([
             'filesystems.media' => 's3',
+            'filesystems.disks.s3.bucket' => 'smartlink-medias',
+            'filesystems.disks.s3.key' => 'une-cle',
+            'filesystems.disks.s3.secret' => 'un-secret',
             'filesystems.disks.s3.url' => null,
         ]);
 
         $this->assertSame(DeploymentCheckService::WARNING, $this->statusOf('MEDIA_DISK'));
+    }
+
+    /**
+     * La panne de production du 1er septembre : `MEDIA_DISK=s3` posé sans
+     * `AWS_BUCKET`. Le SDK lève « The GetObject operation requires non-empty
+     * parameter: Bucket » au moment où une vue demande l'URL d'une image :
+     * l'accueil, le catalogue et l'annuaire rendaient une erreur 500 pendant
+     * que la connexion et les pages légales répondaient normalement. Rien dans
+     * le message ne dit « configuration », et le site paraît à moitié vivant.
+     */
+    #[DataProvider('identifiantsS3Manquants')]
+    public function test_an_s3_media_disk_without_credentials_is_an_error(string $manquant): void
+    {
+        $this->pretendServerless();
+        config([
+            'filesystems.media' => 's3',
+            'filesystems.disks.s3.bucket' => 'smartlink-medias',
+            'filesystems.disks.s3.key' => 'une-cle',
+            'filesystems.disks.s3.secret' => 'un-secret',
+            'filesystems.disks.s3.url' => 'https://cdn.example.com',
+            // Vide, et non absente : c'est la forme que prend le réglage quand
+            // on colle un bloc de variables sans remplir toutes les lignes.
+            "filesystems.disks.s3.{$manquant}" => '',
+        ]);
+
+        $this->assertSame(DeploymentCheckService::ERROR, $this->statusOf('MEDIA_DISK'));
+        $this->assertStringContainsString('500', $this->messageOf('MEDIA_DISK'));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function identifiantsS3Manquants(): array
+    {
+        return [
+            'sans seau' => ['bucket'],
+            'sans clé' => ['key'],
+            'sans secret' => ['secret'],
+        ];
     }
 
     public function test_a_fully_configured_serverless_host_passes(): void
@@ -249,6 +303,9 @@ class DeploymentCheckTest extends TestCase
         $this->pretendServerless();
         config([
             'filesystems.media' => 's3',
+            'filesystems.disks.s3.bucket' => 'smartlink-medias',
+            'filesystems.disks.s3.key' => 'une-cle',
+            'filesystems.disks.s3.secret' => 'un-secret',
             'filesystems.disks.s3.url' => 'https://cdn.example.com',
             // Les pièces d'identité ont leur propre seau, fermé : un disque
             // local les perdrait au déploiement suivant, et la vérification

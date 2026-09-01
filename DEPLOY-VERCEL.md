@@ -310,6 +310,21 @@ l'application démarre parfaitement sans elles :
 | `APP_URL` en `https://` | Le filtrage des noms d'hôte s'éteint : un lien de mot de passe oublié devient détournable |
 | `LEGAL_*` | Les pages légales affichent publiquement « identité de l'éditeur non renseignée » |
 
+⚠️ **`MEDIA_DISK=s3` avec un `AWS_BUCKET` vide ne casse pas en silence : il
+casse en 500.** Une variable posée sans valeur — ce qui arrive dès qu'on colle
+le bloc ci-dessus sans remplir toutes les lignes — fait lever au SDK
+« The GetObject operation requires non-empty parameter: Bucket » au moment où
+une vue demande l'URL d'une image. L'exception part au milieu d'un rendu :
+l'accueil, le catalogue et l'annuaire tombent ensemble pendant que la
+connexion et les pages légales continuent de répondre. Le site paraît à moitié
+vivant, et le journal ne parle que d'un paramètre d'API.
+
+`media_url()` renvoie désormais null dans ce cas — on perd la vignette, pas la
+page — et `deploy:check` refuse la configuration. Le remède reste le même :
+remplir `AWS_BUCKET`, `AWS_ACCESS_KEY_ID` et `AWS_SECRET_ACCESS_KEY`, ou
+repasser `MEDIA_DISK=public` en sachant que les dépôts ne survivront pas au
+déploiement suivant.
+
 **Après un déploiement sur une base qui a déjà reçu des dépôts**, lancez une
 fois `php artisan id-documents:secure` (ou `--dry-run` d'abord) : le code
 n'écrit plus jamais sur le disque public, mais les pièces déposées avant ce

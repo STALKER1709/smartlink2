@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('media_disk')) {
@@ -47,6 +48,19 @@ if (! function_exists('media_url')) {
      *
      * Renvoie null pour un chemin vide, ce qui laisse les vues garder leur
      * garde `@if` habituelle avant d'afficher une image.
+     *
+     * ⚠️ Renvoie également null quand le disque est mal configuré, au lieu de
+     * laisser remonter l'exception. Un `MEDIA_DISK=s3` sans `AWS_BUCKET` fait
+     * lever au SDK « The GetObject operation requires non-empty parameter:
+     * Bucket » — depuis une vue, donc au milieu du rendu, donc en erreur 500.
+     * Les pages sans image répondent encore : le site paraît à moitié vivant
+     * et le journal ne parle que d'un paramètre d'API. C'est arrivé en
+     * production, et l'accueil est resté en 500 tant que la variable est
+     * restée vide. Une vignette manquante est un défaut ; une page morte en
+     * est un autre, sans commune mesure.
+     *
+     * La configuration reste fautive, et `deploy:check` la refuse ; ce garde
+     * ne fait que borner ce qu'elle coûte le temps qu'on la corrige.
      */
     function media_url(?string $path): ?string
     {
@@ -54,7 +68,22 @@ if (! function_exists('media_url')) {
             return null;
         }
 
-        return Storage::disk(media_disk())->url($path);
+        try {
+            return Storage::disk(media_disk())->url($path);
+        } catch (Throwable $e) {
+            // Une fois par processus : appelée par chaque vignette d'une
+            // liste, elle remplirait le journal de la même ligne.
+            static $signale = false;
+
+            if (! $signale) {
+                $signale = true;
+                Log::warning('Disque de médias inutilisable : '.$e->getMessage(), [
+                    'disque' => media_disk(),
+                ]);
+            }
+
+            return null;
+        }
     }
 }
 

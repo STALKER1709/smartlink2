@@ -42,4 +42,31 @@ class MediaHelperTest extends TestCase
         $this->assertNull(media_url(null));
         $this->assertNull(media_url(''));
     }
+
+    /**
+     * Un disque S3 sans seau fait lever le SDK — « The GetObject operation
+     * requires non-empty parameter: Bucket » — au moment où une vue demande
+     * l'URL d'une image. L'exception part donc au milieu d'un rendu : la page
+     * entière devient une erreur 500 pour une vignette. C'est arrivé en
+     * production, et l'accueil, le catalogue et l'annuaire sont tombés
+     * ensemble pendant que la connexion répondait encore.
+     *
+     * Le réglage reste fautif — `deploy:check` le refuse — mais son coût est
+     * borné à ce qu'il est vraiment : une image qui manque.
+     */
+    public function test_a_misconfigured_disk_costs_an_image_and_not_the_page(): void
+    {
+        config([
+            'filesystems.media' => 's3',
+            'filesystems.disks.s3' => [
+                'driver' => 's3',
+                'key' => '',
+                'secret' => '',
+                'region' => '',
+                'bucket' => '',
+            ],
+        ]);
+
+        $this->assertNull(media_url('logos/exemple.png'));
+    }
 }

@@ -305,11 +305,36 @@ class DeploymentCheckService
             )];
         }
 
-        if ($driver === 's3' && ! config("filesystems.disks.{$disk}.url")) {
-            return [$this->warning(
-                'MEDIA_DISK',
-                "Disque « {$disk} » sans AWS_URL : les URL des images seront construites depuis l'endpoint, ce qui échoue chez la plupart des fournisseurs.",
-            )];
+        /*
+         * Un disque S3 sans seau est la panne la plus coûteuse de cette liste,
+         * et la plus discrète : `Storage::disk('s3')->url()` lève
+         * « The GetObject operation requires non-empty parameter: Bucket »
+         * depuis une vue, donc au milieu du rendu. Les pages sans image — la
+         * connexion, les pages légales — continuent de répondre, et toutes
+         * celles qui montrent une photo rendent une erreur 500. Le site paraît
+         * à moitié vivant, et rien dans les journaux ne dit « configuration ».
+         *
+         * C'est arrivé en production, `MEDIA_DISK=s3` posé sans `AWS_BUCKET`.
+         */
+        if ($driver === 's3') {
+            $manquants = collect(['bucket' => 'AWS_BUCKET', 'key' => 'AWS_ACCESS_KEY_ID', 'secret' => 'AWS_SECRET_ACCESS_KEY'])
+                ->reject(fn (string $variable, string $cle) => filled(config("filesystems.disks.{$disk}.{$cle}")))
+                ->values();
+
+            if ($manquants->isNotEmpty()) {
+                return [$this->error(
+                    'MEDIA_DISK',
+                    "Disque « {$disk} » en S3 sans ".$manquants->join(', ', ' ni ')
+                    .' : chaque page qui affiche une image rendra une erreur 500, les autres répondront normalement.',
+                )];
+            }
+
+            if (! config("filesystems.disks.{$disk}.url")) {
+                return [$this->warning(
+                    'MEDIA_DISK',
+                    "Disque « {$disk} » sans AWS_URL : les URL des images seront construites depuis l'endpoint, ce qui échoue chez la plupart des fournisseurs.",
+                )];
+            }
         }
 
         return [$this->ok('MEDIA_DISK', "Disque « {$disk} » ({$driver}).")];
