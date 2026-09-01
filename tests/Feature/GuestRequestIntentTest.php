@@ -62,6 +62,37 @@ class GuestRequestIntentTest extends TestCase
     }
 
     /**
+     * Le même détour, mais suivi par un prestataire.
+     *
+     * Le bouton « Faire une demande » est offert au visiteur non connecté : on
+     * ne sait pas encore qui il est. S'il se connecte avec un compte
+     * prestataire, `redirect()->intended()` le ramène sur une page réservée
+     * aux clients, et la Policy refuse — à juste titre.
+     *
+     * Le refus est bon ; ce qu'on en montrait ne l'était pas. Le parcours
+     * finissait sur la page 403 nue de Laravel : ni explication, ni retour.
+     * C'est arrivé en production, relevé dans les journaux Vercel.
+     */
+    public function test_a_provider_following_the_same_path_is_told_why_and_where_to_go(): void
+    {
+        $cible = route('requests.create', ['service_id' => $this->service->id]);
+
+        $this->get($cible)->assertRedirect(route('login'));
+
+        $prestataire = User::factory()->provider()->create();
+
+        $this->post(route('login'), [
+            'login' => $prestataire->email,
+            'password' => 'password',
+        ])->assertRedirect($cible);
+
+        $this->actingAs($prestataire)->get($cible)
+            ->assertForbidden()
+            ->assertSee(__('Cette page est réservée aux clients.'))
+            ->assertSee(route('dashboard'), false);
+    }
+
+    /**
      * Et une fois revenu, le formulaire porte bien le service visé — sans quoi
      * le détour n'aurait servi à rien.
      */
