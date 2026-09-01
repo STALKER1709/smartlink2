@@ -1,6 +1,7 @@
 /* Les icônes : police sous-ensemblée et glyphes, produits par
    `php artisan icons:sync`. L'import est en tête parce que la règle CSS
    l'exige — un @import posé après une autre règle est ignoré. */
+@import './jetons.css';
 @import './icones.css';
 
 /*
@@ -108,28 +109,19 @@
  * palette à une seule source — changer le vert ici change les trente et une
  * scènes, comme il change tout le reste.
  */
-:root {
-    --scene-ciel-haut: #eef7f2;
-    --scene-ciel-bas: #dcefe6;
-    --scene-soleil: #feb637;   /* secondary-container */
-    --scene-sol: #cfe6da;
-    --scene-horizon: #a4ffdd;  /* on-primary-container */
-    --scene-trait: #005f48;    /* primary */
-    --scene-feuille: #007a5e;  /* primary-container */
-}
 
 @layer base {
     ::selection {
-        background-color: #feb637; /* secondary-container */
-        color: #6e4900;
+        background-color: rgb(var(--secondary-container));
+        color: rgb(var(--on-secondary-container));
     }
 
     :root {
         /* Le curseur de saisie prend le vert de la marque, et les barres de
            défilement se fondent dans la page au lieu d'y poser deux traits
            gris système. */
-        caret-color: #005f48;
-        scrollbar-color: #bdc9c2 transparent;
+        caret-color: rgb(var(--primary));
+        scrollbar-color: rgb(var(--outline-variant)) transparent;
         scrollbar-width: thin;
     }
 
@@ -143,14 +135,14 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background-color: #bdc9c2; /* outline-variant */
+        background-color: rgb(var(--outline-variant));
         border: 3px solid transparent;
         border-radius: 9999px;
         background-clip: content-box;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background-color: #6f7a72; /* outline */
+        background-color: rgb(var(--outline));
     }
 
     /*
@@ -160,7 +152,7 @@
      * ni rouge.
      */
     :focus-visible {
-        outline: 2px solid #005f48;
+        outline: 2px solid rgb(var(--primary));
         outline-offset: 2px;
         border-radius: 4px;
     }

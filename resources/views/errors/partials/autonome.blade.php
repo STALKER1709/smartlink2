@@ -74,6 +74,23 @@
             display: inline-block;
         }
         a.discret:hover { background: #ECEFEC; }
+
+        /* Ces pages ne peuvent pas lire les jetons : elles servent au moment
+           où la feuille de style peut manquer. Elles suivent donc le réglage
+           du système par leurs propres moyens — c'est le mieux qu'une page
+           sans dépendance puisse faire, et un choix explicite fait dans
+           l'application n'y est pas honoré. */
+        @media (prefers-color-scheme: dark) {
+            :root { color-scheme: dark; }
+            body { background: #111413; color: #e1e3e1; }
+            .marque span { color: #e1e3e1; }
+            .marque, svg, .dessin { color: #79d8b7; }
+            p { color: #bfc9c4; }
+            button { background: #79d8b7; color: #00382a; }
+            button:hover { background: #95f5d2; }
+            a.discret { border-color: #3f4945; color: #bfc9c4; }
+            a.discret:hover { background: #1d201f; }
+        }
     </style>
 </head>
 <body>

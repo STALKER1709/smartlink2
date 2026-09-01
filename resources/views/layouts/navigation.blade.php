@@ -60,6 +60,11 @@
                        class="inline-flex h-11 min-w-11 items-center justify-center px-3 font-label-md text-label-md transition-colors {{ $locale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">EN</a>
                 </div>
 
+                {{-- Le schéma de couleurs prend la même forme que la langue :
+                     deux réglages de confort, côte à côte, qui se lisent
+                     pareil. --}}
+                <x-theme-switch class="hidden lg:flex" />
+
                 @auth
                     <a href="{{ route('notifications.index') }}"
                        class="relative inline-flex items-center rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-on-surface"
@@ -182,6 +187,8 @@
                class="rounded-full px-3 py-1.5 text-label-md font-medium {{ $locale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">{{ __("Français") }}</a>
             <a href="{{ route('locale.switch', 'en') }}"
                class="rounded-full px-3 py-1.5 text-label-md font-medium {{ $locale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">{{ __("English") }}</a>
+
+            <x-theme-switch class="ms-auto" />
         </div>
     </div>
 </nav>

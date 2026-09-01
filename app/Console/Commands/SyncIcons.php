@@ -357,8 +357,12 @@ class SyncIcons extends Command
     {
         ksort($table);
 
+        // Un seul espace autour de la flèche, et non un alignement en
+        // colonnes : Pint applique `binary_operator_spaces` en `single_space`
+        // et réécrirait le fichier à chaque passage, faisant échouer
+        // `pint --test` sur un fichier que personne n'a touché.
         $lignes = implode("\n", array_map(
-            fn (string $nom, string $fa) => sprintf('        %-26s => %s,', "'{$nom}'", "'{$fa}'"),
+            fn (string $nom, string $fa) => "        '{$nom}' => '{$fa}',",
             array_keys($table),
             $table,
         ));

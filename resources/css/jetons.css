@@ -1,0 +1,199 @@
+/*
+ * Les jetons de couleur, en variables — et pourquoi.
+ *
+ * Ils étaient écrits en dur dans `tailwind.config.js` : une valeur par jeton,
+ * un seul schéma possible. Passer en variables CSS permet au schéma sombre de
+ * ne redéfinir que les valeurs, sans qu'une seule vue ait à porter de classe
+ * `dark:`. Les 134 vues continuent d'écrire `bg-surface-container-lowest` et
+ * `text-on-surface` ; c'est ici que ces noms changent de sens.
+ *
+ * Les canaux sont séparés par des espaces, et non écrits en `rgb()`, pour que
+ * Tailwind puisse y appliquer ses modificateurs d'opacité : `bg-primary/20`
+ * s'appuie sur `rgb(var(--primary) / <alpha-value>)`, et le dépôt en emploie
+ * une soixantaine.
+ *
+ * Trois états, pas deux : `data-theme` absent suit le réglage du système,
+ * « light » et « dark » sont des choix explicites qui l'emportent. Sans le
+ * troisième état, un visiteur qui a choisi le clair sur un système en sombre
+ * revoit le sombre à chaque visite.
+ *
+ * ⚠️ Les jetons « fixed » ne changent pas d'un schéma à l'autre : c'est leur
+ * définition dans Material 3. Ils portent les couleurs qui doivent rester
+ * identiques des deux côtés — un logo, une pastille de marque.
+ */
+
+:root {
+    color-scheme: light;
+
+    --surface: 249 249 252;
+    --surface-dim: 218 218 220;
+    --surface-bright: 249 249 252;
+    --surface-container-lowest: 255 255 255;
+    --surface-container-low: 243 243 246;
+    --surface-container: 238 238 240;
+    --surface-container-high: 232 232 234;
+    --surface-container-highest: 226 226 229;
+    --surface-variant: 226 226 229;
+    --on-surface: 26 28 30;
+    --on-surface-variant: 62 73 68;
+    --inverse-surface: 47 49 51;
+    --inverse-on-surface: 240 240 243;
+    --outline: 110 122 116;
+    --outline-variant: 189 201 194;
+    --surface-tint: 0 108 83;
+    --primary: 0 95 72;
+    --on-primary: 255 255 255;
+    --primary-container: 0 122 94;
+    --on-primary-container: 164 255 221;
+    --inverse-primary: 121 216 183;
+    --secondary: 128 86 0;
+    --on-secondary: 255 255 255;
+    --secondary-container: 254 182 55;
+    --on-secondary-container: 110 73 0;
+    --tertiary: 170 0 26;
+    --on-tertiary: 255 255 255;
+    --tertiary-container: 212 24 41;
+    --on-tertiary-container: 255 232 230;
+    --error: 186 26 26;
+    --on-error: 255 255 255;
+    --error-container: 255 218 214;
+    --on-error-container: 147 0 10;
+    --primary-fixed: 149 245 210;
+    --primary-fixed-dim: 121 216 183;
+    --on-primary-fixed: 0 33 23;
+    --on-primary-fixed-variant: 0 81 61;
+    --secondary-fixed: 255 221 175;
+    --secondary-fixed-dim: 255 186 67;
+    --on-secondary-fixed: 40 24 0;
+    --on-secondary-fixed-variant: 97 64 0;
+    --tertiary-fixed: 255 218 215;
+    --tertiary-fixed-dim: 255 179 174;
+    --on-tertiary-fixed: 65 0 4;
+    --on-tertiary-fixed-variant: 147 0 21;
+    --background: 249 249 252;
+    --on-background: 26 28 30;
+    /*
+     * Les couleurs des vignettes de métier.
+     *
+     * Un SVG en ligne ne lit pas les classes de Tailwind pour ses `fill` : il
+     * lui faut des valeurs. Les passer par des propriétés personnalisées garde
+     * la palette à une seule source — et leur donne le schéma sombre, sans
+     * quoi trente et une scènes restaient des rectangles clairs au milieu
+     * d'une page noire.
+     */
+    --scene-ciel-haut: #eef7f2;
+    --scene-ciel-bas: #dcefe6;
+    --scene-soleil: #feb637;
+    --scene-sol: #cfe6da;
+    --scene-horizon: #a4ffdd;
+    --scene-trait: #005f48;
+    --scene-feuille: #007a5e;
+}
+
+/* Le réglage du système, quand le visiteur n'a rien choisi. */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        color-scheme: dark;
+
+        --surface: 17 20 19;
+        --surface-dim: 17 20 19;
+        --surface-bright: 55 58 57;
+        --surface-container-lowest: 12 15 14;
+        --surface-container-low: 25 28 27;
+        --surface-container: 29 32 31;
+        --surface-container-high: 40 43 42;
+        --surface-container-highest: 51 54 53;
+        --surface-variant: 63 73 69;
+        --on-surface: 225 227 225;
+        --on-surface-variant: 191 201 196;
+        --inverse-surface: 225 227 225;
+        --inverse-on-surface: 25 28 27;
+        --outline: 137 147 142;
+        --outline-variant: 63 73 69;
+        --surface-tint: 121 216 183;
+        --primary: 121 216 183;
+        --on-primary: 0 56 42;
+        --primary-container: 0 81 61;
+        --on-primary-container: 149 245 210;
+        --inverse-primary: 0 95 72;
+        --secondary: 255 186 67;
+        --on-secondary: 68 43 0;
+        --secondary-container: 97 64 0;
+        --on-secondary-container: 255 221 175;
+        --tertiary: 255 179 174;
+        --on-tertiary: 103 0 12;
+        --tertiary-container: 147 0 21;
+        --on-tertiary-container: 255 218 215;
+        --error: 255 180 171;
+        --on-error: 105 0 5;
+        --error-container: 147 0 10;
+        --on-error-container: 255 218 214;
+        --background: 17 20 19;
+        --on-background: 225 227 225;
+        /* Le soleil reste ambré : c'est le seul point chaud de la scène, et
+           l'éteindre en sombre lui retirait son sujet. */
+        --scene-ciel-haut: #17211e;
+        --scene-ciel-bas: #101917;
+        --scene-soleil: #ffba43;
+        --scene-sol: #1a2a25;
+        --scene-horizon: #00513d;
+        --scene-trait: #79d8b7;
+        --scene-feuille: #00513d;
+    }
+}
+
+/* Le choix explicite, qui l'emporte sur le système dans les deux sens. */
+:root[data-theme='dark'] {
+    color-scheme: dark;
+
+        --surface: 17 20 19;
+        --surface-dim: 17 20 19;
+        --surface-bright: 55 58 57;
+        --surface-container-lowest: 12 15 14;
+        --surface-container-low: 25 28 27;
+        --surface-container: 29 32 31;
+        --surface-container-high: 40 43 42;
+        --surface-container-highest: 51 54 53;
+        --surface-variant: 63 73 69;
+        --on-surface: 225 227 225;
+        --on-surface-variant: 191 201 196;
+        --inverse-surface: 225 227 225;
+        --inverse-on-surface: 25 28 27;
+        --outline: 137 147 142;
+        --outline-variant: 63 73 69;
+        --surface-tint: 121 216 183;
+        --primary: 121 216 183;
+        --on-primary: 0 56 42;
+        --primary-container: 0 81 61;
+        --on-primary-container: 149 245 210;
+        --inverse-primary: 0 95 72;
+        --secondary: 255 186 67;
+        --on-secondary: 68 43 0;
+        --secondary-container: 97 64 0;
+        --on-secondary-container: 255 221 175;
+        --tertiary: 255 179 174;
+        --on-tertiary: 103 0 12;
+        --tertiary-container: 147 0 21;
+        --on-tertiary-container: 255 218 215;
+        --error: 255 180 171;
+        --on-error: 105 0 5;
+        --error-container: 147 0 10;
+        --on-error-container: 255 218 214;
+        --background: 17 20 19;
+        --on-background: 225 227 225;
+
+    /* Le soleil reste ambré : c'est le seul point chaud de la scène, et
+       l'éteindre en sombre lui retirait son sujet. */
+    --scene-ciel-haut: #17211e;
+    --scene-ciel-bas: #101917;
+    --scene-soleil: #ffba43;
+    --scene-sol: #1a2a25;
+    --scene-horizon: #00513d;
+    --scene-trait: #79d8b7;
+    --scene-feuille: #00513d;
+
+}
+
+:root[data-theme='light'] {
+    color-scheme: light;
+}

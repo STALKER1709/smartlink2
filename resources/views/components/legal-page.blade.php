@@ -35,7 +35,10 @@
                         @foreach ($sections as $ancre => $libelle)
                             <li>
                                 <a href="#{{ $ancre }}" class="-mx-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-label-md text-on-surface-variant hover:bg-surface-container hover:text-primary">
-                                    <span class="font-label-numeric text-label-sm text-outline">{{ $loop->iteration }}</span>
+                                    {{-- `outline` est la couleur d'un filet : sur blanc elle donne 4,47:1,
+     juste sous le seuil de 4,5 exigé pour un texte. Ces numéros en sont
+     un — ils désignent la section qu'on cite. --}}
+                                    <span class="font-label-numeric text-label-sm text-on-surface-variant">{{ $loop->iteration }}</span>
                                     <span>{{ $libelle }}</span>
                                 </a>
                             </li>

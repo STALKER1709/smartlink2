@@ -547,6 +547,73 @@ class CharteTest extends TestCase
      * Le remède est le même partout : sortir la chaîne dans un bloc `@php` et
      * passer la variable.
      */
+    /**
+     * Une couleur écrite en dur ne suit pas le schéma sombre.
+     *
+     * C'est le défaut propre au mode sombre, et il ne se voit qu'en sombre :
+     * la page passe au noir, et l'élément resté en dur garde sa couleur
+     * claire. Sept valeurs de `app.css` étaient dans ce cas — la sélection de
+     * texte, le curseur de saisie, la barre de défilement, l'anneau de focus —
+     * et trente et une scènes de métier restaient des rectangles clairs au
+     * milieu d'une page noire.
+     *
+     * Les feuilles autonomes sont hors de cette règle : elles servent au
+     * moment où les jetons peuvent manquer, et portent leur propre bloc
+     * `prefers-color-scheme`.
+     */
+    public function test_no_stylesheet_hardcodes_a_colour(): void
+    {
+        $fautifs = [];
+
+        foreach (['app.css', 'icones.css'] as $feuille) {
+            $chemin = dirname(__DIR__, 2).'/resources/css/'.$feuille;
+
+            if (! file_exists($chemin)) {
+                continue;
+            }
+
+            $contenu = preg_replace('~/\*.*?\*/~s', '', (string) file_get_contents($chemin)) ?? '';
+
+            if (preg_match_all('/#[0-9a-fA-F]{3,8}\b/', $contenu, $m)) {
+                $fautifs[] = $feuille.' ('.implode(', ', array_unique($m[0])).')';
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Couleur en dur dans une feuille : passer par rgb(var(--jeton)), sans quoi elle ne suivra pas le schéma sombre — '
+            .implode(' ; ', $fautifs));
+    }
+
+    /**
+     * Les deux schémas définissent les mêmes jetons.
+     *
+     * Un jeton défini en clair et oublié en sombre garde sa valeur claire :
+     * un seul mot de couleur reste alors lumineux au milieu d'une page noire,
+     * et rien ne le signale.
+     */
+    public function test_both_schemes_define_the_same_tokens(): void
+    {
+        $jetons = (string) file_get_contents(dirname(__DIR__, 2).'/resources/css/jetons.css');
+
+        preg_match_all('/^:root \{(.*?)^\}/ms', $jetons, $clair);
+        preg_match_all('/:root\[data-theme=\x27dark\x27\] \{(.*?)^\}/ms', $jetons, $sombre);
+
+        $nomsDe = fn (string $bloc) => array_values(array_unique(
+            preg_match_all('/--([a-z0-9-]+):/', $bloc, $m) ? $m[1] : []
+        ));
+
+        $enClair = $nomsDe($clair[1][0] ?? '');
+        $enSombre = $nomsDe($sombre[1][0] ?? '');
+
+        // Les jetons « fixed » de Material 3 ne changent pas d'un schéma à
+        // l'autre : c'est leur définition, pas un oubli.
+        $attendus = array_values(array_filter($enClair, fn (string $n) => ! str_contains($n, 'fixed')));
+
+        $this->assertNotEmpty($enSombre, 'Le bloc sombre explicite est introuvable dans jetons.css.');
+        $this->assertSame([], array_values(array_diff($attendus, $enSombre)),
+            'Jeton défini en clair et oublié en sombre : il gardera sa valeur claire.');
+    }
+
     public function test_no_escaped_quote_survives_in_a_view(): void
     {
         $fautifs = [];

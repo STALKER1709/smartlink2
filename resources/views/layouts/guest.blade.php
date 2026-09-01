@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        @include('partials.theme-head')
+
         <x-seo :titre="$titre" :description="$description" :indexable="$indexable" />
 
         @include('partials.pwa-head')        {{-- Les deux fichiers que toute page française lit, demandés avant que
@@ -33,6 +35,11 @@
                 <div class="mt-8 rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation-1 sm:p-8">
                     {{ $slot }}
                 </div>
+
+                {{-- Les écrans d'authentification se voient aussi de nuit, et
+                     l'on n'y est par définition pas connecté : le réglage doit
+                     être atteignable sans compte. --}}
+                <x-theme-switch class="mx-auto mt-6" />
 
                 <a href="{{ route('home') }}"
                    class="group mx-auto mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-label-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface">

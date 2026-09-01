@@ -34,7 +34,12 @@
 
         // Engagé : le vert monte avec l'avancement.
         'accepted' => 'bg-primary-container/20 text-primary',
-        'in_progress' => 'bg-primary-container/40 text-primary',
+        // Le plein plutôt qu'un vert plus dense sous le même texte : à 40 %
+        // d'opacité, `text-primary` tombait à 4,23:1, sous le seuil de 4,5.
+        // Le couple conteneur/sur-conteneur de Material 3 est celui qui tient
+        // dans les deux schémas par construction — et la progression du pâle
+        // au plein se lit d'ailleurs mieux comme un avancement.
+        'in_progress' => 'bg-primary-container text-on-primary-container',
 
         // Clos.
         'completed' => 'bg-primary-container text-on-primary-container',

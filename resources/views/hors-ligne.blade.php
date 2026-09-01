@@ -44,6 +44,15 @@
             cursor: pointer;
         }
         button:hover { background: #00432C; }
+
+        @media (prefers-color-scheme: dark) {
+            :root { color-scheme: dark; }
+            body { background: #111413; color: #e1e3e1; }
+            svg { color: #79d8b7; }
+            p { color: #bfc9c4; }
+            button { background: #79d8b7; color: #00382a; }
+            button:hover { background: #95f5d2; }
+        }
     </style>
 </head>
 <body>

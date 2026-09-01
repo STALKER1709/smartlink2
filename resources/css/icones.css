@@ -69,6 +69,7 @@
 .icone-id-badge { --glyphe: "\f2c1"; }
 .icone-ban { --glyphe: "\f05e"; }
 .icone-bolt { --glyphe: "\f0e7"; }
+.icone-circle-half-stroke { --glyphe: "\f042"; }
 .icone-cake-candles { --glyphe: "\f1fd"; }
 .icone-calendar-days { --glyphe: "\f073"; }
 .icone-calendar { --glyphe: "\f133"; }
@@ -84,6 +85,7 @@
 .icone-xmark { --glyphe: "\f00d"; }
 .icone-desktop { --glyphe: "\f390"; }
 .icone-scissors { --glyphe: "\f0c4"; }
+.icone-moon { --glyphe: "\f186"; }
 .icone-gauge-high { --glyphe: "\f625"; }
 .icone-file-lines { --glyphe: "\f15c"; }
 .icone-car { --glyphe: "\f1b9"; }
@@ -110,6 +112,7 @@
 .icone-circle-info { --glyphe: "\f05a"; }
 .icone-chart-line { --glyphe: "\f201"; }
 .icone-boxes-stacked { --glyphe: "\f468"; }
+.icone-sun { --glyphe: "\f185"; }
 .icone-fire { --glyphe: "\f06d"; }
 .icone-truck { --glyphe: "\f0d1"; }
 .icone-location-dot { --glyphe: "\f3c5"; }

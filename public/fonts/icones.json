@@ -13,6 +13,7 @@
         "badge",
         "block",
         "bolt",
+        "brightness_auto",
         "cake",
         "calendar_month",
         "calendar_today",
@@ -28,6 +29,7 @@
         "close",
         "computer",
         "content_cut",
+        "dark_mode",
         "dashboard",
         "description",
         "directions_car",
@@ -54,6 +56,7 @@
         "info",
         "insights",
         "inventory_2",
+        "light_mode",
         "local_fire_department",
         "local_shipping",
         "location_on",
@@ -100,7 +103,7 @@
         "yard"
     ],
     "sha256": {
-        "plein": "ce02a1f091069db92768637a64317f3d8280da3add11275680c5460b55aafff5",
+        "plein": "dd0831e69c115115d46e16ad7372719a66b93d7cf44aabf5917305279a7e0138",
         "contour": "deaf6853cac0a08ea8bcd64f62e3cb84d59d6950a52e0d55b55b11b7230642cf"
     }
 }

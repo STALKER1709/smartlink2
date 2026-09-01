@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        @include('partials.theme-head')
+
         <x-seo :titre="$titre"
                :description="$description"
                :image="$imagePartage"
