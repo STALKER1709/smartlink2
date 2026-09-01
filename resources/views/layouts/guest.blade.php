@@ -14,6 +14,10 @@
              ignoré puis refait. --}}
         <link rel="preload" href="/fonts/inter-400-600-latin.woff2" as="font" type="font/woff2" crossorigin>
         <link rel="preload" href="/fonts/lexend-600-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+        {{-- La police d'icônes est en `font-display: block` : sans elle, un
+             pictogramme n'est pas remplacé par du texte, il est absent. Elle
+             se précharge donc au même titre que les deux polices de texte. --}}
+        <link rel="preload" href="/fonts/icones-plein.woff2" as="font" type="font/woff2" crossorigin>
 
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -81,6 +81,6 @@ class AccountMenuTest extends TestCase
             $this->assertContains($attendue, $ligatures);
         }
 
-        $this->assertSame([], array_diff($ligatures, config('icons.names', [])));
+        $this->assertSame([], array_diff($ligatures, array_keys(config('icons.correspondance', []))));
     }
 }

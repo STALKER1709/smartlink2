@@ -1,4 +1,5 @@
 {
+    "font_awesome": "6.7.2",
     "icones": [
         "ac_unit",
         "account_circle",
@@ -49,7 +50,6 @@
         "help",
         "home",
         "home_repair_service",
-        "icone",
         "inbox",
         "info",
         "insights",
@@ -99,5 +99,8 @@
         "workspace_premium",
         "yard"
     ],
-    "sha256": "ca9e0a0f8e3ff715ad19eb8b0ef74b08e5101e2ef12b93c559da70e1564e17f3"
+    "sha256": {
+        "plein": "ce02a1f091069db92768637a64317f3d8280da3add11275680c5460b55aafff5",
+        "contour": "deaf6853cac0a08ea8bcd64f62e3cb84d59d6950a52e0d55b55b11b7230642cf"
+    }
 }

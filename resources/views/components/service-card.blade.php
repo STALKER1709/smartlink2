@@ -85,7 +85,7 @@
             </span>
             <span class="min-w-0 flex-1 truncate font-label-md text-label-md text-on-surface-variant">{{ $enseigne }}</span>
             @if ($profile?->is_verified)
-                <x-icon name="verified" size="sm" filled label="{{ __('Prestataire vérifié') }}" class="shrink-0 text-primary" />
+                <x-icon name="verified" size="sm" label="{{ __('Prestataire vérifié') }}" class="shrink-0 text-primary" />
             @endif
         </div>
 

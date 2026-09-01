@@ -46,7 +46,7 @@
              que paie un prestataire Pro ; il ne doit pas se lire comme une
              note de bas de page. --}}
         <div class="mb-2 flex items-start gap-3">
-            <x-icon name="edit_note" filled class="mt-1 text-on-secondary-container" />
+            <x-icon name="edit_note" class="mt-1 text-on-secondary-container" />
             <div>
                 <h2 class="font-headline-md text-headline-md text-on-secondary-container">{{ __('ui.draft.label') }}</h2>
                 <p class="mt-1 text-label-md text-on-secondary-container/80">{{ __('ui.draft.hint') }}</p>
@@ -70,7 +70,7 @@
                 :disabled="working || ! notes.trim()"
                 class="flex items-center gap-2 rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary shadow-elevation-1 transition-all hover:bg-primary-container active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
-                <x-icon name="auto_awesome" filled />
+                <x-icon name="auto_awesome" />
                 <span x-show="! working">{{ __('ui.draft.submit') }}</span>
                 <span x-show="working" x-cloak>{{ __('ui.draft.working') }}</span>
             </button>

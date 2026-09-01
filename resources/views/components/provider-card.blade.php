@@ -35,7 +35,7 @@
             <h3 class="mt-1 flex items-start gap-1.5 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
                 <span class="line-clamp-2">{{ $providerProfile->business_name }}</span>
                 @if ($providerProfile->is_verified)
-                    <x-icon name="verified" size="lg" filled label="{{ __('Prestataire vérifié') }}" class="mt-0.5 shrink-0 text-primary" />
+                    <x-icon name="verified" size="lg" label="{{ __('Prestataire vérifié') }}" class="mt-0.5 shrink-0 text-primary" />
                 @endif
             </h3>
 
@@ -96,7 +96,7 @@
                 <div class="flex flex-wrap items-center gap-2">
                     @if ($providerProfile->is_verified)
                         <span class="inline-flex items-center gap-1 rounded-full bg-primary-fixed px-2 py-0.5 font-label-sm text-label-sm font-bold uppercase tracking-wide text-primary">
-                            <x-icon name="verified" size="xs" filled />
+                            <x-icon name="verified" size="xs" />
                             {{ __("Vérifié") }}
                         </span>
                     @endif

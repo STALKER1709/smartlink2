@@ -4,11 +4,15 @@
      * couleur, comme dans les maquettes : on reconnaît d'un coup d'œil un
      * changement de statut, un message et un avis.
      */
+    /* Des clés nommées, et non un tuple : une icône écrite en première
+       position d'un tableau échappe au relevé de `icons:sync`, donc au
+       sous-ensemble de la police, et le pictogramme manque à l'écran sans la
+       moindre erreur. `IconSubsetTest` monte la garde. */
     $apparences = [
-        'request.status_changed' => ['check_circle', 'bg-primary text-on-primary'],
-        'request.new' => ['assignment', 'bg-primary text-on-primary'],
-        'message.new' => ['chat', 'bg-secondary text-on-secondary'],
-        'review.new' => ['star', 'bg-secondary-container/30 text-on-secondary-container'],
+        'request.status_changed' => ['icone' => 'check_circle', 'pastille' => 'bg-primary text-on-primary'],
+        'request.new' => ['icone' => 'assignment', 'pastille' => 'bg-primary text-on-primary'],
+        'message.new' => ['icone' => 'chat', 'pastille' => 'bg-secondary text-on-secondary'],
+        'review.new' => ['icone' => 'star', 'pastille' => 'bg-secondary-container/30 text-on-secondary-container'],
     ];
 @endphp
 
@@ -38,7 +42,8 @@
                     @php
                         $data = $notification->data;
                         $type = $data['type'] ?? null;
-                        [$icone, $pastille] = $apparences[$type] ?? ['notifications', 'bg-surface-variant text-on-surface-variant'];
+                        ['icone' => $icone, 'pastille' => $pastille] = $apparences[$type]
+                            ?? ['icone' => 'notifications', 'pastille' => 'bg-surface-variant text-on-surface-variant'];
                         $lue = (bool) $notification->read_at;
 
                         $link = match ($type) {

@@ -18,7 +18,7 @@
                     :class="role === 'client' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40 hover:shadow-elevation-2'"
                 >
                     <input type="radio" name="role" value="client" x-model="role" class="sr-only">
-                    <x-icon name="person_search" size="2xl" filled class="mb-2" x-bind:class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'" />
+                    <x-icon name="person_search" size="2xl" class="mb-2" x-bind:class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'" />
                     <span class="font-body-md text-label-md font-semibold md:text-body-md"
                           :class="role === 'client' ? 'text-primary' : 'text-on-surface'">{{ __("Je cherche un prestataire") }}</span>
                 </label>

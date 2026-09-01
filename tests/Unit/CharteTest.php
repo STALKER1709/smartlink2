@@ -56,11 +56,11 @@ class CharteTest extends TestCase
             // une classe.
             'partials/pwa-head.blade.php',
         ],
-        // Une icône n'est pas du texte : sa taille est une dimension, et
-        // Material Symbols la prend en `font-size`. Les trois porteurs
-        // d'icône du dépôt sont donc hors de l'échelle typographique.
+        // Une icône n'est pas du texte : sa taille est une dimension, prise
+        // en `font-size` par la police de glyphes. Les porteurs d'icône du
+        // dépôt sont donc hors de l'échelle typographique.
         'icone' => [
-            'material-symbols',
+            'icone-taille-',
             'x-category-icon',
             'x-service-thumb',
             // La taille par défaut du pictogramme de repli, déclarée en
@@ -573,18 +573,27 @@ class CharteTest extends TestCase
 
             $contenu = $this->contenuSansCommentaires($vue);
 
-            // Une ligature Material Symbols posée à la main est du texte que
-            // rien n'annonce et que rien ne dimensionne : trente icônes du
-            // dépôt n'avaient aucun attribut ARIA, et treize corps différents
-            // circulaient pour la même famille d'objets.
-            if (str_contains($contenu, 'material-symbols-outlined')) {
-                $fautifs[] = $vue.' (span brut)';
+            // Une classe de glyphe posée à la main court-circuite la table de
+            // correspondance : elle fige un nom Font Awesome dans une vue, et
+            // le jour où l'on change de fonte, cette icône-là reste seule en
+            // arrière. Elle échappe aussi au relevé, donc au sous-ensemble de
+            // la police — le pictogramme manque alors sans la moindre erreur.
+            if (preg_match('/class="[^"]*\bicone-(?!taille-|contour\b)[a-z]/', $contenu)) {
+                $fautifs[] = $vue.' (classe de glyphe en dur)';
             }
 
-            // `font-variation-settings` en attribut `style` remet au passage
-            // les trois autres axes à leur valeur par défaut, sans le dire.
-            if (str_contains($contenu, 'font-variation-settings')) {
-                $fautifs[] = $vue.' (axe en style en ligne)';
+            // La forme précédente : une ligature Material Symbols écrite à la
+            // main, qui était du texte que rien n'annonçait et que rien ne
+            // dimensionnait.
+            if (str_contains($contenu, 'material-symbols') || str_contains($contenu, 'font-variation-settings')) {
+                $fautifs[] = $vue.' (reste de Material Symbols)';
+            }
+
+            // Font Awesome écrit d'ordinaire ses icônes ainsi. Ici, le
+            // composant est le seul chemin : une balise `<i class="fa-...">`
+            // dans une vue signifie que quelqu'un a contourné la table.
+            if (preg_match('/<i\s[^>]*class="[^"]*\bfa[-s]/', $contenu)) {
+                $fautifs[] = $vue.' (balise Font Awesome brute)';
             }
         }
 

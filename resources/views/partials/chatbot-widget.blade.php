@@ -115,7 +115,7 @@
                 :disabled="sending || ! message.trim()"
                 class="inline-flex items-center justify-center rounded-full bg-primary px-3 py-2 text-on-primary hover:bg-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                <x-icon name="send" size="lg" filled />
+                <x-icon name="send" size="lg" />
             </button>
         </form>
     </div>

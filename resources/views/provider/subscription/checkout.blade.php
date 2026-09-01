@@ -47,7 +47,7 @@
                                        class="sr-only peer">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-label-sm {{ $meta[1] }}">{{ $meta[2] }}</div>
                                 <span class="text-label-md font-medium text-on-surface text-center">{{ __($meta[0]) }}</span>
-                                <x-icon name="check_circle" size="lg" filled class="absolute top-2 right-2 text-primary opacity-0 peer-checked:opacity-100 transition-opacity" />
+                                <x-icon name="check_circle" size="lg" class="absolute top-2 right-2 text-primary opacity-0 peer-checked:opacity-100 transition-opacity" />
                             </label>
                         @endforeach
                     </div>

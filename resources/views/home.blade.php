@@ -20,7 +20,7 @@
                      le service : c'est ce qui distingue SmartLink d'un
                      annuaire mondial. --}}
                 <span class="inline-flex items-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant">
-                    <x-icon name="verified" size="xs" filled class="text-primary" />
+                    <x-icon name="verified" size="xs" class="text-primary" />
                     {{ __('Le réseau de confiance au Cameroun') }}
                 </span>
 
@@ -80,7 +80,7 @@
                          mieux sur une image que dans un paragraphe. --}}
                     <div class="absolute -bottom-6 -left-4 flex items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 py-3 shadow-elevation-2">
                         <span class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-container">
-                            <x-icon name="verified_user" filled class="text-on-secondary-container" />
+                            <x-icon name="verified_user" class="text-on-secondary-container" />
                         </span>
                         <span>
                             <span class="block font-label-md text-label-md text-on-surface">{{ __('Pièce d\'identité contrôlée') }}</span>

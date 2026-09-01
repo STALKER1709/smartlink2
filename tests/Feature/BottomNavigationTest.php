@@ -45,20 +45,20 @@ class BottomNavigationTest extends TestCase
     }
 
     /**
-     * Les onglets sont rendus par une expression : leurs ligatures
+     * Les onglets sont rendus par une expression : leurs noms d'icône
      * n'apparaissent nulle part dans le balisage, et `icons:sync` ne peut pas
-     * les y trouver. Sans cette garde, un onglet ajouté afficherait le nom de
-     * son icône en toutes lettres, comme « home ».
+     * les y trouver. Sans cette garde, un onglet ajouté n'aurait tout
+     * simplement pas de pictogramme — un vide, sans la moindre erreur.
      */
     public function test_every_tab_icon_is_in_the_subset(): void
     {
-        $sousEnsemble = config('icons.names');
+        $sousEnsemble = array_keys(config('icons.correspondance'));
 
         foreach (NavigationLinks::icones() as $icone) {
             $this->assertContains(
                 $icone,
                 $sousEnsemble,
-                "L'icône « {$icone} » de la barre d'onglets manque à config/icons.php — lancer php artisan icons:sync.",
+                "L'icône « {$icone} » de la barre d'onglets manque à la table de config/icons.php — lancer php artisan icons:sync.",
             );
         }
     }

@@ -97,7 +97,7 @@
         <button type="submit"
                 class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary-container"
                 aria-label="{{ __('Envoyer') }}">
-            <x-icon name="send" filled />
+            <x-icon name="send" />
         </button>
     </form>
 </div>

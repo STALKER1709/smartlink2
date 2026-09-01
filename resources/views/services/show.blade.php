@@ -153,7 +153,7 @@
                             <h2 class="flex items-start gap-1 font-headline-sm text-headline-sm leading-tight text-on-surface">
                                 <a href="{{ route('providers.show', $profile) }}" class="rounded-lg hover:text-primary">{{ $profile->business_name }}</a>
                                 @if ($profile->is_verified)
-                                    <x-icon name="verified" size="sm" filled label="{{ __('Prestataire vérifié') }}" class="mt-1 shrink-0 text-primary" />
+                                    <x-icon name="verified" size="sm" label="{{ __('Prestataire vérifié') }}" class="mt-1 shrink-0 text-primary" />
                                 @endif
                             </h2>
 

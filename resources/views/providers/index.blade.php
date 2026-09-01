@@ -58,7 +58,7 @@
                 <div>
                     <p class="flex items-center gap-2 font-label-md text-body-md font-bold text-on-surface">
                         {{ __("Vérifiés uniquement") }}
-                        <x-icon name="verified" size="sm" filled class="text-primary" />
+                        <x-icon name="verified" size="sm" class="text-primary" />
                     </p>
                     <p class="mt-1 font-body-md text-body-md text-on-surface-variant">
                         {{ __("N'afficher que les profils dont la pièce d'identité a été contrôlée.") }}

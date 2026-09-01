@@ -71,7 +71,7 @@
                 @if ($providerProfile->is_verified)
                     <span class="absolute -bottom-1 -right-1 flex items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest p-1"
                           title="{{ __('Pièce d\'identité contrôlée par notre équipe') }}">
-                        <x-icon name="verified" size="xl" filled label="{{ __('Prestataire vérifié') }}" class="text-primary" />
+                        <x-icon name="verified" size="xl" label="{{ __('Prestataire vérifié') }}" class="text-primary" />
                     </span>
                 @endif
             </div>

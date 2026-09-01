@@ -3,109 +3,148 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\SyncIcons;
-use Symfony\Component\Finder\Finder;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 /**
- * La police d'icônes n'est pas servie en entier — 1,1 Mo pour une cinquantaine
- * d'icônes — mais un sous-ensemble se périme dès qu'une vue en ajoute une, et
- * le symptôme est discret : le nom de la ligature s'affiche en toutes lettres
- * à la place du dessin. Aucune erreur, aucun log.
+ * Le jeu d'icônes, tenu par une lecture des vues plutôt que par la mémoire.
+ *
+ * Une icône ajoutée dans une vue sans être portée dans la table et dans la
+ * police sous-ensemblée ne casse rien : elle ne s'affiche simplement pas.
+ * C'est le pire des symptômes — un vide, à un endroit où l'on n'allait pas
+ * regarder.
  */
 class IconSubsetTest extends TestCase
 {
-    public function test_every_icon_used_by_a_view_is_requested(): void
+    /** @return array<string, mixed> */
+    private function manifeste(): array
     {
-        $manquantes = array_diff(SyncIcons::scan(), config('icons.names', []));
+        $chemin = public_path('fonts/icones.json');
+        $this->assertFileExists($chemin, 'Manifeste absent : lancer php artisan icons:sync.');
 
-        $this->assertSame([], array_values($manquantes),
-            'Icônes utilisées mais non demandées : elles s\'afficheront en toutes lettres. Lancer php artisan icons:sync.');
+        return json_decode((string) File::get($chemin), true);
     }
 
-    public function test_the_subset_carries_no_unused_icon(): void
+    public function test_every_icon_used_in_a_view_has_a_translation(): void
     {
-        $superflues = array_diff(config('icons.names', []), SyncIcons::scan());
+        $employees = SyncIcons::scan();
+        $table = config('icons.correspondance');
 
-        $this->assertSame([], array_values($superflues),
-            'Icônes demandées sans être utilisées : poids inutile. Lancer php artisan icons:sync.');
+        $this->assertSame([], array_values(array_diff($employees, array_keys($table))),
+            'Icône employée sans correspondance Font Awesome : lancer php artisan icons:sync.');
     }
 
-    /**
-     * Depuis que la police est hébergée par nous, c'est le fichier `.woff2`
-     * qui se périme — et lui, aucune configuration ne le trahit. La commande
-     * écrit donc à côté la liste sur laquelle il a été construit.
-     *
-     * Sans ce contrôle, une icône ajoutée passerait les deux tests ci-dessus,
-     * la liste de configuration étant à jour, et s'afficherait en toutes
-     * lettres en production.
-     */
-    public function test_the_font_file_matches_the_configured_list(): void
+    public function test_the_stylesheet_draws_every_icon_used(): void
     {
-        $manifeste = public_path('fonts/material-symbols-subset.json');
+        $feuille = (string) File::get(resource_path('css/icones.css'));
+        $table = config('icons.correspondance');
 
-        $this->assertFileExists($manifeste,
-            'Le manifeste du sous-ensemble manque. Lancer php artisan icons:sync.');
+        $manquantes = [];
 
-        $decrit = json_decode((string) file_get_contents($manifeste), true);
-
-        $this->assertSame(config('icons.names', []), $decrit['icones'] ?? null,
-            'Le fichier de police ne sert pas la liste configurée : les icônes ajoutées '
-            .'depuis s\'afficheront en toutes lettres. Lancer php artisan icons:sync '
-            .'depuis une machine ayant accès à fonts.googleapis.com.');
-
-        /*
-         * Et le manifeste décrit-il le fichier qui est là ?
-         *
-         * Il ne l'a pas toujours fait. Deux sessions en parallèle ont séparé
-         * l'un de l'autre : l'une avait régénéré la police depuis sa propre
-         * liste, plus courte, et au rebase le `.woff2` — binaire, donc sans
-         * conflit — est passé de son côté quand le manifeste passait de
-         * l'autre. Les deux contrôles ci-dessus comparaient alors deux
-         * fichiers texte venus du même côté, et restaient verts pendant que
-         * « more_vert » s'imprimait en toutes lettres dans chaque menu.
-         */
-        $this->assertSame(hash_file('sha256', public_path('fonts/material-symbols-subset.woff2')), $decrit['sha256'] ?? null,
-            'Le manifeste ne décrit pas le fichier de police présent : il vient d\'une autre '
-            .'liste que celle qui a produit ce `.woff2`. Lancer php artisan icons:sync.');
-    }
-
-    /**
-     * Une ligature écrite en position dans un tableau est invisible au relevé.
-     *
-     * Les trois motifs du relevé cherchent un attribut — `name="…"`,
-     * `icon="…"` — ou la clé `'icone' => '…'`. Une vue qui énumère des tuples
-     * (`['done_all', 'Prestations…', …]`) puis les déstructure ne présente
-     * aucune des trois formes : l'icône disparaît du sous-ensemble, et
-     * « DONE_ALL » s'imprime en toutes lettres dans la pastille.
-     *
-     * Les deux tests ci-dessus ne le voient pas non plus : ils lisent le dépôt
-     * avec ce même relevé, et sont donc d'accord avec lui sur ce qu'ils
-     * ignorent. C'est cette règle-ci qui ferme la porte.
-     */
-    public function test_no_view_hides_an_icon_in_a_positional_tuple(): void
-    {
-        $fautives = [];
-
-        foreach (Finder::create()->files()->in(resource_path('views'))->name('*.blade.php') as $fichier) {
-            if (preg_match('/\bas\s*(?:\$\w+\s*=>\s*)?\[[^\]]*\$icone?\b/', $fichier->getContents())) {
-                $fautives[] = $fichier->getRelativePathname();
+        foreach (SyncIcons::scan() as $nom) {
+            if (! str_contains($feuille, '.icone-'.$table[$nom].' {')) {
+                $manquantes[] = $nom;
             }
         }
 
-        $this->assertSame([], $fautives,
-            'Icône déstructurée depuis un tuple : employer une clé nommée `\'icone\' => \'…\'` — '
-            .implode(', ', $fautives));
+        $this->assertSame([], $manquantes,
+            'Icône sans glyphe dans la feuille — elle ne s\'affichera pas du tout : '.implode(', ', $manquantes));
     }
 
-    public function test_no_layout_calls_google_fonts(): void
+    /**
+     * L'empreinte, et pourquoi elle est là.
+     *
+     * Le manifeste seul est une note posée à côté des fichiers, et deux
+     * sessions travaillant en parallèle l'ont déjà séparée d'eux. L'une avait
+     * régénéré la police depuis sa propre liste, plus courte ; au rebase, le
+     * `.woff2` — binaire, donc sans conflit — est passé de son côté et le
+     * manifeste du mien. Les deux tests de l'époque comparaient deux fichiers
+     * texte issus du même côté : ils sont restés verts, et sept icônes se sont
+     * imprimées en toutes lettres en production.
+     */
+    public function test_the_fonts_are_the_ones_the_manifest_describes(): void
     {
-        foreach (['app', 'guest'] as $gabarit) {
-            $contenu = file_get_contents(resource_path("views/layouts/{$gabarit}.blade.php"));
+        $manifeste = $this->manifeste();
 
-            // Une requête tierce bloquante sur chaque page, et l'adresse IP de
-            // chaque visiteur envoyée à Google.
-            $this->assertStringNotContainsString('fonts.googleapis.com', $contenu,
-                "Le gabarit {$gabarit} sert ses polices lui-même : voir resources/css/app.css.");
+        foreach (['plein', 'contour'] as $famille) {
+            $fichier = public_path("fonts/icones-{$famille}.woff2");
+
+            $this->assertFileExists($fichier);
+            $this->assertSame($manifeste['sha256'][$famille] ?? null, hash_file('sha256', $fichier),
+                "La police « {$famille} » n'est pas celle que décrit le manifeste : lancer php artisan icons:sync.");
         }
+
+        $this->assertSame(SyncIcons::scan(), $manifeste['icones'] ?? null,
+            'Le manifeste ne décrit pas le jeu employé : lancer php artisan icons:sync.');
+    }
+
+    /**
+     * Le contour n'existe que pour les icônes dont il porte un sens.
+     *
+     * Font Awesome Free ne dessine que 27 des 97 icônes d'ici en contour :
+     * l'ouvrir à d'autres donnerait un jeu dont une partie est plus légère que
+     * le reste, et le glyphe manquerait purement et simplement pour toutes
+     * celles qui n'ont pas de variante.
+     */
+    public function test_only_binary_icons_ask_for_an_outline(): void
+    {
+        $this->assertSame(SyncIcons::BINAIRES, config('icons.binaires'));
+
+        $fautifs = [];
+
+        foreach (File::allFiles(resource_path('views')) as $fichier) {
+            preg_match_all('/<x-icon\b[^>]*>/s', $fichier->getContents(), $balises);
+
+            foreach ($balises[0] as $balise) {
+                if (! preg_match('/\bfilled\b(?!=)/', $balise)) {
+                    continue;
+                }
+
+                // Une expression `:name` peut viser une binaire selon l'état :
+                // on ne peut pas trancher à la lecture, et le composant, lui,
+                // le fait à l'exécution.
+                if (str_contains($balise, ':name=')) {
+                    continue;
+                }
+
+                preg_match('/\bname="([a-z0-9_]+)"/', $balise, $nom);
+
+                if (! in_array($nom[1] ?? '', SyncIcons::BINAIRES, true)) {
+                    $fautifs[] = $fichier->getRelativePathname().' ('.($nom[1] ?? '?').')';
+                }
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Remplissage demandé sur une icône dont il ne dit aucun état : '.implode(', ', $fautifs));
+    }
+
+    /**
+     * Une icône écrite en première position d'un tableau échappe au relevé —
+     * et à ce test, qui lit le dépôt avec le même relevé. Le symptôme est un
+     * pictogramme absent, sans la moindre erreur.
+     */
+    public function test_no_view_hides_an_icon_in_a_positional_tuple(): void
+    {
+        $fautifs = [];
+
+        foreach (File::allFiles(resource_path('views')) as $fichier) {
+            $contenu = $fichier->getContents();
+
+            if (! str_contains($contenu, '<x-icon') && ! str_contains($contenu, ':name=')) {
+                continue;
+            }
+
+            preg_match_all('/\[\s*\x27([a-z][a-z0-9_]{2,})\x27\s*,/', $contenu, $m);
+
+            foreach ($m[1] as $premier) {
+                if (array_key_exists($premier, config('icons.correspondance'))) {
+                    $fautifs[] = $fichier->getRelativePathname().' ('.$premier.')';
+                }
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Icône en première position d\'un tableau : la nommer par une clé — '.implode(', ', $fautifs));
     }
 }

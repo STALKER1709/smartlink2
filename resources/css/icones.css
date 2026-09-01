@@ -1,0 +1,156 @@
+/*
+ * Fichier généré : ne pas modifier à la main.
+ * Régénérer avec `php artisan icons:sync`, puis `npm run build`.
+ *
+ * Les glyphes viennent de Font Awesome Free 6.7.2, sous-ensemblés
+ * aux seules icônes employées. Le plein est la famille unique ; le
+ * contour n'existe que pour star, favorite, dont le remplissage dit l'état.
+ */
+
+@font-face {
+    font-family: 'SmartLink Icons';
+    font-style: normal;
+    font-weight: 900;
+    font-display: block;
+    src: url('/fonts/icones-plein.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'SmartLink Icons';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('/fonts/icones-contour.woff2') format('woff2');
+}
+
+.icone {
+    font-family: 'SmartLink Icons';
+    font-weight: 900;
+    font-style: normal;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Le glyphe s'aligne sur la ligne de base du texte qu'il
+       accompagne au lieu de flotter au-dessus. */
+    line-height: 1;
+    flex-shrink: 0;
+    /* Un pictogramme ne se sélectionne pas : sans cela, un glisser
+       sur une carte le surligne au milieu du texte. */
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icone::before { content: var(--glyphe, ""); }
+
+/* Le contour, pour les seules icônes dont il porte un sens. */
+.icone-contour { font-weight: 400; }
+
+/* Une taille d'icône est une dimension, pas un palier
+   typographique : elle est donnée en pixels et se lit à
+   l'identique quelle que soit la taille du texte autour. */
+.icone-taille-xs { font-size: 16px; width: 16px; height: 16px; }
+.icone-taille-sm { font-size: 18px; width: 18px; height: 18px; }
+.icone-taille-md { font-size: 20px; width: 20px; height: 20px; }
+.icone-taille-lg { font-size: 24px; width: 24px; height: 24px; }
+.icone-taille-xl { font-size: 32px; width: 32px; height: 32px; }
+.icone-taille-2xl { font-size: 40px; width: 40px; height: 40px; }
+.icone-taille-3xl { font-size: 48px; width: 48px; height: 48px; }
+
+.icone-snowflake { --glyphe: "\f2dc"; }
+.icone-circle-user { --glyphe: "\f2bd"; }
+.icone-plus { --glyphe: "\2b"; }
+.icone-circle-plus { --glyphe: "\f055"; }
+.icone-arrow-left { --glyphe: "\f060"; }
+.icone-arrow-right { --glyphe: "\f061"; }
+.icone-arrow-up { --glyphe: "\f062"; }
+.icone-clipboard-list { --glyphe: "\f46d"; }
+.icone-wand-magic-sparkles { --glyphe: "\e2ca"; }
+.icone-id-badge { --glyphe: "\f2c1"; }
+.icone-ban { --glyphe: "\f05e"; }
+.icone-bolt { --glyphe: "\f0e7"; }
+.icone-cake-candles { --glyphe: "\f1fd"; }
+.icone-calendar-days { --glyphe: "\f073"; }
+.icone-calendar { --glyphe: "\f133"; }
+.icone-phone { --glyphe: "\f095"; }
+.icone-id-card { --glyphe: "\f2c2"; }
+.icone-hammer { --glyphe: "\f6e3"; }
+.icone-comment { --glyphe: "\f075"; }
+.icone-check { --glyphe: "\f00c"; }
+.icone-circle-check { --glyphe: "\f058"; }
+.icone-shirt { --glyphe: "\f553"; }
+.icone-chevron-left { --glyphe: "\f053"; }
+.icone-chevron-right { --glyphe: "\f054"; }
+.icone-xmark { --glyphe: "\f00d"; }
+.icone-desktop { --glyphe: "\f390"; }
+.icone-scissors { --glyphe: "\f0c4"; }
+.icone-gauge-high { --glyphe: "\f625"; }
+.icone-file-lines { --glyphe: "\f15c"; }
+.icone-car { --glyphe: "\f1b9"; }
+.icone-people-group { --glyphe: "\e533"; }
+.icone-check-double { --glyphe: "\f560"; }
+.icone-download { --glyphe: "\f019"; }
+.icone-pen-to-square { --glyphe: "\f044"; }
+.icone-file-pen { --glyphe: "\f31c"; }
+.icone-bolt-lightning { --glyphe: "\e0b7"; }
+.icone-chevron-down { --glyphe: "\f078"; }
+.icone-heart { --glyphe: "\f004"; }
+.icone-flag { --glyphe: "\f024"; }
+.icone-paint-roller { --glyphe: "\f5aa"; }
+.icone-comments { --glyphe: "\f086"; }
+.icone-trowel-bricks { --glyphe: "\e58a"; }
+.icone-table-cells-large { --glyphe: "\f009"; }
+.icone-handshake { --glyphe: "\f2b5"; }
+.icone-screwdriver-wrench { --glyphe: "\f7d9"; }
+.icone-heart-crack { --glyphe: "\f7a9"; }
+.icone-circle-question { --glyphe: "\f059"; }
+.icone-house { --glyphe: "\f015"; }
+.icone-toolbox { --glyphe: "\f552"; }
+.icone-inbox { --glyphe: "\f01c"; }
+.icone-circle-info { --glyphe: "\f05a"; }
+.icone-chart-line { --glyphe: "\f201"; }
+.icone-boxes-stacked { --glyphe: "\f468"; }
+.icone-fire { --glyphe: "\f06d"; }
+.icone-truck { --glyphe: "\f0d1"; }
+.icone-location-dot { --glyphe: "\f3c5"; }
+.icone-lock { --glyphe: "\f023"; }
+.icone-right-from-bracket { --glyphe: "\f2f5"; }
+.icone-envelope { --glyphe: "\f0e0"; }
+.icone-map { --glyphe: "\f279"; }
+.icone-bars { --glyphe: "\f0c9"; }
+.icone-book-open { --glyphe: "\f518"; }
+.icone-ellipsis-vertical { --glyphe: "\f142"; }
+.icone-music { --glyphe: "\f001"; }
+.icone-bell { --glyphe: "\f0f3"; }
+.icone-circle-pause { --glyphe: "\f28b"; }
+.icone-money-bill-wave { --glyphe: "\f53a"; }
+.icone-hourglass-half { --glyphe: "\f252"; }
+.icone-clipboard-check { --glyphe: "\f46c"; }
+.icone-user { --glyphe: "\f007"; }
+.icone-users-viewfinder { --glyphe: "\e595"; }
+.icone-camera { --glyphe: "\f030"; }
+.icone-faucet { --glyphe: "\e005"; }
+.icone-receipt { --glyphe: "\f543"; }
+.icone-comment-dots { --glyphe: "\f4ad"; }
+.icone-clock { --glyphe: "\f017"; }
+.icone-magnifying-glass { --glyphe: "\f002"; }
+.icone-paper-plane { --glyphe: "\f1d8"; }
+.icone-gear { --glyphe: "\f013"; }
+.icone-shield-halved { --glyphe: "\f3ed"; }
+.icone-bag-shopping { --glyphe: "\f290"; }
+.icone-robot { --glyphe: "\f544"; }
+.icone-mobile-screen-button { --glyphe: "\f3cd"; }
+.icone-spa { --glyphe: "\f5bb"; }
+.icone-star { --glyphe: "\f005"; }
+.icone-arrow-trend-down { --glyphe: "\e097"; }
+.icone-arrow-trend-up { --glyphe: "\e098"; }
+.icone-sliders { --glyphe: "\f1de"; }
+.icone-tv { --glyphe: "\f26c"; }
+.icone-upload { --glyphe: "\f093"; }
+.icone-certificate { --glyphe: "\f0a3"; }
+.icone-user-shield { --glyphe: "\f505"; }
+.icone-eye { --glyphe: "\f06e"; }
+.icone-triangle-exclamation { --glyphe: "\f071"; }
+.icone-droplet { --glyphe: "\f043"; }
+.icone-award { --glyphe: "\f559"; }
+.icone-seedling { --glyphe: "\f4d8"; }

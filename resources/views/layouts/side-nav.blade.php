@@ -56,7 +56,7 @@
 
         @if ($profil?->is_verified)
             <p class="mt-1 flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
-                <x-icon name="verified" size="xs" filled class="text-primary" />
+                <x-icon name="verified" size="xs" class="text-primary" />
                 {{ __('Prestataire vérifié') }}
             </p>
         @endif

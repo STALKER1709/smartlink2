@@ -1,3 +1,8 @@
+/* Les icônes : police sous-ensemblée et glyphes, produits par
+   `php artisan icons:sync`. L'import est en tête parce que la règle CSS
+   l'exige — un @import posé après une autre règle est ignoré. */
+@import './icones.css';
+
 /*
  * Les polices, servies par nous.
  *
@@ -79,17 +84,6 @@
     font-display: swap;
     src: url('/fonts/lexend-600-700-latin.woff2') format('woff2');
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-    font-family: 'Material Symbols Outlined';
-    font-style: normal;
-    font-weight: 400;
-    /* `block` et non `swap` : sans lui, le navigateur affiche le nom de la
-       ligature — « location_on », « arrow_forward » — tant que la police
-       n'est pas arrivée. */
-    font-display: block;
-    src: url('/fonts/material-symbols-subset.woff2') format('woff2');
 }
 
 @tailwind base;
@@ -210,43 +204,6 @@
  * que soit la taille rendue ; une icône de 16 px s'y lisait pâle et une de 40 px
  * lourde. Il suit désormais la taille.
  */
-.material-symbols-outlined {
-    /* C'est la feuille de Google qui posait cette ligne. En la retirant, on
-       retirait le seul endroit qui liait la classe à la police — et les
-       ligatures s'affichaient en toutes lettres, exactement le symptôme que
-       tout le mécanisme de sous-ensemble sert à éviter. */
-    font-family: 'Material Symbols Outlined';
-    font-weight: normal;
-    font-style: normal;
-    text-transform: none;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    font-feature-settings: 'liga';
-    -webkit-font-smoothing: antialiased;
-    --icon-fill: 0;
-    font-variation-settings: 'FILL' var(--icon-fill);
-    /* Une ligature d'icône ne se sélectionne pas : sans cela, un glisser sur
-       une carte surligne « location_on » au milieu du texte. */
-    user-select: none;
-    /* L'icône s'aligne sur la ligne de base du texte qu'elle accompagne au
-       lieu de flotter au-dessus. */
-    line-height: 1;
-    flex-shrink: 0;
-}
-
-.icon-filled { --icon-fill: 1; }
-
-/* Les six tailles. L'axe optique qui les accompagnait a été retiré avec le
-   sous-ensemble qui le portait : il coûtait 14,7 Ko pour une correction de
-   graisse qu'un écran de milieu de gamme ne rend pas. */
-.icon-xs { font-size: 16px; }
-.icon-sm { font-size: 18px; }
-.icon-md { font-size: 20px; }
-.icon-lg { font-size: 24px; }
-.icon-xl { font-size: 32px; }
-.icon-2xl { font-size: 40px; }
-.icon-3xl { font-size: 48px; }
 
 /*
  * La longueur de ligne du corps de texte. Au-delà d'environ 70 caractères,

@@ -79,7 +79,7 @@
                         </a>
                         <x-primary-button class="w-full sm:w-auto">
                             {{ __("Soumettre le signalement") }}
-                            <x-icon name="send" size="sm" filled />
+                            <x-icon name="send" size="sm" />
                         </x-primary-button>
                     </div>
                 </div>
