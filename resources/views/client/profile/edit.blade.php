@@ -41,7 +41,7 @@
                         @if ($clientProfile->photo_path)
                             <img src="{{ media_url($clientProfile->photo_path) }}"
                                  alt="{{ __('Votre photo de profil actuelle') }}"
-                                 class="h-16 w-16 rounded-full object-cover">
+                                 class="h-16 w-16 rounded-full object-cover" onerror="this.remove()">
                         @endif
                         <x-file-input name="photo" accept="image/*" :label="__('Choisir une photo')" />
                     </div>

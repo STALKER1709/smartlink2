@@ -9,7 +9,7 @@
                 <div class="flex items-center gap-3 mb-6 p-3 bg-surface-container-low rounded-lg border border-outline-variant">
                     <div class="h-12 w-12 rounded-lg bg-surface-container overflow-hidden shrink-0">
                         @if ($service->images->isNotEmpty())
-                            <img src="{{ media_url($service->images->first()->path) }}" alt="" class="h-full w-full object-cover">
+                            <img src="{{ media_url($service->images->first()->path) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
                         @endif
                     </div>
                     <div>
@@ -21,7 +21,7 @@
                 <div class="flex items-center gap-3 mb-6 p-3 bg-surface-container-low rounded-lg border border-outline-variant">
                     <div class="h-12 w-12 rounded-full bg-surface-container overflow-hidden shrink-0 flex items-center justify-center">
                         @if ($provider->providerProfile?->logo_path)
-                            <img src="{{ media_url($provider->providerProfile->logo_path) }}" alt="" class="h-full w-full object-cover">
+                            <img src="{{ media_url($provider->providerProfile->logo_path) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
                         @else
                             <span class="text-on-surface-variant font-semibold">{{ Str::substr($provider->providerProfile?->business_name ?? $provider->name, 0, 1) }}</span>
                         @endif

@@ -485,6 +485,49 @@ class CharteTest extends TestCase
             .implode(', ', $fautifs));
     }
 
+    /**
+     * Un fichier déposé peut toujours manquer à l'appel : le disque a changé,
+     * le seau a été vidé, le déploiement a emporté storage/. Le navigateur
+     * remplace alors l'image par son pictogramme de fichier cassé — un signe
+     * de panne, là où la vue a presque toujours une initiale ou une scène
+     * dessinée à montrer. `onerror` la retire pour laisser reparaître ce qui
+     * est dessous.
+     *
+     * Le passage de `MEDIA_DISK=s3` à `public` fait exactement cela sur toutes
+     * les images déjà déposées, d'un seul réglage.
+     */
+    public function test_uploaded_images_survive_a_missing_file(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            $contenu = $this->contenuSansCommentaires($vue);
+
+            // Les expressions Blade portent des « -> » : leurs chevrons
+            // fermeraient la balise avant d'avoir vu ses derniers attributs,
+            // et la règle croirait `onerror` absent alors qu'il est écrit.
+            $plat = preg_replace_callback(
+                '/\{\{.*?\}\}|@if\s*\(.*?\)/s',
+                fn (array $m) => str_repeat(' ', strlen($m[0])),
+                $contenu,
+            );
+
+            preg_match_all('/<img\b[^>]*>/s', (string) $plat, $balises, PREG_OFFSET_CAPTURE);
+
+            foreach ($balises[0] as [$vide, $decalage]) {
+                $balise = substr($contenu, $decalage, strlen($vide));
+
+                if (str_contains($balise, 'media_url(') && ! str_contains($balise, 'onerror')) {
+                    $fautifs[] = $vue;
+                }
+            }
+        }
+
+        $this->assertSame([], array_unique($fautifs),
+            'Image déposée sans onerror : ajouter onerror="this.remove()" pour laisser reparaître le repli — '
+            .implode(', ', array_unique($fautifs)));
+    }
+
     public function test_icons_go_through_their_component(): void
     {
         $fautifs = [];

@@ -205,7 +205,7 @@
                         @if ($providerProfile->logo_path)
                             <img src="{{ media_url($providerProfile->logo_path) }}"
                                  alt="{{ __('Logo actuel de :nom', ['nom' => $providerProfile->business_name]) }}"
-                                 class="h-16 w-16 rounded-full object-cover">
+                                 class="h-16 w-16 rounded-full object-cover" onerror="this.remove()">
                         @endif
                         <x-file-input name="logo" accept="image/*" :label="__('Choisir un logo')" />
                     </div>

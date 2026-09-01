@@ -15,13 +15,18 @@
                         {{-- Qui demande --}}
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-3">
-                                @if ($profile->logo_path)
-                                    <img src="{{ media_url($profile->logo_path) }}" alt="" class="h-10 w-10 shrink-0 rounded-full object-cover">
-                                @else
-                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-label-md font-bold text-primary">
-                                        {{ Str::substr($profile->business_name, 0, 1) }}
-                                    </div>
-                                @endif
+                                {{-- Les initiales sont toujours rendues, l'image
+                                     posée par-dessus : elle se retire seule si
+                                     le disque de médias ne la sert pas, et
+                                     l'initiale reparaît au lieu du pictogramme
+                                     d'image cassée. --}}
+                                <div class="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-container-high text-label-md font-bold text-primary">
+                                    {{ Str::substr($profile->business_name, 0, 1) }}
+                                    @if ($profile->logo_path)
+                                        <img src="{{ media_url($profile->logo_path) }}" alt=""
+                                             class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()">
+                                    @endif
+                                </div>
                                 <div class="min-w-0">
                                     <p class="font-medium text-on-surface">{{ $profile->business_name }}</p>
                                     <p class="break-all text-label-md text-on-surface-variant">{{ $profile->user->email }}</p>
