@@ -45,11 +45,13 @@ class CharteTest extends TestCase
             // aucune feuille de style ne l'accompagne, ses couleurs sont donc
             // écrites en clair. Ce sont celles de la palette.
             'hors-ligne.blade.php',
-            // Même raison, retournée : la page des 500 sert au moment où l'on
-            // ne sait pas ce qui est cassé. Elle ne va rien chercher ailleurs
-            // — ni feuille de style, ni session, ni base — parce que tout cela
-            // fait partie de ce qui peut manquer à ce moment-là.
-            'errors/500.blade.php',
+            // Même raison, retournée : les pages 500 et 503 servent au moment
+            // où l'on ne sait pas ce qui est cassé, ou pendant qu'on le
+            // répare. Elles ne vont rien chercher ailleurs — ni feuille de
+            // style, ni session, ni base — parce que tout cela fait partie de
+            // ce qui peut manquer à ce moment-là. Les deux partagent ce
+            // document, qui porte donc seul les couleurs en clair.
+            'errors/partials/autonome.blade.php',
             // `theme-color` est une balise meta : elle prend une couleur, pas
             // une classe.
             'partials/pwa-head.blade.php',
@@ -531,6 +533,33 @@ class CharteTest extends TestCase
         $this->assertSame([], array_unique($fautifs),
             'Image déposée sans onerror : ajouter onerror="this.remove()" pour laisser reparaître le repli — '
             .implode(', ', array_unique($fautifs)));
+    }
+
+    /**
+     * Le guillemet échappé n'existe pas en Blade.
+     *
+     * Un attribut de composant est délimité par ses guillemets : `\"` y ferme
+     * la valeur au milieu de l'expression, et la vue compilée devient du PHP
+     * invalide — « unexpected token endif », dans un fichier de cache dont le
+     * nom ne dit pas de quelle vue il vient. La page ne rend pas une erreur de
+     * syntaxe : elle rend 500. Une page 404 répondant 500, en l'occurrence.
+     *
+     * Le remède est le même partout : sortir la chaîne dans un bloc `@php` et
+     * passer la variable.
+     */
+    public function test_no_escaped_quote_survives_in_a_view(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            if (str_contains($this->contenuSansCommentaires($vue), '\\"')) {
+                $fautifs[] = $vue;
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Guillemet échappé dans une vue : sortir la chaîne dans un bloc @php — '
+            .implode(', ', $fautifs));
     }
 
     public function test_icons_go_through_their_component(): void

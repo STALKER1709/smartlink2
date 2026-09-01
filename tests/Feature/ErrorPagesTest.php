@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 /**
@@ -41,6 +43,51 @@ class ErrorPagesTest extends TestCase
     }
 
     /**
+     * Les quatre pages que l'application rend normalement.
+     *
+     * Elles ne sont atteintes qu'au travers d'une exception : les rendre
+     * directement est le seul moyen d'en éprouver le contenu, et il vaut
+     * mieux que de les laisser sans contrôle.
+     */
+    #[DataProvider('pagesDuSite')]
+    public function test_each_error_page_names_itself_and_offers_a_way_out(string $code, string $phrase): void
+    {
+        $rendu = view("errors.{$code}", ['exception' => new HttpException((int) $code)])->render();
+
+        $this->assertStringContainsString(e($phrase), $rendu);
+        // Le nom du site, et au moins une sortie.
+        $this->assertStringContainsString('SmartLink', $rendu);
+        $this->assertMatchesRegularExpression('/<a [^>]*href=|<button/', $rendu);
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function pagesDuSite(): array
+    {
+        return [
+            '403 refus' => ['403', 'Cette page ne vous est pas ouverte'],
+            '404 introuvable' => ['404', "Cette page n'existe pas"],
+            '419 session expirée' => ['419', 'Votre page a expiré'],
+            '429 trop de tentatives' => ['429', 'Vous allez un peu vite'],
+        ];
+    }
+
+    /**
+     * La limitation de débit annonce son délai dans l'en-tête `Retry-After`.
+     * Le dire vaut mieux qu'un « patientez » sans durée : sans chiffre, on
+     * réessaie tout de suite et le compteur repart.
+     */
+    public function test_the_rate_limit_page_says_how_long_to_wait(): void
+    {
+        $rendu = view('errors.429', [
+            'exception' => new HttpException(429, '', null, ['Retry-After' => 42]),
+        ])->render();
+
+        $this->assertStringContainsString('42', $rendu);
+    }
+
+    /**
      * La garde qui compte sur la page des 500.
      *
      * Elle sert au moment où l'on ne sait pas ce qui est cassé : la base peut
@@ -55,20 +102,27 @@ class ErrorPagesTest extends TestCase
      */
     public function test_the_server_error_page_depends_on_nothing(): void
     {
-        $source = (string) file_get_contents(resource_path('views/errors/500.blade.php'));
+        foreach (['errors/500.blade.php', 'errors/503.blade.php', 'errors/partials/autonome.blade.php'] as $fichier) {
+            // Sans ses commentaires : celui d'en-tête nomme précisément les
+            // directives à ne pas employer, pour dire pourquoi.
+            $source = (string) preg_replace(
+                '/\{\{--.*?--\}\}/s', '',
+                (string) file_get_contents(resource_path('views/'.$fichier)),
+            );
 
-        // Sans ses commentaires : celui d'en-tête nomme précisément les
-        // directives à ne pas employer, pour dire pourquoi.
-        $source = (string) preg_replace('/\{\{--.*?--\}\}/s', '', $source);
-
-        foreach (['@vite', '@auth', '@guest', 'x-guest-layout', 'x-app-layout', 'Auth::', 'route('] as $dependance) {
-            $this->assertStringNotContainsString($dependance, $source,
-                "La page des 500 ne doit dépendre de rien : « {$dependance} » y est.");
+            foreach (['@vite', '@auth', '@guest', 'x-guest-layout', 'x-app-layout', 'x-error-panel', 'Auth::', 'route('] as $dependance) {
+                $this->assertStringNotContainsString($dependance, $source,
+                    "{$fichier} ne doit dépendre de rien : « {$dependance} » y est.");
+            }
         }
 
-        // Et elle doit tout de même dire ce qu'elle a à dire.
-        $rendu = view('errors.500')->render();
-        $this->assertStringContainsString(e(__("Quelque chose s'est cassé de notre côté")), $rendu);
-        $this->assertStringContainsString(__('Réessayer'), $rendu);
+        // Et les deux doivent tout de même dire ce qu'elles ont à dire.
+        $cinqCents = view('errors.500')->render();
+        $this->assertStringContainsString(e(__("Quelque chose s'est cassé de notre côté")), $cinqCents);
+        $this->assertStringContainsString(__('Réessayer'), $cinqCents);
+        $this->assertStringContainsString('SmartLink', $cinqCents);
+
+        $maintenance = view('errors.503')->render();
+        $this->assertStringContainsString(__('SmartLink revient dans quelques minutes'), $maintenance);
     }
 }
