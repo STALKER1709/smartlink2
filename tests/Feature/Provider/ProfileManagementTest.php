@@ -61,6 +61,61 @@ class ProfileManagementTest extends TestCase
         ]);
     }
 
+    /**
+     * Le formulaire ouvre toujours une ligne vide sous « Zones d'intervention »
+     * et sous « Moyens de contact », pour qu'il y ait un champ où écrire. Le
+     * prestataire qui n'en veut pas la laisse vide — et le navigateur poste
+     * alors `service_areas[] = ''`.
+     *
+     * `ConvertEmptyStringsToNull`, actif par défaut, en fait un null, que la
+     * règle `string` refuse : « Le champ service_areas.0 doit être une chaîne
+     * de caractères. » Aucun prestataire ne pouvait enregistrer son profil
+     * sans remplir deux champs annoncés facultatifs, et le message ne
+     * désignait aucun champ visible à l'écran.
+     */
+    public function test_provider_can_leave_the_optional_repeaters_empty(): void
+    {
+        $provider = User::factory()->provider()->create();
+        ProviderProfile::factory()->create(['user_id' => $provider->id]);
+
+        $response = $this->actingAs($provider)->put(route('provider.profile.update'), [
+            'business_name' => 'Le Monstre',
+            'city' => 'Bertoua',
+            'service_areas' => [''],
+            'contact_methods' => [''],
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect();
+
+        $profil = $provider->fresh()->providerProfile;
+        $this->assertSame([], $profil->service_areas);
+        $this->assertSame([], $profil->contact_methods);
+    }
+
+    /**
+     * Une ligne laissée vide au milieu de deux autres ne doit pas non plus
+     * bloquer, ni ressortir comme une zone d'intervention sans nom.
+     */
+    public function test_blank_rows_are_dropped_and_the_others_kept(): void
+    {
+        $provider = User::factory()->provider()->create();
+        ProviderProfile::factory()->create(['user_id' => $provider->id]);
+
+        $response = $this->actingAs($provider)->put(route('provider.profile.update'), [
+            'business_name' => 'Le Monstre',
+            'city' => 'Bertoua',
+            'service_areas' => ['Bastos', '', 'Akwa'],
+            'contact_methods' => ['', '+237 6XX XXX XXX'],
+        ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $profil = $provider->fresh()->providerProfile;
+        $this->assertSame(['Bastos', 'Akwa'], $profil->service_areas);
+        $this->assertSame(['+237 6XX XXX XXX'], $profil->contact_methods);
+    }
+
     public function test_provider_can_upload_a_logo(): void
     {
         Storage::fake('public');
