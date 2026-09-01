@@ -5,7 +5,8 @@
              expression, et la page rendait une erreur 500. Aucun test ne
              passait par cet écran. --}}
         <x-page-header :title="__('ui.admin_plans.title').' — '.$plan->name()"
-                       :back="route('admin.plans.index')" back-label="Formules" />
+                       :back="route('admin.plans.index')"
+                       :back-label="__('Formules')" />
     </x-slot>
 
     <div class="max-w-xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">

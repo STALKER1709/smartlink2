@@ -27,7 +27,18 @@ class RequestController extends Controller
         $query = $user->isProvider() ? $user->receivedRequests() : $user->sentRequests();
 
         $serviceRequests = $query
-            ->with(['service', 'client.clientProfile', 'provider.providerProfile'])
+            /*
+             * Les deux métiers affichés sur chaque ligne — celui du service et
+             * celui du prestataire — se lisaient à travers une relation non
+             * préchargée : une requête par ligne, soit dix allers-retours de
+             * plus par page, invisibles sur SQLite et payés à chaque fois sur
+             * une base distante.
+             */
+            ->with([
+                'service.category',
+                'client.clientProfile',
+                'provider.providerProfile.category',
+            ])
             // Le point rouge des maquettes : une demande dont la conversation
             // porte un message qu'on n'a pas lu.
             ->withCount(['conversation as unread_count' => fn ($q) => $q
