@@ -86,7 +86,11 @@
                                     {{ $item['q'] }}
                                     <x-icon name="expand_more" class="text-on-surface-variant transition-transform group-open:rotate-180" />
                                 </summary>
-                                <p class="mt-3 text-label-md text-on-surface-variant">{{ $item['a'] }}</p>
+                                {{-- La mesure : au-delà d'environ 85 signes par ligne, l'œil
+                                     perd la ligne suivante en revenant à la marge. Une
+                                     réponse de foire aux questions est du texte de lecture,
+                                     pas une étiquette. --}}
+                                <p class="mt-3 max-w-prose text-label-md text-on-surface-variant">{{ $item['a'] }}</p>
                             </details>
                         @endforeach
                     </div>

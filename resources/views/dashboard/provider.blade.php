@@ -64,7 +64,7 @@
                  prestataire répète le plus, et il demandait deux navigations. --}}
             <section class="flex flex-col gap-4 md:col-span-8">
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                    <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Demandes à traiter") }}</h3>
+                    <h2 class="font-headline-md text-headline-md text-on-background">{{ __("Demandes à traiter") }}</h2>
                     @if ($pendingRequests->isNotEmpty())
                         {{-- Le compteur des demandes à traiter est une attente, pas une
                              panne : il prend le jaune, comme les pastilles de la
@@ -81,9 +81,9 @@
                                 {{ Str::upper(Str::substr($client?->clientProfile?->fullName() ?? $client?->name ?? '?', 0, 2)) }}
                             </span>
                             <div class="min-w-0">
-                                <h4 class="font-headline-sm text-headline-sm text-on-background group-hover:text-primary">
+                                <h3 class="font-headline-sm text-headline-sm text-on-background group-hover:text-primary">
                                     {{ $client?->clientProfile?->fullName() ?? $client?->name }}
-                                </h4>
+                                </h3>
                                 <p class="font-body-md text-body-md text-on-surface-variant">
                                     {{ $demande->service?->category?->name }}@if ($demande->service) — {{ $demande->service->title }}@endif
                                 </p>
@@ -122,7 +122,7 @@
 
             <section class="flex flex-col gap-4 md:col-span-4">
                 <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                    <h3 class="font-headline-md text-headline-md text-on-background">{{ __("Vos services") }}</h3>
+                    <h2 class="font-headline-md text-headline-md text-on-background">{{ __("Vos services") }}</h2>
                     @if ($masques > 0)
                         <span class="font-label-md text-label-md text-secondary">{{ trans_choice(":count masqué|:count masqués", $masques) }}</span>
                     @elseif ($auPlafond)
@@ -138,7 +138,7 @@
                                 <x-category-icon :icon="$service->category?->icon" />
                             </span>
                             <div class="min-w-0">
-                                <h4 class="truncate font-body-md text-body-md font-semibold text-on-background">{{ $service->title }}</h4>
+                                <h3 class="truncate font-body-md text-body-md font-semibold text-on-background">{{ $service->title }}</h3>
                                 <span class="font-label-numeric text-label-numeric text-primary">
                                     @if ($service->price_amount)
                                         À partir de {{ number_format((float) $service->price_amount, 0, ',', ' ') }} FCFA

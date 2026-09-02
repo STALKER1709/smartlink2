@@ -31,15 +31,21 @@
                     >
                 </div>
 
-                <select name="category_id" class="min-h-11 rounded-xl border-outline-variant text-label-md focus:border-primary focus:ring-primary sm:w-48">
+                {{-- Un placeholder n'est pas une étiquette : il disparaît dès
+                     la première frappe. Le champ « Rechercher » avait la
+                     sienne, ces deux-là non. --}}
+                <label for="category_id" class="sr-only">{{ __("Catégorie") }}</label>
+                <select id="category_id" name="category_id" class="min-h-11 rounded-xl border-outline-variant text-label-md focus:border-primary focus:ring-primary sm:w-48">
                     <option value="">{{ __("Toutes les catégories") }}</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
                     @endforeach
                 </select>
 
+                <label for="city" class="sr-only">{{ __("Ville") }}</label>
                 <input
                     type="text"
+                    id="city"
                     name="city"
                     value="{{ request('city') }}"
                     placeholder="{{ __('Ville') }}"
@@ -110,7 +116,9 @@
                  de grille. --}}
             <div class="flex flex-col gap-4">
                 @foreach ($providers as $providerProfile)
-                    <x-provider-card :provider-profile="$providerProfile" />
+                    {{-- Niveau 2 : ces cartes suivent directement le titre de la
+                         page, sans titre de section entre les deux. --}}
+                    <x-provider-card :provider-profile="$providerProfile" niveau="h2" />
                 @endforeach
             </div>
 

@@ -56,7 +56,7 @@
                             <x-icon name="shield" class="shrink-0" />
                             {{ __("Document non validé juridiquement") }}
                         </p>
-                        <p class="mt-1 text-label-md text-on-surface-variant">
+                        <p class="mt-1 max-w-prose text-label-md text-on-surface-variant">
                             {{ __("Ce texte a été rédigé d'après le fonctionnement réel de la plateforme, mais il n'a pas été relu par un juriste. Il ne doit pas être considéré comme un engagement contractuel opposable en l'état.") }}
                         </p>
                     </div>
@@ -80,7 +80,7 @@
                 </div>
 
                 <div class="mt-12 border-t border-outline-variant pt-6">
-                    <p class="text-label-md text-on-surface-variant">
+                    <p class="max-w-prose text-label-md text-on-surface-variant">
                         Une question sur ce document ?
                         @if ($editeur['email'])
                             Écrivez à <a href="mailto:{{ $editeur['email'] }}" class="font-semibold text-primary">{{ $editeur['email'] }}</a>.

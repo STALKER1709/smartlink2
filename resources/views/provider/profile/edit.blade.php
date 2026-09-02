@@ -4,7 +4,6 @@
     </x-slot>
 
     {{-- Leaflet CSS --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
@@ -69,44 +68,33 @@
                     <x-input-error :messages="$errors->get('whatsapp')" class="mt-2" />
                 </div>
 
-                {{-- Leaflet map for location --}}
-                <div class="mt-4" x-data="{
-                    lat: {{ old('latitude', $providerProfile->latitude ?? 3.848) }},
-                    lng: {{ old('longitude', $providerProfile->longitude ?? 11.502) }},
-                    map: null, marker: null,
-                    init() {
-                        this.map = L.map('provider-map').setView([this.lat, this.lng], 12);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                            attribution: '© OpenStreetMap'
-                        }).addTo(this.map);
-                        this.marker = L.marker([this.lat, this.lng], { draggable: true }).addTo(this.map);
-                        this.marker.on('dragend', (e) => {
-                            this.lat = e.target.getLatLng().lat.toFixed(7);
-                            this.lng = e.target.getLatLng().lng.toFixed(7);
-                        });
-                        this.map.on('click', (e) => {
-                            this.lat = e.latlng.lat.toFixed(7);
-                            this.lng = e.latlng.lng.toFixed(7);
-                            this.marker.setLatLng([this.lat, this.lng]);
-                        });
-                    }
-                }">
+                {{-- La carte se déclare par ses attributs : c'est `carte.js`
+                     qui la pose, et lui seul connaît Leaflet. Le composant
+                     Alpine qui vivait ici appelait `L.map()` dans son `init()`,
+                     donc avant que le module ait pu s'exécuter — l'ordre tenait
+                     par chance, et par un script tiers chargé en tête. --}}
+                <div class="mt-4">
                     <x-input-label :value="__('ui.provider.location_map')" />
                     <p class="text-label-sm text-on-surface-variant mb-2">{{ __('ui.provider.location_hint') }}</p>
-                    <div id="provider-map" class="w-full h-56 rounded-xl border border-outline-variant z-0"></div>
-                    <input type="hidden" name="latitude" :value="lat">
-                    <input type="hidden" name="longitude" :value="lng">
+                    <div id="provider-map"
+                         data-carte data-modifiable data-zoom="12"
+                         data-lat="{{ old('latitude', $providerProfile->latitude ?? 3.848) }}"
+                         data-lng="{{ old('longitude', $providerProfile->longitude ?? 11.502) }}"
+                         data-champ-lat="#latitude" data-champ-lng="#longitude" data-echo="#coordonnees"
+                         class="w-full h-56 rounded-xl border border-outline-variant z-0"></div>
+                    <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $providerProfile->latitude ?? 3.848) }}">
+                    <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $providerProfile->longitude ?? 11.502) }}">
                     {{-- « 3.848, 11.502 » nu ne dit rien à personne. La ligne
                          confirme d'abord que le repère est posé ; les
                          coordonnées suivent, à qui elles servent. --}}
                     <p class="mt-1 text-label-sm text-on-surface-variant">
-                        {{ __("Repère placé ·") }} <span class="font-label-numeric" x-text="`${lat}, ${lng}`"></span>
+                        {{ __("Repère placé ·") }} <span id="coordonnees" class="font-label-numeric"></span>
                     </p>
                 </div>
 
                 {{-- ID Card upload --}}
                 <div class="mt-6 border-t border-outline-variant pt-5">
-                    <h3 class="font-medium text-on-surface mb-1">{{ __('ui.provider.id_card_title') }}</h3>
+                    <h2 class="font-medium text-on-surface mb-1">{{ __('ui.provider.id_card_title') }}</h2>
                     <p class="text-label-sm text-on-surface-variant mb-3">{{ __('ui.provider.id_card_hint') }}</p>
 
                     @if ($providerProfile->id_card_path)
@@ -144,7 +132,7 @@
                 </div>
 
                 <div class="mt-6 border-t border-outline-variant pt-5">
-                    <h3 class="font-medium text-on-surface">{{ __("Où et comment vous joindre") }}</h3>
+                    <h2 class="font-medium text-on-surface">{{ __("Où et comment vous joindre") }}</h2>
                     <p class="mt-1 text-label-sm text-on-surface-variant">{{ __("Ces informations paraissent sur votre fiche publique.") }}</p>
                 </div>
 
@@ -153,7 +141,7 @@
                     <x-input-label :value="__('Zones d\'intervention (facultatif)')" />
                     <template x-for="(area, index) in areas" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
+                            <input type="text" name="service_areas[]" :aria-label="`Zone d'intervention ${index + 1}`" x-model="areas[index]" maxlength="120" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
                             <button type="button" @click="areas.splice(index, 1)" class="inline-flex min-h-6 items-center justify-center text-error text-label-md px-2">✕</button>
                         </div>
                     </template>
@@ -168,7 +156,7 @@
                     <x-input-label :value="__('Moyens de contact (facultatif)')" />
                     <template x-for="(contact, index) in contacts" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
+                            <input type="text" name="contact_methods[]" :aria-label="`Moyen de contact ${index + 1}`" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
                             <button type="button" @click="contacts.splice(index, 1)" class="inline-flex min-h-6 items-center justify-center text-error text-label-md px-2">✕</button>
                         </div>
                     </template>
@@ -221,5 +209,5 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @vite('resources/js/carte.js')
 </x-app-layout>

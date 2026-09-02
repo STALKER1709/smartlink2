@@ -140,9 +140,9 @@
                         <div class="flex flex-1 flex-col p-4">
                             <p class="font-label-sm text-label-sm font-semibold uppercase tracking-wide text-primary">{{ $service->category?->name }}</p>
 
-                            <h3 class="mt-1 font-headline-sm text-headline-sm font-bold leading-snug text-on-surface">
+                            <h2 class="mt-1 font-headline-sm text-headline-sm font-bold leading-snug text-on-surface">
                                 <a href="{{ route('provider.services.edit', $service) }}" class="rounded-lg hover:text-primary">{{ $service->title }}</a>
-                            </h3>
+                            </h2>
 
                             <p class="mt-2 line-clamp-2 font-body-md text-body-md text-on-surface-variant">{{ $service->description }}</p>
 

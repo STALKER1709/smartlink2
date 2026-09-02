@@ -24,6 +24,11 @@
 --}}
 
 @php
+    /* Un identifiant unique par instance : la graine seule se répétait dès que
+       deux vignettes du même métier voisinaient sur une page, et deux éléments
+       de même id rendent le document invalide — les deux `url(#…)` pointant
+       alors sur le premier dégradé. */
+    $instance = uniqid('', false);
     // Quatorze motifs pour trente et un métiers. Un motif partagé par des
     // métiers voisins vaut mieux qu'un dessin approximatif par métier.
     $familles = [
@@ -77,13 +82,13 @@
 
     {{-- Le ciel. Un dégradé, pas un aplat : c'est ce qui donne l'heure. --}}
     <defs>
-        <linearGradient id="ciel-{{ $motif }}-{{ $graine % 997 }}" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="ciel-{{ $motif }}-{{ $graine % 997 }}-{{ $instance }}" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="var(--scene-ciel-haut)" />
             <stop offset="100%" stop-color="var(--scene-ciel-bas)" />
         </linearGradient>
     </defs>
 
-    <rect width="400" height="200" fill="url(#ciel-{{ $motif }}-{{ $graine % 997 }})" />
+    <rect width="400" height="200" fill="url(#ciel-{{ $motif }}-{{ $graine % 997 }}-{{ $instance }})" />
 
     {{-- Le soleil bas, dans le jaune de la palette. --}}
     <circle cx="{{ $soleilX }}" cy="{{ $soleilY }}" r="26" fill="var(--scene-soleil)" opacity="0.85" />

@@ -88,7 +88,7 @@
                                 @endif
                             </div>
                             <div class="min-w-0">
-                                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary">{{ $nom ?? 'Non assigné' }}</h3>
+                                <h2 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary">{{ $nom ?? 'Non assigné' }}</h2>
                                 @if ($metier)
                                     <p class="font-body-md text-label-numeric text-on-surface-variant">{{ $metier }}</p>
                                 @endif
@@ -97,9 +97,12 @@
 
                         <div class="mb-3">
                             <x-status-badge :status="$serviceRequest->status" variant="caps" class="mb-2" />
-                            <h4 class="font-headline-sm text-headline-sm text-on-surface">{{ $serviceRequest->service?->title ?? 'Demande directe' }}</h4>
+                            <h3 class="font-headline-sm text-headline-sm text-on-surface">{{ $serviceRequest->service?->title ?? 'Demande directe' }}</h3>
                             @if ($serviceRequest->message)
-                                <p class="mt-1 line-clamp-2 font-body-md text-body-md text-on-surface-variant">{{ $serviceRequest->message }}</p>
+                                {{-- La mesure : à pleine largeur d'écran, ce message atteignait
+                                     128 signes par ligne, et l'œil perd la ligne suivante
+                                     en revenant à la marge. --}}
+                                <p class="mt-1 line-clamp-2 max-w-prose font-body-md text-body-md text-on-surface-variant">{{ $serviceRequest->message }}</p>
                             @endif
                         </div>
 

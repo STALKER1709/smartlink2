@@ -1,4 +1,4 @@
-@props(['title', 'subtitle' => null, 'back' => null, 'backLabel' => 'Retour', 'heading' => 'h2'])
+@props(['title', 'subtitle' => null, 'back' => null, 'backLabel' => 'Retour', 'heading' => 'h1'])
 
 {{-- En-tête de page unifié : titre à gauche, actions à droite, et un lien de
      retour quand la page est une feuille de navigation. Sur mobile les actions
@@ -16,9 +16,14 @@
         {{-- La maquette donne au titre de page le palier au-dessus de celui
              d'une carte, et un sous-titre en corps de lecture : c'est ce qui
              distingue l'en-tête d'un écran d'un simple titre de section. --}}
-        {{-- `h1` sur les pages publiques, `h2` ailleurs : une page n'a
-             qu'un seul titre de premier niveau, et sur les écrans connectés
-             c'est le contenu qui le porte. --}}
+        {{-- `h1` par défaut : c'est le titre de l'écran, et rien d'autre ne
+             le porte. La règle précédente réservait le premier niveau aux
+             pages publiques en supposant que le contenu s'en chargeait
+             ailleurs — un relevé des vingt-six écrans a montré que dix-sept
+             n'avaient aucun `h1`. Un lecteur d'écran commence alors sa lecture
+             par un titre de deuxième niveau, sans savoir de quelle page il
+             s'agit. `heading` reste réglable pour un écran qui porterait
+             réellement son titre ailleurs. --}}
         <{{ $heading }} class="font-headline-lg text-headline-md text-on-surface md:text-headline-lg">{{ $title }}</{{ $heading }}>
 
         {{-- Le sous-titre accepte une chaîne ou un fragment : certaines fiches

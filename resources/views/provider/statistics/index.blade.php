@@ -68,7 +68,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {{-- Répartition des demandes par statut --}}
                 <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-elevation-1 p-5">
-                    <h3 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.stats.by_status') }}</h3>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.stats.by_status') }}</h2>
                     <div class="mt-4 space-y-2">
                         @foreach ($stats['by_status'] as $status => $count)
                             @php $share = (int) round($count / max($stats['requests_total'], 1) * 100); @endphp
@@ -85,7 +85,7 @@
 
                 {{-- Réputation --}}
                 <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-elevation-1 p-5">
-                    <h3 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.stats.rating_breakdown') }}</h3>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.stats.rating_breakdown') }}</h2>
 
                     <div class="mt-3 flex items-baseline gap-3">
                         <span class="font-label-numeric text-headline-md text-on-surface">
@@ -118,7 +118,7 @@
             @if ($stats['top_services']->isNotEmpty())
                 <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-elevation-1 p-5">
                     <div class="flex flex-wrap items-center justify-between gap-3">
-                        <h3 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.stats.top_services') }}</h3>
+                        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.stats.top_services') }}</h2>
                         <a href="{{ route('provider.services.index') }}" class="inline-flex min-h-6 items-center font-label-md text-label-md text-primary hover:underline">{{ __('Voir tout') }}</a>
                     </div>
 

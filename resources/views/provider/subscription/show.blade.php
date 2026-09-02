@@ -72,7 +72,7 @@
                     'border-outline-variant' => ! $isCurrent,
                 ])>
                     <div class="flex items-baseline justify-between gap-2">
-                        <h3 class="font-headline-md text-headline-md text-on-surface">{{ $plan->name() }}</h3>
+                        <h2 class="font-headline-md text-headline-md text-on-surface">{{ $plan->name() }}</h2>
                         @if ($isCurrent)
                             <span class="rounded-full bg-primary-container/20 px-2.5 py-0.5 text-label-sm font-semibold text-primary">
                                 {{ __('ui.subscription.current_plan') }}

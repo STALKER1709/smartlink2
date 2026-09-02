@@ -11,7 +11,7 @@
                 <x-list-row class="flex items-start gap-4 sm:gap-6">
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                            <h3 class="font-headline-md text-headline-md text-on-surface">{{ $plan->name() }}</h3>
+                            <h2 class="font-headline-md text-headline-md text-on-surface">{{ $plan->name() }}</h2>
                             @unless ($plan->is_active)
                                 <x-status-badge status="inactive" />
                             @endunless

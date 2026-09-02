@@ -614,6 +614,41 @@ class CharteTest extends TestCase
             'Jeton défini en clair et oublié en sombre : il gardera sa valeur claire.');
     }
 
+    /**
+     * Rien n'est chargé depuis un CDN tiers.
+     *
+     * Le dépôt héberge ses polices pour trois raisons — une requête bloquante
+     * de moins, une adresse IP de visiteur qui ne part pas chez un tiers, et
+     * une page qui ne dépend pas d'un serveur qu'on ne tient pas. Leaflet
+     * venait pourtant d'unpkg.com sur les deux écrans qui portent une carte,
+     * et rendait un `ReferenceError: L is not defined` en pleine page dès que
+     * ce CDN n'était pas joignable.
+     *
+     * Les tuiles de carte sont l'exception, et la seule : une carte sans
+     * serveur de tuiles n'est pas une carte.
+     */
+    public function test_no_view_loads_from_a_third_party_cdn(): void
+    {
+        $fautifs = [];
+
+        foreach ($this->vues() as $vue) {
+            $contenu = $this->contenuSansCommentaires($vue);
+
+            preg_match_all('/(?:src|href)="(https?:\/\/[^"]+)"/', $contenu, $m);
+
+            foreach ($m[1] as $url) {
+                if (str_contains($url, 'tile.openstreetmap.org')) {
+                    continue;
+                }
+
+                $fautifs[] = $vue.' ('.$url.')';
+            }
+        }
+
+        $this->assertSame([], $fautifs,
+            'Ressource chargée depuis un tiers : l\'héberger, comme les polices — '.implode(', ', $fautifs));
+    }
+
     public function test_no_escaped_quote_survives_in_a_view(): void
     {
         $fautifs = [];

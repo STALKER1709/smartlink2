@@ -73,7 +73,7 @@
                 <x-icon name="smart_toy" size="lg" />
             </div>
             <div>
-                <h3 class="font-headline-sm text-headline-sm leading-tight">{{ __('ui.assistant.title') }}</h3>
+                <h2 class="font-headline-sm text-headline-sm leading-tight">{{ __('ui.assistant.title') }}</h2>
                 <p class="text-label-sm text-on-primary-container">{{ __('ui.assistant.subtitle') }}</p>
             </div>
         </div>
@@ -108,6 +108,7 @@
                 x-model="message"
                 :disabled="sending"
                 placeholder="{{ __('ui.assistant.placeholder') }}"
+                aria-label="{{ __('ui.assistant.placeholder') }}"
                 class="flex-1 rounded-full border-outline-variant text-label-md focus:border-primary focus:ring-primary"
             >
             <button

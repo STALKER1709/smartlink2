@@ -1,4 +1,4 @@
-@props(['providerProfile', 'compact' => false])
+@props(['providerProfile', 'compact' => false, 'niveau' => 'h3'])
 
 @php
     // Le même partage que sur l'accueil : un visiteur vise la demande, un
@@ -32,12 +32,12 @@
 
             {{-- Le nom passe à la ligne plutôt que de se couper : « Tchoumi
                  Électricité Bâtim… » ne désigne personne. --}}
-            <h3 class="mt-1 flex items-start gap-1.5 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
+            <{{ $niveau }} class="mt-1 flex items-start gap-1.5 font-headline-sm text-headline-sm leading-snug text-on-surface group-hover:text-primary">
                 <span class="line-clamp-2">{{ $providerProfile->business_name }}</span>
                 @if ($providerProfile->is_verified)
                     <x-icon name="verified" size="lg" label="{{ __('Prestataire vérifié') }}" class="mt-0.5 shrink-0 text-primary" />
                 @endif
-            </h3>
+            </{{ $niveau }}>
 
             <p class="mt-1 text-label-md text-on-surface-variant">
                 {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
@@ -105,12 +105,12 @@
 
                 {{-- Le nom passe à la ligne plutôt que de se couper : « Tchoumi
                      Électricité Bâtim… » ne désigne personne. --}}
-                <h3 class="mt-2 font-headline-md text-headline-md font-bold leading-tight text-on-surface">
+                <{{ $niveau }} class="mt-2 font-headline-md text-headline-md font-bold leading-tight text-on-surface">
                     <a href="{{ route('providers.show', $providerProfile) }}"
                        class="rounded-lg hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                         {{ $providerProfile->business_name }}
                     </a>
-                </h3>
+                </{{ $niveau }}>
 
                 @if ($providerProfile->category)
                     <p class="mt-1 font-label-md text-label-md font-semibold text-primary">{{ $providerProfile->category->name }}</p>

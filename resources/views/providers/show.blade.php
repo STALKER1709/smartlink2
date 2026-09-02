@@ -43,9 +43,6 @@
             || $adresse !== '';
     @endphp
 
-    @if ($aUneCarte)
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    @endif
 
     <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 pb-28 md:px-margin-tablet lg:px-margin-desktop lg:pb-8">
         {{--
@@ -261,7 +258,7 @@
                 @endif
 
                 @if ($aUneCarte)
-                    <div id="provider-map-show" class="z-0 h-48 w-full overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 md:h-64"></div>
+                    <div id="provider-map-show" data-carte data-zoom="14" data-lat="{{ $providerProfile->latitude }}" data-lng="{{ $providerProfile->longitude }}" data-libelle="{{ $providerProfile->business_name }}" class="z-0 h-48 w-full overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 md:h-64"></div>
                 @endif
             </section>
         @endif
@@ -370,17 +367,6 @@
     </div>
 
     @if ($aUneCarte)
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const lat = {{ $providerProfile->latitude }};
-                const lng = {{ $providerProfile->longitude }};
-                const map = L.map('provider-map-show').setView([lat, lng], 14);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-                L.marker([lat, lng]).addTo(map)
-                    .bindPopup(@js($providerProfile->business_name))
-                    .openPopup();
-            });
-        </script>
+        @vite('resources/js/carte.js')
     @endif
 </x-app-layout>
