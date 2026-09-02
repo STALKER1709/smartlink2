@@ -64,7 +64,6 @@
         "logout",
         "mail",
         "map",
-        "menu",
         "menu_book",
         "more_vert",
         "music_note",
@@ -103,7 +102,7 @@
         "yard"
     ],
     "sha256": {
-        "plein": "dd0831e69c115115d46e16ad7372719a66b93d7cf44aabf5917305279a7e0138",
+        "plein": "92fc612be4b7cdaafd5d07e3f209bc58d54d3bf1e51c828bd430ce268a3005e2",
         "contour": "deaf6853cac0a08ea8bcd64f62e3cb84d59d6950a52e0d55b55b11b7230642cf"
     }
 }

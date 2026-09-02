@@ -116,24 +116,21 @@ class NavigationLinks
     }
 
     /**
-     * L'entrée de compte de la barre du bas : la porte du profil, ou de la
-     * connexion pour un visiteur.
+     * Le cinquième onglet de la barre du bas.
      *
-     * @return array<string, string>
+     * Il n'ouvre pas une page mais une feuille, qui porte tout ce que la barre
+     * ne peut pas montrer en permanence : le profil, les écrans propres au
+     * rôle, la déconnexion, la langue et le schéma de couleurs. Il ne rend
+     * donc ni route ni motif — il n'y a pas d'écran « compte » dont il serait
+     * l'état actif.
+     *
+     * @return array{court: string, icone: string}
      */
     public static function compte(?User $utilisateur): array
     {
-        if ($utilisateur === null) {
-            return ['route' => 'login', 'motif' => 'login', 'court' => __('Connexion'), 'icone' => 'lock'];
-        }
-
-        $route = match (true) {
-            $utilisateur->isProvider() => 'provider.profile.edit',
-            $utilisateur->isClient() => 'client.profile.edit',
-            default => 'profile.edit',
-        };
-
-        return ['route' => $route, 'motif' => '*profile*', 'court' => __('Profil'), 'icone' => 'person'];
+        return $utilisateur === null
+            ? ['court' => __('Compte'), 'icone' => 'account_circle']
+            : ['court' => __('Compte'), 'icone' => 'person'];
     }
 
     /**

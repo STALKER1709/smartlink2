@@ -47,6 +47,7 @@ export default {
                 'surface-container-highest': 'rgb(var(--surface-container-highest) / <alpha-value>)',
                 'surface-variant': 'rgb(var(--surface-variant) / <alpha-value>)',
                 'on-surface': 'rgb(var(--on-surface) / <alpha-value>)',
+                scrim: 'rgb(var(--scrim) / <alpha-value>)',
                 'on-surface-variant': 'rgb(var(--on-surface-variant) / <alpha-value>)',
                 'inverse-surface': 'rgb(var(--inverse-surface) / <alpha-value>)',
                 'inverse-on-surface': 'rgb(var(--inverse-on-surface) / <alpha-value>)',

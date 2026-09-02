@@ -40,6 +40,11 @@
     --inverse-on-surface: 240 240 243;
     --outline: 110 122 116;
     --outline-variant: 189 201 194;
+
+    /* Le voile posé derrière une feuille ou une boîte de dialogue. Il ne
+       change pas avec le schéma : son rôle est de faire reculer la page, et un
+       voile clair en mode sombre l'éclaircirait au lieu de l'éloigner. */
+    --scrim: 0 0 0;
     --surface-tint: 0 108 83;
     --primary: 0 95 72;
     --on-primary: 255 255 255;
@@ -110,6 +115,12 @@
         --inverse-on-surface: 25 28 27;
         --outline: 137 147 142;
         --outline-variant: 63 73 69;
+
+            /* Identique en clair et en sombre, et déclaré dans les deux : le voile
+           fait reculer la page, pas changer de camp. Le laisser au seul bloc clair
+           aurait donné le bon rendu par accident — un jeton oublié garde sa valeur
+           claire — et `JetonsTest` refuse cet accident-là, à raison. */
+        --scrim: 0 0 0;
         --surface-tint: 121 216 183;
         --primary: 121 216 183;
         --on-primary: 0 56 42;
@@ -161,6 +172,12 @@
         --inverse-on-surface: 25 28 27;
         --outline: 137 147 142;
         --outline-variant: 63 73 69;
+
+            /* Identique en clair et en sombre, et déclaré dans les deux : le voile
+           fait reculer la page, pas changer de camp. Le laisser au seul bloc clair
+           aurait donné le bon rendu par accident — un jeton oublié garde sa valeur
+           claire — et `JetonsTest` refuse cet accident-là, à raison. */
+        --scrim: 0 0 0;
         --surface-tint: 121 216 183;
         --primary: 121 216 183;
         --on-primary: 0 56 42;

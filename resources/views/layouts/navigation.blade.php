@@ -12,20 +12,26 @@
 
     /*
      * Le menu du compte vient de `NavigationLinks::secondaires` : le menu
-     * déroulant et le panneau mobile ci-dessous le rendent tous les deux, pour
-     * la raison qui a déjà sorti les liens principaux d'ici — deux listes
+     * déroulant d'ici et la feuille de la barre du bas le rendent tous les
+     * deux, pour la raison qui a déjà sorti les liens principaux — deux listes
      * recopiées divergent.
      */
     $menuCompte = \App\Support\NavigationLinks::secondaires($utilisateur);
 
-    // Une seule fois : la barre large et le menu mobile s'en partagent le résultat.
+    // Une seule fois : la barre large et la pastille mobile s'en partagent le résultat.
     $nonLues = $utilisateur?->unreadNotifications()->count() ?? 0;
 @endphp
 
 {{-- La barre haute disparaît quand la colonne latérale porte les mêmes
      destinations : les répéter à deux endroits, c'est ce que la charte
-     refuse, et la colonne n'existe qu'à partir de `xl`. --}}
-<nav x-data="{ open: false }" @class([
+     refuse, et la colonne n'existe qu'à partir de `xl`.
+
+     Sur téléphone elle ne porte plus que l'identité du site et les
+     notifications. Le menu burger qui s'y trouvait rendait exactement les
+     quatre destinations de la barre du bas — la même liste deux fois, dont une
+     en haut à droite de l'écran, là où le pouce n'arrive pas. Ce qu'il portait
+     seul est passé dans la feuille du cinquième onglet. --}}
+<nav @class([
     'border-b border-outline-variant bg-surface-container-lowest',
     'xl:hidden' => auth()->check(),
 ])>
@@ -125,70 +131,8 @@
                     </a>
                 @endauth
 
-                {{-- 44 px de côté : `p-2` autour d'une icône de 20 px n'en donnait que 36,
-                     mesure prise dans le navigateur. C'est le seul bouton de la barre
-                     sur un téléphone ; il n'a pas droit à l'à-peu-près. --}}
-                <button @click="open = ! open"
-                        class="inline-flex h-11 w-11 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-on-surface"
-                        :aria-expanded="open ? 'true' : 'false'"
-                        aria-controls="menu-mobile"
-                        aria-label="{{ __('Menu') }}">
-                    <x-icon name="menu" size="lg" x-show="! open" />
-                    <x-icon name="close" size="lg" x-show="open" x-cloak />
-                </button>
             </div>
         </div>
     </div>
 
-    <div id="menu-mobile" x-show="open" x-cloak class="md:hidden">
-        <div class="space-y-1 pb-3 pt-2">
-            @foreach ($liens as $lien)
-                <x-responsive-nav-link :href="route($lien['route'])" :active="request()->routeIs($lien['motif'])">
-                    {{ $lien['libelle'] }}
-                </x-responsive-nav-link>
-            @endforeach
-        </div>
-
-        <div class="border-t border-outline-variant pb-1 pt-4">
-            @auth
-                <div class="px-4">
-                    <div class="text-body-md font-medium text-on-surface">{{ $utilisateur->name }}</div>
-                    <div class="text-label-md font-medium text-on-surface-variant">{{ $utilisateur->email }}</div>
-                </div>
-
-                <div class="mt-3 space-y-1">
-                    @foreach ($menuCompte as $entree)
-                        <x-responsive-nav-link :href="route($entree['route'])">
-                            <span class="inline-flex items-center gap-3">
-                                <x-icon :name="$entree['icone']" size="sm" class="shrink-0 text-on-surface-variant" />
-                                {{ $entree['libelle'] }}
-                            </span>
-                        </x-responsive-nav-link>
-                    @endforeach
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <x-responsive-nav-link :href="route('logout')"
-                                               onclick="event.preventDefault(); this.closest('form').submit();">
-                            {{ __('Log Out') }}
-                        </x-responsive-nav-link>
-                    </form>
-                </div>
-            @else
-                <div class="space-y-1">
-                    <x-responsive-nav-link :href="route('login')">{{ __('Se connecter') }}</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('register')">{{ __("S'inscrire") }}</x-responsive-nav-link>
-                </div>
-            @endauth
-        </div>
-
-        <div class="flex gap-2 border-t border-outline-variant px-4 py-3">
-            <a href="{{ route('locale.switch', 'fr') }}"
-               class="rounded-full px-3 py-1.5 text-label-md font-medium {{ $locale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">{{ __("Français") }}</a>
-            <a href="{{ route('locale.switch', 'en') }}"
-               class="rounded-full px-3 py-1.5 text-label-md font-medium {{ $locale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">{{ __("English") }}</a>
-
-            <x-theme-switch class="ms-auto" />
-        </div>
-    </div>
 </nav>

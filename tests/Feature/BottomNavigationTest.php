@@ -8,20 +8,83 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * La barre d'onglets basse est la navigation principale sur mobile. Ce qui doit
- * tenir : chaque rôle y trouve ses destinations, et aucune icône n'y manque —
- * une ligature absente du sous-ensemble s'affiche en toutes lettres.
+ * La barre d'onglets basse est la navigation mobile, et la seule.
+ *
+ * Elle coexistait avec un menu burger qui rendait exactement les mêmes quatre
+ * destinations : la même liste à deux endroits, dont l'un en haut à droite de
+ * l'écran, là où le pouce n'arrive pas. Ce qui doit tenir désormais : chaque
+ * rôle y trouve ses destinations, le burger ne revient pas, et ce qu'il
+ * portait seul reste joignable.
  */
 class BottomNavigationTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Le burger est parti, et rien ne doit le ramener. Le signe qui ne trompe
+     * pas : le panneau qu'il ouvrait, et les liens qu'il rendait en double.
+     */
+    public function test_no_burger_menu_survives(): void
+    {
+        $rendus = [
+            $this->get(route('services.index')),
+            $this->actingAs(User::factory()->provider()->create())->get(route('dashboard')),
+        ];
+
+        foreach ($rendus as $rendu) {
+            $rendu->assertOk()
+                ->assertDontSee('id="menu-mobile"', false)
+                ->assertDontSee('aria-controls="menu-mobile"', false)
+                ->assertDontSee('x-responsive-nav-link', false);
+        }
+    }
+
+    /**
+     * Ce que le burger portait seul devait trouver une place, sans quoi le
+     * retirer aurait rendu ces réglages injoignables sur un téléphone : la
+     * langue et le schéma de couleurs n'existaient nulle part ailleurs sous
+     * 768 px.
+     */
+    public function test_the_account_sheet_carries_what_the_burger_alone_had(): void
+    {
+        $prestataire = User::factory()->provider()->create();
+
+        $rendu = $this->actingAs($prestataire)->get(route('dashboard'))->assertOk();
+
+        $rendu->assertSee('id="feuille-compte"', false)
+            ->assertSee('aria-controls="feuille-compte"', false)
+            // La déconnexion, la langue, et les écrans propres au rôle.
+            ->assertSee(route('logout'))
+            ->assertSee(route('locale.switch', 'en'))
+            ->assertSee(route('provider.subscription.show'));
+
+    }
+
+    /**
+     * Pour un visiteur, la feuille porte les deux portes d'entrée.
+     *
+     * Test à part, et non la suite du précédent : `actingAs` vaut pour toutes
+     * les requêtes du même test, et la requête « visiteur » y partait encore
+     * authentifiée. Le premier jet de ce contrôle a signalé un lien
+     * d'inscription manquant qui n'a jamais manqué.
+     */
+    public function test_the_sheet_offers_a_guest_both_doors(): void
+    {
+        $this->get(route('services.index'))->assertOk()
+            ->assertSee(route('register'))
+            ->assertSee(route('login'))
+            ->assertSee(route('locale.switch', 'fr'));
+    }
+
     public function test_a_guest_gets_the_public_destinations(): void
     {
         $this->get(route('services.index'))
             ->assertOk()
-            ->assertSee(route('login'))
-            ->assertSee(route('providers.index'));
+            ->assertSee(route('providers.index'))
+            ->assertSee(route('help.index'))
+            // La connexion n'est plus un onglet : elle est dans la feuille du
+            // cinquième, avec l'inscription.
+            ->assertSee(route('login'));
     }
 
     public function test_a_provider_gets_their_own_destinations(): void
