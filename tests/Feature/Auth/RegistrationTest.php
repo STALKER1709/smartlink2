@@ -29,7 +29,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('onboarding.show', absolute: false));
 
         $user = User::where('email', 'test@example.com')->first();
         $this->assertNotNull($user->clientProfile);
@@ -48,7 +48,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('onboarding.show', absolute: false));
 
         $user = User::where('email', 'provider@example.com')->first();
         $this->assertNotNull($user->providerProfile);
@@ -68,5 +68,22 @@ class RegistrationTest extends TestCase
 
         $response->assertSessionHasErrors('business_name');
         $this->assertGuest();
+    }
+
+    /**
+     * Chaque compte créé ouvre un essai gratuit de 30 jours : sans plafond, une
+     * boucle en fabrique autant qu'elle veut. Le sixième envoi d'une même
+     * minute doit être refusé, y compris — surtout — quand les données sont
+     * invalides et qu'aucun compte n'est réellement créé.
+     */
+    public function test_registration_is_rate_limited(): void
+    {
+        foreach (range(1, 5) as $i) {
+            $this->post('/register', ['email' => "flood{$i}@example.com"])
+                ->assertStatus(302);
+        }
+
+        $this->post('/register', ['email' => 'flood6@example.com'])
+            ->assertStatus(429);
     }
 }

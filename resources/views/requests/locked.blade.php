@@ -1,27 +1,41 @@
-<x-app-layout>
+<x-app-layout :titre="__('Demande verrouillée')" :indexable="false">
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.nav.requests') }}</h2>
+        <x-page-header :title="__('ui.nav.requests')" />
     </x-slot>
 
-    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-12">
-        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-8 text-center">
-            <span class="material-symbols-outlined text-5xl text-tertiary mb-3">lock</span>
+    {{-- L'écran de plafond des maquettes : un seul bloc centré, la pastille,
+         la phrase qui nomme le plafond, ce qui se passe, ce qui attend, et
+         deux sorties. --}}
+    <div class="mx-auto flex w-full max-w-[440px] px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
+        <article class="flex w-full flex-col items-center rounded-xl border border-outline-variant shadow-elevation-1 bg-surface p-6 text-center md:p-8">
+            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-surface-container-high text-primary">
+                <x-icon name="pause_circle" size="2xl" />
+            </div>
 
-            <h3 class="font-headline-md text-headline-md text-on-surface">
+            <h1 class="mb-4 font-headline-md text-headline-md text-on-surface">
                 {{ __('ui.subscription.quota_reached', ['count' => $plan?->max_monthly_requests ?? 0]) }}
-            </h3>
+            </h1>
 
-            <p class="mt-3 text-sm text-on-surface-variant">{{ __('ui.subscription.quota_hidden') }}</p>
-            <p class="mt-2 text-sm text-on-surface-variant">{{ __('ui.subscription.quota_upgrade') }}</p>
+            <p class="mb-6 px-2 font-body-md text-body-md text-on-surface-variant">
+                {{ __('ui.subscription.quota_hidden') }} {{ __('ui.subscription.quota_upgrade') }}
+            </p>
 
-            <div class="mt-6 flex flex-wrap justify-center gap-3">
-                <a href="{{ route('provider.subscription.show') }}" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+            <div class="mb-8 flex w-full items-start gap-3 rounded-lg border border-outline-variant bg-surface-container p-4">
+                <x-icon name="info" class="mt-0.5 text-primary" />
+                <p class="flex-1 text-left font-body-md text-body-md text-on-surface-variant">
+                    {{ __("Cette demande vous attend : elle reste lisible dès que votre plafond se renouvelle, le premier jour du mois prochain.") }}
+                </p>
+            </div>
+
+            <div class="mt-auto flex w-full flex-col gap-4">
+                <x-primary-button :href="route('provider.subscription.show')" class="w-full">
                     {{ __('ui.subscription.see_plans') }}
-                </a>
-                <a href="{{ route('requests.index') }}" class="rounded-full border border-primary px-4 py-2 text-sm font-button-text font-semibold text-primary hover:bg-primary-container/10 transition-colors">
+                </x-primary-button>
+                <a href="{{ route('requests.index') }}"
+                   class="flex w-full items-center justify-center rounded-full border border-primary bg-surface px-8 py-[14px] font-button-text text-button-text text-primary transition-colors active:bg-surface-container-low">
                     {{ __('ui.subscription.back_to_requests') }}
                 </a>
             </div>
-        </div>
+        </article>
     </div>
 </x-app-layout>

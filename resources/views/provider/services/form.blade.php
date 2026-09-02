@@ -39,10 +39,20 @@
                     .finally(() => { this.working = false; });
             },
         }"
-        class="mb-6 rounded-lg border border-outline-variant bg-secondary-container/20 p-4"
+        class="mb-8 rounded-xl border border-outline-variant/30 bg-secondary-container p-gutter"
     >
-        <label for="ai-notes" class="block text-sm font-medium text-on-secondary-container">{{ __('ui.draft.label') }}</label>
-        <p class="mt-1 text-xs text-on-secondary-container">{{ __('ui.draft.hint') }}</p>
+        {{-- Le bandeau de rédaction assistée des maquettes : plein plutôt
+             qu'en teinte légère, avec son pictogramme et son titre. C'est ce
+             que paie un prestataire Pro ; il ne doit pas se lire comme une
+             note de bas de page. --}}
+        <div class="mb-2 flex items-start gap-3">
+            <x-icon name="edit_note" class="mt-1 text-on-secondary-container" />
+            <div>
+                <h2 class="font-headline-md text-headline-md text-on-secondary-container">{{ __('ui.draft.label') }}</h2>
+                <p class="mt-1 text-label-md text-on-secondary-container/80">{{ __('ui.draft.hint') }}</p>
+            </div>
+        </div>
+        <label for="ai-notes" class="sr-only">{{ __('ui.draft.label') }}</label>
 
         <textarea
             id="ai-notes"
@@ -50,36 +60,40 @@
             rows="2"
             maxlength="600"
             placeholder="{{ __('ui.draft.placeholder') }}"
-            class="mt-3 block w-full rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary"
+            class="mt-4 block w-full resize-none rounded-lg border border-outline-variant bg-surface p-3 font-body-md text-body-md text-on-surface outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
         ></textarea>
 
-        <div class="mt-3 flex flex-wrap items-center gap-3">
+        <div class="mt-4 flex flex-wrap items-center justify-end gap-3">
             <button
                 type="button"
                 @click="propose"
                 :disabled="working || ! notes.trim()"
-                class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex items-center gap-2 rounded-full bg-primary px-6 py-2 font-button-text text-button-text text-on-primary shadow-elevation-1 transition-all hover:bg-primary-container active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
+                <x-icon name="auto_awesome" />
                 <span x-show="! working">{{ __('ui.draft.submit') }}</span>
                 <span x-show="working" x-cloak>{{ __('ui.draft.working') }}</span>
             </button>
 
-            <p x-show="applied" x-cloak class="text-sm text-secondary">{{ __('ui.draft.applied') }}</p>
-            <p x-show="error" x-cloak x-text="error" class="text-sm text-error"></p>
+        </div>
+
+        <div class="mt-2 flex flex-wrap justify-end gap-3">
+            <p x-show="applied" x-cloak class="text-label-md text-on-secondary-container">{{ __('ui.draft.applied') }}</p>
+            <p x-show="error" x-cloak x-text="error" class="text-label-md text-error"></p>
         </div>
     </div>
 @endif
 
 <div>
-    <x-input-label for="title" value="Titre du service" />
+    <x-input-label for="title" :value="__('Titre du service')" />
     <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title', $service?->title)" required />
     <x-input-error :messages="$errors->get('title')" class="mt-2" />
 </div>
 
 <div class="mt-4">
-    <x-input-label for="category_id" value="Catégorie" />
-    <select id="category_id" name="category_id" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
-        <option value="">Choisir une catégorie</option>
+    <x-input-label for="category_id" :value="__('Catégorie')" />
+    <select id="category_id" name="category_id" required class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary">
+        <option value="">{{ __("Choisir une catégorie") }}</option>
         @foreach ($categories as $category)
             <option value="{{ $category->id }}" @selected(old('category_id', $service?->category_id) == $category->id)>{{ $category->name }}</option>
         @endforeach
@@ -88,19 +102,19 @@
 </div>
 
 <div class="mt-4">
-    <x-input-label for="description" value="Description" />
-    <textarea id="description" name="description" rows="5" required maxlength="3000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">{{ old('description', $service?->description) }}</textarea>
+    <x-input-label for="description" :value="__('Description')" />
+    <textarea id="description" name="description" rows="5" required maxlength="3000" class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary">{{ old('description', $service?->description) }}</textarea>
     <x-input-error :messages="$errors->get('description')" class="mt-2" />
 </div>
 
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
-        <x-input-label for="price_amount" value="Prix en FCFA (facultatif)" />
+        <x-input-label for="price_amount" :value="__('Prix en FCFA (facultatif)')" />
         <x-text-input id="price_amount" name="price_amount" type="number" step="0.01" min="0" class="mt-1 block w-full" :value="old('price_amount', $service?->price_amount)" />
         <x-input-error :messages="$errors->get('price_amount')" class="mt-2" />
     </div>
     <div>
-        <x-input-label for="price_unit" value="Unité (ex: /heure, /m², forfait)" />
+        <x-input-label for="price_unit" :value="__('Unité (ex: /heure, /m², forfait)')" />
         <x-text-input id="price_unit" name="price_unit" type="text" class="mt-1 block w-full" :value="old('price_unit', $service?->price_unit)" maxlength="50" />
         <x-input-error :messages="$errors->get('price_unit')" class="mt-2" />
     </div>
@@ -108,9 +122,9 @@
 
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
-        <x-input-label for="city" value="Ville" />
-        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary text-sm">
-            <option value="">— Choisir une ville —</option>
+        <x-input-label for="city" :value="__('Ville')" />
+        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary text-label-md">
+            <option value="">{{ __("— Choisir une ville —") }}</option>
             @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
                 <option value="{{ $ville }}" @selected(old('city', $service?->city) === $ville)>{{ $ville }}</option>
             @endforeach
@@ -118,63 +132,70 @@
         <x-input-error :messages="$errors->get('city')" class="mt-2" />
     </div>
     <div>
-        <x-input-label for="quarter" value="Quartier (facultatif)" />
+        <x-input-label for="quarter" :value="__('Quartier (facultatif)')" />
         <x-text-input id="quarter" name="quarter" type="text" class="mt-1 block w-full" :value="old('quarter', $service?->quarter)" maxlength="120" placeholder="ex: Bastos, Akwa…" />
         <x-input-error :messages="$errors->get('quarter')" class="mt-2" />
     </div>
 </div>
 
 <div class="mt-4">
-    <x-input-label for="location" value="Adresse précise (facultatif)" />
+    <x-input-label for="location" :value="__('Adresse précise (facultatif)')" />
     <x-text-input id="location" name="location" type="text" class="mt-1 block w-full" :value="old('location', $service?->location)" />
     <x-input-error :messages="$errors->get('location')" class="mt-2" />
 </div>
 
 <div class="mt-4">
-    <label class="flex items-center gap-2 text-sm text-on-surface-variant">
+    <label class="flex items-center gap-2 text-label-md text-on-surface-variant">
         <input type="hidden" name="is_available" value="0">
         <input type="checkbox" name="is_available" value="1" class="rounded border-outline-variant text-primary focus:ring-primary" @checked(old('is_available', $service?->is_available ?? true))>
-        Disponible actuellement
+        {{ __("Disponible actuellement") }}
     </label>
 </div>
 
 <div class="mt-4">
-    <x-input-label for="availability_note" value="Note de disponibilité (facultatif)" />
+    <x-input-label for="availability_note" :value="__('Note de disponibilité (facultatif)')" />
     <x-text-input id="availability_note" name="availability_note" type="text" class="mt-1 block w-full" :value="old('availability_note', $service?->availability_note)" maxlength="255" />
     <x-input-error :messages="$errors->get('availability_note')" class="mt-2" />
 </div>
 
 @if ($service)
     <div class="mt-4">
-        <x-input-label for="status" value="Statut" />
-        <select id="status" name="status" required class="mt-1 block rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
-            <option value="active" @selected(old('status', $service->status) === 'active')>Actif</option>
-            <option value="inactive" @selected(old('status', $service->status) === 'inactive')>Inactif</option>
+        <x-input-label for="status" :value="__('Statut')" />
+        <select id="status" name="status" required class="mt-1 block rounded-lg border-outline-variant focus:border-primary focus:ring-primary">
+            <option value="active" @selected(old('status', $service->status) === 'active')>{{ __("Actif") }}</option>
+            <option value="inactive" @selected(old('status', $service->status) === 'inactive')>{{ __("Inactif") }}</option>
         </select>
         <x-input-error :messages="$errors->get('status')" class="mt-2" />
     </div>
 
     @if ($service->images->isNotEmpty())
         <div class="mt-4">
-            <p class="block font-medium text-sm text-on-surface-variant mb-2">Images actuelles</p>
+            <p class="block font-medium text-label-md text-on-surface-variant mb-2">{{ __("Images actuelles") }}</p>
             <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
                 @foreach ($service->images as $image)
+                    {{-- L'image est dans le label de la case : son texte
+                         alternatif devient le libellé de la suppression. Il
+                         doit donc distinguer une photo de l'autre, sans quoi
+                         la liste annonce cinq fois la même chose. --}}
                     <label class="relative block cursor-pointer">
-                        <img src="{{ asset('storage/'.$image->path) }}" class="h-20 w-full object-cover rounded-md">
-                        <span class="absolute top-1 right-1 bg-white/90 rounded-full p-1">
+                        <img src="{{ media_url($image->path) }}"
+                             alt="{{ __('Photo :numero du service', ['numero' => $loop->iteration]) }}"
+                             class="h-20 w-full object-cover rounded-lg" onerror="this.remove()">
+                        <span class="absolute top-1 right-1 bg-surface-container-lowest/90 rounded-full p-1">
                             <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded border-outline-variant text-primary focus:ring-primary">
                         </span>
                     </label>
                 @endforeach
             </div>
-            <p class="mt-1 text-xs text-on-surface-variant">Cochez les images à supprimer.</p>
+            <p class="mt-1 text-label-sm text-on-surface-variant">{{ __("Cochez les images à supprimer.") }}</p>
         </div>
     @endif
 @endif
 
 <div class="mt-4">
-    <x-input-label for="images" value="Ajouter des images (max 5, facultatif)" />
-    <input id="images" name="images[]" type="file" multiple accept="image/*" class="mt-1 block w-full text-sm text-on-surface-variant">
+    <x-input-label for="images" :value="__('Ajouter des images (max 5, facultatif)')" />
+    <x-file-input id="images" name="images" accept="image/*" multiple :label="__('Ajouter des images')"
+                  :hint="__('Jusqu\'à cinq images.')" class="mt-1" />
     <x-input-error :messages="$errors->get('images')" class="mt-2" />
     <x-input-error :messages="$errors->get('images.0')" class="mt-1" />
 </div>

@@ -30,7 +30,7 @@ class TrialOnRegistrationTest extends TestCase
             'business_name' => 'Jean-Paul Plomberie',
             'password' => 'motdepasse-solide',
             'password_confirmation' => 'motdepasse-solide',
-        ])->assertRedirect(route('dashboard', absolute: false));
+        ])->assertRedirect(route('onboarding.show', absolute: false));
 
         $provider = User::where('email', 'jp@example.cm')->firstOrFail();
         $subscription = $provider->activeSubscription();

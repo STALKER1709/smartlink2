@@ -1,53 +1,94 @@
-<section>
-    <header>
-        <h2 class="font-headline-md text-headline-md text-on-surface">
-            {{ __('Profile Information') }}
-        </h2>
+@php
+    // Le compte n'a pas de photo à lui : elle appartient au profil du rôle —
+    // logo pour un prestataire, portrait pour un client. La carte montre celle
+    // qui existe et renvoie là où elle se change, plutôt que d'ouvrir un second
+    // endroit où déposer une image.
+    $photo = $user->isProvider()
+        ? $user->providerProfile?->logo_path
+        : $user->clientProfile?->photo_path;
 
-        <p class="mt-1 text-sm text-on-surface-variant">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
+    $lienPhoto = match (true) {
+        $user->isProvider() => route('provider.profile.edit'),
+        $user->isClient() => route('client.profile.edit'),
+        default => null,
+    };
+@endphp
 
+<x-settings-card :title="__('Profile Information')" icon="person">
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    {{-- `max-w-3xl` : la carte occupe toute la largeur, le formulaire non.
+         Étirés sur les 1 100 px d'un écran de bureau, « Adresse e-mail » et
+         « Nom » devenaient deux rubans de saisie où l'œil perd le rapport
+         entre l'étiquette et son champ. --}}
+    <form method="post" action="{{ route('profile.update') }}" class="max-w-3xl space-y-6">
         @csrf
         @method('patch')
 
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+        <div class="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
+            <div class="relative shrink-0">
+                <div class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-surface-container">
+                    @if ($photo)
+                        <img src="{{ media_url($photo) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
+                    @else
+                        <span class="font-headline-md text-headline-md font-bold text-primary">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
+                    @endif
+                </div>
+
+                @if ($lienPhoto)
+                    <a href="{{ $lienPhoto }}"
+                       class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface-container-lowest bg-primary text-on-primary transition-colors hover:bg-primary-container"
+                       aria-label="{{ __('Change photo') }}" title="{{ __('Change photo') }}">
+                        <x-icon name="edit" size="sm" />
+                    </a>
+                @endif
+            </div>
+
+            <div>
+                <p class="font-medium text-on-surface">{{ __('Profile photo') }}</p>
+                <p class="mt-0.5 text-label-md text-on-surface-variant">{{ __('A square image of at least 400×400 px works best.') }}</p>
+            </div>
         </div>
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div>
+                <x-input-label for="name" :value="__('Name')" />
+                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+                <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            </div>
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-on-surface">
+            <div>
+                <x-input-label for="phone" :value="__('Phone')" />
+                <x-text-input id="phone" name="phone" type="tel" class="mt-1 block w-full" :value="old('phone', $user->phone)" required autocomplete="tel" />
+                <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+            </div>
+
+            <div class="md:col-span-2">
+                <x-input-label for="email" :value="__('Email')" />
+                <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+                <x-input-error class="mt-2" :messages="$errors->get('email')" />
+
+                @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+                    <p class="mt-2 text-label-md text-on-surface">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="underline text-sm text-on-surface-variant hover:text-on-surface rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <button form="send-verification" class="rounded-full text-label-md text-on-surface-variant underline hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-secondary">
+                        <p class="mt-2 text-label-md font-medium text-secondary">
                             {{ __('A new verification link has been sent to your email address.') }}
                         </p>
                     @endif
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 border-t border-outline-variant pt-5">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
@@ -56,9 +97,9 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-on-surface-variant"
+                    class="text-label-md text-on-surface-variant"
                 >{{ __('Saved.') }}</p>
             @endif
         </div>
     </form>
-</section>
+</x-settings-card>

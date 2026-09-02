@@ -1,247 +1,138 @@
-<nav x-data="{ open: false }" class="bg-surface-container-lowest border-b border-outline-variant">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop">
-        <div class="flex justify-between h-16">
+@php
+    $utilisateur = Auth::user();
+    $locale = app()->getLocale();
+
+    /*
+     * La table des destinations vit dans `App\Support\NavigationLinks` : la
+     * barre d'onglets du bas, incluse séparément, n'a pas accès aux variables
+     * définies ici. La recopier aurait ramené le défaut que cette liste unique
+     * corrigeait — une entrée ajoutée d'un côté et manquante de l'autre.
+     */
+    $liens = \App\Support\NavigationLinks::principaux($utilisateur);
+
+    /*
+     * Le menu du compte vient de `NavigationLinks::secondaires` : le menu
+     * déroulant d'ici et la feuille de la barre du bas le rendent tous les
+     * deux, pour la raison qui a déjà sorti les liens principaux — deux listes
+     * recopiées divergent.
+     */
+    $menuCompte = \App\Support\NavigationLinks::secondaires($utilisateur);
+
+    // Une seule fois : la barre large et la pastille mobile s'en partagent le résultat.
+    $nonLues = $utilisateur?->unreadNotifications()->count() ?? 0;
+@endphp
+
+{{-- La barre haute disparaît quand la colonne latérale porte les mêmes
+     destinations : les répéter à deux endroits, c'est ce que la charte
+     refuse, et la colonne n'existe qu'à partir de `xl`.
+
+     Sur téléphone elle ne porte plus que l'identité du site et les
+     notifications. Le menu burger qui s'y trouvait rendait exactement les
+     quatre destinations de la barre du bas — la même liste deux fois, dont une
+     en haut à droite de l'écran, là où le pouce n'arrive pas. Ce qu'il portait
+     seul est passé dans la feuille du cinquième onglet. --}}
+<nav @class([
+    'border-b border-outline-variant bg-surface-container-lowest',
+    'xl:hidden' => auth()->check(),
+])>
+    <div class="mx-auto max-w-container px-margin-mobile md:px-margin-tablet lg:px-margin-desktop">
+        <div class="flex h-16 justify-between gap-4">
             <div class="flex min-w-0 flex-1">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center gap-2">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2">
-                        <x-application-logo class="block h-8 w-auto fill-current text-primary" />
-                        <span class="hidden sm:inline font-headline-md text-headline-md text-primary">SmartLink</span>
+                <div class="flex shrink-0 items-center">
+                    <a href="{{ route('home') }}" class="-ml-2 inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-primary transition-colors hover:bg-surface-container-low" aria-label="{{ __('SmartLink — accueil') }}">
+                        <x-application-logo class="block h-8 w-8" />
+                        {{-- Le mot-logo s'efface entre 768 et 1023 px, le seul palier où la
+                             barre porte à la fois les trois destinations, le sélecteur de
+                             langue et les deux actions de compte : à 768 px il manquait
+                             une trentaine de pixels, et « Aide » passait sous FR/EN. --}}
+                        <span class="hidden font-headline-md text-headline-md text-primary sm:inline md:hidden lg:inline">SmartLink</span>
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden min-w-0 space-x-4 overflow-x-auto sm:-my-px sm:ms-6 sm:flex sm:flex-nowrap">
-                    <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.*')">
-                        {{ __('Services') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('providers.index')" :active="request()->routeIs('providers.*')">
-                        {{ __('Prestataires') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('help.index')" :active="request()->routeIs('help.*')">
-                        Aide
-                    </x-nav-link>
-
-                    @auth
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Tableau de bord') }}
+                <div class="hidden min-w-0 space-x-5 md:-my-px md:ms-8 md:flex md:flex-nowrap">
+                    @foreach ($liens as $lien)
+                        <x-nav-link :href="route($lien['route'])" :active="request()->routeIs($lien['motif'])">
+                            {{ $lien['libelle'] }}
                         </x-nav-link>
-                        <x-nav-link :href="route('requests.index')" :active="request()->routeIs('requests.*')">
-                            {{ __('Demandes') }}
-                        </x-nav-link>
-                        @if (Auth::user()->isProvider())
-                            <x-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
-                                {{ __('Mes services') }}
-                            </x-nav-link>
-                        @endif
-                        <x-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
-                            {{ __('Messages') }}
-                        </x-nav-link>
-                        @if (Auth::user()->isAdmin())
-                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                                {{ __('Administration') }}
-                            </x-nav-link>
-                        @endif
-                    @endauth
+                    @endforeach
                 </div>
             </div>
 
-            <div class="hidden shrink-0 sm:flex sm:items-center sm:ms-6 gap-3">
-                {{-- Language switcher --}}
-                @php $currentLocale = app()->getLocale(); @endphp
-                <div class="flex rounded-full border border-outline-variant overflow-hidden text-xs font-semibold">
+            <div class="hidden shrink-0 items-center gap-2 md:ms-6 md:flex">
+                <div class="flex overflow-hidden rounded-full border border-outline-variant text-label-sm font-semibold">
                     <a href="{{ route('locale.switch', 'fr') }}"
-                       class="px-3 py-1.5 {{ $currentLocale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">FR</a>
+                       class="inline-flex h-11 min-w-11 items-center justify-center px-3 font-label-md text-label-md transition-colors {{ $locale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">FR</a>
                     <a href="{{ route('locale.switch', 'en') }}"
-                       class="px-3 py-1.5 {{ $currentLocale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">EN</a>
+                       class="inline-flex h-11 min-w-11 items-center justify-center px-3 font-label-md text-label-md transition-colors {{ $locale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">EN</a>
                 </div>
 
+                {{-- Le schéma de couleurs prend la même forme que la langue :
+                     deux réglages de confort, côte à côte, qui se lisent
+                     pareil. --}}
+                <x-theme-switch class="hidden lg:flex" />
+
                 @auth
-                    <!-- Notifications -->
-                    <a href="{{ route('notifications.index') }}" class="relative inline-flex items-center p-2 text-on-surface-variant hover:text-on-surface rounded-full hover:bg-surface-container-low transition-colors">
-                        <span class="material-symbols-outlined" style="font-size: 22px;">notifications</span>
-                        @php $unreadCount = Auth::user()->unreadNotifications()->count(); @endphp
-                        @if ($unreadCount > 0)
-                            <span class="absolute top-0.5 right-0.5 inline-flex items-center justify-center h-4 w-4 rounded-full bg-error text-[10px] font-bold text-on-error">
-                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                    <a href="{{ route('notifications.index') }}"
+                       class="relative inline-flex items-center rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-on-surface"
+                       title="{{ __('Notifications') }}">
+                        <x-icon name="notifications" style="font-size: 22px;" />
+                        @if ($nonLues > 0)
+                            <span class="absolute right-0.5 top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-error font-label-sm text-label-sm font-bold text-on-error">
+                                {{ $nonLues > 9 ? '9+' : $nonLues }}
                             </span>
                         @endif
                     </a>
 
-                    <!-- Settings Dropdown -->
-                    <x-dropdown align="right" width="48">
+                    <x-dropdown align="right" width="56">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center gap-1 px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-full text-on-surface-variant bg-surface-container-lowest hover:text-on-surface hover:bg-surface-container-low focus:outline-none transition ease-in-out duration-150 max-w-[10rem]">
-                                <span class="truncate">{{ Auth::user()->name }}</span>
-
-                                <span class="material-symbols-outlined shrink-0" style="font-size: 18px;">expand_more</span>
+                            <button class="inline-flex max-w-[10rem] items-center gap-1 rounded-full border border-transparent bg-surface-container-lowest px-3 py-2 text-label-md font-medium leading-4 text-on-surface-variant transition duration-150 ease-in-out hover:bg-surface-container-low hover:text-on-surface focus:outline-none">
+                                <span class="truncate">{{ $utilisateur->name }}</span>
+                                <x-icon name="expand_more" class="shrink-0" style="font-size: 18px;" />
                             </button>
                         </x-slot>
 
                         <x-slot name="content">
-                            @if (Auth::user()->isClient())
-                                <x-dropdown-link :href="route('client.profile.edit')">
-                                    {{ __('Mon profil client') }}
-                                </x-dropdown-link>
-                            @elseif (Auth::user()->isProvider())
-                                <x-dropdown-link :href="route('provider.profile.edit')">
-                                    {{ __('Mon profil prestataire') }}
-                                </x-dropdown-link>
-                                @if (Auth::user()->currentPlan()?->has_stats)
-                                    <x-dropdown-link :href="route('provider.statistics.index')">
-                                        {{ __('ui.nav.statistics') }}
-                                    </x-dropdown-link>
-                                @endif
-                                <x-dropdown-link :href="route('provider.subscription.show')">
-                                    {{ __('ui.nav.subscription') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('provider.reviews.index')">
-                                    Mes avis
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('provider.transactions.index')">
-                                    Mes transactions
-                                </x-dropdown-link>
-                            @endif
+                            <div class="border-b border-outline-variant px-4 py-3">
+                                <p class="truncate text-label-md font-semibold text-on-surface">{{ $utilisateur->name }}</p>
+                                <p class="truncate text-label-sm text-on-surface-variant">{{ $utilisateur->email }}</p>
+                            </div>
 
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Paramètres du compte') }}
-                            </x-dropdown-link>
+                            @foreach ($menuCompte as $entree)
+                                <x-dropdown-link :href="route($entree['route'])" class="flex items-center gap-3">
+                                    <x-icon :name="$entree['icone']" size="sm" class="shrink-0 text-on-surface-variant" />
+                                    {{ $entree['libelle'] }}
+                                </x-dropdown-link>
+                            @endforeach
 
-                            <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}" class="border-t border-outline-variant">
                                 @csrf
-
                                 <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();">
+                                                 onclick="event.preventDefault(); this.closest('form').submit();">
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
                         </x-slot>
                     </x-dropdown>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm font-medium text-on-surface-variant hover:text-on-surface">{{ __('Se connecter') }}</a>
-                    <a href="{{ route('register') }}" class="rounded-full bg-primary px-5 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">{{ __("S'inscrire") }}</a>
+                    <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center rounded-full px-4 text-label-md font-medium text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-on-surface">{{ __('Se connecter') }}</a>
+                    <a href="{{ route('register') }}" class="inline-flex min-h-11 items-center rounded-full bg-primary px-5 font-button-text text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-container">{{ __("S'inscrire") }}</a>
                 @endauth
             </div>
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low focus:outline-none transition duration-150 ease-in-out">
-                    <span class="material-symbols-outlined" x-show="! open">menu</span>
-                    <span class="material-symbols-outlined" x-show="open" x-cloak>close</span>
-                </button>
+            <div class="-me-2 flex items-center gap-1 md:hidden">
+                @auth
+                    <a href="{{ route('notifications.index') }}" class="relative inline-flex items-center rounded-full p-2 text-on-surface-variant" title="{{ __('Notifications') }}">
+                        <x-icon name="notifications" style="font-size: 22px;" />
+                        @if ($nonLues > 0)
+                            <span class="absolute right-0.5 top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-error font-label-sm text-label-sm font-bold text-on-error">
+                                {{ $nonLues > 9 ? '9+' : $nonLues }}
+                            </span>
+                        @endif
+                    </a>
+                @endauth
+
             </div>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('services.index')" :active="request()->routeIs('services.*')">
-                {{ __('Services') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('providers.index')" :active="request()->routeIs('providers.*')">
-                {{ __('Prestataires') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('help.index')" :active="request()->routeIs('help.*')">
-                Aide
-            </x-responsive-nav-link>
-
-            @auth
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Tableau de bord') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('requests.index')" :active="request()->routeIs('requests.*')">
-                    {{ __('Demandes') }}
-                </x-responsive-nav-link>
-                @if (Auth::user()->isProvider())
-                    <x-responsive-nav-link :href="route('provider.services.index')" :active="request()->routeIs('provider.services.*')">
-                        {{ __('Mes services') }}
-                    </x-responsive-nav-link>
-                @endif
-                <x-responsive-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
-                    {{ __('Messages') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
-                    {{ __('Notifications') }}
-                    @php $unreadCount = Auth::user()->unreadNotifications()->count(); @endphp
-                    @if ($unreadCount > 0)
-                        <span class="ms-1 inline-flex items-center justify-center h-4 w-4 rounded-full bg-error text-[10px] font-bold text-on-error">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
-                    @endif
-                </x-responsive-nav-link>
-                @if (Auth::user()->isAdmin())
-                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                        {{ __('Administration') }}
-                    </x-responsive-nav-link>
-                @endif
-            @endauth
-        </div>
-
-        <!-- Mobile language switcher -->
-        <div class="pt-2 pb-2 px-4 border-t border-outline-variant flex gap-2">
-            @php $currentLocale = app()->getLocale(); @endphp
-            <a href="{{ route('locale.switch', 'fr') }}"
-               class="rounded-full px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'fr' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">Français</a>
-            <a href="{{ route('locale.switch', 'en') }}"
-               class="rounded-full px-3 py-1.5 text-sm font-medium {{ $currentLocale === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }}">English</a>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-outline-variant">
-            @auth
-                <div class="px-4">
-                    <div class="font-medium text-base text-on-surface">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-on-surface-variant">{{ Auth::user()->email }}</div>
-                </div>
-
-                <div class="mt-3 space-y-1">
-                    @if (Auth::user()->isClient())
-                        <x-responsive-nav-link :href="route('client.profile.edit')">
-                            {{ __('Mon profil client') }}
-                        </x-responsive-nav-link>
-                    @elseif (Auth::user()->isProvider())
-                        <x-responsive-nav-link :href="route('provider.profile.edit')">
-                            {{ __('Mon profil prestataire') }}
-                        </x-responsive-nav-link>
-                        @if (Auth::user()->currentPlan()?->has_stats)
-                            <x-responsive-nav-link :href="route('provider.statistics.index')" :active="request()->routeIs('provider.statistics.*')">
-                                {{ __('ui.nav.statistics') }}
-                            </x-responsive-nav-link>
-                        @endif
-                        <x-responsive-nav-link :href="route('provider.subscription.show')" :active="request()->routeIs('provider.subscription.*')">
-                            {{ __('ui.nav.subscription') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('provider.reviews.index')">
-                            Mes avis
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('provider.transactions.index')">
-                            Mes transactions
-                        </x-responsive-nav-link>
-                    @endif
-
-                    <x-responsive-nav-link :href="route('profile.edit')">
-                        {{ __('Paramètres du compte') }}
-                    </x-responsive-nav-link>
-
-                    <!-- Authentication -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-
-                        <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                            {{ __('Log Out') }}
-                        </x-responsive-nav-link>
-                    </form>
-                </div>
-            @else
-                <div class="space-y-1">
-                    <x-responsive-nav-link :href="route('login')">{{ __('Se connecter') }}</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('register')">{{ __("S'inscrire") }}</x-responsive-nav-link>
-                </div>
-            @endauth
-        </div>
-    </div>
 </nav>

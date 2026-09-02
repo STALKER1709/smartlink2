@@ -1,0 +1,202 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+# Une nouvelle poussée sur la même branche annule la précédente : inutile de
+# payer deux fois la suite complète pour un correctif poussé dans la foulée.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------
+  # SQLite : le moteur du quotidien. C'est ce passage qui doit être rapide,
+  # c'est celui qu'on regarde en premier quand une PR rougit.
+  # ---------------------------------------------------------------------
+  tests-sqlite:
+    name: Tests (SQLite)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_sqlite, sqlite3, gd, bcmath, intl
+          coverage: none
+
+      - name: Restaurer le cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installer les dépendances PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Préparer l'environnement
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - run: php artisan test
+
+  # ---------------------------------------------------------------------
+  # PostgreSQL : le moteur de la production (Supabase). Ce passage existe
+  # parce que `like` y est sensible à la casse et que personne ne peut le
+  # vérifier en local sans serveur — c'est exactement le genre de bogue qui
+  # se voyait seulement une fois en ligne.
+  # ---------------------------------------------------------------------
+  tests-postgres:
+    name: Tests (PostgreSQL)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: smartlink_test
+        ports:
+          - 5432:5432
+        # `pg_isready` sans `-U` interroge la base au nom de l'utilisateur
+        # système, qui est `root` dans ce conteneur — et `root` n'existe pas
+        # comme rôle PostgreSQL. Le contrôle de santé échouait donc en boucle
+        # (« FATAL: role "root" does not exist », toutes les dix secondes) et le
+        # travail mourait en attendant un service qui, lui, était prêt.
+        options: >-
+          --health-cmd "pg_isready -U postgres -d smartlink_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_pgsql, pgsql, gd, bcmath, intl
+          coverage: none
+
+      - name: Restaurer le cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installer les dépendances PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Préparer l'environnement
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      # PHPUnit est appelé directement, et non par `php artisan test`.
+      # Ce dernier rend un code de sortie 1 avec `--configuration`, alors que
+      # les 652 tests passent : le passage était rouge sur une suite verte.
+      # `phpunit.pgsql.xml` porte lui-même tous les DB_* en `force="true"`,
+      # la surcouche n'apportait donc rien ici.
+      - run: vendor/bin/phpunit --configuration=phpunit.pgsql.xml
+
+  # ---------------------------------------------------------------------
+  # Style et dépendances : rapide, sans base de données.
+  # ---------------------------------------------------------------------
+  qualite:
+    name: Style et dépendances
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl
+          coverage: none
+
+      - name: Installer les dépendances PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Laravel Pint
+        run: vendor/bin/pint --test
+
+      - name: Vulnérabilités des dépendances PHP
+        run: composer audit --no-interaction
+
+      # L'analyse statique ne tourne que si larastan est installé. Elle ne
+      # l'est pas encore : le paquet dont elle dépend n'est distribué que par
+      # l'API de GitHub, inaccessible depuis l'environnement où ce dépôt a été
+      # préparé (voir CLAUDE.md, « Analyse statique »). Ce passage s'allume
+      # donc de lui-même le jour où la dépendance entre dans composer.json,
+      # sans qu'il faille penser à revenir modifier ce fichier — et il ne
+      # rougit pas d'ici là.
+      - name: Analyse statique
+        run: |
+          if [ -x vendor/bin/phpstan ]; then
+            vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+          else
+            echo "larastan absent : analyse statique passée. Voir phpstan.neon."
+          fi
+
+  # ---------------------------------------------------------------------
+  # Le paquet front est versionné (voir CLAUDE.md) : la fonction PHP déployée
+  # lit `public/build/manifest.json` tel qu'il est dans le dépôt. Si un commit
+  # touche une classe Tailwind sans rejouer `npm run build`, l'hébergeur sert
+  # un CSS qui ne correspond plus au code — sans la moindre erreur.
+  #
+  # Ce passage reconstruit et vérifie que rien ne bouge. Il attrape l'oubli
+  # que personne ne voit en revue.
+  # ---------------------------------------------------------------------
+  build-a-jour:
+    name: Paquet front à jour
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl
+          coverage: none
+
+      - name: Installer les dépendances PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # Le glob Tailwind inclut le cache des vues compilées : sans purge, une
+      # classe supprimée survit dans la feuille produite et le diff ci-dessous
+      # part sur une différence qui n'existe pas dans le code source.
+      - name: Vider le cache des vues avant construction
+        run: php artisan view:clear
+
+      - run: npm run build
+
+      - name: Vérifier que public/build est à jour
+        run: |
+          if ! git diff --quiet -- public/build; then
+            echo "::error::public/build ne correspond pas aux sources."
+            echo "Lancez « php artisan view:clear && npm run build » et committez le résultat."
+            git diff --stat -- public/build
+            exit 1
+          fi
+          echo "public/build est à jour."

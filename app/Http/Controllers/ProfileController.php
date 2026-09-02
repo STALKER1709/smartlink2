@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\AccountDeletionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,8 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    public function __construct(private readonly AccountDeletionService $accountDeletion) {}
+
     /**
      * Display the user's profile form.
      */
@@ -32,6 +35,13 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
+        // Un numéro changé n'est plus le numéro vérifié. Sans cette remise à
+        // zéro, la coche de confiance restait acquise à un téléphone que
+        // personne n'a jamais confirmé.
+        if ($request->user()->isDirty('phone')) {
+            $request->user()->phone_verified_at = null;
+        }
+
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
@@ -50,7 +60,9 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
+        // La suppression est douce, mais elle doit tout de même retirer le
+        // compte de la vitrine et effacer sa pièce d'identité.
+        $this->accountDeletion->delete($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

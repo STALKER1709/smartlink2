@@ -1,29 +1,20 @@
-<x-app-layout>
+<x-app-layout :titre="__('Paramètres du compte')" :indexable="false">
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">
-            {{ __('Profile') }}
-        </h2>
+        <x-page-header :title="__('Profile')"
+                       :subtitle="__('Manage your personal information and account settings.')" />
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop space-y-6">
-            <div class="p-4 sm:p-8 bg-surface-container-lowest border border-outline-variant sm:rounded-xl">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-surface-container-lowest border border-outline-variant sm:rounded-xl">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-surface-container-lowest border border-outline-variant sm:rounded-xl">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-        </div>
+    {{--
+        Les maquettes posent un bouton « Enregistrer » fixe en bas d'écran. Il
+        n'est pas repris : la page porte trois formulaires indépendants, et un
+        bouton unique en aurait soumis un seul. Un visiteur qui vient de saisir
+        son nouveau mot de passe et qui appuie dessus enregistrerait ses
+        coordonnées et perdrait sa saisie, sans rien qui le lui dise. Chaque
+        carte garde donc son propre bouton, au pied de son formulaire.
+    --}}
+    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 md:px-margin-tablet lg:px-margin-desktop">
+        @include('profile.partials.update-profile-information-form')
+        @include('profile.partials.update-password-form')
+        @include('profile.partials.delete-user-form')
     </div>
 </x-app-layout>

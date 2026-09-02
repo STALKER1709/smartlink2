@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DisputeController as AdminDisputeController;
 use App\Http\Controllers\Admin\ModerationController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\ProviderVerificationController;
@@ -10,12 +11,17 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DisputeController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\ProfileController;
@@ -30,6 +36,8 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\WebManifestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,11 +64,49 @@ Route::get('/aide', [HelpCenterController::class, 'index'])->name('help.index');
 
 Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('payments.webhook');
 
+// Passage quotidien déclenché en HTTP, pour les hébergements serverless où
+// aucun `schedule:run` ne tourne (voir DEPLOY-VERCEL.md). Protégé par
+// CRON_SECRET ; sans ce secret la route répond 503.
+Route::get('/cron/subscriptions-refresh', [CronController::class, 'subscriptionsRefresh'])
+    ->middleware('cron')
+    ->name('cron.subscriptions.refresh');
+
+// Contrôle d'après-déploiement. Même protection : ce que renvoie cette route
+// décrit la configuration de la production, ça ne se laisse pas lire par tout
+// le monde.
+Route::get('/cron/health', [CronController::class, 'health'])
+    ->middleware('cron')
+    ->name('cron.health');
+
 /*
 |--------------------------------------------------------------------------
 | Routes pour tout utilisateur authentifié et actif
 |--------------------------------------------------------------------------
 */
+
+/*
+ * Pages légales — publiques et sans état, comme le veut leur usage : on doit
+ * pouvoir les lire avant de créer un compte, et les citer par leur adresse.
+ */
+Route::get('/conditions-generales', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/mentions-legales', [LegalController::class, 'notice'])->name('legal.notice');
+Route::get('/confidentialite', [LegalController::class, 'privacy'])->name('legal.privacy');
+
+/*
+ * Plan du site et fichier des robots. Servis par l'application et non déposés
+ * en fichiers statiques : la directive « Sitemap » veut une URL absolue, que
+ * seul `APP_URL` connaît, et le plan doit refléter les fiches réellement
+ * ouvertes au public à l'instant où le robot passe.
+ */
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+/*
+ * Installation sur l'écran d'accueil. La page hors-ligne n'est jamais atteinte
+ * par un lien : c'est le service worker qui la sert quand le réseau manque.
+ */
+Route::get('/manifest.json', WebManifestController::class)->name('manifest');
+Route::view('/hors-ligne', 'hors-ligne')->name('offline');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -84,6 +130,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])->name('conversations.messages.store');
 
+    Route::get('/bienvenue/{etape?}', [OnboardingController::class, 'show'])->whereNumber('etape')->name('onboarding.show');
+    Route::post('/bienvenue/terminer', [OnboardingController::class, 'finish'])->name('onboarding.finish');
+
+    Route::get('/litiges', [DisputeController::class, 'index'])->name('disputes.index');
+    Route::get('/demandes/{serviceRequest}/litige', [DisputeController::class, 'create'])->name('disputes.create');
+    Route::post('/demandes/{serviceRequest}/litige', [DisputeController::class, 'store'])->name('disputes.store');
+
+    Route::get('/favoris', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favoris/{providerProfile}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
@@ -95,6 +151,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])
         ->middleware('throttle:10,1')
         ->name('phone.verify.check');
+
+    /*
+     * Seule sortie des pièces d'identité, qui vivent sur un disque privé.
+     *
+     * Volontairement hors du groupe « role:admin » : le prestataire doit
+     * pouvoir relire le document qu'il a lui-même déposé. C'est la Policy
+     * `viewIdDocument` qui tranche, pas la place de la route.
+     */
+    Route::get('/prestataires/{providerProfile}/piece-identite',
+        [ProviderVerificationController::class, 'document'])
+        ->name('provider-profiles.id-document');
 });
 
 /*
@@ -116,12 +183,16 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::get('/statistics', [ProviderStatisticsController::class, 'index'])->name('statistics.index');
     Route::get('/reviews', [ProviderReviewController::class, 'index'])->name('reviews.index');
     Route::get('/transactions', [ProviderTransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/export', [ProviderTransactionController::class, 'export'])->name('transactions.export');
 
     Route::get('/subscription', [ProviderSubscriptionController::class, 'show'])->name('subscription.show');
     Route::get('/subscription/{plan}', [ProviderSubscriptionController::class, 'checkout'])->name('subscription.checkout');
     Route::post('/subscription/{plan}', [ProviderSubscriptionController::class, 'subscribe'])
         ->middleware('throttle:5,1')
         ->name('subscription.subscribe');
+    Route::post('/subscription/{plan}/gratuit', [ProviderSubscriptionController::class, 'activateFree'])
+        ->middleware('throttle:5,1')
+        ->name('subscription.free');
 });
 
 /*
@@ -159,6 +230,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
 
     Route::get('/moderation', [ModerationController::class, 'index'])->name('moderation.index');
+    Route::get('/litiges', [AdminDisputeController::class, 'index'])->name('disputes.index');
+    Route::post('/litiges/{dispute}/trancher', [AdminDisputeController::class, 'resolve'])->name('disputes.resolve');
     Route::post('/moderation/{report}/dismiss', [ModerationController::class, 'dismiss'])->name('moderation.dismiss');
 
     Route::get('/verifications', [ProviderVerificationController::class, 'index'])->name('verifications.index');

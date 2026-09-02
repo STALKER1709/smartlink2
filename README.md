@@ -58,6 +58,7 @@ Sans clé d'API, l'application fonctionne intégralement en mode par règles, sa
 - [INSTALL.md](INSTALL.md) — installation et configuration du projet
 - [USAGE.md](USAGE.md) — guide d'utilisation par rôle, comptes de démonstration
 - [ARCHITECTURE.md](ARCHITECTURE.md) — structure du code, modèles, services, choix techniques
+- [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md) — mise en production : Vercel, Supabase, HR-Skills Pay
 
 ## Démarrage rapide
 

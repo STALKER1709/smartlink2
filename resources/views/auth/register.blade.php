@@ -1,82 +1,97 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}" x-data="{ role: '{{ old('role', 'client') }}' }">
+<x-guest-layout :titre="__('seo.register')" :indexable="true" :description="__('seo.register_description')">
+    <h1 class="font-headline-md text-headline-md text-on-surface">{{ __("Créer votre compte") }}</h1>
+    <p class="mt-1 text-label-md text-on-surface-variant">{{ __("Gratuit pour les clients. 30 jours d'essai pour les prestataires.") }}</p>
+
+    <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4" x-data="{ role: '{{ old('role', 'client') }}' }">
         @csrf
 
-        <!-- Name -->
+        {{-- Le choix du rôle en premier : il change la suite du formulaire, et
+             c'est la question à laquelle le visiteur répond le plus vite. --}}
         <div>
-            <x-input-label for="name" :value="__('Nom complet')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Phone -->
-        <div class="mt-4">
-            <x-input-label for="phone" :value="__('Téléphone')" />
-            <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required autocomplete="tel" placeholder="6XXXXXXXX" />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
-        </div>
-
-        <!-- Role -->
-        <div class="mt-4">
-            <x-input-label :value="__('Je suis un(e)...')" />
-            <div class="flex gap-6 mt-2">
-                <label class="inline-flex items-center">
-                    <input type="radio" name="role" value="client" x-model="role" class="text-primary focus:ring-primary">
-                    <span class="ms-2 text-sm text-on-surface">{{ __('Client') }}</span>
+            {{-- La maquette centre la question et met le geste devant le rôle :
+                 « Je cherche un prestataire » se choisit plus vite que
+                 « Client », qui demande de se ranger dans une catégorie. --}}
+            <span class="mb-3 block text-center text-label-md font-medium text-on-surface-variant">{{ __("Je souhaite utiliser SmartLink pour :") }}</span>
+            <div class="grid grid-cols-2 gap-4">
+                <label
+                    class="flex cursor-pointer flex-col items-center rounded-xl border p-4 text-center transition-colors"
+                    :class="role === 'client' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40 hover:shadow-elevation-2'"
+                >
+                    <input type="radio" name="role" value="client" x-model="role" class="sr-only">
+                    <x-icon name="person_search" size="2xl" class="mb-2" x-bind:class="role === 'client' ? 'text-primary' : 'text-on-surface-variant'" />
+                    <span class="font-body-md text-label-md font-semibold md:text-body-md"
+                          :class="role === 'client' ? 'text-primary' : 'text-on-surface'">{{ __("Je cherche un prestataire") }}</span>
                 </label>
-                <label class="inline-flex items-center">
-                    <input type="radio" name="role" value="provider" x-model="role" class="text-primary focus:ring-primary">
-                    <span class="ms-2 text-sm text-on-surface">{{ __('Prestataire') }}</span>
+
+                <label
+                    class="flex cursor-pointer flex-col items-center rounded-xl border p-4 text-center transition-colors"
+                    :class="role === 'provider' ? 'border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant hover:border-primary/40 hover:shadow-elevation-2'"
+                >
+                    <input type="radio" name="role" value="provider" x-model="role" class="sr-only">
+                    <x-icon name="handyman" size="2xl" class="mb-2" x-bind:class="role === 'provider' ? 'text-primary' : 'text-on-surface-variant'" />
+                    <span class="font-body-md text-label-md font-semibold md:text-body-md"
+                          :class="role === 'provider' ? 'text-primary' : 'text-on-surface'">{{ __("Je propose mes services") }}</span>
                 </label>
             </div>
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
-        <!-- Business name (provider only) -->
-        <div class="mt-4" x-show="role === 'provider'">
+        <div>
+            <x-input-label for="name" :value="__('Nom complet')" />
+            <x-text-input id="name" class="mt-1 block w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        </div>
+
+        <div x-show="role === 'provider'" x-cloak>
             <x-input-label for="business_name" :value="__('Nom commercial / de l\'activité')" />
-            <x-text-input id="business_name" class="block mt-1 w-full" type="text" name="business_name" :value="old('business_name')" autocomplete="organization" />
+            <x-text-input id="business_name" class="mt-1 block w-full" type="text" name="business_name" :value="old('business_name')" autocomplete="organization" />
             <x-input-error :messages="$errors->get('business_name')" class="mt-2" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <x-input-label for="email" :value="__('Email')" />
+            <x-text-input id="email" class="mt-1 block w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div>
+            <x-input-label for="phone" :value="__('Téléphone')" />
+            <x-text-input id="phone" class="mt-1 block w-full" type="tel" name="phone" :value="old('phone')" required autocomplete="tel" placeholder="6XXXXXXXX" />
+            <p class="mt-1 text-label-sm text-on-surface-variant">{{ __("C'est par là que les prestataires vous joindront.") }}</p>
+            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-on-surface-variant hover:text-on-surface rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+                <x-input-label for="password" :value="__('Password')" />
+                <x-text-input id="password" class="mt-1 block w-full" type="password" name="password" required autocomplete="new-password" />
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+            <div>
+                <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+                <x-text-input id="password_confirmation" class="mt-1 block w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            </div>
         </div>
+
+        <x-primary-button class="w-full">
+            {{ __('Register') }}
+        </x-primary-button>
+
+        {{-- On ne s'engage pas à des conditions qu'on n'a pas pu lire : les
+             deux documents sont accessibles depuis l'endroit exact où
+             l'engagement se prend. --}}
+        <p class="text-center text-label-sm leading-relaxed text-on-surface-variant">
+            {{ __("En créant un compte, vous acceptez les") }}
+            <a href="{{ route('legal.terms') }}" class="font-semibold text-primary hover:underline">{{ __('conditions générales') }}</a>
+            {{ __('et la') }}
+            <a href="{{ route('legal.privacy') }}" class="font-semibold text-primary hover:underline">{{ __('politique de confidentialité') }}</a>.
+        </p>
     </form>
+
+    <p class="mt-6 border-t border-outline-variant pt-5 text-center text-label-md text-on-surface-variant">
+        {{ __('Already registered?') }}
+        <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center rounded-full px-2 font-semibold text-primary transition-colors hover:bg-primary-container/10 hover:text-primary-container">{{ __('Log in') }}</a>
+    </p>
 </x-guest-layout>

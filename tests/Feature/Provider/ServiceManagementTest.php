@@ -42,6 +42,58 @@ class ServiceManagementTest extends TestCase
         $response->assertViewHas('services', fn ($services) => $services->pluck('id')->contains($service->id));
     }
 
+    /**
+     * Les trois onglets de « Mes services », et leur définition d'« actif ».
+     *
+     * Une annonce travaille quand elle est publiée *et* disponible : un
+     * prestataire qui décoche « disponible » le temps d'un déplacement
+     * s'attend à la retrouver en pause, pas parmi les actives. Le filtre
+     * s'écrit donc sur deux colonnes, et son onglet inverse sur un `orWhere` —
+     * la forme exacte que SQLite pardonne et que PostgreSQL applique à la
+     * lettre.
+     */
+    public function test_the_tabs_split_services_between_published_and_paused(): void
+    {
+        $provider = User::factory()->provider()->create();
+
+        $actif = Service::factory()->create(['provider_id' => $provider->id]);
+        $indisponible = Service::factory()->unavailable()->create(['provider_id' => $provider->id]);
+        $depublie = Service::factory()->inactive()->create(['provider_id' => $provider->id]);
+
+        $this->actingAs($provider)
+            ->get(route('provider.services.index'))
+            ->assertOk()
+            ->assertViewHas('compteurs', fn (array $compteurs) => $compteurs === [
+                'tous' => 3,
+                'actifs' => 1,
+                'pause' => 2,
+            ]);
+
+        $this->actingAs($provider)
+            ->get(route('provider.services.index', ['statut' => 'actifs']))
+            ->assertOk()
+            ->assertViewHas('services', fn ($services) => $services->pluck('id')->all() === [$actif->id]);
+
+        $this->actingAs($provider)
+            ->get(route('provider.services.index', ['statut' => 'pause']))
+            ->assertOk()
+            ->assertViewHas('services', fn ($services) => $services->pluck('id')->sort()->values()->all()
+                === collect([$indisponible->id, $depublie->id])->sort()->values()->all());
+    }
+
+    /** Un onglet inconnu retombe sur « tous » plutôt que de ne rien rendre. */
+    public function test_an_unknown_tab_falls_back_to_all_services(): void
+    {
+        $provider = User::factory()->provider()->create();
+        Service::factory()->count(2)->create(['provider_id' => $provider->id]);
+
+        $this->actingAs($provider)
+            ->get(route('provider.services.index', ['statut' => 'nimporte-quoi']))
+            ->assertOk()
+            ->assertViewHas('statut', 'tous')
+            ->assertViewHas('services', fn ($services) => $services->count() === 2);
+    }
+
     public function test_provider_can_create_a_service_with_images(): void
     {
         Storage::fake('public');

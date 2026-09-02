@@ -1,0 +1,128 @@
+<?php
+
+/*
+ * Le vocabulaire d'icônes de l'application, traduit en noms Font Awesome.
+ *
+ * Les vues nomment leurs icônes ici — `handyman`, `location_on` — et ignorent
+ * la fonte employée. En changer ne toucherait que cette table.
+ *
+ * Fichier généré : ne pas modifier à la main.
+ * Régénérer avec `php artisan icons:sync` après avoir ajouté une icône dans
+ * une vue, sinon elle ne s'affichera pas du tout.
+ */
+
+return [
+
+    'correspondance' => [
+        'ac_unit' => 'snowflake',
+        'account_circle' => 'circle-user',
+        'add' => 'plus',
+        'add_circle' => 'circle-plus',
+        'arrow_back' => 'arrow-left',
+        'arrow_forward' => 'arrow-right',
+        'arrow_upward' => 'arrow-up',
+        'assignment' => 'clipboard-list',
+        'auto_awesome' => 'wand-magic-sparkles',
+        'badge' => 'id-badge',
+        'block' => 'ban',
+        'bolt' => 'bolt',
+        'brightness_auto' => 'circle-half-stroke',
+        'cake' => 'cake-candles',
+        'calendar_month' => 'calendar-days',
+        'calendar_today' => 'calendar',
+        'call' => 'phone',
+        'card_membership' => 'id-card',
+        'carpenter' => 'hammer',
+        'chat' => 'comment',
+        'check' => 'check',
+        'check_circle' => 'circle-check',
+        'checkroom' => 'shirt',
+        'chevron_left' => 'chevron-left',
+        'chevron_right' => 'chevron-right',
+        'close' => 'xmark',
+        'computer' => 'desktop',
+        'content_cut' => 'scissors',
+        'dark_mode' => 'moon',
+        'dashboard' => 'gauge-high',
+        'description' => 'file-lines',
+        'directions_car' => 'car',
+        'diversity_3' => 'people-group',
+        'done_all' => 'check-double',
+        'download' => 'download',
+        'edit' => 'pen-to-square',
+        'edit_note' => 'file-pen',
+        'electric_bolt' => 'bolt-lightning',
+        'expand_more' => 'chevron-down',
+        'favorite' => 'heart',
+        'flag' => 'flag',
+        'format_paint' => 'paint-roller',
+        'forum' => 'comments',
+        'foundation' => 'trowel-bricks',
+        'grid_view' => 'table-cells-large',
+        'handshake' => 'handshake',
+        'handyman' => 'screwdriver-wrench',
+        'heart_broken' => 'heart-crack',
+        'help' => 'circle-question',
+        'home' => 'house',
+        'home_repair_service' => 'toolbox',
+        'inbox' => 'inbox',
+        'info' => 'circle-info',
+        'insights' => 'chart-line',
+        'inventory_2' => 'boxes-stacked',
+        'light_mode' => 'sun',
+        'local_fire_department' => 'fire',
+        'local_shipping' => 'truck',
+        'location_on' => 'location-dot',
+        'lock' => 'lock',
+        'logout' => 'right-from-bracket',
+        'mail' => 'envelope',
+        'map' => 'map',
+        'menu' => 'bars',
+        'menu_book' => 'book-open',
+        'more_vert' => 'ellipsis-vertical',
+        'music_note' => 'music',
+        'notifications' => 'bell',
+        'pause_circle' => 'circle-pause',
+        'payments' => 'money-bill-wave',
+        'pending' => 'hourglass-half',
+        'pending_actions' => 'clipboard-check',
+        'person' => 'user',
+        'person_search' => 'users-viewfinder',
+        'photo_camera' => 'camera',
+        'plumbing' => 'faucet',
+        'receipt_long' => 'receipt',
+        'reviews' => 'comment-dots',
+        'schedule' => 'clock',
+        'search' => 'magnifying-glass',
+        'send' => 'paper-plane',
+        'settings' => 'gear',
+        'shield' => 'shield-halved',
+        'shopping_bag' => 'bag-shopping',
+        'smart_toy' => 'robot',
+        'smartphone' => 'mobile-screen-button',
+        'spa' => 'spa',
+        'star' => 'star',
+        'trending_down' => 'arrow-trend-down',
+        'trending_up' => 'arrow-trend-up',
+        'tune' => 'sliders',
+        'tv' => 'tv',
+        'upload' => 'upload',
+        'verified' => 'certificate',
+        'verified_user' => 'user-shield',
+        'visibility' => 'eye',
+        'warning' => 'triangle-exclamation',
+        'water_drop' => 'droplet',
+        'workspace_premium' => 'award',
+        'yard' => 'seedling',
+    ],
+
+    /*
+     * Les seules icônes dont le contour porte un sens : leur remplissage dit
+     * un état binaire — l'étoile d'une note, le cœur d'un favori.
+     */
+    'binaires' => [
+        'star',
+        'favorite',
+    ],
+
+];

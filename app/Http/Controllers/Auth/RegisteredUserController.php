@@ -60,6 +60,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Un compte tout neuf passe par l'accueil : c'est le seul moment où
+        // l'on peut dire en trois écrans ce que la plateforme fait, et
+        // surtout ce qu'elle ne fait pas.
+        return redirect(route('onboarding.show', absolute: false));
     }
 }

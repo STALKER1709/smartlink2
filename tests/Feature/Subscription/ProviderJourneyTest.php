@@ -51,7 +51,7 @@ class ProviderJourneyTest extends TestCase
             'business_name' => 'Jean-Paul Plomberie',
             'password' => 'motdepasse-solide',
             'password_confirmation' => 'motdepasse-solide',
-        ])->assertRedirect(route('dashboard', absolute: false));
+        ])->assertRedirect(route('onboarding.show', absolute: false));
 
         $provider = User::where('email', 'jp@example.cm')->firstOrFail();
         $this->assertSame(Subscription::STATUS_TRIALING, $provider->activeSubscription()->status);
@@ -87,6 +87,12 @@ class ProviderJourneyTest extends TestCase
         // 4. L'essai expire : le service sort des recherches, le compte reste.
         $provider->subscriptions()->update(['ends_at' => now()->subDay()]);
         $this->artisan('subscriptions:refresh')->assertSuccessful();
+
+        // L'abonnement est mémoïsé le temps d'une requête. Le passage
+        // quotidien tourne dans son propre processus, et la requête suivante
+        // d'un prestataire reconstruit son utilisateur depuis la session :
+        // ici, une seule instance traverse les deux, il faut la relire.
+        $provider->refresh();
 
         $this->asVisitor();
         $this->get(route('services.index'))->assertOk()->assertDontSee($service->title);
@@ -127,6 +133,10 @@ class ProviderJourneyTest extends TestCase
             ],
             $body,
         )->assertOk();
+
+        // Le rappel de l'opérateur est une requête à part : elle a crédité
+        // l'abonnement sans passer par l'instance que porte ce test.
+        $provider->refresh();
 
         $subscription = $provider->activeSubscription();
         $this->assertSame(Subscription::STATUS_ACTIVE, $subscription->status);

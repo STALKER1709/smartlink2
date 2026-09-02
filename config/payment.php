@@ -6,7 +6,7 @@ return [
      * « mock » n'appelle aucune API : mode par défaut, pour développer et
      * tester sans compte ni réseau.
      */
-    'driver' => env('PAYMENT_PROVIDER', 'mock'),
+    'driver' => env_or('PAYMENT_PROVIDER', 'mock'),
 
     'hrskills' => [
         /*
@@ -26,6 +26,6 @@ return [
          */
         'webhook_secret' => env('HRSKILLS_WEBHOOK_SECRET', ''),
 
-        'base_url' => env('HRSKILLS_BASE_URL', 'https://api.hrskills-pay.com'),
+        'base_url' => env_or('HRSKILLS_BASE_URL', 'https://api.hrskills-pay.com'),
     ],
 ];

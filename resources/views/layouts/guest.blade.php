@@ -5,27 +5,60 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        @include('partials.theme-head')
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <x-seo :titre="$titre" :description="$description" :indexable="$indexable" />
 
-        <!-- Scripts -->
+        @include('partials.pwa-head')        {{-- Les deux fichiers que toute page française lit, demandés avant que
+             le navigateur ne découvre la feuille qui les réclame. Le
+             `crossorigin` est obligatoire même en même origine : une police
+             se récupère en mode anonyme, et sans lui le préchargement est
+             ignoré puis refait. --}}
+        <link rel="preload" href="/fonts/inter-400-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/lexend-600-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+        {{-- La police d'icônes est en `font-display: block` : sans elle, un
+             pictogramme n'est pas remplacé par du texte, il est absent. Elle
+             se précharge donc au même titre que les deux polices de texte. --}}
+        <link rel="preload" href="/fonts/icones-plein.woff2" as="font" type="font/woff2" crossorigin>
+
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-on-surface antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-surface-container-low">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-primary" />
+        <div class="flex min-h-screen flex-col bg-surface-container-low">
+            <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10">
+                <a href="{{ route('home') }}" class="inline-flex min-h-11 items-center mx-auto flex items-center gap-2.5 text-primary">
+                    <x-application-logo class="h-9 w-9" />
+                    <span class="font-headline-md text-headline-md font-extrabold tracking-tight text-on-surface">SmartLink</span>
                 </a>
-            </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-surface-container-lowest border border-outline-variant overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+                <div class="mt-8 rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation-1 sm:p-8">
+                    {{ $slot }}
+                </div>
+
+                {{-- Les écrans d'authentification se voient aussi de nuit, et
+                     l'on n'y est par définition pas connecté : le réglage doit
+                     être atteignable sans compte. --}}
+                <x-theme-switch class="mx-auto mt-6" />
+
+                <a href="{{ route('home') }}"
+                   class="group mx-auto mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-label-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface">
+                    <x-icon name="arrow_back" size="sm" class="transition-transform duration-150 group-hover:-translate-x-0.5" />
+                    {{ __("Retour à l'accueil") }}
+                </a>
+
+                {{-- Les écrans d'authentification n'ont pas de pied de page :
+                     ces liens y seraient introuvables autrement, alors que
+                     c'est précisément là qu'on s'engage. --}}
+                {{-- Les trois liens faisaient 16 px de haut, mesure prise dans le
+                     navigateur : la hauteur de leur texte, sans rien autour. Les
+                     séparateurs « · » disparaissent avec — ils ne servaient qu'à
+                     écarter des cibles trop serrées. --}}
+                <nav class="mx-auto mt-1 flex flex-wrap justify-center gap-x-1 text-label-sm text-on-surface-variant">
+                    <a href="{{ route('legal.terms') }}" class="inline-flex min-h-11 items-center rounded-full px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Conditions générales") }}</a>
+                    <a href="{{ route('legal.privacy') }}" class="inline-flex min-h-11 items-center rounded-full px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Confidentialité") }}</a>
+                    <a href="{{ route('legal.notice') }}" class="inline-flex min-h-11 items-center rounded-full px-3 transition-colors hover:bg-surface-container hover:text-primary">{{ __("Mentions légales") }}</a>
+                </nav>
             </div>
         </div>
     </body>

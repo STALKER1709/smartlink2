@@ -103,11 +103,19 @@ class Service extends Model
         return $query->where('category_id', $categoryId);
     }
 
+    /**
+     * Recherche insensible à la casse, quel que soit le moteur.
+     *
+     * `whereLike` avec `caseSensitive: false` compile en `ilike` sur
+     * PostgreSQL et en `like` sur MySQL et SQLite. Un `like` écrit à la main
+     * est sensible à la casse sur PostgreSQL : un visiteur tapant « plomberie »
+     * n'y trouverait rien, sans la moindre erreur pour le signaler.
+     */
     public function scopeSearchTerm(Builder $query, string $term): Builder
     {
         return $query->where(function (Builder $q) use ($term) {
-            $q->where('title', 'like', "%{$term}%")
-                ->orWhere('description', 'like', "%{$term}%");
+            $q->whereLike('title', "%{$term}%", caseSensitive: false)
+                ->orWhereLike('description', "%{$term}%", caseSensitive: false);
         });
     }
 }

@@ -1,39 +1,40 @@
-<x-app-layout>
+<x-app-layout :titre="__('Messages')" :indexable="false">
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Messages</h2>
+        <x-page-header :title="__('Messages')" :subtitle="__('Gérez vos conversations en cours')" />
     </x-slot>
 
-    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="mx-auto max-w-container px-margin-mobile py-6 md:px-margin-tablet lg:px-margin-desktop">
         @if ($conversations->isEmpty())
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                <span class="material-symbols-outlined text-5xl text-outline mb-3">forum</span>
-                <p class="text-on-surface-variant">Aucune conversation pour le moment.</p>
+            {{-- Sans fil, pas de deux colonnes : la recherche reste au-dessus
+                 de la phrase qui explique l'absence. --}}
+            <div class="mx-auto max-w-3xl">
+                @include('partials.conversation-list', ['conversations' => $conversations, 'terme' => $terme])
+
+                <x-empty-state compact class="mt-6"
+                    :title="$terme !== '' ? __('Aucune conversation ne correspond à « :terme ».', ['terme' => $terme]) : __('Aucune conversation pour le moment.')"
+                    :description="$terme !== '' ? __('Essayez le nom du prestataire ou le titre du service.') : __('Une conversation s\'ouvre dès qu\'une demande est acceptée.')" />
             </div>
         @else
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
-                @foreach ($conversations as $conversation)
-                    @php $other = $conversation->otherParticipant(Auth::user()); @endphp
-                    <a href="{{ route('conversations.show', $conversation) }}" class="flex items-center gap-4 p-4 hover:bg-surface-container-low transition-colors">
-                        <div class="h-12 w-12 rounded-full bg-surface-container flex items-center justify-center overflow-hidden shrink-0 border border-outline-variant">
-                            <span class="text-on-surface-variant font-semibold">{{ Str::substr($other->providerProfile?->business_name ?? $other->name, 0, 1) }}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-medium text-on-surface truncate">
-                                {{ $other->providerProfile?->business_name ?? $other->name }}
-                            </p>
-                            <p class="text-sm text-on-surface-variant truncate">
-                                {{ $conversation->request?->service?->title ?? 'Demande directe' }}
-                            </p>
-                        </div>
-                        <span class="text-xs text-on-surface-variant shrink-0">
-                            {{ ($conversation->last_message_at ?? $conversation->created_at)->format('d/m/Y') }}
-                        </span>
-                    </a>
-                @endforeach
-            </div>
+            {{-- Deux volets à partir de `lg`, comme dans la maquette. Sur
+                 mobile la liste occupe la page entière : le fil s'ouvre sur son
+                 propre écran, avec son lien de retour. --}}
+            <div class="lg:grid lg:grid-cols-[minmax(0,360px)_1fr] lg:items-start lg:gap-6">
+                <div>
+                    @include('partials.conversation-list', ['conversations' => $conversations, 'terme' => $terme])
 
-            <div class="mt-6">
-                {{ $conversations->links() }}
+                    <div class="mt-6">{{ $conversations->links() }}</div>
+                </div>
+
+                {{-- Le volet de droite n'existe qu'à partir de `lg` : sur
+                     mobile, une invitation à choisir un fil ferait défiler la
+                     liste hors de l'écran. --}}
+                <div class="hidden min-h-[24rem] flex-col items-center justify-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center lg:flex">
+                    <x-icon name="forum" size="3xl" class="text-outline" />
+                    <p class="font-headline-sm text-headline-sm text-on-surface">{{ __("Choisissez une conversation") }}</p>
+                    <p class="max-w-sm font-body-md text-body-md text-on-surface-variant">
+                        {{ __("Le fil s'ouvre ici, à côté de la liste : vous passez de l'un à l'autre sans revenir en arrière.") }}
+                    </p>
+                </div>
             </div>
         @endif
     </div>

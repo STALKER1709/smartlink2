@@ -1,59 +1,105 @@
-<x-app-layout>
+@php
+    /*
+     * Chaque type de notification porte son pictogramme et sa pastille de
+     * couleur, comme dans les maquettes : on reconnaît d'un coup d'œil un
+     * changement de statut, un message et un avis.
+     */
+    /* Des clés nommées, et non un tuple : une icône écrite en première
+       position d'un tableau échappe au relevé de `icons:sync`, donc au
+       sous-ensemble de la police, et le pictogramme manque à l'écran sans la
+       moindre erreur. `IconSubsetTest` monte la garde. */
+    $apparences = [
+        'request.status_changed' => ['icone' => 'check_circle', 'pastille' => 'bg-primary text-on-primary'],
+        'request.new' => ['icone' => 'assignment', 'pastille' => 'bg-primary text-on-primary'],
+        'message.new' => ['icone' => 'chat', 'pastille' => 'bg-secondary text-on-secondary'],
+        'review.new' => ['icone' => 'star', 'pastille' => 'bg-secondary-container/30 text-on-secondary-container'],
+    ];
+@endphp
+
+<x-app-layout :titre="__('Notifications')" :indexable="false">
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-headline-md text-headline-md text-on-surface">Notifications</h2>
-            @if ($notifications->isNotEmpty())
-                <form action="{{ route('notifications.read-all') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="text-sm font-semibold text-primary hover:text-primary-container">
-                        Tout marquer comme lu
-                    </button>
-                </form>
+        <x-page-header :title="__('Notifications')" :subtitle="$nonLues > 0 ? $nonLues.' non '.Str::plural('lue', $nonLues) : null">
+            @if ($nonLues > 0)
+                <x-slot name="action">
+                    <form action="{{ route('notifications.read-all') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="cursor-pointer border-none bg-transparent p-0 font-button-text text-button-text text-primary transition-opacity hover:text-primary-container active:opacity-80">
+                            {{ __("Tout marquer comme lu") }}
+                        </button>
+                    </form>
+                </x-slot>
             @endif
-        </div>
+        </x-page-header>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-6">
         @if ($notifications->isEmpty())
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                <span class="material-symbols-outlined text-5xl text-outline mb-3">notifications</span>
-                <p class="text-on-surface-variant">Aucune notification pour le moment.</p>
-            </div>
+            <x-empty-state :title="__('Aucune notification pour le moment.')"
+                           :description="__('Les réponses de vos prestataires et les changements de statut de vos demandes arrivent ici.')" />
         @else
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
+            <div class="flex flex-col gap-3">
                 @foreach ($notifications as $notification)
                     @php
                         $data = $notification->data;
-                        $link = match ($data['type'] ?? null) {
+                        $type = $data['type'] ?? null;
+                        ['icone' => $icone, 'pastille' => $pastille] = $apparences[$type]
+                            ?? ['icone' => 'notifications', 'pastille' => 'bg-surface-variant text-on-surface-variant'];
+                        $lue = (bool) $notification->read_at;
+
+                        $link = match ($type) {
                             'request.new', 'request.status_changed' => route('requests.show', $data['request_id']),
                             'message.new' => route('conversations.show', $data['conversation_id']),
                             'review.new' => route('dashboard'),
                             default => null,
                         };
+
+                        // Les notifications déjà en base portent l'ancienne
+                        // phrase — « est passé à "in_progress" », la valeur de
+                        // la colonne. Quand la charge utile porte le statut,
+                        // la phrase est recomposée à l'affichage.
+                        $texte = isset($data['to_status'])
+                            ? \App\Notifications\RequestStatusChangedNotification::phrase(
+                                $data['service_title'] ?? $titres[$data['request_id'] ?? null] ?? null,
+                                $data['to_status'],
+                            )
+                            : ($data['message'] ?? 'Notification');
                     @endphp
-                    <div class="flex items-start gap-3 p-4 {{ $notification->read_at ? '' : 'bg-secondary-container/25' }}">
-                        <div class="h-2 w-2 mt-2 rounded-full {{ $notification->read_at ? 'bg-outline-variant' : 'bg-primary' }} shrink-0"></div>
 
-                        <div class="flex-1 min-w-0">
-                            @if ($link)
-                                <a href="{{ $link }}" class="text-sm text-on-surface hover:text-primary">
-                                    {{ $data['message'] ?? 'Notification' }}
-                                </a>
-                            @else
-                                <p class="text-sm text-on-surface">{{ $data['message'] ?? 'Notification' }}</p>
-                            @endif
-                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $notification->created_at->diffForHumans() }}</p>
+                    <{{ $link ? 'a' : 'div' }} @if ($link) href="{{ $link }}" @endif
+                        @class([
+                            'group relative flex items-start gap-4 rounded-lg border border-outline-variant p-4 transition-colors',
+                            'bg-primary-container/10 hover:bg-primary-container/15' => ! $lue,
+                            'bg-surface hover:bg-surface-container-low' => $lue,
+                        ])>
+                        @unless ($lue)
+                            <span class="absolute left-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-primary"
+                                  role="img" aria-label="{{ __('Non lue') }}"></span>
+                        @endunless
+
+                        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full {{ $pastille }}">
+                            <x-icon :name="$icone" />
+                        </span>
+
+                        <div class="min-w-0 flex-grow">
+                            <p @class([
+                                'mb-1 font-body-md text-body-md',
+                                'text-on-surface' => ! $lue,
+                                'text-on-surface-variant' => $lue,
+                            ])>{{ $texte }}</p>
+
+                            <div class="flex flex-wrap items-center gap-x-3">
+                                <span class="block font-label-md text-label-md text-on-surface-variant">{{ $notification->created_at->diffForHumans() }}</span>
+                                @unless ($lue)
+                                    <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="inline-flex min-h-6 items-center text-label-sm font-medium text-primary hover:text-primary-container">
+                                            {{ __("Marquer comme lu") }}
+                                        </button>
+                                    </form>
+                                @endunless
+                            </div>
                         </div>
-
-                        @if (! $notification->read_at)
-                            <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="text-xs text-on-surface-variant hover:text-on-surface">
-                                    Marquer comme lu
-                                </button>
-                            </form>
-                        @endif
-                    </div>
+                    </{{ $link ? 'a' : 'div' }}>
                 @endforeach
             </div>
 

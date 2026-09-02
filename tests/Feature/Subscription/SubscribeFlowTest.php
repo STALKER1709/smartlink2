@@ -86,12 +86,14 @@ class SubscribeFlowTest extends TestCase
         $this->assertSame('ref_pending', $payment->provider_reference);
 
         // Le palier ne change qu'au règlement effectif.
-        $this->assertSame($this->pro->id, $this->provider->activeSubscription()->plan_id);
+        $this->assertSame($this->pro->id, $this->provider->refresh()->activeSubscription()->plan_id);
 
         // Le statut relu chez le fournisseur fait foi.
         $this->postSignedWebhook('ref_pending', $payment->internal_reference);
 
-        $this->assertSame($this->essential->id, $this->provider->activeSubscription()->plan_id);
+        // Le rappel est une autre requête : en production elle reconstruit son
+        // propre utilisateur. Ici l'instance du test traverse les deux.
+        $this->assertSame($this->essential->id, $this->provider->refresh()->activeSubscription()->plan_id);
     }
 
     public function test_a_refused_collection_reports_the_failure_without_charging_the_plan(): void
@@ -135,13 +137,21 @@ class SubscribeFlowTest extends TestCase
                 'operator' => 'mtn',
             ]);
 
+        // Le fournisseur peut très bien renvoyer la même référence : elle est
+        // unique en base, donc la collecte abandonnée doit la libérer. Sans
+        // cela, cette seconde demande partait en erreur 500.
         $this->actingAs($this->provider)
             ->post(route('provider.subscription.subscribe', $this->pro), [
                 'phone' => '677001122',
                 'operator' => 'mtn',
-            ]);
+            ])
+            ->assertRedirect();
 
         $this->assertSame(2, Payment::count());
+
+        $abandoned = Payment::where('status', Payment::STATUS_CANCELLED)->firstOrFail();
+        $this->assertNull($abandoned->provider_reference);
+        $this->assertStringContainsString('ref_pending', (string) $abandoned->failure_reason);
         $this->assertSame(
             Payment::STATUS_CANCELLED,
             Payment::where('plan_id', $this->essential->id)->firstOrFail()->status,

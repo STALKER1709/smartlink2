@@ -5,18 +5,24 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+/.claude
 /.codex
 /.cursor/
 /.idea
 /.nova
 /.phpunit.cache
+
+# La base SQLite de développement. database/.gitignore couvre « *.sqlite* »,
+# mais .env.example proposait DB_DATABASE=smartlink : basculer DB_CONNECTION
+# sur sqlite sans toucher à cette ligne posait une base sans extension à la
+# racine, qui échappait au filtre. Elle a fini versionnée, et se salissait
+# ensuite à chaque test lancé en local.
+/smartlink
+
 /.vscode
 /.zed
 /auth.json
 /node_modules
-/public/build
-/composer.lock
-/package-lock.json
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
@@ -27,3 +33,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# composer.lock, package-lock.json et public/build sont volontairement versionnés :
+# le déploiement serverless (DEPLOY-VERCEL.md) a besoin que la fonction PHP
+# trouve public/build/manifest.json, et que la reconstruction sur l'hébergeur
+# produise exactement les mêmes fichiers hachés que ceux testés localement.

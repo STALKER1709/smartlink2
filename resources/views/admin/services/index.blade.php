@@ -1,73 +1,81 @@
-<x-app-layout>
+<x-app-layout :titre="__('Services')" :indexable="false">
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Gérer les services</h2>
+        <x-page-header :title="__('Gérer les services')" />
     </x-slot>
 
-    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <div class="max-w-container mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
         @if (session('status'))
-            <div class="mb-4 rounded-md bg-secondary-container/30 border border-outline-variant px-4 py-3 text-sm text-on-secondary-container">
+            <div class="mb-4 rounded-xl bg-primary-container/15 border border-outline-variant px-4 py-3 text-label-md text-primary">
                 {{ session('status') }}
             </div>
         @endif
 
-        <form method="GET" class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <form method="GET" class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-elevation-1 p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-                <x-input-label for="term" value="Recherche" />
-                <x-text-input id="term" name="term" type="text" class="mt-1 block w-full" :value="request('term')" placeholder="Titre du service" />
+                <x-input-label for="term" :value="__('Recherche')" />
+                <x-text-input id="term" name="term" type="text" class="mt-1 block w-full" :value="request('term')" :placeholder="__('Titre du service')" />
             </div>
             <div>
-                <x-input-label for="status" value="Statut" />
-                <select id="status" name="status" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
-                    <option value="">Tous</option>
-                    <option value="{{ \App\Models\Service::STATUS_ACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_ACTIVE)>Actif</option>
-                    <option value="{{ \App\Models\Service::STATUS_INACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_INACTIVE)>Inactif</option>
+                <x-input-label for="status" :value="__('Statut')" />
+                <select id="status" name="status" class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary">
+                    <option value="">{{ __("Tous") }}</option>
+                    <option value="{{ \App\Models\Service::STATUS_ACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_ACTIVE)>{{ __("Actif") }}</option>
+                    <option value="{{ \App\Models\Service::STATUS_INACTIVE }}" @selected(request('status') === \App\Models\Service::STATUS_INACTIVE)>{{ __("Inactif") }}</option>
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
-                    Filtrer
-                </button>
+                <x-primary-button>
+                    {{ __("Filtrer") }}
+                </x-primary-button>
             </div>
         </form>
 
         @if ($services->isEmpty())
-            <p class="text-on-surface-variant">Aucun service trouvé.</p>
+            <x-empty-state :title="__('Aucun service trouvé.')" :description="__('Aucun service ne correspond à ces critères.')" />
         @else
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden">
+            {{-- Le titre d'abord, sur toute la largeur. Il était tronqué à
+                 « Recherc… » parce que trois actions se partageaient la ligne :
+                 un administrateur ne pouvait pas identifier ce qu'il
+                 modérait. Les actions descendent sur leur propre ligne. --}}
+            <x-list-panel>
                 @foreach ($services as $service)
-                    <div class="flex items-center gap-4 p-4">
-                        <div class="flex-1 min-w-0">
-                            <p class="font-medium text-on-surface truncate">{{ $service->title }}</p>
-                            <p class="text-sm text-on-surface-variant truncate">
+                    <x-list-row class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <p class="font-medium text-on-surface">{{ $service->title }}</p>
+                                <x-status-badge :status="$service->status" />
+                            </div>
+                            <p class="mt-0.5 text-label-md text-on-surface-variant">
                                 {{ $service->provider?->name }} · {{ $service->category?->name }}
                                 @if ($service->city) · {{ $service->city }} @endif
                             </p>
                         </div>
 
-                        <x-status-badge :status="$service->status" />
-
-                        <div class="flex items-center gap-3 shrink-0">
-                            <a href="{{ route('services.show', $service) }}" class="text-sm font-medium text-primary hover:text-primary-container">
-                                Voir
+                        {{-- « Supprimer » est irréversible et se trouvait collé à
+                             « Désactiver », deux cibles voisines au pouce. Il
+                             est mis à part, à l'autre bout de la rangée. --}}
+                        <div class="flex shrink-0 items-center gap-4">
+                            <a href="{{ route('services.show', $service) }}" class="inline-flex min-h-6 items-center text-label-md font-medium text-primary hover:text-primary-container">
+                                {{ __("Voir") }}
                             </a>
-                            <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.services.toggle-status', $service) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="text-sm font-medium text-tertiary hover:opacity-80">
+                                <button type="submit" class="inline-flex min-h-6 items-center text-label-md font-medium text-secondary hover:opacity-80">
                                     {{ $service->status === \App\Models\Service::STATUS_ACTIVE ? 'Désactiver' : 'Activer' }}
                                 </button>
                             </form>
-                            <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="inline" onsubmit="return confirm('Supprimer ce service ?');">
+                            <form action="{{ route('admin.services.destroy', $service) }}" method="POST" class="ml-auto sm:ml-4" onsubmit="return confirm('Supprimer définitivement « {{ $service->title }} » ? Cette action est irréversible.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-sm font-medium text-error hover:opacity-80">
-                                    Supprimer
+                                <button type="submit" class="inline-flex min-h-6 items-center text-label-md font-medium text-error hover:opacity-80">
+                                    {{ __("Supprimer") }}
                                 </button>
                             </form>
                         </div>
-                    </div>
+                    </x-list-row>
                 @endforeach
-            </div>
+            </x-list-panel>
 
             <div class="mt-6">
                 {{ $services->links() }}

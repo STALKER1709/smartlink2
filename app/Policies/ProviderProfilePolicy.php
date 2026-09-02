@@ -27,6 +27,22 @@ class ProviderProfilePolicy
         return $user->isAdmin() || $user->id === $providerProfile->user_id;
     }
 
+    /**
+     * Qui peut lire la pièce d'identité déposée.
+     *
+     * L'administrateur, parce qu'il doit la vérifier ; le prestataire, parce
+     * que c'est la sienne et qu'il doit pouvoir contrôler ce qu'il a envoyé.
+     * Personne d'autre — pas même un autre prestataire, pas même un client
+     * qui a travaillé avec lui.
+     *
+     * C'est le seul contrôle qui protège ces documents : ils ne sont plus
+     * joignables par une URL publique.
+     */
+    public function viewIdDocument(User $user, ProviderProfile $providerProfile): bool
+    {
+        return $user->isAdmin() || $user->id === $providerProfile->user_id;
+    }
+
     public function delete(User $user, ProviderProfile $providerProfile): bool
     {
         return $user->isAdmin();

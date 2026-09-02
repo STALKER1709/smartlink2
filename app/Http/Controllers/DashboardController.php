@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversation;
+use App\Models\Message;
+use App\Models\Review;
 use App\Models\ServiceRequest;
 use App\Models\User;
+use App\Services\QuotaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    public function __construct(private readonly QuotaService $quotas) {}
+
     public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
@@ -34,9 +40,22 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('aggregate', 'status');
 
+        // Les quatre chiffres de la maquette : ce qui est en cours, ce qui
+        // est clos, ce qui attend une lecture, et ce que le client a laissé
+        // derrière lui.
+        $unreadMessages = Message::query()
+            ->whereNull('read_at')
+            ->where('sender_id', '!=', $user->id)
+            ->whereIn('conversation_id', Conversation::query()
+                ->where('client_id', $user->id)
+                ->select('id'))
+            ->count();
+
         return view('dashboard.client', [
             'requests' => $requests,
             'counts' => $counts,
+            'unreadMessages' => $unreadMessages,
+            'reviewsLeft' => Review::query()->where('client_id', $user->id)->count(),
         ]);
     }
 
@@ -55,12 +74,36 @@ class DashboardController extends Controller
             ServiceRequest::STATUS_SENT, ServiceRequest::STATUS_VIEWED,
         ])->count();
 
+        // L'abonnement est toute la relation du prestataire avec SmartLink, et
+        // le bandeau d'alerte ne paraît qu'à sept jours de l'échéance : d'ici
+        // là, rien à l'écran ne dit quel palier il paie ni ce qu'il lui reste.
+        $subscription = $user->activeSubscription();
+
+        // Les maquettes posent l'arbitrage sur le tableau de bord : accepter
+        // ou refuser sans ouvrir la demande. Et la liste des services, que le
+        // prestataire consulte plus souvent qu'il ne la modifie.
+        $pendingRequests = $user->receivedRequests()
+            ->whereIn('status', [ServiceRequest::STATUS_SENT, ServiceRequest::STATUS_VIEWED])
+            ->with(['client.clientProfile', 'service.category'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('dashboard.provider', [
             'requests' => $requests,
+            'pendingRequests' => $pendingRequests,
+            'requestsThisMonth' => $user->receivedRequests()
+                ->where('created_at', '>=', now()->startOfMonth())
+                ->count(),
+            'services' => $user->services()->with('category')->latest()->take(4)->get(),
+            'profile' => $user->providerProfile,
             'counts' => $counts,
             'servicesCount' => $servicesCount,
             'activeServicesCount' => $activeServicesCount,
             'pendingCount' => $pendingCount,
+            'subscription' => $subscription,
+            'plan' => $subscription?->plan,
+            'remainingRequests' => $subscription ? $this->quotas->remainingRequests($user) : 0,
         ]);
     }
 }

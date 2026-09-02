@@ -48,7 +48,10 @@ avec un repli permanent sur un mode par règles sans coût.
 
 ## Stack
 
-- Backend : Laravel 13 (PHP 8.3+), MySQL en prod / SQLite en dev-tests
+- Backend : Laravel 13 (PHP 8.3+)
+- Base : PostgreSQL (Supabase) en production, SQLite en dev-tests, MySQL possible.
+  La suite tourne sur SQLite **et** sur PostgreSQL — vérifie les deux avant de
+  toucher à une requête.
 - Frontend : Blade, Tailwind CSS, Alpine.js, Vite
 - Tests : PHPUnit (`php artisan test`)
 
@@ -69,12 +72,26 @@ avec un repli permanent sur un mode par règles sans coût.
 ## Avant de committer
 
 ```bash
-composer install    # composer.lock est gitignored : régénère-le localement si besoin
+composer install    # composer.lock est versionné : ne le régénère que pour un changement de dépendance
 php artisan view:clear   # voir ci-dessous — indispensable après un changement de couleurs
 npm install && npm run build
 php artisan test
 vendor/bin/pint --test
 ```
+
+Et, dès que tu touches à une requête, à une contrainte ou à une migration, le
+second passage sur le moteur de la production :
+
+```bash
+vendor/bin/phpunit --configuration=phpunit.pgsql.xml   # PostgreSQL local requis
+```
+
+⚠️ **PHPUnit directement, pas `php artisan test --configuration=…`.** Cette
+seconde forme rend un code de sortie 1 alors que la suite entière passe — le
+résumé annonce « 652 passed » et le processus échoue quand même. On le voit sur
+un CI, jamais à l'œil dans un terminal, et on cherche alors un test cassé qui
+n'existe pas. `phpunit.pgsql.xml` porte lui-même tous les `DB_*` en
+`force="true"` : la surcouche d'Artisan n'apporte rien sur ce passage.
 
 ⚠️ Le glob de contenu de Tailwind inclut `storage/framework/views`, le cache des vues
 Blade compilées. Après un changement de classes, les anciennes survivent dans la feuille
@@ -95,3 +112,164 @@ touch database/database.sqlite   # ou configurer MySQL comme dans .env.example
 php artisan migrate --seed
 npm run build
 ```
+
+## Hébergement
+
+Le déploiement de référence reste un serveur classique (`INSTALL.md`) : disque persistant,
+`queue:work` et `schedule:work` en continu.
+
+Un déploiement serverless sur Vercel est aussi possible (`DEPLOY-VERCEL.md`,
+`vercel.json`, `api/index.php`). Trois contraintes y sont structurelles et ne doivent pas
+être reperdues :
+
+- **Les fichiers déposés ne passent plus par `Storage::disk('public')` en dur.** Utilise
+  `media_disk()` dans les contrôleurs et `media_url()` dans les vues
+  (`app/Support/helpers.php`) : c'est ce qui permet de basculer sur S3 via `MEDIA_DISK`.
+  Un `disk('public')` en dur réintroduit la perte silencieuse des images au déploiement.
+- **Aucun worker ne tourne** : la file passe en `sync`. Ne compte pas sur un traitement
+  différé pour quoi que ce soit d'indispensable.
+- **Aucun `schedule:run`** : le passage quotidien est déclenché par
+  `GET /cron/subscriptions-refresh`, protégé par `CRON_SECRET` (403 sans jeton, 503 sans
+  secret configuré). Toute nouvelle tâche planifiée doit avoir son pendant HTTP.
+
+⚠️ **Une pièce d'identité ne va jamais sur le disque `media`.** Ce disque est public :
+ce qu'on y écrit est servi par le serveur web sans passer par Laravel, donc sans
+middleware ni Policy — un nom de fichier aléatoire n'y change rien. Les pièces d'identité
+passent par `id_documents_disk()` (privé) et ne ressortent que par
+`ProviderVerificationController::document()`, qui vérifie la Policy `viewIdDocument`.
+`deploy:check` refuse un disque public ou confondu avec `media`, et
+`tests/Feature/Provider/IdDocumentPrivacyTest.php` monte la garde. Toute nouvelle donnée
+sensible déposée par un utilisateur suit le même chemin.
+
+⚠️ `composer.lock`, `package-lock.json` et `public/build` sont **versionnés**, contrairement
+à l'habitude Laravel. La fonction PHP déployée doit trouver `public/build/manifest.json`, et
+la reconstruction sur l'hébergeur doit produire exactement les fichiers hachés qui ont été
+testés. Conséquence : `npm run build` fait partie de la préparation d'un commit dès qu'une
+classe Tailwind ou un asset change, et le résultat se commite avec le reste.
+
+⚠️ Dans `vercel.json`, la racine `/` doit être routée vers `api/index.php`
+**avant** `{ "handle": "filesystem" }`. `outputDirectory` vaut `public`, et
+`public/index.php` y est le fichier d'index : sans cette règle, le CDN sert le
+code source du point d'entrée et la page d'accueil devient un téléchargement.
+
+⚠️ **Rien ne doit être écrit dans l'arborescence du projet à l'exécution.** Sur
+Vercel tout est en lecture seule sauf `/tmp` ; `api/index.php` y déplace
+`storage/` **et** `bootstrap/cache/` — ce dernier parce que Laravel y écrit le
+manifeste de ses fournisseurs de services à la première requête et que ce
+fichier n'est pas versionné. Sans ce déplacement, aucun fournisseur ne
+s'enregistre et l'application meurt sur « Target class [view] does not
+exist », qui ne dit rien de la cause. `tests/Unit/ServerlessPathsTest.php`
+monte la garde.
+
+⚠️ `php artisan deploy:check` (ou `GET /cron/health` en ligne, avec le jeton) vérifie que
+l'hébergement porte réellement les trois fonctions qui cassent en silence : stockage des
+fichiers, file d'attente, passage quotidien. À lancer après chaque déploiement.
+
+⚠️ **Dans les fichiers de configuration, utilise `env_or()` et non `env()`** pour
+tout réglage dont une valeur nulle coûterait quelque chose. `env('X', 30)` ne
+rend 30 que si `X` **n'existe pas** : une variable posée à vide sur l'hébergeur
+— ce qui arrive dès qu'on colle un bloc `.env` sans remplir toutes les lignes —
+donne `''`, et `(int) ''` vaut zéro. En production, `SUBSCRIPTION_CYCLE_DAYS`
+vide a donné un abonnement payé couvrant zéro jour, et `HRSKILLS_BASE_URL` vide
+une URL relative qui faisait échouer chaque encaissement.
+`tests/Unit/EnvFallbackTest.php` monte la garde.
+
+⚠️ **`User::activeSubscription()` est mémoïsé le temps de la requête.** Une seule page
+de prestataire rejouait la requête jusqu'à sept fois — barre de navigation, bandeau
+d'abonnement, bouton de publication et chaque appel de `QuotaService`. Invisible sur
+SQLite, autant d'allers-retours réseau sur Supabase.
+
+Conséquence : **toute écriture sur un abonnement doit appeler
+`$user->forgetActiveSubscription()`**, ou passer par `$user->refresh()` qui le fait.
+`SubscriptionService` s'en charge sur tous ses chemins d'écriture. Dans un test qui
+traverse plusieurs requêtes simulées ou qui écrit en masse
+(`$user->subscriptions()->update(...)`), relis l'instance : en production chaque requête
+reconstruit son utilisateur depuis la session, pas un test qui en garde un seul.
+`tests/Feature/Subscription/SubscriptionMemoTest.php` monte la garde.
+
+## La version de PHP est verrouillée, et ce n'est pas décoratif
+
+`composer.json` déclare `"php": "^8.3"` et le CI tourne sur **8.3**. Mais
+Composer résout les dépendances contre le PHP de *la machine qui lance la
+commande* : un `composer update` passé depuis un poste en 8.4 verrouille des
+paquets qui exigent 8.4 — ici Symfony 8.1, qui demande `php >=8.4.1`.
+
+Rien ne prévient. Les tests passent sur le poste, la revue ne voit qu'un
+`composer.lock` qui a bougé, et le CI meurt à `composer install` sur ses quatre
+passages à la fois, bien avant d'exécuter le moindre test. C'est arrivé.
+
+`config.platform.php` est donc figé à `8.3.0` dans `composer.json` : Composer
+résout désormais pour la version la plus basse que le projet accepte, quel que
+soit le PHP du poste. **Ne retire pas ce réglage**, et si tu montes le plancher
+de PHP, monte-le aux trois endroits — `require.php`, `config.platform.php` et
+`php-version` dans `.github/workflows/ci.yml`.
+
+## Analyse statique
+
+`phpstan.neon` est écrit, larastan est dans `composer.json` et
+`phpstan-baseline.neon` fige les 85 erreurs existantes : **le CI exécute donc
+réellement l'analyse**, sur `app`, `database` et `routes`.
+
+⚠️ Le paquet ne s'installe pas depuis tous les environnements. `phpstan/phpstan`
+n'est distribué que par un zip de l'API GitHub (aucune `source` dans ses
+métadonnées) ; là où cet hôte est fermé, `composer install` échoue sur lui et
+`vendor/bin/phpstan` reste absent. On ne peut alors pas vérifier son code avant
+de pousser — c'est le CI qui tranche. Ne conclus pas de cette absence que
+l'analyse est désactivée.
+
+Sans larastan, PHPStan ne sait pas ce que rend `User::create()` ni quel type a
+une colonne lue en propriété : il signale 404 « erreurs » sur ce dépôt, dont
+aucune n'est un vrai défaut. Un baseline construit dans ces conditions serait
+un mensonge figé.
+
+Depuis une machine ayant accès à GitHub, pour régénérer le baseline :
+
+```bash
+vendor/bin/phpstan analyse --generate-baseline --memory-limit=1G
+```
+
+`--memory-limit` n'est pas un confort : PHPStan ne lit aucune limite mémoire
+depuis `phpstan.neon`, seulement depuis la ligne de commande ou `php.ini`, et
+les 128 Mo alloués par défaut ne suffisent pas à Laravel plus larastan.
+L'analyse traverse alors tous les fichiers puis meurt en écrivant son cache,
+sur une trace d'appels qui n'a rien à voir avec le dépôt.
+
+Le passage « Analyse statique » du CI ne s'exécute que si `vendor/bin/phpstan`
+existe. Il est présent depuis que larastan est entré dans `composer.json` ; le
+garde reste utile pour les environnements qui ne peuvent pas l'installer.
+
+⚠️ **Tout texte d'interface passe par `__()`, avec le français pour clé.**
+`lang/en.json` traduit ces clés ; `lang/fr/*.php` et `lang/en/*.php` portent les
+clés structurées (`ui.*`, `sms.*`, `seo.*`), employées depuis le code PHP.
+Une clé française sans entrée dans `lang/en.json` **ne casse rien** : Laravel
+rend la clé telle quelle, donc du français au milieu d'une page anglaise, sans
+la moindre erreur. `tests/Feature/TranslationCoverageTest.php` monte la garde
+dans les deux sens — pas de clé sans traduction, pas de traduction sans clé.
+
+Les trois pages légales (`resources/views/legal/`) restent volontairement en
+français seul : traduire des CGU engage juridiquement, et les documents ne sont
+pas encore relus par un juriste (`LEGAL_VALIDE`).
+
+⚠️ **`APP_URL` est un réglage de sécurité, pas seulement de confort.** Laravel
+compose ses URL absolues à partir de l'en-tête `Host` de la requête — et de
+`X-Forwarded-Host`, honoré parce que `trustProxies(at: '*')` fait confiance à
+tous les répartiteurs. C'est-à-dire à partir d'une valeur que le client choisit.
+Une demande de mot de passe oublié envoyée avec un `Host` falsifié fait donc
+partir, vers la boîte du titulaire, un lien de réinitialisation **valide qui
+pointe chez l'attaquant**. `trustHosts` (`bootstrap/app.php`) filtre les noms
+d'hôte à partir d'`APP_URL` ; un `APP_URL` vide vide la liste et éteint le
+filtrage sans rien dire, d'où le contrôle dans `deploy:check`.
+`tests/Feature/TrustedHostsTest.php` monte la garde.
+
+⚠️ **N'écris jamais `where(..., 'like', ...)` à la main.** `like` est sensible à
+la casse sur PostgreSQL et ne l'est pas sur MySQL ni SQLite : la recherche
+renvoyait une page vide à qui tapait en minuscules, sans erreur nulle part et
+sans qu'aucun test ne rougisse. Utilise `whereLike($colonne, $valeur,
+caseSensitive: false)`, que Laravel compile en `ilike` sur PostgreSQL.
+`tests/Feature/CaseInsensitiveSearchTest.php` monte la garde.
+
+⚠️ `database/factories/ServiceCategoryFactory.php` tire ses noms dans un vivier
+**volontairement disjoint** des noms que les tests posent en dur (« Plomberie »,
+« Ménage », « Coiffure »…). `name` et `slug` sont uniques en base : un tirage au sort
+inséré avant qu'un test n'impose le même nom fait échouer le test, de façon
+intermittente. N'ajoute jamais au vivier un nom utilisé tel quel dans `tests/`.

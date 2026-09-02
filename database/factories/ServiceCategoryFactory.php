@@ -13,10 +13,17 @@ class ServiceCategoryFactory extends Factory
 {
     public function definition(): array
     {
+        // Ce vivier est volontairement disjoint des noms que les tests posent
+        // eux-mêmes (« Plomberie », « Ménage », « Coiffure »…). La garde plus
+        // bas rattrape un tirage qui arrive après un nom imposé ; elle ne peut
+        // rien contre l'ordre inverse — un tirage au sort déjà inséré, puis un
+        // test qui impose le même nom — et `name` comme `slug` sont uniques en
+        // base. Ne jamais réintroduire ici un nom utilisé tel quel par un test.
         $pool = [
-            'Plomberie', 'Électricité', 'Ménage', 'Coiffure', 'Couture',
-            'Menuiserie', 'Peinture', 'Jardinage', 'Déménagement', 'Mécanique auto',
-            'Informatique', 'Cours particuliers', 'Photographie', 'Traiteur', 'Maçonnerie',
+            'Électricité', 'Couture', 'Menuiserie', 'Peinture', 'Jardinage',
+            'Déménagement', 'Mécanique auto', 'Informatique', 'Cours particuliers',
+            'Photographie', 'Traiteur', 'Maçonnerie', 'Carrelage', 'Climatisation',
+            'Serrurerie', 'Vitrerie', 'Plâtrerie', 'Toiture', 'Blanchisserie',
         ];
 
         // Deux sources de collision à couvrir. D'abord la création par lot :

@@ -1,42 +1,59 @@
-<x-app-layout>
+<x-app-layout :titre="__('Nouvelle demande')" :indexable="false">
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">Nouvelle demande</h2>
+        <x-page-header :title="__('Nouvelle demande')" :back="route('requests.index')" :back-label="__('Mes demandes')" />
     </x-slot>
 
-    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
-        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
+        <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
             @if ($service)
                 <div class="flex items-center gap-3 mb-6 p-3 bg-surface-container-low rounded-lg border border-outline-variant">
                     <div class="h-12 w-12 rounded-lg bg-surface-container overflow-hidden shrink-0">
                         @if ($service->images->isNotEmpty())
-                            <img src="{{ asset('storage/'.$service->images->first()->path) }}" alt="" class="h-full w-full object-cover">
+                            <img src="{{ media_url($service->images->first()->path) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
                         @endif
                     </div>
                     <div>
                         <p class="font-medium text-on-surface">{{ $service->title }}</p>
-                        <p class="text-sm text-on-surface-variant">{{ $service->provider?->providerProfile?->business_name ?? $service->provider?->name }}</p>
+                        <p class="text-label-md text-on-surface-variant">{{ $service->provider?->providerProfile?->business_name ?? $service->provider?->name }}</p>
                     </div>
                 </div>
             @elseif ($provider)
                 <div class="flex items-center gap-3 mb-6 p-3 bg-surface-container-low rounded-lg border border-outline-variant">
                     <div class="h-12 w-12 rounded-full bg-surface-container overflow-hidden shrink-0 flex items-center justify-center">
                         @if ($provider->providerProfile?->logo_path)
-                            <img src="{{ asset('storage/'.$provider->providerProfile->logo_path) }}" alt="" class="h-full w-full object-cover">
+                            <img src="{{ media_url($provider->providerProfile->logo_path) }}" alt="" class="h-full w-full object-cover" onerror="this.remove()">
                         @else
                             <span class="text-on-surface-variant font-semibold">{{ Str::substr($provider->providerProfile?->business_name ?? $provider->name, 0, 1) }}</span>
                         @endif
                     </div>
                     <div>
                         <p class="font-medium text-on-surface">{{ $provider->providerProfile?->business_name ?? $provider->name }}</p>
-                        <p class="text-sm text-on-surface-variant">{{ $provider->providerProfile?->category?->name }}</p>
+                        <p class="text-label-md text-on-surface-variant">{{ $provider->providerProfile?->category?->name }}</p>
                     </div>
                 </div>
-            @else
-                <p class="mb-6 text-sm text-on-surface-variant">
-                    Décrivez votre besoin ci-dessous. Vous pouvez aussi démarrer une demande directement depuis la page d'un service ou d'un prestataire.
-                </p>
             @endif
 
+            @if (! $service && ! $provider)
+                {{-- Sans service ni prestataire, la demande ne peut aboutir :
+                     la validation exige l'un des deux. Le formulaire était
+                     tout de même offert, et le client qui l'envoyait recevait
+                     « Le champ service est obligatoire lorsque provider id
+                     n'est pas présent » — deux champs qu'il n'a jamais vus,
+                     nommés comme des colonnes. On demande le destinataire
+                     avant le message, pas l'inverse. --}}
+                <p class="font-headline-md text-headline-md text-on-surface">{{ __("À qui adressez-vous cette demande ?") }}</p>
+                <p class="prose-measure mt-2 text-body-md text-on-surface-variant">
+                    {{ __("Une demande part toujours vers un prestataire précis. Choisissez d'abord le service qui vous intéresse, ou le prestataire à qui vous voulez écrire — le formulaire s'ouvrira avec son nom déjà rempli.") }}
+                </p>
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <x-primary-button :href="route('services.index')">
+                        {{ __("Parcourir les services") }}
+                    </x-primary-button>
+                    <x-secondary-button :href="route('providers.index')">
+                        {{ __("Parcourir les prestataires") }}
+                    </x-secondary-button>
+                </div>
+            @else
             <form action="{{ route('requests.store') }}" method="POST" class="space-y-4">
                 @csrf
 
@@ -47,21 +64,21 @@
                 @endif
 
                 <div>
-                    <x-input-label for="message" value="Votre message" />
+                    <x-input-label for="message" :value="__('Votre message')" />
                     <textarea
                         id="message"
                         name="message"
                         rows="5"
                         required
                         maxlength="2000"
-                        class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary"
-                        placeholder="Décrivez votre besoin, le lieu, et toute information utile au prestataire…"
+                        class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary"
+                        placeholder="{{ __('Décrivez votre besoin, le lieu, et toute information utile au prestataire…') }}"
                     >{{ old('message') }}</textarea>
                     <x-input-error :messages="$errors->get('message')" class="mt-2" />
                 </div>
 
                 <div>
-                    <x-input-label for="preferred_date" value="Date souhaitée (facultatif)" />
+                    <x-input-label for="preferred_date" :value="__('Date souhaitée (facultatif)')" />
                     <x-text-input
                         id="preferred_date"
                         name="preferred_date"
@@ -73,15 +90,19 @@
                     <x-input-error :messages="$errors->get('preferred_date')" class="mt-2" />
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-2">
-                    <x-secondary-button type="submit" name="action" value="draft">
-                        Enregistrer comme brouillon
+                {{-- Côte à côte à 390 px, les deux libellés français passaient
+                     chacun sur deux lignes dans des boutons dimensionnés pour
+                     l'anglais. Empilés, l'action principale en premier. --}}
+                <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
+                    <x-secondary-button type="submit" name="action" value="draft" class="w-full sm:w-auto">
+                        {{ __("Enregistrer comme brouillon") }}
                     </x-secondary-button>
-                    <x-primary-button type="submit" name="action" value="send">
-                        Envoyer la demande
+                    <x-primary-button type="submit" name="action" value="send" class="w-full sm:w-auto">
+                        {{ __("Envoyer la demande") }}
                     </x-primary-button>
                 </div>
             </form>
+            @endif
         </div>
     </div>
 </x-app-layout>

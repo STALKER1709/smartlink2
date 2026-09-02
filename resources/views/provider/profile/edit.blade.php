@@ -1,27 +1,26 @@
-<x-app-layout>
+<x-app-layout :titre="__('Mon profil prestataire')" :indexable="false">
     <x-slot name="header">
-        <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('ui.provider.my_profile') }}</h2>
+        <x-page-header :title="__('ui.provider.my_profile')" />
     </x-slot>
 
     {{-- Leaflet CSS --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
-        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+    <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-8">
+        <div class="-mx-margin-mobile border-y border-outline-variant bg-surface-container-lowest px-margin-mobile py-6 md:mx-0 md:rounded-xl md:border md:p-6">
             <form action="{{ route('provider.profile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 <div>
-                    <x-input-label for="business_name" value="Nom de l'entreprise / activité" />
+                    <x-input-label for="business_name" :value="__('Nom de l\'entreprise / activité')" />
                     <x-text-input id="business_name" name="business_name" type="text" class="mt-1 block w-full" :value="old('business_name', $providerProfile->business_name)" required />
                     <x-input-error :messages="$errors->get('business_name')" class="mt-2" />
                 </div>
 
                 <div class="mt-4">
-                    <x-input-label for="category_id" value="Catégorie principale" />
-                    <select id="category_id" name="category_id" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">
-                        <option value="">Choisir une catégorie</option>
+                    <x-input-label for="category_id" :value="__('Catégorie principale')" />
+                    <select id="category_id" name="category_id" class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary">
+                        <option value="">{{ __("Choisir une catégorie") }}</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}" @selected(old('category_id', $providerProfile->category_id) == $category->id)>{{ $category->name }}</option>
                         @endforeach
@@ -30,15 +29,15 @@
                 </div>
 
                 <div class="mt-4">
-                    <x-input-label for="description" value="Description (facultatif)" />
-                    <textarea id="description" name="description" rows="4" maxlength="2000" class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary">{{ old('description', $providerProfile->description) }}</textarea>
+                    <x-input-label for="description" :value="__('Description (facultatif)')" />
+                    <textarea id="description" name="description" rows="4" maxlength="2000" class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary">{{ old('description', $providerProfile->description) }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
                 </div>
 
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="city" :value="__('ui.provider.city')" />
-                        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant shadow-sm focus:border-primary focus:ring-primary text-sm">
+                        <select id="city" name="city" required class="mt-1 block w-full rounded-lg border-outline-variant focus:border-primary focus:ring-primary text-label-md">
                             <option value="">— {{ __('ui.provider.choose_city') }} —</option>
                             @foreach (['Yaoundé','Douala','Bafoussam','Bamenda','Garoua','Maroua','Ngaoundéré','Bertoua','Kribi','Limbé','Buea','Ebolowa','Kumba','Nkongsamba','Edéa','Bafia'] as $ville)
                                 <option value="{{ $ville }}" @selected(old('city', $providerProfile->city) === $ville)>{{ $ville }}</option>
@@ -62,112 +61,125 @@
                 {{-- WhatsApp --}}
                 <div class="mt-4">
                     <x-input-label for="whatsapp" :value="__('ui.provider.whatsapp')" />
-                    <div class="mt-1 flex rounded-md shadow-sm">
-                        <span class="inline-flex items-center rounded-l-md border border-r-0 border-outline-variant bg-surface-container-low px-3 text-sm text-on-surface-variant">+237</span>
+                    <div class="mt-1 flex rounded-xl">
+                        <span class="inline-flex items-center rounded-l-md border border-r-0 border-outline-variant bg-surface-container-low px-3 text-label-md text-on-surface-variant">+237</span>
                         <x-text-input id="whatsapp" name="whatsapp" type="tel" class="block flex-1 rounded-none rounded-r-md" :value="old('whatsapp', $providerProfile->whatsapp)" placeholder="6XXXXXXXX" maxlength="20" />
                     </div>
                     <x-input-error :messages="$errors->get('whatsapp')" class="mt-2" />
                 </div>
 
-                {{-- Leaflet map for location --}}
-                <div class="mt-4" x-data="{
-                    lat: {{ old('latitude', $providerProfile->latitude ?? 3.848) }},
-                    lng: {{ old('longitude', $providerProfile->longitude ?? 11.502) }},
-                    map: null, marker: null,
-                    init() {
-                        this.map = L.map('provider-map').setView([this.lat, this.lng], 12);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                            attribution: '© OpenStreetMap'
-                        }).addTo(this.map);
-                        this.marker = L.marker([this.lat, this.lng], { draggable: true }).addTo(this.map);
-                        this.marker.on('dragend', (e) => {
-                            this.lat = e.target.getLatLng().lat.toFixed(7);
-                            this.lng = e.target.getLatLng().lng.toFixed(7);
-                        });
-                        this.map.on('click', (e) => {
-                            this.lat = e.latlng.lat.toFixed(7);
-                            this.lng = e.latlng.lng.toFixed(7);
-                            this.marker.setLatLng([this.lat, this.lng]);
-                        });
-                    }
-                }">
+                {{-- La carte se déclare par ses attributs : c'est `carte.js`
+                     qui la pose, et lui seul connaît Leaflet. Le composant
+                     Alpine qui vivait ici appelait `L.map()` dans son `init()`,
+                     donc avant que le module ait pu s'exécuter — l'ordre tenait
+                     par chance, et par un script tiers chargé en tête. --}}
+                <div class="mt-4">
                     <x-input-label :value="__('ui.provider.location_map')" />
-                    <p class="text-xs text-on-surface-variant mb-2">{{ __('ui.provider.location_hint') }}</p>
-                    <div id="provider-map" class="w-full h-56 rounded-md border border-outline-variant z-0"></div>
-                    <input type="hidden" name="latitude" :value="lat">
-                    <input type="hidden" name="longitude" :value="lng">
-                    <p class="mt-1 text-xs text-on-surface-variant" x-text="`${lat}, ${lng}`"></p>
+                    <p class="text-label-sm text-on-surface-variant mb-2">{{ __('ui.provider.location_hint') }}</p>
+                    <div id="provider-map"
+                         data-carte data-modifiable data-zoom="12"
+                         data-lat="{{ old('latitude', $providerProfile->latitude ?? 3.848) }}"
+                         data-lng="{{ old('longitude', $providerProfile->longitude ?? 11.502) }}"
+                         data-champ-lat="#latitude" data-champ-lng="#longitude" data-echo="#coordonnees"
+                         class="w-full h-56 rounded-xl border border-outline-variant z-0"></div>
+                    <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $providerProfile->latitude ?? 3.848) }}">
+                    <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $providerProfile->longitude ?? 11.502) }}">
+                    {{-- « 3.848, 11.502 » nu ne dit rien à personne. La ligne
+                         confirme d'abord que le repère est posé ; les
+                         coordonnées suivent, à qui elles servent. --}}
+                    <p class="mt-1 text-label-sm text-on-surface-variant">
+                        {{ __("Repère placé ·") }} <span id="coordonnees" class="font-label-numeric"></span>
+                    </p>
                 </div>
 
                 {{-- ID Card upload --}}
                 <div class="mt-6 border-t border-outline-variant pt-5">
-                    <h3 class="font-medium text-on-surface mb-1">{{ __('ui.provider.id_card_title') }}</h3>
-                    <p class="text-xs text-on-surface-variant mb-3">{{ __('ui.provider.id_card_hint') }}</p>
+                    <h2 class="font-medium text-on-surface mb-1">{{ __('ui.provider.id_card_title') }}</h2>
+                    <p class="text-label-sm text-on-surface-variant mb-3">{{ __('ui.provider.id_card_hint') }}</p>
 
                     @if ($providerProfile->id_card_path)
                         <div class="mb-3 flex items-center gap-3">
-                            @php $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION); @endphp
+                            @php
+                                $ext = pathinfo($providerProfile->id_card_path, PATHINFO_EXTENSION);
+                                // Passe par la route contrôlée : la pièce n'est
+                                // plus joignable par une URL publique.
+                                $document = route('provider-profiles.id-document', $providerProfile);
+                            @endphp
                             @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png']))
-                                <img src="{{ asset('storage/'.$providerProfile->id_card_path) }}" class="h-20 w-32 object-cover rounded border border-outline-variant">
+                                <span class="relative block">
+                                    <img src="{{ $document }}" alt="{{ __('Votre pièce d\'identité déposée') }}"
+                                         class="h-20 w-32 rounded-lg border border-outline-variant object-cover"
+                                         onerror="this.nextElementSibling.hidden = false; this.remove();">
+                                    <span hidden class="flex h-20 w-32 flex-col items-center justify-center gap-1 rounded-lg border border-outline-variant bg-surface-container px-2 text-center font-label-sm text-label-sm text-error">
+                                        <x-icon name="warning" size="sm" />
+                                        {{ __("Document introuvable") }}
+                                    </span>
+                                </span>
                             @else
-                                <a href="{{ asset('storage/'.$providerProfile->id_card_path) }}" target="_blank" class="text-primary text-sm hover:underline">Voir le document</a>
+                                <a href="{{ $document }}" target="_blank" rel="noopener" class="text-primary text-label-md hover:underline">{{ __("Voir le document") }}</a>
                             @endif
                             @if ($providerProfile->id_card_verified)
-                                <span class="inline-flex items-center rounded-full bg-secondary-container/40 px-2.5 py-0.5 text-xs font-medium text-on-secondary-container">Vérifié</span>
+                                <span class="inline-flex items-center rounded-full bg-primary-container/20 px-2.5 py-0.5 text-label-sm font-medium text-primary">{{ __("Vérifié") }}</span>
                             @else
-                                <span class="inline-flex items-center rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-xs font-medium text-tertiary">En attente de vérification</span>
+                                <span class="inline-flex items-center rounded-full bg-secondary-container/25 px-2.5 py-0.5 text-label-sm font-medium text-on-secondary-container">{{ __("En attente de vérification") }}</span>
                             @endif
                         </div>
                     @endif
 
-                    <input type="file" name="id_card" accept="image/*,.pdf" class="text-sm text-on-surface-variant">
+                    <x-file-input name="id_card" accept="image/*,.pdf" :label="__('Déposer ma pièce')"
+                                  :hint="__('Photo de la CNI ou du passeport, ou PDF.')" class="mt-2" />
                     <x-input-error :messages="$errors->get('id_card')" class="mt-2" />
+                </div>
+
+                <div class="mt-6 border-t border-outline-variant pt-5">
+                    <h2 class="font-medium text-on-surface">{{ __("Où et comment vous joindre") }}</h2>
+                    <p class="mt-1 text-label-sm text-on-surface-variant">{{ __("Ces informations paraissent sur votre fiche publique.") }}</p>
                 </div>
 
                 <!-- Service areas -->
                 <div class="mt-4" x-data="{ areas: @js(old('service_areas', $providerProfile->service_areas ?: [''])) }">
-                    <x-input-label value="Zones d'intervention (facultatif)" />
+                    <x-input-label :value="__('Zones d\'intervention (facultatif)')" />
                     <template x-for="(area, index) in areas" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="service_areas[]" x-model="areas[index]" maxlength="120" class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                            <button type="button" @click="areas.splice(index, 1)" class="text-error text-sm px-2">✕</button>
+                            <input type="text" name="service_areas[]" :aria-label="`Zone d'intervention ${index + 1}`" x-model="areas[index]" maxlength="120" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
+                            <button type="button" @click="areas.splice(index, 1)" class="inline-flex min-h-6 items-center justify-center text-error text-label-md px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="areas.push('')" class="mt-2 text-sm text-primary hover:text-primary-container">
-                        + Ajouter une zone
+                    <button type="button" @click="areas.push('')" class="mt-2 inline-flex min-h-6 items-center text-label-md text-primary hover:text-primary-container">
+                        {{ __("+ Ajouter une zone") }}
                     </button>
                     <x-input-error :messages="$errors->get('service_areas')" class="mt-2" />
                 </div>
 
                 <!-- Contact methods -->
                 <div class="mt-4" x-data="{ contacts: @js(old('contact_methods', $providerProfile->contact_methods ?: [''])) }">
-                    <x-input-label value="Moyens de contact (facultatif)" />
+                    <x-input-label :value="__('Moyens de contact (facultatif)')" />
                     <template x-for="(contact, index) in contacts" :key="index">
                         <div class="flex gap-2 mt-2">
-                            <input type="text" name="contact_methods[]" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary">
-                            <button type="button" @click="contacts.splice(index, 1)" class="text-error text-sm px-2">✕</button>
+                            <input type="text" name="contact_methods[]" :aria-label="`Moyen de contact ${index + 1}`" x-model="contacts[index]" maxlength="120" placeholder="ex: +237 6XX XXX XXX" class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary">
+                            <button type="button" @click="contacts.splice(index, 1)" class="inline-flex min-h-6 items-center justify-center text-error text-label-md px-2">✕</button>
                         </div>
                     </template>
-                    <button type="button" @click="contacts.push('')" class="mt-2 text-sm text-primary hover:text-primary-container">
-                        + Ajouter un contact
+                    <button type="button" @click="contacts.push('')" class="mt-2 inline-flex min-h-6 items-center text-label-md text-primary hover:text-primary-container">
+                        {{ __("+ Ajouter un contact") }}
                     </button>
                     <x-input-error :messages="$errors->get('contact_methods')" class="mt-2" />
                 </div>
 
                 <!-- Opening hours -->
                 <div class="mt-4">
-                    <p class="block font-medium text-sm text-on-surface-variant mb-2">Horaires d'ouverture (facultatif)</p>
+                    <p class="block font-medium text-label-md text-on-surface-variant mb-2">{{ __("Horaires d'ouverture (facultatif)") }}</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @foreach (['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'] as $day)
                             <div class="flex items-center gap-2">
-                                <label for="opening_hours_{{ $day }}" class="w-24 text-sm text-on-surface-variant capitalize shrink-0">{{ $day }}</label>
+                                <label for="opening_hours_{{ $day }}" class="w-24 text-label-md text-on-surface-variant capitalize shrink-0">{{ $day }}</label>
                                 <input
                                     id="opening_hours_{{ $day }}"
                                     type="text"
                                     name="opening_hours[{{ $day }}]"
                                     value="{{ old('opening_hours.'.$day, $providerProfile->opening_hours[$day] ?? '') }}"
                                     placeholder="ex: 8h-18h"
-                                    class="flex-1 rounded-lg border-outline-variant text-sm focus:border-primary focus:ring-primary"
+                                    class="flex-1 rounded-lg border-outline-variant text-label-md focus:border-primary focus:ring-primary"
                                 >
                             </div>
                         @endforeach
@@ -175,25 +187,27 @@
                 </div>
 
                 <!-- Logo -->
-                <div class="mt-4">
-                    <x-input-label value="Logo (facultatif)" />
+                <div class="mt-6 border-t border-outline-variant pt-5">
+                    <x-input-label :value="__('Logo (facultatif)')" />
                     <div class="mt-1 flex items-center gap-4">
                         @if ($providerProfile->logo_path)
-                            <img src="{{ asset('storage/'.$providerProfile->logo_path) }}" class="h-16 w-16 rounded-full object-cover">
+                            <img src="{{ media_url($providerProfile->logo_path) }}"
+                                 alt="{{ __('Logo actuel de :nom', ['nom' => $providerProfile->business_name]) }}"
+                                 class="h-16 w-16 rounded-full object-cover" onerror="this.remove()">
                         @endif
-                        <input type="file" name="logo" accept="image/*" class="text-sm text-on-surface-variant">
+                        <x-file-input name="logo" accept="image/*" :label="__('Choisir un logo')" />
                     </div>
                     <x-input-error :messages="$errors->get('logo')" class="mt-2" />
                 </div>
 
-                <div class="mt-6 flex justify-end">
-                    <button type="submit" class="rounded-full bg-primary px-4 py-2 text-sm font-button-text font-semibold text-on-primary hover:bg-primary-container transition-colors">
+                <div class="mt-8 flex justify-end border-t border-outline-variant pt-5">
+                    <x-primary-button>
                         {{ __('ui.save') }}
-                    </button>
+                    </x-primary-button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @vite('resources/js/carte.js')
 </x-app-layout>

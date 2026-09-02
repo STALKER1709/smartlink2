@@ -1,59 +1,258 @@
-<x-app-layout>
-    <!-- Hero -->
-    <section class="bg-primary">
-        <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-16 text-center">
-            <h1 class="font-headline-xl text-headline-xl text-white">
-                Trouvez le bon prestataire, près de chez vous
-            </h1>
-            <p class="mt-4 font-body-lg text-body-lg text-white/85 max-w-2xl mx-auto">
-                SmartLink connecte les clients aux meilleurs prestataires de services au Cameroun.
-            </p>
+{{-- La page d'accueil garde le titre par défaut, qui porte déjà la
+     promesse et le pays. --}}
+<x-app-layout :description="__('seo.default_description')">
+    {{-- ══ Hero ══
+         Deux colonnes à partir de `lg`, comme la maquette : le texte et la
+         recherche à gauche, une illustration à droite. Empilé en dessous —
+         la maquette, elle, ne prévoit rien sous `md` et pose 64 px de marge
+         partout, ce qui ne laisserait que 262 px de contenu sur un
+         téléphone.
 
-            <form action="{{ route('services.index') }}" method="GET" class="mt-8 max-w-xl mx-auto flex gap-2">
-                <input
-                    type="text"
-                    name="term"
-                    placeholder="Quel service recherchez-vous ?"
-                    class="flex-1 rounded-lg border-0 px-4 py-2.5 text-on-surface placeholder:text-on-surface-variant/60 focus:ring-2 focus:ring-white"
-                >
-                <button type="submit" class="rounded-full bg-white px-5 py-2.5 font-button-text text-button-text text-primary hover:bg-surface-container-low transition-colors">
-                    Rechercher
-                </button>
-            </form>
+         La maquette met une photographie à droite. On met les vignettes de
+         métier : elles sont dessinées, donc sans question de droits, elles
+         ne pèsent aucune requête, et elles montrent ce que la plateforme
+         propose au lieu d'illustrer une idée. --}}
+    <section class="border-b border-outline-variant bg-surface-container-low">
+        <div class="mx-auto grid max-w-container items-center gap-10 px-margin-mobile py-12 md:px-margin-tablet md:py-16 lg:grid-cols-2 lg:gap-16 lg:px-margin-desktop lg:py-20">
+
+            <div class="text-center lg:text-left">
+                {{-- La pastille dit le territoire avant que le titre ne dise
+                     le service : c'est ce qui distingue SmartLink d'un
+                     annuaire mondial. --}}
+                <span class="inline-flex items-center gap-2 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant">
+                    <x-icon name="verified" size="xs" class="text-primary" />
+                    {{ __('Le réseau de confiance au Cameroun') }}
+                </span>
+
+                {{-- Un seul mot en vert. Deux en feraient une alternance, et
+                     l'accent ne se poserait plus nulle part. --}}
+                <h1 class="mt-5 font-display-lg text-headline-lg text-on-background sm:text-display-lg">
+                    {!! __('Un artisan de <span class="text-primary">confiance</span>,<br class="hidden sm:inline"> près de chez vous') !!}
+                </h1>
+
+                <p class="mx-auto mt-4 max-w-xl font-body-lg text-body-lg text-on-surface-variant lg:mx-0">
+                    {{ __('Plombiers, électriciens, coiffeuses, répétiteurs — décrivez votre besoin, nous trouvons le prestataire.') }}
+                    <strong class="font-semibold text-primary">{{ __('Gratuit pour les clients.') }}</strong>
+                </p>
+
+                <x-natural-search class="mt-8" />
+
+                @if ($categories->isNotEmpty())
+                    {{-- Les recherches courantes, en toutes lettres : elles
+                         montrent ce qu'on peut taper, ce que le champ vide
+                         n'apprend à personne. --}}
+                    <p class="mt-5 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 font-label-sm text-label-sm text-on-surface-variant lg:justify-start">
+                        <span class="mr-1">{{ __('Recherches courantes :') }}</span>
+                        @foreach ($categories->sortBy(fn ($c) => mb_strlen($c->name))->take(3) as $courante)
+                            <a href="{{ route('services.index', ['category' => $courante->slug]) }}"
+                               class="inline-flex min-h-11 items-center rounded-full px-2 font-medium text-primary underline decoration-outline-variant underline-offset-4 transition-colors hover:bg-primary-container/10 hover:decoration-primary">{{ $courante->name }}</a>
+                        @endforeach
+                    </p>
+                @endif
+
+                @if ($providerCount > 0)
+                    <p class="mt-4 font-label-md text-label-md text-on-surface-variant">
+                        {{ trans_choice(':count prestataire|:count prestataires', $providerCount) }}
+                        · {{ trans_choice(':count service en ligne|:count services en ligne', $serviceCount) }}
+                    </p>
+                @endif
+            </div>
+
+            {{-- La colonne d'illustration. Cachée sous `lg` : sur un
+                 téléphone, elle repousserait la recherche — le seul contrôle
+                 de l'écran — sous la ligne de flottaison. --}}
+            @if ($categories->count() >= 3)
+                <div class="relative hidden lg:block" aria-hidden="true">
+                    <div class="grid grid-cols-2 gap-4">
+                        @foreach ($categories->take(3) as $index => $vitrine)
+                            <div @class([
+                                'overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1',
+                                'col-span-2 h-56' => $index === 0,
+                                'h-40' => $index > 0,
+                            ])>
+                                <x-category-scene :name="$vitrine->name" class="h-full w-full" />
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Le repère de confiance, posé sur l'illustration : c'est
+                         la promesse que la plateforme tient, et elle se lit
+                         mieux sur une image que dans un paragraphe. --}}
+                    <div class="absolute -bottom-6 -left-4 flex items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 py-3 shadow-elevation-2">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-container">
+                            <x-icon name="verified_user" class="text-on-secondary-container" />
+                        </span>
+                        <span>
+                            <span class="block font-label-md text-label-md text-on-surface">{{ __('Pièce d\'identité contrôlée') }}</span>
+                            <span class="block font-label-sm text-label-sm text-on-surface-variant">{{ __('par notre équipe, un par un') }}</span>
+                        </span>
+                    </div>
+                </div>
+            @endif
         </div>
     </section>
 
-    <!-- Categories -->
-    <section class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-12">
-        <h2 class="font-headline-lg text-headline-lg text-on-surface">Catégories populaires</h2>
+    {{-- ══ Catégories populaires ══
+         Remontées juste sous la recherche, comme la maquette : c'est le second
+         chemin d'entrée, et il valait mieux que le bas de page où il était.
 
-        <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            @foreach ($categories as $category)
-                <a
-                    href="{{ route('services.index', ['category_id' => $category->id]) }}"
-                    class="flex flex-col items-center justify-center gap-2 bg-surface-container-lowest rounded-lg border border-outline-variant p-4 text-center hover:bg-surface-container-low hover:border-primary/40 transition-colors"
-                >
-                    <x-category-icon :icon="$category->icon" class="text-primary text-2xl" />
-                    <span class="text-sm font-medium text-on-surface">{{ $category->name }}</span>
-                </a>
-            @endforeach
-        </div>
-    </section>
+         Huit métiers sur grand écran — deux rangées pleines à quatre colonnes.
+         Quatre seulement sur téléphone : à huit, la grille posait quatre
+         rangées et repoussait les prestataires d'un demi-écran, sur une page
+         qui en fait déjà plus de cinq mille pixels. --}}
+    @if ($categories->isNotEmpty())
+        <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
+            <x-section-header :title="__('Catégories populaires')" :href="route('services.index')" :link-label="__('Tous les services')" />
 
-    <!-- Recent services -->
-    <section class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-12">
-        <div class="flex items-center justify-between">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface">Services récents</h2>
-            <a href="{{ route('services.index') }}" class="text-sm font-semibold text-primary hover:text-primary-container flex items-center gap-1">
-                Voir tout
-                <span class="material-symbols-outlined text-base">arrow_forward</span>
-            </a>
-        </div>
+            <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+                @foreach ($categories->take(8) as $category)
+                    <a href="{{ route('services.index', ['category_id' => $category->id]) }}"
+                       @class([
+                           'group flex-col overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest text-center transition-colors hover:border-primary/50 hover:shadow-elevation-2',
+                           'flex' => $loop->index < 4,
+                           'hidden sm:flex' => $loop->index >= 4,
+                       ])>
+                        {{-- Le bandeau photographique, quand il existe. La
+                             pastille du pictogramme reste et chevauche son bord
+                             bas : elle est le repli si l'hôte ne répond pas, et
+                             elle rattache la vignette au reste du site, où le
+                             métier se lit toujours au même dessin. --}}
+                        @php $photo = image_categorie($category->name); @endphp
+
+                        <div class="relative h-24 w-full overflow-hidden">
+                            <x-category-scene :name="$category->name" class="absolute inset-0" />
+
+                        </div>
+
+                        <div class="flex flex-1 flex-col justify-center gap-1 px-4 pb-6 pt-8">
+                            <span class="font-medium leading-tight text-on-background">{{ $category->name }}</span>
+                            <span class="font-label-numeric text-label-sm text-on-surface-variant">
+                                {{ $category->services_count }} {{ Str::plural('service', $category->services_count) }}
+                            </span>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- ══ Prestataires vérifiés ══
+         La maquette veut des cartes ici, pas les rangées de liste employées
+         partout ailleurs — et sur cet écran-là elle a raison : l'accueil doit
+         convaincre un visiteur qui ne connaît pas SmartLink, et une rangée de
+         liste ne montre ni visage ni prix d'entrée.
+
+         Six prestataires, dont trois seulement sur téléphone : à six, la page
+         posait mille trois cents pixels de cartes avant le premier service.
+         À quatre et six colonnes les rangées sont pleines dans les deux cas.
+
+         La note reste la puce ambre discrète du reste du site. La maquette la
+         voulait en pastille orange pleine ; l'ambre est réservé aux
+         avertissements — abonnement qui expire, plafond atteint — et une note
+         de 4,8 n'en est pas un. --}}
+    @if ($featuredProviders->isNotEmpty())
+        <section class="bg-surface-container-low">
+            <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
+                <x-section-header :title="__('Prestataires vérifiés')"
+                                  :subtitle="__('Pièce d\'identité contrôlée par notre équipe.')"
+                                  :href="route('providers.index', ['verified_only' => 1])"
+                                  link-label="Voir l'annuaire" />
+
+                <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-gutter lg:grid-cols-3">
+                    @foreach ($featuredProviders as $providerProfile)
+                        <article @class([
+                            'flex-col overflow-hidden rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest',
+                            'flex' => $loop->index < 3,
+                            'hidden md:flex' => $loop->index >= 3,
+                        ])>
+                            <a href="{{ route('providers.show', $providerProfile) }}"
+                               class="group flex flex-1 items-start gap-4 border-b border-outline-variant p-4 transition-colors hover:bg-surface-container-low/70">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-surface-container-high">
+                                    @if ($providerProfile->logo_path)
+                                        <img src="{{ media_url($providerProfile->logo_path) }}" alt="" loading="lazy"
+                                             class="h-full w-full object-cover" onerror="this.remove()">
+                                    @else
+                                        <span class="font-headline-md text-headline-md font-bold text-primary">{{ Str::upper(Str::substr($providerProfile->business_name, 0, 1)) }}</span>
+                                    @endif
+                                </div>
+
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="font-headline-md text-headline-md leading-tight text-on-background group-hover:text-primary">
+                                        {{ $providerProfile->business_name }}
+                                    </h3>
+
+                                    @if ($providerProfile->category)
+                                        <p class="mt-0.5 text-on-surface-variant">{{ $providerProfile->category->name }}</p>
+                                    @endif
+
+                                    @if ($providerProfile->city)
+                                        <p class="mt-1 flex items-center gap-1 text-label-md text-on-surface-variant">
+                                            <x-icon name="location_on" />
+                                            {{ $providerProfile->city }}@if ($providerProfile->quarter), {{ $providerProfile->quarter }}@endif
+                                        </p>
+                                    @endif
+                                </div>
+                            </a>
+
+                            <div class="flex flex-col gap-3 bg-surface-container-low p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    @if ($providerProfile->rating_count)
+                                        <x-star-rating :rating="$providerProfile->rating_avg" :count="$providerProfile->rating_count" compact />
+                                    @else
+                                        <span class="text-label-md text-on-surface-variant">{{ __('Pas encore d\'avis') }}</span>
+                                    @endif
+
+                                    {{-- Le montant en chasse fixe, la phrase qui le
+                                         porte non : « À partir de » composé en
+                                         JetBrains Mono ouvre un blanc de deux
+                                         caractères avant le prix. --}}
+                                    <span class="font-label-md text-label-md text-primary">
+                                        @if ($providerProfile->min_price)
+                                            {{ __('À partir de') }} <span class="font-label-numeric">{{ number_format((float) $providerProfile->min_price, 0, ',', ' ') }} FCFA</span>
+                                        @else
+                                            {{ __('Prix à convenir') }}
+                                        @endif
+                                    </span>
+                                </div>
+
+                                {{-- Le visiteur non connecté voit « Contacter »
+                                     comme la maquette le veut : le middleware
+                                     `auth` retient l'intention et
+                                     `redirect()->intended()` le ramène à la
+                                     demande après connexion. Seuls un
+                                     prestataire ou un administrateur de
+                                     passage, qui ne peuvent pas demander,
+                                     voient la fiche à la place — sans quoi la
+                                     page leur répétait six fois la même
+                                     phrase grise. --}}
+                                @if (auth()->guest() || auth()->user()->can('create', \App\Models\ServiceRequest::class))
+                                    <x-primary-button :href="route('requests.create', ['provider_id' => $providerProfile->user_id])"
+                                                      class="w-full">
+                                        <x-icon name="mail" />
+                                        Contacter
+                                    </x-primary-button>
+                                @else
+                                    <a href="{{ route('providers.show', $providerProfile) }}"
+                                       class="inline-flex w-full items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest px-6 py-3 font-button-text font-semibold text-on-surface transition-colors hover:border-primary/50 hover:shadow-elevation-2">
+                                        {{ __('Voir la fiche') }}
+                                    </a>
+                                @endif
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- ══ Services récents ══ --}}
+    <section class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
+        <x-section-header :title="__('Derniers services publiés')" :href="route('services.index')" />
 
         @if ($recentServices->isEmpty())
-            <p class="mt-6 text-on-surface-variant">Aucun service disponible pour le moment.</p>
+            <x-empty-state class="mt-6" :title="__('Aucun service disponible pour le moment.')" />
         @else
-            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($recentServices as $service)
                     <x-service-card :service="$service" />
                 @endforeach
@@ -61,15 +260,69 @@
         @endif
     </section>
 
-    <!-- CTA -->
+    {{-- ══ Comment ça marche ══ Le modèle du produit n'est évident pour personne :
+         le client ne paie rien ici, et le règlement se convient de gré à gré. --}}
+    <section class="border-b border-outline-variant bg-surface-container-low">
+        <div class="mx-auto max-w-container px-margin-mobile py-12 md:px-margin-tablet lg:px-margin-desktop">
+            <h2 class="text-center font-headline-lg text-headline-lg text-on-surface">{{ __('Comment ça marche') }}</h2>
+
+            <ol class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                {{-- L'icône est nommée, pas positionnelle : `icons:sync`
+                     reconnaît « 'icone' => '…' » et ne voit pas une valeur
+                     posée en première position d'un tableau. Une icône qu'il
+                     n'embarque pas s'affiche en toutes lettres — « HANDSHAKE »
+                     est resté écrit ainsi sur l'accueil. --}}
+                @foreach ([
+                    ['icone' => 'search', 'titre' => __('Décrivez votre besoin'), 'texte' => __('Une phrase suffit. La catégorie, la ville et le quartier sont reconnus automatiquement.')],
+                    ['icone' => 'forum', 'titre' => __('Comparez et contactez'), 'texte' => __('Notes, avis et prix indicatifs sont affichés. Vous échangez directement avec le prestataire.')],
+                    ['icone' => 'handshake', 'titre' => __('Convenez entre vous'), 'texte' => __('Le règlement se fait de gré à gré, hors plateforme. SmartLink ne prend aucune commission.')],
+                ] as $index => $etape)
+                    @php ['icone' => $icon, 'titre' => $titre, 'texte' => $texte] = $etape; @endphp
+                    <li class="rounded-xl border border-outline-variant shadow-elevation-1 bg-surface-container-lowest p-6">
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container/20 text-primary">
+                                <x-icon :name="$icon" />
+                            </span>
+                            <span class="font-label-numeric text-label-numeric text-on-surface-variant">0{{ $index + 1 }}</span>
+                        </div>
+                        <h3 class="mt-4 font-headline-sm text-headline-sm text-on-surface">{{ $titre }}</h3>
+                        <p class="mt-2 text-label-md leading-relaxed text-on-surface-variant">{{ $texte }}</p>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+    </section>
+
+    {{-- ══ Appel aux prestataires ══ --}}
     @guest
-        <section class="bg-inverse-surface">
-            <div class="max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-12 text-center">
-                <h2 class="font-headline-lg text-headline-lg text-inverse-on-surface">Vous êtes prestataire de services ?</h2>
-                <p class="mt-2 font-body-md text-body-md text-inverse-on-surface/80">Rejoignez SmartLink et trouvez de nouveaux clients dès aujourd'hui.</p>
-                <a href="{{ route('register') }}" class="mt-6 inline-flex rounded-full bg-primary px-6 py-3 font-button-text text-button-text text-on-primary hover:bg-primary-container transition-colors">
-                    Créer un compte prestataire
-                </a>
+        @php $photoCta = image_photo(config('imagery.cta')); @endphp
+
+        {{-- La photo passe *derrière* le fond sombre, jamais à sa place : si
+             l'hôte ne répond pas, le bandeau reste exactement ce qu'il était.
+             Le voile n'est pas décoratif — sans lui, le texte blanc tombe sur
+             une photo dont on ne connaît pas la luminosité. --}}
+        <section class="relative overflow-hidden bg-inverse-surface">
+            @if ($photoCta)
+                {{-- Un seul assombrissement, pas deux : l'image à 30 % sous un
+                     voile à 60 % ne laissait plus rien voir du tout — le
+                     bandeau était noir et la requête vers l'hôte, payée pour
+                     rien. --}}
+                <img src="{{ $photoCta['url'] }}" alt="" loading="lazy" referrerpolicy="no-referrer"
+                     @if ($photoCta['credit']) title="Photo : {{ $photoCta['credit'] }}" @endif
+                     class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()">
+                <div class="absolute inset-0 bg-inverse-surface/75" aria-hidden="true"></div>
+            @endif
+
+            <div class="relative mx-auto max-w-container px-margin-mobile py-14 text-center md:px-margin-tablet lg:px-margin-desktop">
+                <h2 class="font-headline-lg text-headline-lg text-inverse-on-surface">{{ __('Vous êtes prestataire de services ?') }}</h2>
+                <p class="mx-auto mt-3 max-w-xl font-body-md text-body-md text-inverse-on-surface/80">
+                    {{ __('Publiez vos services, recevez des demandes, développez votre clientèle.') }}
+                    <strong class="font-semibold text-inverse-on-surface">{{ __("30 jours d'essai gratuit") }}</strong>{{ __(', sans engagement.') }}
+                </p>
+                <x-primary-button :href="route('register')" class="mt-7">
+                    {{ __('Créer un compte prestataire') }}
+                    <x-icon name="arrow_forward" />
+                </x-primary-button>
             </div>
         </section>
     @endguest

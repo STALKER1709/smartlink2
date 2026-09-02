@@ -27,7 +27,7 @@ class SearchService
         }
 
         if (! empty($filters['quarter'])) {
-            $query->where('quarter', 'like', '%'.$filters['quarter'].'%');
+            $query->whereLike('quarter', '%'.$filters['quarter'].'%', caseSensitive: false);
         }
 
         if (! empty($filters['term'])) {
@@ -60,7 +60,12 @@ class SearchService
      */
     public function searchProviders(array $filters = [], int $perPage = 12): LengthAwarePaginator
     {
-        $query = ProviderProfile::query()->listed()->with(['user', 'category']);
+        $query = ProviderProfile::query()
+            ->listed()
+            ->with(['user', 'category'])
+            // Le nombre de services affiché sur la carte : un annuaire de profils
+            // vides n'inspire rien, autant que le visiteur le voie tout de suite.
+            ->withCount(['services' => fn ($services) => $services->active()->available()]);
 
         if (! empty($filters['category_id'])) {
             $query->where('category_id', $filters['category_id']);
@@ -77,8 +82,8 @@ class SearchService
         if (! empty($filters['term'])) {
             $term = $filters['term'];
             $query->where(function ($q) use ($term) {
-                $q->where('business_name', 'like', "%{$term}%")
-                    ->orWhere('description', 'like', "%{$term}%");
+                $q->whereLike('business_name', "%{$term}%", caseSensitive: false)
+                    ->orWhereLike('description', "%{$term}%", caseSensitive: false);
             });
         }
 

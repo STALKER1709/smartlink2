@@ -34,16 +34,19 @@ class ProfileController extends Controller
 
         if ($request->hasFile('logo')) {
             if ($providerProfile->logo_path) {
-                Storage::disk('public')->delete($providerProfile->logo_path);
+                Storage::disk(media_disk())->delete($providerProfile->logo_path);
             }
-            $data['logo_path'] = $request->file('logo')->store('logos', 'public');
+            $data['logo_path'] = $request->file('logo')->store('logos', media_disk());
         }
 
+        // La pièce d'identité part sur son disque privé, jamais sur « media » :
+        // ce dernier est public, donc servi par le serveur web sans passer par
+        // Laravel — ni middleware, ni Policy.
         if ($request->hasFile('id_card')) {
             if ($providerProfile->id_card_path) {
-                Storage::disk('public')->delete($providerProfile->id_card_path);
+                Storage::disk(id_documents_disk())->delete($providerProfile->id_card_path);
             }
-            $data['id_card_path'] = $request->file('id_card')->store('id_cards', 'public');
+            $data['id_card_path'] = $request->file('id_card')->store('', id_documents_disk());
             $data['id_card_verified'] = false;
         }
 

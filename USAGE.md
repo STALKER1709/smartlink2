@@ -1,6 +1,6 @@
 # Guide d'utilisation
 
-## Comptes de démonstration
+## Comptes de démonstration (développement)
 
 Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts à l'emploi (mot de passe : `password`) ainsi que des dizaines de clients/prestataires aléatoires :
 
@@ -9,6 +9,110 @@ Après `php artisan migrate --seed`, le `UserSeeder` crée trois comptes prêts 
 | Client | `client@smartlink.cm` | `password` | Aïcha Mballa, Douala |
 | Prestataire | `provider@smartlink.cm` | `password` | Jean-Paul Eto'o, plombier vérifié à Douala |
 | Administrateur | `admin@smartlink.cm` | `password` | Administrateur SmartLink |
+
+⚠️ **`db:seed` sans argument ne doit jamais être lancé en production** : il ouvre un
+administrateur dont le mot de passe est `password`, et remplit les descriptions avec le
+faux latin de Faker.
+
+## Contenu de démonstration (production)
+
+Pour ne pas ouvrir la plateforme sur des pages vides, `DemoSeeder` installe un contenu
+écrit à la main : quatorze prestataires répartis sur six villes, vingt-sept services aux
+descriptions réelles, huit clients, treize demandes couvrant tout le cycle de vie, les
+conversations correspondantes et cinq avis.
+
+Sous Linux ou macOS :
+
+```bash
+php artisan db:seed --class=ServiceCategorySeeder   # si ce n'est pas déjà fait
+php artisan db:seed --class=PlanSeeder              # idem
+DEMO_PASSWORD='...' php artisan db:seed --class=DemoSeeder
+```
+
+Sous Windows, en PowerShell — `VAR=valeur commande` n'y existe pas, la variable se pose
+avant l'appel et se retire après :
+
+```powershell
+php artisan db:seed --class=ServiceCategorySeeder
+php artisan db:seed --class=PlanSeeder
+$env:DEMO_PASSWORD = '...'
+php artisan db:seed --class=DemoSeeder
+Remove-Item Env:\DEMO_PASSWORD
+```
+
+Le mot de passe se met entre apostrophes : sans elles, PowerShell interprète `@`, `$` et
+`;` avant que PHP ne les voie.
+
+Chaque service reçoit une **illustration de couverture** de son métier, téléversée sur
+le disque de médias (`MEDIA_DISK`) comme le serait une vraie photo — donc sur S3 en
+production, dans `storage/app/public` en développement.
+
+Ce sont des dessins et non des photographies, délibérément : une photo de stock d'un
+plombier européen dans une cuisine européenne dessert une place de marché camerounaise,
+et une photo trouvée en ligne pose une question de droits qu'on ne veut pas découvrir
+après la mise en ligne. Elles sont produites par
+`database/seeders/data/images/generate.mjs` à partir de la palette de la plateforme :
+aucun tiers, aucune licence. Pour les régénérer après un changement de couleurs :
+
+```bash
+node database/seeders/data/images/generate.mjs
+```
+
+Trois propriétés en font un seeder sûr sur une base réelle :
+
+- **Il n'écrit que sur son propre domaine.** Tous les comptes sont en
+  `@demo.smartlink.cm` ; aucune ligne appartenant à un vrai compte n'est touchée.
+- **Il est rejouable.** Comptes retrouvés par adresse, services par `slug` : le relancer
+  met à jour au lieu de dupliquer. Le mot de passe des comptes existants n'est pas
+  remplacé, sauf si `DEMO_PASSWORD` est posée.
+- **Il ne crée aucun administrateur.** Sans `DEMO_PASSWORD`, un mot de passe est tiré au
+  sort et affiché une seule fois, à la fin.
+
+Les prestataires sont répartis sur tous les états d'abonnement — essai, Pro, Essentiel,
+gratuit, expiré — pour que chaque affichage de l'interface ait des données à montrer.
+
+Pour tout retirer avant l'ouverture réelle :
+
+```bash
+php artisan demo:clear          # demande confirmation
+php artisan demo:clear --force  # sans confirmation
+```
+
+Les illustrations partent avec : elles ne relèvent d'aucune cascade en base, et sont
+retrouvées par leur préfixe `services/demo/`, qui ne contient jamais le dépôt d'un vrai
+prestataire.
+
+La sélection porte sur le domaine des adresses : les vrais comptes y survivent, et
+`tests/Feature/DemoDataTest.php` monte la garde sur ce point.
+
+## Ouvrir un compte administrateur
+
+Le formulaire public n'accepte que les rôles client et prestataire — un formulaire
+capable de fabriquer un administrateur serait une porte ouverte. Le seul chemin est donc
+la console :
+
+```bash
+php artisan admin:create
+```
+
+La commande demande nom, adresse, téléphone, puis le mot de passe **à l'écran**. Il n'est
+jamais accepté en argument : sur la ligne de commande, il resterait dans l'historique du
+terminal et dans les journaux du shell. Les règles sont celles de l'inscription publique
+— rien ne justifie qu'un administrateur ait un mot de passe plus faible qu'un client.
+
+Les trois premières valeurs peuvent être passées en options pour aller plus vite ;
+le mot de passe, jamais :
+
+```bash
+php artisan admin:create --name="Votre nom" --email=vous@exemple.cm --phone=699887766
+```
+
+Si l'adresse appartient déjà à un compte, la commande propose de le **promouvoir** au
+lieu d'échouer — son mot de passe reste inchangé. Un compte supprimé n'est jamais
+ressuscité en silence : le restaurer est une décision à part.
+
+Les deux opérations sont tracées dans le journal d'audit (`admin.created`,
+`admin.promoted`).
 
 ## Parcours Visiteur (non connecté)
 

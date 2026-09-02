@@ -40,6 +40,16 @@ class MockPaymentProvider implements PaymentProvider
         return 'success';
     }
 
+    /**
+     * Rien à authentifier hors ligne : la simulation n'a pas de secret partagé.
+     * Le pilote « mock » n'est jamais celui de la production, où le contrôle de
+     * signature appartient au vrai fournisseur.
+     */
+    public function isAuthentic(Request $request): bool
+    {
+        return true;
+    }
+
     public function readWebhook(Request $request): ?WebhookEvent
     {
         $reference = $request->input('external_reference') ?? $request->input('reference');

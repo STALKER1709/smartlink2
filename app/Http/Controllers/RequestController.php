@@ -27,14 +27,52 @@ class RequestController extends Controller
         $query = $user->isProvider() ? $user->receivedRequests() : $user->sentRequests();
 
         $serviceRequests = $query
-            ->with(['service', 'client.clientProfile', 'provider.providerProfile'])
+            /*
+             * Les deux métiers affichés sur chaque ligne — celui du service et
+             * celui du prestataire — se lisaient à travers une relation non
+             * préchargée : une requête par ligne, soit dix allers-retours de
+             * plus par page, invisibles sur SQLite et payés à chaque fois sur
+             * une base distante.
+             */
+            ->with([
+                'service.category',
+                'client.clientProfile',
+                'provider.providerProfile.category',
+            ])
+            // Le point rouge des maquettes : une demande dont la conversation
+            // porte un message qu'on n'a pas lu.
+            ->withCount(['conversation as unread_count' => fn ($q) => $q
+                ->join('messages', 'messages.conversation_id', '=', 'conversations.id')
+                ->where('messages.sender_id', '!=', $user->id)
+                ->whereNull('messages.read_at')])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
+        // Neuf pastilles de filtre s'affichaient toujours, y compris celles
+        // qui n'auraient rien renvoyé. Seuls les statuts réellement présents
+        // sont proposés, avec leur nombre : un filtre qui rend zéro n'est pas
+        // un filtre, c'est un piège.
+        //
+        // Le décompte repart d'une relation neuve, et `reorder()` retire tout
+        // tri : `paginate()` avait posé « order by created_at » et « limit »
+        // sur le constructeur partagé, que le regroupement traînait ensuite.
+        // SQLite l'accepte, PostgreSQL refuse — « column requests.created_at
+        // must appear in the GROUP BY clause » — et la page tombait en erreur
+        // sur le moteur de la production seulement.
+        $comptes = ($user->isProvider() ? $user->receivedRequests() : $user->sentRequests())
+            ->reorder()
+            ->getQuery()
+            ->select('status')
+            ->selectRaw('count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->all();
+
         return view('requests.index', [
             'requests' => $serviceRequests,
+            'comptes' => $comptes,
         ]);
     }
 
@@ -50,7 +88,11 @@ class RequestController extends Controller
         if ($user->isProvider()
             && $user->id === $serviceRequest->provider_id
             && $serviceRequest->status === ServiceRequest::STATUS_SENT) {
-            if (! $this->quotas->hasRequestQuotaLeft($user)) {
+            // La réservation vaut vérification : elle n'aboutit que s'il
+            // restait une place, et c'est la base qui tranche. Vérifier puis
+            // consommer en deux temps laissait deux lectures simultanées
+            // passer toutes les deux.
+            if (! $this->quotas->consumeRequestRead($user)) {
                 return view('requests.locked', [
                     'serviceRequest' => $serviceRequest,
                     'plan' => $this->quotas->plan($user),
@@ -58,7 +100,6 @@ class RequestController extends Controller
             }
 
             $this->requests->markViewed($serviceRequest, $user);
-            $this->quotas->consumeRequestRead($user);
         }
 
         $serviceRequest->load([

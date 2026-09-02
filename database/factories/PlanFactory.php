@@ -27,6 +27,20 @@ class PlanFactory extends Factory
         ];
     }
 
+    public function free(): static
+    {
+        return $this->state(fn () => [
+            'code' => Plan::CODE_FREE,
+            'price_xaf' => 0,
+            'max_services' => 1,
+            'max_monthly_requests' => 3,
+            'is_featured' => false,
+            'has_ai_writing' => false,
+            'has_stats' => false,
+            'sort_order' => 0,
+        ]);
+    }
+
     public function pro(): static
     {
         return $this->state(fn () => [

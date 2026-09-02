@@ -36,15 +36,51 @@ class SubscriptionController extends Controller
     {
         abort_unless($plan->is_active, 404);
 
-        return view('provider.subscription.checkout', [
-            'plan' => $plan,
-            'subscription' => $request->user()->activeSubscription(),
-        ]);
+        // Un palier gratuit n'a rien à encaisser : pas de numéro à saisir,
+        // pas d'opérateur à choisir, seulement les restrictions à énoncer
+        // avant de s'y engager.
+        return view($plan->isFree()
+            ? 'provider.subscription.free'
+            : 'provider.subscription.checkout', [
+                'plan' => $plan,
+                'subscription' => $request->user()->activeSubscription(),
+            ]);
+    }
+
+    /**
+     * Bascule sur un palier gratuit. Le règlement n'entrant pas en jeu, le
+     * seul refus possible vient de l'abonnement en cours : tant qu'il reste
+     * du temps réglé ou d'essai, la formule gratuite attend son tour plutôt
+     * que d'effacer ce qui est déjà ouvert.
+     */
+    public function activateFree(Request $request, Plan $plan): RedirectResponse
+    {
+        abort_unless($plan->is_active && $plan->isFree(), 404);
+
+        $result = $this->subscriptions->activateFreePlan($request->user(), $plan);
+
+        if ($result['error'] === 'still_running') {
+            return back()->withErrors([
+                'plan' => __('ui.subscription.free_blocked', [
+                    'days' => $result['subscription']?->daysRemaining() ?? 0,
+                ]),
+            ]);
+        }
+
+        if ($result['error'] !== null) {
+            return back()->withErrors(['plan' => __('ui.subscription.free_refused')]);
+        }
+
+        return redirect()->route('provider.subscription.show')
+            ->with('status', __('ui.subscription.free_activated', ['plan' => $plan->name()]));
     }
 
     public function subscribe(SubscribeRequest $request, Plan $plan): RedirectResponse
     {
-        abort_unless($plan->is_active, 404);
+        // Un palier gratuit n'a pas de porte payante : sans ce refus, un POST
+        // forgé lancerait un encaissement de 0 FCFA, que l'opérateur rejette
+        // et qui laisserait un paiement en échec sur le compte.
+        abort_unless($plan->is_active && ! $plan->isFree(), 404);
 
         $validated = $request->validated();
 

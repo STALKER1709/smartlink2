@@ -1,0 +1,15 @@
+# Ce qui n'a rien à faire dans une fonction serverless : ni les tests, ni les
+# maquettes, ni les fichiers régénérés à chaque déploiement.
+/tests
+/design
+/.claude
+/smartlink
+/node_modules
+/vendor
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+/storage/logs
+/database/database.sqlite
+/.phpunit.cache
+/.phpunit.result.cache

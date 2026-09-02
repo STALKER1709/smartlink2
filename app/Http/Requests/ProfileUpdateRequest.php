@@ -18,6 +18,16 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            // Le téléphone est l'identifiant de contact du Cameroun, et il est
+            // unique en base : sans la règle, un changement de numéro heurtait
+            // la contrainte et sortait en erreur de base de données plutôt
+            // qu'en message sous le champ.
+            'phone' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique(User::class)->ignore($this->user()->id),
+            ],
             'email' => [
                 'required',
                 'string',

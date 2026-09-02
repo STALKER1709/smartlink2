@@ -1,10 +1,10 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
+    <div class="mb-4 text-label-md text-on-surface-variant">
         {{ __('ui.phone_verification.description', ['phone' => Auth::user()->phone]) }}
     </div>
 
     @if (session('status'))
-        <div class="mb-4 text-sm font-medium text-green-600">
+        <div class="mb-4 text-label-md font-medium text-secondary">
             {{ session('status') }}
         </div>
     @endif
@@ -20,7 +20,7 @@
                 type="text"
                 inputmode="numeric"
                 maxlength="6"
-                class="mt-1 block w-full text-center text-3xl tracking-widest font-bold"
+                class="mt-1 block w-full text-center text-headline-lg tracking-widest font-bold"
                 placeholder="_ _ _ _ _ _"
                 autofocus
                 required
@@ -33,7 +33,7 @@
         </x-primary-button>
     </form>
 
-    <div class="mt-4 flex items-center justify-between text-sm">
+    <div class="mt-4 flex items-center justify-between text-label-md">
         <form method="POST" action="{{ route('phone.verify.send') }}">
             @csrf
             <button type="submit" class="text-primary hover:text-primary-container underline">
@@ -42,7 +42,7 @@
         </form>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="text-gray-500 hover:text-gray-700">
+            <button type="submit" class="text-on-surface-variant hover:text-on-surface">
                 {{ __('ui.phone_verification.logout') }}
             </button>
         </form>

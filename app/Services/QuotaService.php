@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Plan;
 use App\Models\ProviderProfile;
+use App\Models\Service;
 use App\Models\User;
 
 /**
@@ -79,28 +80,111 @@ class QuotaService
     }
 
     /**
-     * Décompte une demande nouvellement lue, puis réévalue la visibilité :
-     * un prestataire au plafond sort des recherches, pour qu'aucun client
-     * ne lui écrive sans pouvoir être lu.
+     * Réserve une lecture de demande, puis réévalue la visibilité : un
+     * prestataire au plafond sort des recherches, pour qu'aucun client ne lui
+     * écrive sans pouvoir être lu.
+     *
+     * Renvoie `false` quand le plafond est déjà atteint — l'appelant ne doit
+     * alors rien montrer de la demande.
+     *
+     * Vérifier le plafond puis incrémenter en deux temps laissait passer deux
+     * lectures simultanées : les deux processus lisaient le même compteur et
+     * écrivaient la même valeur, ce qui perdait une incrémentation et
+     * distribuait deux fois le dernier jeton. Tout tient donc en une seule
+     * écriture conditionnelle, et c'est la base qui arbitre : la clause WHERE
+     * porte le plafond, le nombre de lignes touchées dit si la place était
+     * libre. `UPDATE` prend un verrou sur la ligne, les deux appels ne peuvent
+     * pas réussir.
      */
-    public function consumeRequestRead(User $provider): void
+    public function consumeRequestRead(User $provider): bool
     {
         $profile = $provider->providerProfile;
+        $plan = $this->plan($provider);
 
-        if ($profile === null) {
-            return;
+        if ($profile === null || $plan === null) {
+            return false;
         }
 
         $period = $this->currentPeriod();
 
-        $profile->forceFill([
-            'requests_read_count' => $profile->requests_read_period === $period
-                ? $profile->requests_read_count + 1
-                : 1,
-            'requests_read_period' => $period,
-        ])->save();
+        // Bascule de mois, en une écriture conditionnelle : seul le processus
+        // qui trouve encore la période révolue remet le compteur à zéro. Les
+        // autres n'y touchent pas — sans cette condition, une remise à zéro
+        // tardive effacerait l'incrémentation d'un processus plus rapide.
+        ProviderProfile::query()
+            ->whereKey($profile->id)
+            ->where(function ($query) use ($period) {
+                $query->where('requests_read_period', '!=', $period)
+                    ->orWhereNull('requests_read_period');
+            })
+            ->update([
+                'requests_read_count' => 0,
+                'requests_read_period' => $period,
+            ]);
+
+        // La période est désormais celle du mois courant : le plafond porte
+        // donc directement sur la colonne. C'est la base qui arbitre, et
+        // `increment` compile en « SET count = count + 1 », qui ne relit pas
+        // une valeur chargée en mémoire.
+        $reserve = ProviderProfile::query()
+            ->whereKey($profile->id)
+            ->where('requests_read_period', $period)
+            ->when(
+                ! $plan->allowsUnlimitedRequests(),
+                fn ($query) => $query->where('requests_read_count', '<', $plan->max_monthly_requests)
+            )
+            ->increment('requests_read_count');
+
+        if ($reserve === 0) {
+            return false;
+        }
+
+        // L'instance en mémoire porte encore l'ancien compteur : la visibilité
+        // se recalculerait sur une valeur périmée.
+        $provider->unsetRelation('providerProfile');
 
         $this->refreshListing($provider);
+
+        return true;
+    }
+
+    /**
+     * Ramène le nombre de services actifs sous le plafond du palier.
+     *
+     * Sans ce passage, le plafond ne s'appliquerait qu'à la publication : un
+     * prestataire qui publie dix services pendant son essai au palier Pro les
+     * garderait tous visibles en retombant sur un palier qui n'en autorise
+     * qu'un. Le plafond ne vaudrait alors que pour les nouveaux venus.
+     *
+     * Les plus anciens survivent, arbitrairement mais de façon stable : rien
+     * ne permet de deviner lequel compte le plus, et un ordre qui change à
+     * chaque passage ferait clignoter les annonces. Les surnuméraires passent
+     * en « inactif » — ils restent modifiables et reparaissent tels quels si
+     * le prestataire reprend un palier plus large.
+     *
+     * @return int nombre de services retirés
+     */
+    public function enforceServiceCap(User $provider): int
+    {
+        $plan = $this->plan($provider);
+
+        if ($plan === null || $plan->allowsUnlimitedServices()) {
+            return 0;
+        }
+
+        $surplus = $provider->services()
+            ->where('status', Service::STATUS_ACTIVE)
+            ->orderBy('id')
+            ->pluck('id')
+            ->slice($plan->max_services);
+
+        if ($surplus->isEmpty()) {
+            return 0;
+        }
+
+        Service::whereIn('id', $surplus)->update(['status' => Service::STATUS_INACTIVE]);
+
+        return $surplus->count();
     }
 
     /**
@@ -108,6 +192,11 @@ class QuotaService
      */
     public function refreshListing(User $provider): bool
     {
+        // Le plafond s'applique d'abord, et sans dépendre du profil : un
+        // prestataire sans fiche publique n'apparaît dans aucune recherche,
+        // mais ses services, eux, existent bel et bien.
+        $this->enforceServiceCap($provider);
+
         $profile = $provider->providerProfile;
 
         if ($profile === null) {

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'subscription_id', 'plan_id', 'payer_id', 'amount_xaf', 'operator', 'phone',
     'status', 'provider_reference', 'internal_reference', 'failure_reason', 'paid_at',
+    'credited_at',
 ])]
 class Payment extends Model
 {
@@ -29,6 +30,7 @@ class Payment extends Model
     {
         return [
             'paid_at' => 'datetime',
+            'credited_at' => 'datetime',
             'amount_xaf' => 'integer',
         ];
     }
@@ -46,11 +48,6 @@ class Payment extends Model
     public function payer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'payer_id');
-    }
-
-    public function isSuccessful(): bool
-    {
-        return $this->status === self::STATUS_SUCCESS;
     }
 
     public function formattedAmount(): string
