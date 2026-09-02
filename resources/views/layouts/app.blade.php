@@ -70,15 +70,21 @@
             @include('partials.flash-messages')
 
             <!-- Page Content -->
-            {{-- La marge basse dégage la barre d'onglets, qui est fixée : sans
-                 elle, le dernier bloc de chaque page passe dessous. --}}
-            <main id="contenu" tabindex="-1" class="pb-[4.75rem] md:pb-0">
+            <main id="contenu" tabindex="-1">
                 {{ $slot }}
             </main>
 
             @if ($piedDePage)
                 @include('layouts.footer')
             @endif
+
+            {{-- La réserve qui dégage la barre d'onglets, fixée au bas de
+                 l'écran. Elle était posée sur `<main>` — mais le pied de page
+                 vient après, et sa dernière ligne (« Gratuit pour les clients ·
+                 Abonnement mensuel… ») restait sous la barre sur tous les
+                 écrans, définitivement hors de portée. La réserve appartient
+                 donc à ce qui ferme le document, pas au contenu. --}}
+            <div aria-hidden="true" class="h-[4.75rem] shrink-0 md:hidden"></div>
 
             @include('layouts.bottom-nav')
 

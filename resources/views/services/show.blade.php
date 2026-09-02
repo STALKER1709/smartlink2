@@ -37,7 +37,7 @@
             : null;
     @endphp
 
-    <div class="mx-auto max-w-container px-margin-mobile py-6 pb-28 md:px-margin-tablet lg:px-margin-desktop md:py-8 lg:pb-8">
+    <div class="mx-auto max-w-container px-margin-mobile py-6 pb-[9.5rem] md:px-margin-tablet lg:px-margin-desktop md:py-8 lg:pb-8">
         <a href="{{ route('services.index') }}" class="mb-4 inline-flex min-h-6 items-center gap-1 text-label-md text-on-surface-variant hover:text-primary sm:hidden">
             <x-icon name="arrow_back" />
             {{ __("Tous les services") }}

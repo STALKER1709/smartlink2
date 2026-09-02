@@ -44,7 +44,7 @@
     @endphp
 
 
-    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 pb-28 md:px-margin-tablet lg:px-margin-desktop lg:pb-8">
+    <div class="mx-auto max-w-container space-y-8 px-margin-mobile py-8 pb-[9.5rem] md:px-margin-tablet lg:px-margin-desktop lg:pb-8">
         {{--
             L'identité au centre, comme la maquette : portrait, nom, métier,
             note, gages de confiance, puis les deux actions. La fiche était

@@ -111,6 +111,43 @@
  */
 
 @layer base {
+    /*
+     * Le fond des champs de saisie.
+     *
+     * `@tailwindcss/forms` pose `background-color: #fff` en dur sur chaque
+     * contrôle de formulaire. En schéma sombre, quarante-quatre champs
+     * répartis sur huit écrans restaient donc blancs — la connexion et
+     * l'inscription les premières, c'est-à-dire les deux écrans par lesquels
+     * tout le monde entre. Le texte y restait lisible, ce qui est exactement
+     * pourquoi aucun contrôle de contraste ne l'a signalé : le défaut n'est
+     * pas la lisibilité, c'est deux rectangles blancs au milieu d'une page
+     * sombre.
+     *
+     * Les cases à cocher, les boutons radio et les curseurs sont exclus : leur
+     * fond est leur dessin, et le leur reprendre les efface.
+     */
+    input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']):not([type='color']),
+    select,
+    textarea {
+        background-color: rgb(var(--surface-container-lowest));
+        color: rgb(var(--on-surface));
+    }
+
+    /*
+     * Une case non cochée est vide, pas blanche. `@tailwindcss/forms` lui pose
+     * le même `#fff` en dur, et en schéma sombre le carré plein attirait l'œil
+     * plus que l'étiquette à côté. L'état coché n'est pas touché : la case s'y
+     * remplit de `currentColor`, ce qui reste le comportement voulu.
+     */
+    input[type='checkbox']:not(:checked),
+    input[type='radio']:not(:checked) {
+        background-color: transparent;
+    }
+
+    ::placeholder {
+        color: rgb(var(--on-surface-variant) / 0.7);
+    }
+
     ::selection {
         background-color: rgb(var(--secondary-container));
         color: rgb(var(--on-secondary-container));
