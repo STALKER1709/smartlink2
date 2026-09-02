@@ -276,6 +276,75 @@
 }
 
 /*
+ * ── Dire que quelque chose se passe ───────────────────────────────────────
+ *
+ * L'application est rendue par le serveur : entre le clic et la page suivante,
+ * rien ne bouge à l'écran. Sur une connexion lente, l'utilisateur ne distingue
+ * pas « lent » de « cassé », alors il reclique.
+ */
+
+.trait-attente {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 100;
+    height: 3px;
+    width: 0;
+    background: rgb(var(--primary));
+    /* Le trait avance vite au début puis ralentit : il n'annonce jamais une
+       fin qu'il ne connaît pas, et n'atteint donc jamais le bord. */
+    transition: width 8s cubic-bezier(0.05, 0.8, 0.2, 1);
+}
+
+.trait-attente--court {
+    width: 92%;
+}
+
+/* Le bouton qui vient d'être actionné. Il n'est pas désactivé — un `disabled`
+   posé trop tôt retire son `name`/`value` de l'envoi — mais il cesse de
+   répondre au pointeur et porte son propre témoin. */
+[data-attente] {
+    pointer-events: none;
+    position: relative;
+    color: transparent !important;
+}
+
+[data-attente] > * {
+    visibility: hidden;
+}
+
+[data-attente]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 1.15em;
+    height: 1.15em;
+    border: 2px solid currentColor;
+    border-block-start-color: transparent;
+    border-radius: 9999px;
+    color: rgb(var(--on-primary));
+    animation: tourne 0.7s linear infinite;
+}
+
+/* Un bouton secondaire porte son témoin dans la couleur du texte, pas dans
+   celle qu'on pose sur un aplat plein. */
+[data-attente]:not(.bg-primary)::after {
+    color: rgb(var(--primary));
+}
+
+@keyframes tourne {
+    to { transform: rotate(1turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* Le témoin reste — c'est une information — mais il cesse de tourner et le
+       trait se pose d'un coup. */
+    [data-attente]::after { animation: none; opacity: 0.6; }
+    .trait-attente { transition: none; }
+}
+
+/*
  * Un utilisateur qui a demandé moins d'animation à son système l'a fait pour
  * une raison — vertiges, troubles vestibulaires, ou simplement un appareil
  * lent. Les transitions ne sont pas supprimées mais ramenées à l'instantané :

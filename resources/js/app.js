@@ -2,6 +2,13 @@
 
 import Alpine from 'alpinejs';
 
+/*
+ * Le retour d'attente : un trait de progression et un bouton qui dit qu'il a
+ * été entendu. Sur une application rendue par le serveur, c'est tout ce qui
+ * sépare « lent » de « cassé » aux yeux de l'utilisateur.
+ */
+import './attente.js';
+
 window.Alpine = Alpine;
 
 Alpine.start();
